@@ -88,8 +88,11 @@ describe('Modul Tindak lanjut · detail dan alur status (TLJ-01)', () => {
     fireEvent.click(within(dlg).getByRole('button', { name: 'Ajukan selesai' }));
     expect(fu('TL-SEN-2026-0041')).toMatchObject({ status: 'menunggu-verifikasi', completionNote: 'Pagar beton 12 m terpasang.' });
     expect(screen.getByText('Tindak lanjut diajukan untuk diperiksa')).toBeInTheDocument();
-    expect(screen.getByText(/Menunggu pemeriksaan Andi Pratama sejak/)).toBeInTheDocument();
-    expect(screen.getByText('Terkunci')).toBeInTheDocument();
+    expect(screen.getByText('2 · Pengajuan selesai')).toBeInTheDocument();
+    expect(screen.getByText(/diperiksa Andi Pratama/)).toBeInTheDocument();
+    expect(screen.getAllByText('Terkunci selama diperiksa')).toHaveLength(1);
+    expect(screen.getByText('Pagar beton 12 m terpasang.')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Catatan penyelesaian')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Tarik pengajuan' }));
     expect(fu('TL-SEN-2026-0041').status).toBe('berjalan');
     expect(screen.getByText('Pengajuan ditarik')).toBeInTheDocument();
@@ -128,7 +131,7 @@ describe('Modul Tindak lanjut · detail dan alur status (TLJ-01)', () => {
     expect(screen.getByText(/Dikembalikan oleh Andi Pratama/)).toBeInTheDocument();
     expect(screen.getByText('Foto belum menunjukkan sisi luar pagar.')).toBeInTheDocument();
     expect(screen.getAllByText('Dikerjakan').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('belum diajukan')).toHaveLength(2);
+    expect(screen.getAllByText(/belum diajukan/)).toHaveLength(2);
     fireEvent.click(screen.getByRole('button', { name: 'Pilih file' }));
     expect(fu('TL-SEN-2026-0041').evidence).toHaveLength(3);
     expect(screen.getAllByRole('button', { name: /Ajukan selesai/ }).length).toBeGreaterThan(0);

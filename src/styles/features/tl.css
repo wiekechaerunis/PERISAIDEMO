@@ -60,3 +60,33 @@
 .tl-finish{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:var(--radius-lg);background:var(--action-subtle-bg)}
 .tl-drop-box{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;text-align:center}
 .tl-thumb{width:36px;height:36px;border-radius:8px;background:var(--surface-sunken);display:inline-flex;align-items:center;justify-content:center;color:var(--ink-muted);flex:none}
+/* Kartu Pengerjaan satu kartu (PgKartu) */
+.pg-card{display:flex;flex-direction:column;gap:18px;font-size:13px;line-height:18px;color:var(--ink)}
+.pg-steps{display:flex;align-items:center;gap:0;margin:0 0 4px;padding:0;list-style:none;flex-wrap:wrap}
+.pg-steps li{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-muted)}
+.pg-steps li .n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--surface-sunken);box-shadow:inset 0 0 0 1px var(--border)}
+.pg-steps li.done{color:var(--ink-subtle)}
+.pg-steps li.done .n{background:var(--action-subtle-bg);color:var(--action-subtle-ink);box-shadow:none}
+.pg-steps li.on{color:var(--ink)}
+.pg-steps li.on .n{background:var(--action);color:var(--on-action);box-shadow:none}
+.pg-steps .ln{width:36px;height:2px;background:var(--border);margin:0 8px}
+.pg-steps .ln.done{background:var(--action-line)}
+.pg-start{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:var(--radius-lg);background:var(--surface-subtle)}
+.pg-sec{display:flex;flex-direction:column;gap:10px}
+.pg-h{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.pg-h .s{font-weight:500;font-size:12px;color:var(--ink-muted)}
+.pg-entry{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--border-subtle)}
+.pg-thumbs{display:flex;gap:6px}
+.pg-thumbs span{width:56px;height:42px;border-radius:6px;background:linear-gradient(135deg,#D9DCD1,#EEF0EA);box-shadow:inset 0 0 0 1px var(--border)}
+.pg-done{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:var(--radius-lg);background:color-mix(in srgb,var(--action-subtle-bg) 40%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--action-line) 35%,var(--border))}
+.pg-drop{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-md);border:1.5px dashed var(--border-control);background:var(--surface)}
+.pg-sub{display:flex;flex-direction:column;gap:14px;padding:16px;border-radius:var(--radius-lg);background:var(--surface-subtle);box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.pg-sub-hd{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pg-sub-meta{font-size:12px;line-height:18px;color:var(--ink-muted);margin-top:-8px}
+.pg-req{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-md);background:var(--surface);box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.pg-req .k,.pg-quote .k{display:block;font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted);margin-bottom:2px}
+.pg-filehd{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.pg-lock{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--ink-muted)}
+.pg-quote{padding:2px 0 2px 12px;border-left:3px solid var(--border)}
+.pg-quote p{margin:0;line-height:20px;color:var(--ink)}
+.pg-sub-ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--border-subtle)}

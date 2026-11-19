@@ -127,7 +127,7 @@ export function addEvidence(s: Slice, no: string, by: string, file: { name: stri
   if (!f) return bad('Tindak lanjut tidak ditemukan.');
   if (f.status !== 'berjalan' && f.status !== 'belum-dimulai' && f.status !== 'dikembalikan') return bad('Bukti terkunci.');
   if (by !== f.pic) return bad('Hanya PIC tindak lanjut yang bisa menambah bukti.');
-  return { ok: true, state: put(s, { ...f, evidence: [...f.evidence, file] }) };
+  return { ok: true, state: put(s, { ...f, evidence: [...f.evidence, { ...file, at: TL_NOW }] }) };
 }
 
 export const MSG_ONLY_PIC = 'Hanya PIC tindak lanjut yang bisa mengajukan selesai.';

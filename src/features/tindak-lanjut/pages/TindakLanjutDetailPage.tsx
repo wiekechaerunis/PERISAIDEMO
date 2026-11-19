@@ -4,7 +4,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
-import { DEMO_USERS, isSkk } from '@/lib/rbac';
+import { DEMO_USERS, isSkk, titleOf } from '@/lib/rbac';
 import { SEV_LABEL, SEV_TAG_CLS } from '@/lib/severity';
 import { formatDate, formatWibFull } from '@/lib/format';
 import { STATUS_LABEL, STATUS_TAG, type FollowUp, type Incident } from '@/services/types';
@@ -18,6 +18,7 @@ import { Ic } from '@/features/insiden/components/review/parts';
 import type { ToastMsg } from '@/features/insiden/components/detail/DetailShell';
 import { initialsOf } from '@/features/insiden/logic/handling';
 import { TlShell } from '../components/TlShell';
+import { FollowUpWorkCard } from '../components/FollowUpWorkCard';
 import { SourceCell } from './TindakLanjutListPage';
 import { MOD_LABEL, MOD_TAG, canTarik, canWork, daysLeft, dueSub, isFinal, isLate, sourceId, sourceKindOf } from '../logic/followups';
 import { useFollowUps } from '../logic/useFollowUps';
@@ -73,7 +74,6 @@ function Notes({ f }: { f: FollowUp }) {
   );
 }
 
-const STEPS = ['Belum dimulai', 'Dikerjakan', 'Menunggu pemeriksaan', 'Selesai'];
 type Dlg = 'ajukan' | 'setujui' | 'kembalikan' | 'tenggat' | 'pic' | 'batal' | null;
 
 export function TindakLanjutDetailPage() {
@@ -179,7 +179,6 @@ export function TindakLanjutDetailPage() {
     if (run(decide((s) => cancelFollowUp(s, f.no, me, reason, TL_NOW)), `Tindak lanjut ${f.no} dibatalkan`)) setReason('');
   };
 
-  const stepNo = f.status === 'belum-dimulai' ? 0 : f.status === 'menunggu-verifikasi' ? 2 : f.status === 'selesai' ? 3 : 1;
   const closeDlg = () => { setDlg(null); setTried(false); setReason(''); };
   const ReasonField = () => (
     <div className="p-field">
@@ -316,80 +315,12 @@ export function TindakLanjutDetailPage() {
           )}
 
           {!isFinal(f) && (
-            <section className="p-card in-sec tl-work" aria-label="Pengerjaan">
-              <div className="lk-card-head" style={{ marginBottom: 0 }}>
-                <h2 className="in-h">Pengerjaan</h2>
-                {pull && <Btn onClick={doTarik}>Tarik pengajuan</Btn>}
-              </div>
-              <ol className="p-stepper tl-stepper" aria-label="Status tindak lanjut">
-                {STEPS.map((t, n) => (
-                  <li key={t} className={'p-step' + (n < stepNo ? ' done' : n === stepNo ? ' on' : '')} aria-current={n === stepNo ? 'step' : undefined}>
-                    <span className="n">{n < stepNo ? <Ic d={D.check} size={12} /> : n + 1}</span>{t}
-                  </li>
-                ))}
-              </ol>
-              {f.status === 'belum-dimulai' && work && (
-                <div className="p-note" style={{ alignItems: 'center' }}>
-                  <Ic d={D.info} size={16} />
-                  <span style={{ flex: 1 }}><b>Sudah mulai?</b> {giver} diberi tahu bahwa pekerjaan berjalan.</span>
-                  <Btn onClick={doStart}>Mulai kerjakan</Btn>
-                </div>
-              )}
-              {f.status === 'belum-dimulai' && !work && <span className="p-cap">PIC belum mulai. Bukti dan catatan dari PIC tampil di sini.</span>}
-              {f.status === 'menunggu-verifikasi' && <span className="p-cap">Menunggu pemeriksaan {giver} sejak {f.submittedAt ? formatDate(f.submittedAt) : ''}.</span>}
-
-              <h3 className="in-h tl-sub">1 · Catatan progres</h3>
-              {work && (
-                <>
-                  <textarea className="p-input p-area tl-field tl-area" aria-label="Catatan progres" placeholder="Mis. Menunggu suku cadang dari vendor, estimasi 30 Okt" maxLength={MAX_NOTE_TL} value={note} onChange={(e) => setNote(e.target.value)} style={{ minHeight: 72 }} />
-                  <span className="p-help row"><span>{notePhotos > 0 ? `${notePhotos} foto dilampirkan` : 'Boleh ditulis berkali-kali, boleh dengan foto.'}</span><span>{note.length}/{MAX_NOTE_TL}</span></span>
-                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                    <Btn onClick={() => setNotePhotos(notePhotos + 1)}><Ic d={D.img} size={16} />Lampirkan foto</Btn>
-                    <Btn onClick={doNote} disabled={!note.trim()}>Tambah catatan</Btn>
-                  </div>
-                </>
-              )}
-              <Notes f={f} />
-
-              <div className="tl-finish">
-                <h3 className="in-h tl-sub">2 · Selesaikan</h3>
-                {f.expectedEvidence && <span className="p-cap">Bukti yang diminta {giver}: {f.expectedEvidence}</span>}
-                {f.evidence.length > 0 && (
-                  <>
-                    <span className="p-lbl">{f.evidence.length} bukti</span>
-                    <div className="tl-files">
-                      {f.evidence.map((e) => (
-                        <div key={e.name} className="tl-file">
-                          <Ic d={D.img} size={16} /><span className="n">{e.name}</span>
-                          <span className="s">{f.status === 'menunggu-verifikasi' ? 'Terkunci' : 'belum diajukan'}</span>
-                          {work && <button type="button" className="p-ibtn ghost" style={{ width: 24, height: 24 }} aria-label={`Hapus ${e.name}`} onClick={() => doRemove(e.name)}><Ic d={D.close} size={14} /></button>}
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-                {work && (
-                  <>
-                    <div className="p-drop tl-drop-box">
-                      <span className="di"><Ic d={D.up} size={20} /></span>
-                      <b>Tambah bukti · tarik file atau pilih</b>
-                      <span className="p-cap">PDF, JPG, PNG, HEIC, DOCX, XLSX · maks. 25 MB</span>
-                      <Btn onClick={doFile}>Pilih file</Btn>
-                    </div>
-                    <div className="p-field">
-                      <span className="p-lbl" style={{ color: 'var(--ink)' }}>Catatan penyelesaian <span style={{ fontWeight: 500, color: 'var(--ink-muted)' }}>· opsional</span></span>
-                      <textarea className="p-input p-area tl-field tl-area" aria-label="Catatan penyelesaian" maxLength={MAX_NOTE_TL} value={doneNote} onChange={(e) => setDoneNote(e.target.value)} style={{ minHeight: 72 }} />
-                      <span className="p-help row"><span></span><span>{doneNote.length}/{MAX_NOTE_TL}</span></span>
-                    </div>
-                    <div className="tl-foot">
-                      <span className="p-help">{f.evidence.length === 0 ? 'Lampirkan minimal satu bukti untuk mengajukan selesai.' : `${giver} memeriksa. Bukti terkunci setelah diajukan.`}</span>
-                      <Btn kind="primary" disabled={f.evidence.length === 0} onClick={() => setDlg('ajukan')}>Ajukan selesai</Btn>
-                    </div>
-                  </>
-                )}
-                {f.status === 'menunggu-verifikasi' && f.completionNote && (<><span className="p-lbl">Catatan penyelesaian</span><div className="tl-quote">{f.completionNote}</div></>)}
-              </div>
-            </section>
+            <FollowUpWorkCard
+              f={f} giver={giver} work={work} pull={pull}
+              note={note} onNote={setNote} notePhotos={notePhotos} onAttachPhoto={() => setNotePhotos(notePhotos + 1)}
+              doneNote={doneNote} onDoneNote={setDoneNote}
+              onStart={doStart} onAddNote={doNote} onPickFile={doFile} onRemoveFile={doRemove} onSubmit={() => setDlg('ajukan')} onWithdraw={doTarik}
+            />
           )}
 
           {f.status === 'selesai' && (
@@ -482,7 +413,7 @@ export function TindakLanjutDetailPage() {
             <h2 className="in-h">Rincian</h2>
             <dl className="tl-kv">
               <dt>Dikerjakan oleh</dt><dd style={{ display: 'flex', gap: 6, alignItems: 'center' }}><Av name={f.pic} />{f.pic}</dd>
-              <dt>Pemeriksa</dt><dd>{giver}<div className="p-cap">{f.createdBy === f.pic ? <><span className="p-tag t-neutral">Diperiksa sendiri</span> tanpa pemeriksaan kedua</> : 'juga pemberi tugas'}</div></dd>
+              <dt>Pemberi tugas</dt><dd>{giver}{titleOf(giver) ? ` (${titleOf(giver)})` : ''}<div className="p-cap">{f.createdBy === f.pic ? <><span className="p-tag t-neutral">Diperiksa sendiri</span> tanpa pemeriksaan kedua</> : 'juga pemeriksa'}</div></dd>
               <dt>Tenggat</dt>
               <dd>
                 <b>{formatDate(f.dueAt)}</b>

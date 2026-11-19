@@ -311,6 +311,8 @@ export const FOLLOWUP_TAG: Record<FollowUpStatus, string> = {
 export interface FollowUpFile {
   name: string;
   sizeKb: number;
+  /** waktu diunggah (ISO lokal) */
+  at?: string;
 }
 
 export interface FollowUp {

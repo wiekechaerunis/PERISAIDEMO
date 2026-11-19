@@ -78,3 +78,26 @@ describe('B5 · sisa waktu satu fungsi', () => {
     expect(remainingLabel('2026-10-28T08:00:00').text).toBe('lewat 5 jam');
   });
 });
+
+describe('Kartu Pengerjaan · aturan status', () => {
+  it('catatan progres pertama: Belum dimulai → Dikerjakan dengan entri riwayat "Mulai dikerjakan"', async () => {
+    const { addFollowUpNote } = await import('./workflow.followup');
+    const s = seedState();
+    const f = s.followUps!.find((x) => x.status === 'belum-dimulai' && x.pic === 'Rudi Hartono')!;
+    const r = st(addFollowUpNote(s, f.no, 'Rudi Hartono', 'Mulai survei lokasi.'));
+    const after = r.followUps!.find((x) => x.no === f.no)!;
+    expect(after.status).toBe('berjalan');
+    expect(after.history.some((h) => h.text === 'Mulai dikerjakan.')).toBe(true);
+  });
+  it('tarik pengajuan: kembali Dikerjakan dan bukti bisa diubah lagi', async () => {
+    const { submitDone, withdrawSubmission, removeEvidence } = await import('./workflow.followup');
+    let s = seedState();
+    const f = s.followUps!.find((x) => x.status === 'berjalan' && x.pic === 'Rudi Hartono')!;
+    s = { ...s, ...st(submitDone(s, f.no, 'Rudi Hartono', 'Selesai.')) };
+    expect(s.followUps!.find((x) => x.no === f.no)!.status).toBe('menunggu-verifikasi');
+    expect(removeEvidence(s, f.no, 'Rudi Hartono', f.evidence[0].name).ok).toBe(false);
+    s = { ...s, ...st(withdrawSubmission(s, f.no, 'Rudi Hartono')) };
+    expect(s.followUps!.find((x) => x.no === f.no)!.status).toBe('berjalan');
+    expect(removeEvidence(s, f.no, 'Rudi Hartono', f.evidence[0].name).ok).toBe(true);
+  });
+});

@@ -46,3 +46,7 @@ export const reviewerTarget = (rev: string[] | null | undefined, options: string
 export const reviewerBy = (rev: string[] | null | undefined, options: string[] = PEJABAT_NAMES): string =>
   rev === undefined ? options[0] :
   !rev || rev.length >= options.length ? `Pejabat Berwenang (${options.length})` : rev.join(', ');
+
+/** Jabatan persona demo di layar Tindak lanjut (T14N); kosong bila tidak dikenal. */
+export const titleOf = (name: string): string =>
+  ({ 'Andi Pratama': 'Koordinator Security', 'Rudi Hartono': 'Teknisi pengamanan', 'Dedi Kurniawan': 'Staf Security', 'Sari Wulandari': 'Pejabat Berwenang KKKS', 'Hendra Wijaya': 'Pengawas SKK' } as Record<string, string>)[name] ?? '';

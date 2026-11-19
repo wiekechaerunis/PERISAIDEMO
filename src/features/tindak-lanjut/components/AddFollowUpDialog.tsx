@@ -10,7 +10,7 @@ import { addWorkingDays, MAX_ACTION, MAX_EVIDENCE_HINT, TL_CREATE_NOW } from '@/
 
 const USERS = [
   { name: 'Rudi Hartono', ini: 'RH', cap: 'Teknisi pengamanan · WK Andalas Darat', load: '2 tindak lanjut aktif' },
-  { name: 'Dedi Kurniawan', ini: 'DK', cap: 'Koordinator BUJP lapangan · WK Andalas Darat', load: '1 aktif · 1 terlambat' },
+  { name: 'Dedi Kurniawan', ini: 'DK', cap: 'Staf Security · WK Andalas Darat', load: '1 aktif · 1 terlambat' },
   { name: 'Andi Pratama', ini: 'AP', cap: 'PIC insiden · Anda juga yang memeriksa hasilnya', load: '4 aktif' },
 ];
 

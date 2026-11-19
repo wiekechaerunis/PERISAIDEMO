@@ -36,7 +36,7 @@ const EXTRA: FollowUp[] = [
   // Kartu uji jalur pemeriksa: Andi Pratama (pemeriksa) menunggu memeriksa hasil Rudi Hartono.
   tl({
     no: 'TL-SEN-2026-0043', incidentNo: 'INS-SEN-2026-0003', action: 'Pasang papan peringatan di gerbang 2', pic: 'Rudi Hartono',
-    createdBy: 'Andi Pratama', dueAt: '2026-11-06T17:00:00', status: 'menunggu-verifikasi', evidence: files(['papan-gerbang-2.jpg', 1700]),
+    createdBy: 'Andi Pratama', dueAt: '2026-11-06T17:00:00', status: 'menunggu-verifikasi', expectedEvidence: 'Foto papan terpasang di gerbang 2', evidence: files(['papan-gerbang-2.jpg', 1700]),
     submittedAt: '2026-11-04T14:30:00', completionNote: 'Papan peringatan terpasang di gerbang 2.',
   }),
   tl({
@@ -59,6 +59,9 @@ const EXTRA: FollowUp[] = [
   tl({
     no: 'TL-SEN-2026-0030', incidentNo: 'INS-SEN-2026-0005', action: 'Latih ulang regu jaga malam tentang rute patroli baru', pic: 'Rudi Hartono',
     createdBy: 'Sari Wulandari', dueAt: '2026-10-23T17:00:00', status: 'berjalan',
+    expectedEvidence: 'Jadwal patroli baru dan daftar hadir pelatihan',
+    evidence: [{ name: 'jadwal-patroli-baru.pdf', sizeKb: 420, at: '2026-11-03T10:12:00' }],
+    notes: [{ at: '2026-11-02T16:05:00', by: 'Rudi Hartono', text: 'Pelatihan sesi pertama selesai, 12 dari 20 anggota hadir.', photos: 1 }],
   }),
   tl({
     no: 'TL-SEN-2026-0025', incidentNo: 'INS-SEN-2026-0005', action: 'Pasang CCTV di jalur truk logistik', pic: 'Dedi Kurniawan',
