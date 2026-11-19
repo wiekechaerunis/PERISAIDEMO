@@ -6,8 +6,21 @@ import { V2Dialog } from '../nomor/V2Dialog';
 
 const hash = (s: string) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 
+/** Foto dummy yang tersedia sebagai berkas (public/dummy-wa); nama lain memakai gambar contoh SVG. */
+const REAL_PHOTOS: Record<string, string> = {
+  'IMG-20261028-WA0044.jpg': '/dummy-wa/IMG-20261028-WA0044.webp',
+  'IMG-20261028-WA0045.jpg': '/dummy-wa/IMG-20261028-WA0045.webp',
+};
+export const hasRealPhoto = (name: string) => name in REAL_PHOTOS;
+
 /** Gambar contoh deterministik: langit, tanah, bangunan panel, dan sosok, berbeda per nama berkas. */
 export function SamplePhoto({ name, size = 'lg' }: { name: string; size?: 'sm' | 'lg' }) {
+  const real = REAL_PHOTOS[name];
+  if (real) {
+    return size === 'sm'
+      ? <img src={real} alt={`Pratinjau ${name}`} width={120} height={90} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      : <img src={real} alt={`Pratinjau ${name}`} style={{ maxWidth: '100%', maxHeight: '60vh', borderRadius: 8, display: 'block', objectFit: 'contain' }} />;
+  }
   const h = hash(name);
   const hue = 30 + (h % 40);
   const panelX = 40 + (h % 120);
@@ -44,7 +57,7 @@ export function PhotoPreview({ photos, startIndex, sender, at, onClose }: Props)
   return (
     <V2Dialog
       title={p.name} subtitle={`${sender} · ${at} · ${p.sizeKb} KB`} size="lg" labelId="wa-photo" onClose={onClose}
-      note={<span>{i + 1} dari {photos.length} foto · pratinjau simulasi, bukan foto asli</span>}
+      note={<span>{i + 1} dari {photos.length} foto{hasRealPhoto(p.name) ? '' : ' · pratinjau simulasi, bukan foto asli'}</span>}
       footer={
         <>
           {many && <button type="button" className="pr-btn pr-btn--secondary pr-btn--md" onClick={() => setI((i - 1 + photos.length) % photos.length)}>Sebelumnya</button>}

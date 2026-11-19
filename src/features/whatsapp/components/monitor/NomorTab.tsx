@@ -11,6 +11,7 @@ import { run } from './shared';
 import { V2Root } from './V2Root';
 import { Ic, P } from './nomor/icons';
 import { LinkNumberDialog } from './nomor/LinkNumberDialog';
+import { V2Dialog } from './nomor/V2Dialog';
 import { ReasonDialog, RenameDialog, TermsReadDialog } from './nomor/NumberDialogs';
 import { RiskText } from './nomor/RiskText';
 import { RowMenu } from './nomor/RowMenu';
@@ -31,20 +32,19 @@ export function WaTerms({ me }: { me: string }) {
   const accept = () => { rememberTermsAt(me); run((s) => acceptTerms(s, me)); };
   return (
     <V2Root>
-      <div className="pr-stack wa-scope">
-        <section className="pr-card nomor-terms" aria-label="Ketentuan pemakaian">
-          <div>
-            <h2 className="nomor-terms__h">Sebelum memakai Pemantauan WhatsApp</h2>
-            <p className="pr-help">Baca ketentuan pemakaian WhatsApp berikut. Persetujuan ini bisa dibuka lagi kapan saja.</p>
-          </div>
-          <RiskText />
-          <label className="pr-choice">
-            <input className="pr-check" type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} />
-            <span>Saya memahami risiko di atas</span>
-          </label>
-          <div><button type="button" className="pr-btn pr-btn--primary pr-btn--md" disabled={!ok} onClick={accept}>Lanjutkan</button></div>
-        </section>
-      </div>
+      <div className="asis-scrim" />
+      <V2Dialog
+        title="Sebelum memakai Pemantauan WhatsApp" size="lg" labelId="wa-terms-first"
+        subtitle="Baca ketentuan pemakaian WhatsApp berikut. Persetujuan ini bisa dibuka lagi kapan saja."
+        onClose={() => undefined}
+        footer={<button type="button" className="pr-btn pr-btn--primary pr-btn--md" disabled={!ok} onClick={accept}>Lanjutkan</button>}
+      >
+        <RiskText />
+        <label className="pr-choice" style={{ marginTop: 12 }}>
+          <input className="pr-check" type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} />
+          <span>Saya memahami risiko di atas</span>
+        </label>
+      </V2Dialog>
     </V2Root>
   );
 }

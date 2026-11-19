@@ -23,10 +23,10 @@ export function WaInboxPage() {
   if (!canUseWaMonitor(role)) return <Navigate to="/" replace />;
   const manage = canManageWa(role);
   const raw = params.get('tab') as Tab | null;
-  const tab: Tab = manage && (raw === 'nomor' || raw === 'aturan' || raw === 'grup') ? raw : 'pesan';
   const needTerms = manage && !terms.includes(me);
+  const tab: Tab = manage && (raw === 'nomor' || raw === 'aturan' || raw === 'grup') ? raw : needTerms ? 'nomor' : 'pesan';
   const waiting = messages.filter(isPriority).length;
-  const tabs = manage && !needTerms
+  const tabs = manage
     ? [
         { to: BASE, label: 'Pesan masuk', count: waiting, on: tab === 'pesan' },
         { to: `${BASE}?tab=nomor`, label: 'Nomor tertaut', count: 0, on: tab === 'nomor' },
@@ -34,7 +34,7 @@ export function WaInboxPage() {
         { to: `${BASE}?tab=grup`, label: 'Grup', count: 0, on: tab === 'grup' },
       ]
     : undefined;
-  const nomorAction = manage && !needTerms && tab === 'nomor';
+  const nomorAction = manage && tab === 'nomor';
 
   return (
     <PesanShell>
@@ -57,9 +57,8 @@ export function WaInboxPage() {
           </nav>
         </div>
       )}
-      {needTerms ? (
-        <div className="pr-page pr-stack wa-scope"><WaTerms me={me} /></div>
-      ) : tab === 'pesan' ? (
+      {needTerms && <WaTerms me={me} />}
+      {tab === 'pesan' ? (
         <InboxView manage={manage} />
       ) : (
         <div className="pr-page pr-stack wa-scope">
