@@ -10,6 +10,8 @@ import { extLabel, formatSize } from '../../logic/attachments';
 import { CAUSE_OPTS, FACTOR_OPTS, PARTNER_OPTS, typesOf } from '../../logic/handling';
 import { KB } from '../step2Data';
 import { D } from './parts';
+import { TidyBar } from './TidyBar';
+import { ClosureExtraFields } from './ClosureExtraFields';
 
 const MAX_ACTIONS = 1000;
 const MAX_CAUSE = 500;
@@ -95,9 +97,13 @@ interface Props {
   hasMan: boolean;
   reportedLoss: number | null;
   reportedHandled: string;
+  /** waktu kejadian (batas bawah Waktu operasi pulih) */
+  occurredAt: string;
+  /** kondisi operasi menurut laporan bukan "Tidak terganggu" */
+  opsReported: boolean;
 }
 
-export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, reportedHandled }: Props) {
+export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, reportedHandled, occurredAt, opsReported }: Props) {
   const done = closureDone(form);
   const total = CLOSURE_REQUIRED.length;
   const miss = (key: string) => showErrors && CLOSURE_REQUIRED.find((r) => r.key === key && !r.ok(form)) ? `Lengkapi ${CLOSURE_REQUIRED.find((r) => r.key === key)!.label} sebelum menutup insiden.` : undefined;
@@ -118,7 +124,7 @@ export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, 
 
       <Req label="Ringkasan penanganan" error={miss('actions')}>
         <textarea className={'p-input p-area' + (miss('actions') ? ' err' : '')} aria-label="Ringkasan penanganan" style={{ minHeight: 88 }} maxLength={MAX_ACTIONS} placeholder="Apa yang dilakukan sampai insiden selesai" value={form.actions} onChange={(e) => onChange({ actions: e.target.value })} />
-        <span className="p-help row"><span></span><span>{formatNumber(form.actions.length)}/1.000</span></span>
+        <TidyBar label="Ringkasan penanganan" value={form.actions} counter={`${formatNumber(form.actions.length)}/1.000`} onApply={(t) => onChange({ actions: t })} />
       </Req>
 
       <Req label="Tim terlibat" error={miss('partners')} help={`Siapa saja yang ikut menangani. Pilih mitranya, tanpa nama personel.${reportedHandled ? ` Menurut pelapor: ${reportedHandled}.` : ''} Kontraknya dikonfirmasi Pejabat saat pemeriksaan penutupan.`}>
@@ -131,7 +137,7 @@ export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, 
 
       <Req label="Penjelasan" optional>
         <textarea className="p-input p-area" aria-label="Penjelasan penyebab" style={{ minHeight: 88 }} maxLength={MAX_CAUSE} placeholder="Jelaskan penyebabnya" value={form.causeDetail ?? ''} onChange={(e) => onChange({ causeDetail: e.target.value })} />
-        <span className="p-help row"><span></span><span>{(form.causeDetail ?? '').length}/500</span></span>
+        <TidyBar label="Penjelasan" value={form.causeDetail ?? ''} counter={`${(form.causeDetail ?? '').length}/500`} onApply={(t) => onChange({ causeDetail: t })} />
       </Req>
 
       <Req label="Faktor penyebab" error={miss('factors')} help="Dipakai analisis faktor penyebab utama.">
@@ -203,6 +209,8 @@ export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, 
             }} />
         </label>
       </Req>
+
+      <ClosureExtraFields form={form} onChange={onChange} opsReported={opsReported} occurredAt={occurredAt} showErrors={showErrors} />
     </>
   );
 }

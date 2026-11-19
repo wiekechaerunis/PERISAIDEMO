@@ -3,3 +3,6 @@
 .p-input.err:focus-within{box-shadow:inset 0 0 0 2px var(--error-ink)}
 .p-input input::placeholder,.p-input textarea::placeholder,textarea.p-input::placeholder{color:var(--ink-muted)}
 textarea.p-input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--action-line)}
+
+/* Bar aksi formulir menempel di bawah layar (Batal · Simpan draf · Berikutnya, dst.); tetap terlihat saat halaman digulir */
+.lk-ffoot{position:sticky;bottom:0;z-index:5;box-shadow:0 -4px 12px rgba(0,0,0,.06)}

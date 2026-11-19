@@ -8,7 +8,7 @@ import { formatDate } from '@/lib/format';
 import { useDemoStore } from '@/services/mock/store';
 import { FieldError } from '@/features/insiden/components/AiTag';
 import { nextNumber } from '@/features/insiden/logic/submit';
-import { AiFailedBanner, AiHead, OriginalMessageCard, StatusNote, SubmissionCard, Toast } from '../components/parts';
+import { AiFailedBanner, AiHead, OriginalMessagePanel, StatusNote, SubmissionCard, Toast } from '../components/parts';
 import { NoDraft } from '../components/NoDraft';
 import { Step1Copilot } from '../components/WaCopilot';
 import { WaFormShell } from '../components/WaFormShell';
@@ -32,6 +32,7 @@ export function WaStep1Page() {
   const [tried, setTried] = useState(false);
   const [picker, setPicker] = useState(false);
   const [toast, setToast] = useState(false);
+  const [orig, setOrig] = useState(false);
   if (!draft || !message) return <NoDraft />;
 
   const f = draft.form;
@@ -69,7 +70,10 @@ export function WaStep1Page() {
 
   const main = (
     <section className="p-card">
-      <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Temuan</h2></div>
+      <div className="lk-card-head" style={{ marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <h2 className="p-h2">Temuan</h2>
+        <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={() => setOrig(true)}>Lihat pesan asli</button>
+      </div>
       <div className="lk-f2">
         <div className="p-field lk-span2">
           <AiHead id="wa-f-kind" draft={draft} k="kind" label="Jenis laporan" required onConfirm={confirm} />
@@ -159,7 +163,6 @@ export function WaStep1Page() {
 
   const aside = (
     <>
-      <OriginalMessageCard message={message} draft={draft} />
       <SubmissionCard no={nomor} message={message} />
       <Step1Copilot draft={draft} message={message} onPickMap={() => setPicker(true)} />
     </>
@@ -171,6 +174,7 @@ export function WaStep1Page() {
         step={1} top={top} main={main} aside={aside}
         back={{ label: 'Batal', to: WA_ROUTES.inbox }}
         actions={[{ label: 'Simpan draf', onClick: save }, { label: 'Berikutnya', variant: 'primary', onClick: next }]}
+        overlay={orig ? <OriginalMessagePanel message={message} draft={draft} onClose={() => setOrig(false)} /> : undefined}
       />
       {toast && <Toast text="Draf tersimpan." />}
     </>

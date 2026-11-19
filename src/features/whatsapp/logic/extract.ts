@@ -15,6 +15,9 @@ export interface WaSuggestion {
 const field = (src: string, confidence: 'hi' | 'md', needsCheck = confidence === 'md'): WaAiField => ({ src, confidence, needsCheck });
 const cap1 = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+/** Teks lengkap pesan: bubble pertama dan semua bubble lanjutan (dibaca AI bersama-sama). */
+export const fullText = (m: WaMessage): string => [m.text, ...(m.bubbles ?? []).map((b) => b.text)].join(' ');
+
 /** Foto pesan ikut terlampir otomatis (id berawalan `wa:`, ditandai "Dari WhatsApp"; board I21b). */
 export const WA_PREFIX = 'wa:';
 export const photoAttachments = (m: WaMessage): Attachment[] => m.photos.map((p) => ({ id: WA_PREFIX + p.id, name: p.name, sizeKb: p.sizeKb, caption: '' }));
@@ -32,7 +35,7 @@ export const siteForHint = (hint: string | null) => (hint ? SITES.find((s) => s.
 
 /** Bentuk saran dari hasil ekstraksi (murni, tanpa jaringan). */
 export function buildSuggestion(m: WaMessage, ex: Extraction): WaSuggestion {
-  const text = m.text;
+  const text = fullText(m);
   const aiMap: Record<string, WaAiField> = {};
   const form: ReportDraft = { ...emptyDraft(), hasImpact: 'ya', kind: 'insiden', date: m.at.slice(0, 10), time: m.at.slice(11, 16), attachments: photoAttachments(m) };
 
@@ -91,6 +94,21 @@ export function buildSuggestion(m: WaMessage, ex: Extraction): WaSuggestion {
     }
   }
 
+  // Kerugian, korban, dan kronologi dari bubble lanjutan (isian ini tidak perlu dicek ulang)
+  if (ex.lossIdr) {
+    form.lossIdr = ex.lossIdr.value;
+    aiMap.lossIdr = field(ex.lossIdr.src, 'hi', false);
+  }
+  if (ex.casualty && ex.casualty.value.kind !== 'none') {
+    form.casualties = { [ex.casualty.value.kind]: ex.casualty.value.count };
+    if (!form.axes.includes('man')) form.axes = [...form.axes, 'man'];
+    aiMap.casualties = field(ex.casualty.src, 'hi', false);
+  }
+  if (ex.chronology) {
+    form.story = ex.chronology.value;
+    aiMap.story = field(ex.chronology.src, 'hi', false);
+  }
+
   // Sudah menangani: dari peran pengirim, selalu "Perlu dicek" ("Sdh lapor polsek" belum tentu Polri ikut menangani)
   const role = m.senderRole.toLowerCase();
   if (role.includes('bujp')) {
@@ -112,7 +130,7 @@ export function buildSuggestion(m: WaMessage, ex: Extraction): WaSuggestion {
 export async function suggestFromMessage(m: WaMessage, opts: { fail?: boolean } = {}): Promise<WaSuggestion> {
   if (opts.fail) return manualSuggestion(m);
   try {
-    return buildSuggestion(m, await ai.extract(m.text));
+    return buildSuggestion(m, await ai.extract(fullText(m)));
   } catch {
     return manualSuggestion(m);
   }

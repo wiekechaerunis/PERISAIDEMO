@@ -1,4 +1,4 @@
-export type Role = 'pelapor' | 'pejabat' | 'pic' | 'pic-tl' | 'pengawas' | 'pimpinan' | 'admin';
+export type Role = 'pelapor' | 'pejabat' | 'pic' | 'pic-tl' | 'pengawas' | 'pimpinan' | 'admin' | 'admin-kkks';
 
 export interface DemoUser {
   role: Role;
@@ -18,6 +18,7 @@ export const DEMO_USERS: Record<Role, DemoUser> = {
   // ASSUMPTION: Pimpinan SKK tidak punya nama/board khusus; memakai tampilan Pengawas SKK.
   pimpinan: { role: 'pimpinan', name: 'Pimpinan SKK', roleLabel: 'Pimpinan SKK', org: 'skk' },
   admin: { role: 'admin', name: 'Rina Hapsari', roleLabel: 'Admin SKK', org: 'skk' },
+  'admin-kkks': { role: 'admin-kkks', name: 'Dewi Lestari', roleLabel: 'Admin KKKS', org: 'kkks', scope: ['WK Andalas Darat'] },
 };
 
 export const isSkk = (r: Role) => DEMO_USERS[r].org === 'skk';
@@ -50,3 +51,10 @@ export const reviewerBy = (rev: string[] | null | undefined, options: string[] =
 /** Jabatan persona demo di layar Tindak lanjut (T14N); kosong bila tidak dikenal. */
 export const titleOf = (name: string): string =>
   ({ 'Andi Pratama': 'Koordinator Security', 'Rudi Hartono': 'Teknisi pengamanan', 'Dedi Kurniawan': 'Staf Security', 'Sari Wulandari': 'Pejabat Berwenang KKKS', 'Hendra Wijaya': 'Pengawas SKK' } as Record<string, string>)[name] ?? '';
+
+/** Pemantauan WhatsApp: SKK tidak punya akses (keputusan PM K1). */
+export const canUseWaMonitor = (r: Role) => !isSkk(r);
+/** Kelola nomor, grup, dan aturan: hanya Admin KKKS (R-04). */
+export const canManageWa = (r: Role) => r === 'admin-kkks';
+/** Memproses pesan (Jadikan draf, Tautkan, Tandai rutin/tidak relevan, Buka kembali): Admin KKKS dan Pelapor. */
+export const canProcessWa = (r: Role) => r === 'admin-kkks' || r === 'pelapor';

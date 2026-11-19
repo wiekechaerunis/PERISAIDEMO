@@ -90,3 +90,7 @@
 .pg-quote{padding:2px 0 2px 12px;border-left:3px solid var(--border)}
 .pg-quote p{margin:0;line-height:20px;color:var(--ink)}
 .pg-sub-ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--border-subtle)}
+
+/* Kartu TL (rail): tanggal di kiri, tag status dan tag tambahan berkumpul di kanan; tag turun ke baris berikutnya bila sempit */
+.in-tlr.rail .m{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;justify-content:flex-start}
+.in-tlr.rail .m .tg{display:inline-flex;flex-wrap:wrap;gap:6px;margin-left:auto;justify-content:flex-end}

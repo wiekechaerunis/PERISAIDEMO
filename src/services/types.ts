@@ -67,6 +67,24 @@ export interface IncidentDetail {
   jenis: string | null;
 }
 
+/** Hasil pengamanan (F2, wajib) dan status proses hukum (F3, opsional) pada Data penutupan. */
+export type SecurityOutcome = 'digagalkan' | 'tertangkap' | 'keduanya' | 'tidak-ada';
+export const SECURITY_OUTCOME_LABEL: Record<SecurityOutcome, string> = {
+  digagalkan: 'Aksi digagalkan', tertangkap: 'Pelaku tertangkap', keduanya: 'Keduanya', 'tidak-ada': 'Tidak ada',
+};
+export type LegalStatus = 'tidak-diproses' | 'dilaporkan' | 'penyidikan' | 'penuntutan' | 'putusan' | 'dihentikan';
+export const LEGAL_STATUS_LABEL: Record<LegalStatus, string> = {
+  'tidak-diproses': 'Tidak diproses', dilaporkan: 'Dilaporkan ke polisi', penyidikan: 'Penyidikan',
+  penuntutan: 'Penuntutan atau sidang', putusan: 'Putusan', dihentikan: 'Dihentikan',
+};
+export interface LegalProcess {
+  status: LegalStatus;
+  /** nomor laporan polisi, maks. 50 karakter */
+  lpNo?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+}
+
 /** Data penutupan yang diisi PIC (P16) dan dikonfirmasi Pejabat (P22). Semua opsional sampai PIC mengisi. */
 export interface Closure {
   /** Tim terlibat (mitra); wajib diisi PIC, tanpa nama personel */
@@ -111,6 +129,12 @@ export interface Closure {
   aiSteps?: { at: string; text: string; source: string; orig?: string }[];
   /** waktu operasi pulih menurut teks Data penutupan (AI, perlu dicek) */
   aiRestoredAt?: string;
+  /** F1 (opsional): waktu operasi pulih, ISO lokal zona WK */
+  restoredAt?: string;
+  /** F2 (wajib): hasil pengamanan */
+  result?: SecurityOutcome;
+  /** F3 (opsional): proses hukum; bisa diperbarui setelah insiden Ditutup */
+  legal?: LegalProcess;
 }
 
 export interface FollowUpItem {
@@ -375,6 +399,69 @@ export interface WaLinkRecord {
   releaseReason?: string;
 }
 
+/** Syarat aturan penangkapan (PRD WhatsApp Sitrep Capture §7). Semua opsional; kelompok kosong = tanpa syarat. */
+export interface WaRuleCond {
+  groupIds?: string[];
+  senders?: string[];
+  startsWith?: string[];
+  containsAny?: string[];
+  containsAll?: string[];
+  kinds?: string[];
+  minLen?: number;
+  maxLen?: number;
+}
+export interface WaRule {
+  id: string;
+  name: string;
+  enabled: boolean;
+  /** aturan bawaan tidak bisa dihapus, hanya dimatikan */
+  builtin?: boolean;
+  priority: boolean;
+  ignore: WaRuleCond;
+  capture: WaRuleCond;
+  /** sertakan pesan lanjutan: maksimal `count` pesan dalam `minutes` menit */
+  followUp?: { count: number; minutes: number };
+  /** saran jenis laporan (hanya di aturan) */
+  suggestKind?: 'insiden' | 'kerawanan';
+}
+export type WaNumberStatus = 'terhubung' | 'menunggu' | 'terputus' | 'ditangguhkan';
+/** Nomor WhatsApp organisasi yang ditautkan (maks. 3 per KKKS, parameter wa_max_numbers_per_org). */
+export interface WaNumber {
+  id: string;
+  label: string;
+  phone: string;
+  status: WaNumberStatus;
+  linkedAt?: string;
+  /** perangkat tertaut di ponsel (maks. 4) */
+  devices: string[];
+  suspendedReason?: string;
+}
+/** Anggota grup (nomor disamarkan). Nomor milik organisasi sendiri tidak disimpan di sini, ditampilkan sebagai "Nomor ini". */
+export interface WaMember { name?: string; phone: string }
+export interface WaGroup {
+  id: string;
+  numberId: string;
+  name: string;
+  monitored: boolean;
+  wk?: string;
+  area?: string;
+  /** grup baru di ponsel yang belum dipantau */
+  isNew?: boolean;
+  /** nomor dikeluarkan dari grup */
+  removed?: boolean;
+  /** anggota selain nomor organisasi (board V2-56) */
+  members?: WaMember[];
+  /** ISO tanpa zona: kapan daftar anggota terakhir diperbarui */
+  membersAt?: string;
+  tags?: string[];
+  description?: string;
+  /** ISO tanpa zona: kapan mulai dipantau */
+  monitoredSince?: string;
+  /** jumlah pesan yang diperiksa hari ini (contoh) */
+  checkedToday?: number;
+}
+export const WA_MAX_NUMBERS = 3;
+
 /** Pesan masuk dari grup WhatsApp pengamanan (Pemantauan WhatsApp). Status: baru → draf → diproses; lepas tautan → baru. */
 export interface WaMessage {
   id: string;
@@ -386,8 +473,21 @@ export interface WaMessage {
   /** waktu pesan masuk, ISO tanpa zona (WIB) */
   at: string;
   photos: WaPhoto[];
-  status: 'baru' | 'draf' | 'diproses';
+  /** baru = Perlu ditinjau; prioritas ditandai lewat `priority` */
+  status: 'baru' | 'draf' | 'diproses' | 'rutin' | 'tidak-relevan';
   draftId?: string;
+  /** id grup dan nomor sumber (Pemantauan WhatsApp v2) */
+  groupId?: string;
+  numberId?: string;
+  priority?: boolean;
+  /** id aturan yang menangkap */
+  ruleIds?: string[];
+  /** bubble lanjutan (teks) yang bergabung ke pesan ini */
+  bubbles?: { text: string; at: string }[];
+  irrelevantReason?: string;
+  /** catatan jejak: ditandai/diproses oleh siapa dan kapan */
+  handledBy?: string;
+  handledAt?: string;
   /** riwayat tautan; yang aktif = terakhir tanpa `releasedAt` */
   links: WaLinkRecord[];
 }
@@ -424,4 +524,9 @@ export interface DemoState {
   followUps: FollowUp[];
   waMessages: WaMessage[];
   waDrafts: WaDraft[];
+  waNumbers: WaNumber[];
+  waGroups: WaGroup[];
+  waRules: WaRule[];
+  /** nama pengguna yang sudah menyetujui ketentuan pemakaian Pemantauan WhatsApp */
+  waTerms: string[];
 }

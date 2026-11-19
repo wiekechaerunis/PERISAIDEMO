@@ -3,6 +3,7 @@
 // PS9 (Memuat), PS11 (Dikembalikan). `?state=lewat-tenggat|kronologi-kosong|kronologi-gagal|catatan-gagal|belum-lengkap|memuat|dikembalikan`.
 // Rute: /insiden/:no (detail) dan /insiden/:no/tangani (halaman kerja); mode dibaca dari path.
 import { demoNow } from '@/services/mock/clock';
+import { TidyBar } from '../components/handling/TidyBar';
 import { ReviewerSelect } from '@/components/ui/ReviewerSelect';
 import { reviewerBy, reviewerOptions, reviewerTarget } from '@/lib/rbac';
 import { useState } from 'react';
@@ -39,7 +40,7 @@ const PREVIEW_CLOSURE: Closure = {
   ...emptyClosure(), ...SAMPLE_CLOSURE, cause: 'Celah pengamanan fisik',
   partnerNames: ['PT Garda Nusantara Sejahtera · BUJP', 'Polres Musi Banyuasin · Polri'], partners: ['bujp', 'polri'],
   evidence: [{ name: 'pompa-menyala.jpg', sizeKb: 2150, caption: 'Kondisi akhir pompa' }, { name: 'berita-acara-penggantian.pdf', sizeKb: 640, caption: 'Berita acara penggantian kabel' }],
-  lossFinalIdr: 21_400_000,
+  lossFinalIdr: 21_400_000, result: 'tidak-ada',
 };
 
 /** `incidentNo` dan `tlNew` dipakai rute /tindak-lanjut/baru (T1/T1b): halaman Tangani dengan dialog Tambah tindak lanjut terbuka. */
@@ -205,8 +206,8 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
           </div>
           <aside className="c4 lk-stack">
             <DueCard i={i} due={due} />
-            <PicSummaryCard i={i} mode={mode} closureNames={stored.partnerNames} />
             <TlCard i={i} canAdd={(i.status as string) === 'dalam-penanganan' || (i.status as string) === 'minta-ditutup'} />
+            <PicSummaryCard i={i} mode={mode} closureNames={stored.partnerNames} />
           </aside>
         </div>
       </HandlingShell>
@@ -241,9 +242,9 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
           ) : (
             <DueCard i={i} due={due} />
           )}
+          {mode !== 'grup-lain' && mode !== 'grup-belum' && <TlCard i={i} canAdd={(i.status as string) === 'dalam-penanganan' || (i.status as string) === 'minta-ditutup'} />}
           <PicSummaryCard i={i} mode={mode} closureNames={returnedReason ? (closure ?? stored)?.partnerNames : undefined} />
           {escalated && mode !== 'grup-lain' && <EscalationCard i={i} due={due} auto={!manual} />}
-          {mode !== 'grup-lain' && mode !== 'grup-belum' && <TlCard i={i} canAdd={(i.status as string) === 'dalam-penanganan' || (i.status as string) === 'minta-ditutup'} />}
           {krw && (
             <section className="p-card in-sec">
               <h2 className="in-h">Tautan</h2>
@@ -366,6 +367,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
                 placeholder="Tulis langkah penanganan, mis. lapor polisi atau perbaikan" value={note} onChange={(e) => setNote(e.target.value)}
               />
               {noteErr && <span style={{ color: 'var(--error-ink)', fontSize: 12 }}>{ERR_NOTE}</span>}
+              <TidyBar label="Catatan penanganan" value={note} onApply={setNote} />
               <div className="row">
                 <button type="button" className="p-btn p-btn-ghost p-btn-sm"><P d={D.clip} size={16} />Lampirkan</button>
                 {noteErr ? (
@@ -391,7 +393,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
                 <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={() => setOpen(true)}><P d={D.tick} size={16} />Isi data penutupan</button>
               </div>
             ) : (
-              <ClosureForm form={form} onChange={update} showErrors={showErrors} hasMan={d.axes.includes('man')} reportedLoss={d.lossIdr} reportedHandled={handledLabel} />
+              <ClosureForm form={form} onChange={update} showErrors={showErrors} hasMan={d.axes.includes('man')} reportedLoss={d.lossIdr} reportedHandled={handledLabel} occurredAt={i.occurredAt} opsReported={!!d.ops && d.ops !== 'tidak'} />
             )}
           </section>
 
@@ -400,18 +402,6 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
           <div className="in-bn info sm" style={{ alignSelf: 'stretch' }}>
             <P d={D.info} size={16} />
             <div className="body">Catatan langsung masuk Riwayat. Data penutupan tersimpan sebagai draf.</div>
-          </div>
-          <div className="in-wsfoot">
-            <Link to={`/insiden/${i.no}`} className="p-btn p-btn-ghost"><P d="M19 12H5M12 19l-7-7 7-7" size={16} />Kembali ke detail</Link>
-            <span style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="p-btn p-btn-secondary" onClick={() => setToast({ text: 'Draf data penutupan tersimpan.' })}>Simpan draf</button>
-              <span className="in-tw">
-                <button type="button" className="p-btn p-btn-primary" aria-disabled={!complete} aria-describedby={complete ? undefined : 'mt2'} onClick={submit}>
-                  <P d={D.tick} size={16} />Ajukan penutupan
-                </button>
-                {!complete && <span className="in-tip r" id="mt2" role="tooltip">Lengkapi 5 isian wajib data penutupan dulu.</span>}
-              </span>
-            </span>
           </div>
         </div>
         <aside className="c4 lk-stack in-sticky">
@@ -438,6 +428,18 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
           </section>
           <TlCard i={i} canAdd={(i.status as string) === 'dalam-penanganan' || (i.status as string) === 'minta-ditutup'} />
         </aside>
+      </div>
+      <div className="in-wsfoot in-wsfoot-sticky" role="region" aria-label="Aksi halaman">
+        <Link to={`/insiden/${i.no}`} className="p-btn p-btn-ghost"><P d="M19 12H5M12 19l-7-7 7-7" size={16} />Kembali ke detail</Link>
+        <span style={{ display: 'flex', gap: 8 }}>
+          <button type="button" className="p-btn p-btn-secondary" onClick={() => setToast({ text: 'Draf data penutupan tersimpan.' })}>Simpan draf</button>
+          <span className="in-tw">
+            <button type="button" className="p-btn p-btn-primary" aria-disabled={!complete} aria-describedby={complete ? undefined : 'mt2'} onClick={submit}>
+              <P d={D.tick} size={16} />Ajukan penutupan
+            </button>
+            {!complete && <span className="in-tip r" id="mt2" role="tooltip">Lengkapi 6 isian wajib data penutupan dulu.</span>}
+          </span>
+        </span>
       </div>
     </HandlingShell>
   );

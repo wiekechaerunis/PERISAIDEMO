@@ -45,7 +45,8 @@ interface Props {
 }
 
 export function TlCard({ i, hl, note, empty, hideWhenEmpty, canAdd, id }: Props) {
-  const all = followUpItemsOf(i, useFollowUps());
+  const fus = useFollowUps();
+  const all = followUpItemsOf(i, fus);
   const items = sortTl(all);
   const [showFinal, setShowFinal] = useState(false);
   const me = DEMO_USERS[useDemoStore((s) => s.role)].name;
@@ -72,7 +73,10 @@ export function TlCard({ i, hl, note, empty, hideWhenEmpty, canAdd, id }: Props)
               <b style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{r.title}</b>
               <span className="m">
                 <span className={'in-due ' + (!isFinal(r) && r.dueAt < TL_NOW ? 'late' : 'ok')}><P d={CLOCK} size={13} />{formatDate(r.dueAt)}</span>
-                <span className={`p-tag ${tag(r)}`}>{label(r)}</span>
+                <span className="tg">
+                  <span className={`p-tag ${tag(r)}`}>{label(r)}</span>
+                  {fus.some((x) => x.no === r.tl && x.createdBy === x.pic) && <span className="p-tag t-neutral">Diperiksa sendiri</span>}
+                </span>
               </span>
               <span className="who"><span className="in-av" style={{ width: 18, height: 18, fontSize: 9 }}>{initialsOf(r.owner)}</span>{r.owner}{r.owner === me && <span className="p-tag t-info" style={{ height: 18, fontSize: 11, marginLeft: 4 }}>Anda</span>}</span>
             </Link>

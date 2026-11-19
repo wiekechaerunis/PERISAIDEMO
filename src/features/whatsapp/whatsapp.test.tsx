@@ -44,6 +44,7 @@ function renderAt(path: string) {
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/insiden/wa" element={<WaInboxPage />} />
+        <Route path="/pemantauan-whatsapp" element={<WaInboxPage />} />
         <Route path="/insiden/wa/temuan" element={<WaStep1Page />} />
         <Route path="/insiden/wa/kejadian" element={<WaStep2Page />} />
         <Route path="/insiden/wa/lampiran" element={<WaStep3Page />} />
@@ -65,8 +66,8 @@ beforeEach(() => {
 
 describe('Insiden dari WhatsApp (INS-05)', () => {
   it('(a) memilih pesan membuat draf dengan saran AI bertanda "Perlu dicek"', async () => {
-    renderAt('/insiden/wa');
-    fireEvent.click(screen.getByRole('button', { name: 'Jadikan draf laporan: Joko, 03:05' }));
+    renderAt('/insiden/wa/pesan/WAM-003');
+    fireEvent.click(screen.getByRole('button', { name: 'Jadikan draf laporan' }));
     expect(await screen.findByDisplayValue('Kabel pompa ADR-07 dipotong')).toBeInTheDocument();
 
     expect(store().waDrafts).toHaveLength(1);
@@ -208,5 +209,23 @@ describe('Insiden dari WhatsApp (INS-05)', () => {
     b.unmount();
     renderAt(`/insiden/wa/m-kejadian?d=${id}&state=memuat`);
     expect(screen.getByText('Membaca pesan…')).toBeInTheDocument();
+  });
+});
+
+describe('Lihat pesan asli (langkah 1)', () => {
+  it('pesan asli tidak langsung tampil; tombol sejajar judul Temuan membuka panel samping dengan semua bubble dan foto', () => {
+    const id = makeDraft('WAM-009');
+    renderAt(`/insiden/wa/temuan?d=${id}`);
+    expect(screen.queryByRole('dialog', { name: 'Pesan asli' })).toBeNull();
+    expect(screen.queryByText(/Panel listrik terbuka, pompa mati kira-kira 5 jam/)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Lihat pesan asli' }));
+    const panel = screen.getByRole('dialog', { name: 'Pesan asli' });
+    const para = (re: RegExp) => within(panel).getByText((_, el) => el?.tagName === 'P' && re.test(el.textContent ?? ''));
+    expect(para(/Lapor ndan, jam 02.30 tadi/)).toBeInTheDocument();
+    expect(para(/Panel listrik terbuka, pompa mati kira-kira 5 jam/)).toBeInTheDocument();
+    expect(para(/Mohon petunjuk, ndan/)).toBeInTheDocument();
+    expect(within(panel).getAllByText(/IMG-20261028-WA0044.jpg/).length).toBeGreaterThan(0);
+    fireEvent.click(within(panel).getByRole('button', { name: 'Tutup panel' }));
+    expect(screen.queryByRole('dialog', { name: 'Pesan asli' })).toBeNull();
   });
 });

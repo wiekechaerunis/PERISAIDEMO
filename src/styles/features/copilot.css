@@ -9,3 +9,8 @@
 .cp-done dt{color:var(--ink-muted)}
 .cp-done dd{margin:0;overflow-wrap:anywhere}
 .cp-done .sk{color:var(--ink-muted);font-style:italic}
+
+/* Panel Copilot lebih pendek supaya ilustrasi dan tampilan suara tidak terpotong; isi yang lebih tinggi menggulir di dalam panel */
+.lk-grid aside .p-card.cp{height:min(540px, calc(100vh - 32px))!important;max-height:540px!important}
+.p-card.cp .cp-il{width:auto;max-width:100%;max-height:min(150px, 22vh)}
+.p-card.cp .cp-empty{padding-top:12px;padding-bottom:12px}

@@ -27,6 +27,7 @@ import { ReportStep2Page } from '@/features/insiden/pages/ReportStep2Page';
 import { KonfigurasiDaftarPage } from '@/features/konfigurasi/pages/KonfigurasiDaftarPage';
 import { MatriksKeparahanPage } from '@/features/konfigurasi/pages/MatriksKeparahanPage';
 import { TenggatPage } from '@/features/konfigurasi/pages/TenggatPage';
+import { WaSimPanel } from '@/features/whatsapp/sim/WaSimPanel';
 import { WaInboxPage } from '@/features/whatsapp/pages/WaInboxPage';
 import { WaStep1Page } from '@/features/whatsapp/pages/WaStep1Page';
 import { WaStep2Page } from '@/features/whatsapp/pages/WaStep2Page';
@@ -80,6 +81,8 @@ const router = createBrowserRouter([
   { path: '/insiden/wa/kejadian', element: <Responsive routeKey="/insiden/wa/kejadian" desktop={<WaStep2Page />} /> },
   { path: '/insiden/wa/lampiran', element: <WaStep3Page /> },
   { path: '/insiden/wa/ringkasan', element: <WaStep4Page /> },
+  { path: '/pemantauan-whatsapp', element: <WaInboxPage /> },
+  { path: '/pemantauan-whatsapp/pesan/:id', element: <WaMessagePage /> },
   { path: '/insiden/wa/pesan/:id', element: <WaMessagePage /> },
   { path: '/insiden/wa/tautan/:no', element: <WaLinksPage /> },
   { path: '/insiden/wa/:no', element: <Responsive routeKey="/insiden/wa/:no" desktop={<WaDetailPage />} /> },
@@ -103,5 +106,10 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <WaSimPanel />
+    </>
+  );
 }

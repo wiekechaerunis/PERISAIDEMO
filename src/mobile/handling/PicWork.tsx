@@ -1,6 +1,8 @@
 // Board MP3-DataPenutupan (layar penuh "Tangani insiden": catatan + data penutupan). Logika = WorkView/ClosureForm desktop
 // (saveNote, saveClosure, requestClosure, CLOSURE_REQUIRED). Dibuka lewat `?langkah=penutupan`.
 import { ReviewerSelect } from '@/components/ui/ReviewerSelect';
+import { TidyBar } from '@/features/insiden/components/handling/TidyBar';
+import { ClosureExtraFields } from '@/features/insiden/components/handling/ClosureExtraFields';
 import { reviewerOptions, reviewerTarget } from '@/lib/rbac';
 import { useRef, useState, type ReactNode } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
@@ -127,7 +129,7 @@ export function PicWork({ i }: { i: Incident }) {
       footer={
         <>
           <button type="button" className="p-btn p-btn-secondary" style={{ justifyContent: 'center' }} onClick={() => setToast({ text: 'Draf data penutupan tersimpan.' })}>Simpan draf</button>
-          <button type="button" className="p-btn p-btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={submit}><Ic d={P.tick} size={16} />Minta ditutup</button>
+          <button type="button" className="p-btn p-btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={submit}><Ic d={P.tick} size={16} />Ajukan penutupan</button>
         </>
       }
       overlay={
@@ -164,7 +166,7 @@ export function PicWork({ i }: { i: Incident }) {
       </div>
 
       <div className="sec">
-        <div className="in-wh"><span className="no">2</span><div><h2 style={{ margin: 0, fontSize: 15 }}>Data penutupan</h2><span className="p-cap">Wajib lengkap untuk minta ditutup.</span></div></div>
+        <div className="in-wh"><span className="no">2</span><div><h2 style={{ margin: 0, fontSize: 15 }}>Data penutupan</h2><span className="p-cap">Wajib lengkap untuk ajukan penutupan.</span></div></div>
         <div className="in-prog" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done}>
           <span className="bar"><i style={{ width: `${(done / total) * 100}%` }}></i></span>
           <span>{done} dari {total}</span>
@@ -173,6 +175,7 @@ export function PicWork({ i }: { i: Incident }) {
         <Field label="Ringkasan penanganan" error={miss('actions')}>
           <textarea className={'p-input p-area' + (miss('actions') ? ' err' : '')} aria-label="Ringkasan penanganan" style={{ minHeight: 96, alignItems: 'flex-start' }} maxLength={1000}
             placeholder="Apa yang dilakukan sampai insiden selesai" value={form.actions} onChange={(e) => update({ actions: e.target.value })} />
+          <TidyBar label="Ringkasan penanganan" value={form.actions} counter={`${form.actions.length}/1000`} onApply={(t) => update({ actions: t })} />
         </Field>
 
         <Field label="Tim terlibat" error={miss('partners')} help={`${handledLabel ? `Menurut pelapor: ${handledLabel}. ` : ''}Pilih mitranya, tanpa nama personel.`}>
@@ -186,6 +189,7 @@ export function PicWork({ i }: { i: Incident }) {
         <Field label="Penjelasan" optional>
           <textarea className="p-input p-area" aria-label="Penjelasan penyebab" style={{ minHeight: 72, alignItems: 'flex-start' }} maxLength={500}
             placeholder="Jelaskan penyebabnya" value={form.causeDetail ?? ''} onChange={(e) => update({ causeDetail: e.target.value })} />
+          <TidyBar label="Penjelasan" value={form.causeDetail ?? ''} counter={`${(form.causeDetail ?? '').length}/500`} onApply={(t) => update({ causeDetail: t })} />
         </Field>
 
         <Field label="Faktor penyebab" error={miss('factors')}>
@@ -256,6 +260,8 @@ export function PicWork({ i }: { i: Incident }) {
           </label>
           {d.lossIdr ? <span className="p-help">Perkiraan pelapor {formatRupiah(d.lossIdr)}.</span> : null}
         </div>
+
+        <ClosureExtraFields form={form} onChange={update} opsReported={!!d.ops && d.ops !== 'tidak'} occurredAt={i.occurredAt} showErrors={showErrors} stack />
       </div>
       <div className="sec"><ReviewerSelect options={reviewerOptions(me)} value={rev} onChange={setRev} /></div>
     </MobileShell>

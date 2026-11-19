@@ -14,7 +14,7 @@ function handling(kind: 'perorangan' | 'grup' = 'perorangan') {
 const get = (s: ReturnType<typeof handling>) => s.incidents.find((i) => i.no === NO)!;
 const full = {
   actions: 'Kabel diganti.', partners: ['bujp' as const], partnerNames: ['PT Garda Nusantara Sejahtera · BUJP'], cause: 'Celah pengamanan fisik',
-  factors: ['Celah pagar'], evidence: [{ name: 'pompa-menyala.jpg', sizeKb: 2100, caption: '' }],
+  factors: ['Celah pagar'], evidence: [{ name: 'pompa-menyala.jpg', sizeKb: 2100, caption: '' }], result: 'tidak-ada' as const,
 };
 
 describe('workflow penanganan PIC', () => {

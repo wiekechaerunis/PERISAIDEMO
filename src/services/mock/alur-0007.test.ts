@@ -37,9 +37,9 @@ describe('Alur 0007 (skenario 2–7)', () => {
     run(saveNote(s, NO, 'Andi Pratama', 'Kabel diganti, pompa menyala.'));
     for (const p of [
       { actions: 'Kabel 40 m diganti dan pompa menyala.' }, { partners: ['bujp' as const] }, { cause: 'Pencurian kabel' },
-      { factors: ['Celah pagar'] }, { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] },
+      { factors: ['Celah pagar'] }, { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] }, { result: 'tidak-ada' as const },
     ]) run(saveClosure(s, NO, 'Andi Pratama', p as never));
-    expect(closureCompleteness(inc())).toMatchObject({ done: 5, total: 5, complete: true });
+    expect(closureCompleteness(inc())).toMatchObject({ done: 6, total: 6, complete: true });
     run(requestClosure(s, NO, 'Andi Pratama', null));
     expect(inc().status).toBe('minta-ditutup');
     expect(closureSummary(inc().handling?.closure)).toContain('Kabel 40 m diganti');
@@ -50,7 +50,7 @@ describe('Alur 0007 (skenario 2–7)', () => {
     expect(s.followUps!.find((f) => f.no === tl.no)!.status).toBe('belum-dimulai');
 
     // 5. SKK melihat data penutupan yang sama (5/5)
-    expect(closureCompleteness(inc()).done).toBe(5);
+    expect(closureCompleteness(inc()).done).toBe(6);
 
     // 6. Rudi: unggah bukti tanpa Mulai kerjakan → status tetap; lalu ajukan selesai
     run(addEvidence(s, tl.no, 'Rudi Hartono', { name: 'patroli.jpg', sizeKb: 100 }));

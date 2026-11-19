@@ -1,5 +1,6 @@
 // Blok bersama layar Pejabat insiden berjalan: Data penutupan, Tindak lanjut, Riwayat, Ringkasan, Tenggat, Eskalasi, Kondisi sekitar, Jejak audit.
 import { useState, type ReactNode } from 'react';
+import { ClosureExtraRows, UpdateLegalButton } from './ClosureExtraRows';
 import { handleDaysOf } from '@/lib/deadline';
 import { closureSummary } from '@/services/mock/workflow.handling';
 import type { Incident } from '@/services/types';
@@ -152,6 +153,7 @@ export function ClosureDataCard({ i, hl, grupFrom }: { i: Incident; hl: string |
         </dd>
         <dt>Kerugian akhir</dt>
         <dd className={hl === 'rg' ? 'in-hl' : undefined}>{c.lossFinalIdr != null ? formatRupiah(c.lossFinalIdr) : '—'}{d.lossIdr != null && <div className="sub">Perkiraan pelapor {formatRupiah(d.lossIdr)}</div>}</dd>
+        <ClosureExtraRows c={c} />
       </dl>
     </section>
   );
@@ -171,6 +173,7 @@ export function ClosedDataCard({ i }: { i: Incident }) {
         {c.factors && c.factors.length > 0 && (<><dt>Faktor penyebab</dt><dd>{c.factors.join(', ')}</dd></>)}
         <dt>Bukti</dt><dd>{(c.evidence ?? []).map((e) => e.name).join(', ') || '—'}</dd>
         <dt>Kerugian akhir</dt><dd>{c.lossFinalIdr != null ? formatRupiah(c.lossFinalIdr) : '—'}{d.lossIdr != null && <div className="sub">Perkiraan pelapor {formatRupiah(d.lossIdr)}</div>}</dd>
+        <ClosureExtraRows c={c} action={<UpdateLegalButton i={i} />} />
       </dl>
     </section>
   );

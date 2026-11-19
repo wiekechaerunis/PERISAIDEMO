@@ -243,9 +243,9 @@ function Body({ stored }: { stored: Incident }) {
         </div>
         <aside className="c4 lk-stack">
           <DueCard i={i} now={demoNow()} withEsc={!i.escalated} />
+          <FollowUpsCard i={i} />
           <SummaryCard i={i} title="Ringkasan" picExtra={i.pic ? <> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={() => setDialog('ganti-pic')}>Ganti PIC</button></> : undefined} />
           <EscalationCard i={i} />
-          <FollowUpsCard i={i} />
         </aside>
       </div>
     );

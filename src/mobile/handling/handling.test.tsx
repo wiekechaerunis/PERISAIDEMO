@@ -46,9 +46,9 @@ describe('Mobile · PIC (MP2, MP3, MP4)', () => {
     expect(screen.getByText('Catatan ditambahkan ke Riwayat')).toBeInTheDocument();
   });
 
-  it('Minta ditutup tanpa data lengkap ditolak; status tetap', () => {
+  it('Ajukan penutupan tanpa data lengkap ditolak; status tetap', () => {
     renderAt(`/insiden/${NO}?langkah=penutupan`);
-    fireEvent.click(screen.getByRole('button', { name: /Minta ditutup/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Ajukan penutupan/ }));
     expect(screen.getAllByText(/Lengkapi Ringkasan penanganan/).length).toBeGreaterThan(0);
     expect(get(NO).status).toBe('dalam-penanganan');
   });

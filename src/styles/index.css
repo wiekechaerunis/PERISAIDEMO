@@ -31,5 +31,9 @@
 @import './features/mobile-forma.css';
 @import './features/email.css';
 @import './features/whatsapp.css';
+@import './features/wa-v2.css';
+@import './features/wa-v2-extra-pesan.css';
+@import './features/wa-v2-extra-aturan.css';
+@import './features/wa-v2-extra-nomor.css';
 @import './features/location.css';
 @import './features/copilot.css';

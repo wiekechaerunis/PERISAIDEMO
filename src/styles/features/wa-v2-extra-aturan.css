@@ -1,0 +1,4 @@
+/* Tambahan gaya tab Aturan (di luar v2.css): hasil uji tidak cocok, pesan galat, tag Prioritas di tabel. */
+.v2-root .wa-why--no { background: var(--error-bg); color: var(--error-ink); }
+.v2-root .wa-err { color: var(--error-ink); }
+.v2-root .wa-rules .pr-tag--caution { margin-top: 4px; }

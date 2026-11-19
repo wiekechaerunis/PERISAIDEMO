@@ -1,6 +1,7 @@
 import { withHandlingSeed } from './seedHandling';
 import { seedFollowUps } from './seedFollowUps';
 import { seedWaMessages } from './seedWa';
+import { seedWaGroups, seedWaNumbers, seedWaRules } from './seedWaMon';
 import type { ConfigChange, DemoState, Incident, IncidentDetail, TimelineEntry } from '../types';
 
 /** Riwayat awal Konfigurasi Modul (board CFG-Tenggat dan CFG-MatriksKeparahan), terbaru di depan. */
@@ -147,6 +148,10 @@ export function seedState(): DemoState {
     followUps: seedFollowUps(),
     waMessages: seedWaMessages(),
     waDrafts: [],
+    waNumbers: seedWaNumbers(),
+    waGroups: seedWaGroups(),
+    waRules: seedWaRules(),
+    waTerms: [],
     config: {
       // Konfigurasi › Tenggat penanganan (nilai contoh, menunggu SKK)
       deadlines: { kritis: 1, tinggi: 3, sedang: 7, rendah: 14, 'sangat-rendah': 14 },

@@ -1,5 +1,6 @@
 // Transisi penanganan oleh PIC (board P12, P14, P15, P16, P17, PS6). Fungsi murni gaya workflow.ts.
 import { demoNow } from '@/services/mock/clock';
+import { LEGAL_STATUS_LABEL, type LegalProcess, type LegalStatus } from '../types';
 import type { Closure, DemoState, HandlingData, Incident } from '../types';
 import type { DecisionResult } from './workflow';
 
@@ -25,20 +26,21 @@ export const emptyClosure = (): Closure => ({
 /** Satu sumber teks Ringkasan penanganan: `actions` (form PIC); `summary`/`outcome` hanya untuk data seed lama. */
 export const closureSummary = (c: Closure | undefined): string => (c?.actions || c?.summary || c?.outcome || '').trim();
 
-/** Kelengkapan 5 isian wajib data penutupan; dipakai semua layar (PIC, Pejabat, SKK, dialog Tutup). */
+/** Kelengkapan 6 isian wajib data penutupan; dipakai semua layar (PIC, Pejabat, SKK, dialog Tutup). */
 export function closureCompleteness(i: Incident): { done: number; total: number; missing: string[]; complete: boolean } {
   const c = i.handling?.closure;
   const missing = closureMissing(c).map((m) => m.label);
   return { done: CLOSURE_REQUIRED.length - missing.length, total: CLOSURE_REQUIRED.length, missing, complete: missing.length === 0 };
 }
 
-/** Label 5 isian wajib data penutupan (P16) dan pemeriksanya; satu sumber untuk progres, validasi PS6, dan Minta ditutup. */
+/** Label 6 isian wajib data penutupan (P16) dan pemeriksanya; satu sumber untuk progres, validasi PS6, dan Minta ditutup. */
 export const CLOSURE_REQUIRED: { key: string; label: string; ok: (c: Closure) => boolean }[] = [
   { key: 'actions', label: 'Ringkasan penanganan', ok: (c) => closureSummary(c).length > 0 },
   { key: 'partners', label: 'Tim terlibat', ok: (c) => c.partners.length > 0 },
   { key: 'cause', label: 'Penyebab', ok: (c) => c.cause.trim().length > 0 },
   { key: 'factors', label: 'Faktor penyebab', ok: (c) => (c.factors?.length ?? 0) > 0 },
   { key: 'evidence', label: 'Bukti penyelesaian', ok: (c) => (c.evidence?.length ?? 0) > 0 },
+  { key: 'result', label: 'Hasil pengamanan', ok: (c) => !!c.result },
 ];
 export const closureMissing = (c: Closure | undefined) => CLOSURE_REQUIRED.filter((r) => !r.ok(c ?? emptyClosure()));
 export const closureDone = (c: Closure | undefined) => CLOSURE_REQUIRED.length - closureMissing(c).length;
@@ -121,7 +123,7 @@ export function saveClosure(s: Slice, no: string, _by: string, patch: Partial<Cl
   return { ok: true, state: put(s, { ...i, handling: withHandling(i, { closure }) }) };
 }
 
-/** Minta ditutup (P16 → P17): hanya bila 5 isian wajib lengkap; selain itu galat (PS6). */
+/** Minta ditutup (P16 → P17): hanya bila 6 isian wajib lengkap; selain itu galat (PS6). */
 export function requestClosure(s: Slice, no: string, by: string, reviewers?: string[] | null): DecisionResult {
   const i = find(s, no);
   const bad = working(i);
@@ -156,6 +158,37 @@ export function respondStep(s: Slice, no: string, step: string, as: 'done' | 'ig
         stepsDone: as === 'done' ? [...rest(h.stepsDone), step] : rest(h.stepsDone),
         stepsIgnored: as === 'ignored' ? [...rest(h.stepsIgnored), step] : rest(h.stepsIgnored),
       }),
+    }),
+  };
+}
+
+/** F1: waktu operasi pulih tidak boleh sebelum waktu kejadian atau setelah jam demo; galat atau null. */
+export function restoredAtError(restoredAt: string | undefined, occurredAt: string, now: string = demoNow()): string | null {
+  if (!restoredAt) return null;
+  if (restoredAt < occurredAt.slice(0, 16)) return 'Waktu pulih tidak boleh sebelum waktu kejadian.';
+  if (restoredAt > now.slice(0, 16)) return 'Waktu pulih tidak boleh setelah waktu sekarang.';
+  return null;
+}
+
+export const MAX_LP = 50;
+
+/** Perbarui proses hukum (FR-INS-57a): PIC atau Pejabat, tanpa batas waktu, insiden Dalam penanganan sampai Ditutup. Hanya status dan nomor LP yang berubah. */
+export function updateLegalProcess(s: Slice, no: string, by: string, patch: { status: LegalStatus; lpNo?: string }): DecisionResult {
+  const i = find(s, no);
+  if (!i) return { ok: false, reason: 'Insiden tidak ditemukan.' };
+  if (!i.handling?.closure) return { ok: false, reason: 'Data penutupan belum ada.' };
+  if (patch.lpNo && patch.lpNo.length > MAX_LP) return { ok: false, reason: `Nomor laporan polisi maksimal ${MAX_LP} karakter.` };
+  const c = i.handling.closure;
+  const before = c.legal?.status;
+  const lpNo = patch.status === 'tidak-diproses' ? undefined : patch.lpNo?.trim() || undefined;
+  const legal: LegalProcess = { status: patch.status, lpNo, updatedAt: demoNow(), updatedBy: by };
+  const from = before ? LEGAL_STATUS_LABEL[before] : 'Belum diisi';
+  return {
+    ok: true,
+    state: put(s, {
+      ...i,
+      handling: { ...i.handling, closure: { ...c, legal } },
+      timeline: [...(i.timeline ?? []), stamp(by, `Proses hukum diperbarui: ${from} → ${LEGAL_STATUS_LABEL[patch.status]}`)],
     }),
   };
 }

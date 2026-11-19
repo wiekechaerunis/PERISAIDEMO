@@ -11,7 +11,7 @@ const st = (r: DecisionResult) => {
 };
 
 describe('B1 · ringkasan penanganan satu sumber', () => {
-  it('isian PIC (actions) terbaca sebagai 5/5 dan Ringkasan oleh semua layar', () => {
+  it('isian PIC (actions) terbaca sebagai 6/6 dan Ringkasan oleh semua layar', () => {
     let s: ReturnType<typeof seedState> = seedState();
     const no = 'INS-SEN-2026-0007';
     s = { ...s, incidents: s.incidents.map((i) => (i.no === no ? { ...i, status: 'dalam-penanganan' as const, pic: 'Andi Pratama' } : i)) };
@@ -20,11 +20,11 @@ describe('B1 · ringkasan penanganan satu sumber', () => {
       { partners: ['bujp' as const] },
       { cause: 'Pencurian kabel' },
       { factors: ['Celah pagar'] },
-      { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] },
+      { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] }, { result: 'tidak-ada' as const },
     ];
     for (const p of patches) s = { ...s, ...st(saveClosure(s, no, 'Andi Pratama', p as never)) };
     const i = s.incidents.find((x) => x.no === no)!;
-    expect(closureCompleteness(i)).toMatchObject({ done: 5, total: 5, complete: true, missing: [] });
+    expect(closureCompleteness(i)).toMatchObject({ done: 6, total: 6, complete: true, missing: [] });
     expect(closureSummary(i.handling?.closure)).toBe('Kabel diganti dan pompa menyala.');
   });
 });
@@ -99,5 +99,44 @@ describe('Kartu Pengerjaan · aturan status', () => {
     s = { ...s, ...st(withdrawSubmission(s, f.no, 'Rudi Hartono')) };
     expect(s.followUps!.find((x) => x.no === f.no)!.status).toBe('berjalan');
     expect(removeEvidence(s, f.no, 'Rudi Hartono', f.evidence[0].name).ok).toBe(true);
+  });
+});
+
+describe('Data penutupan 6 isian · proses hukum', () => {
+  it('5/6 bila Hasil pengamanan kosong; 6/6 bila dipilih', async () => {
+    const { closureCompleteness, saveClosure } = await import('./workflow.handling');
+    let s: ReturnType<typeof seedState> = seedState();
+    const no = 'INS-SEN-2026-0007';
+    s = { ...s, incidents: s.incidents.map((i) => (i.no === no ? { ...i, status: 'dalam-penanganan' as const, pic: 'Andi Pratama' } : i)) };
+    for (const p of [{ actions: 'Kabel diganti.' }, { partners: ['bujp' as const] }, { cause: 'Pencurian kabel' }, { factors: ['Celah pagar'] }, { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] }]) {
+      s = { ...s, ...st(saveClosure(s, no, 'Andi Pratama', p as never)) };
+    }
+    expect(closureCompleteness(s.incidents.find((i) => i.no === no)!)).toMatchObject({ done: 5, total: 6, complete: false, missing: ['Hasil pengamanan'] });
+    s = { ...s, ...st(saveClosure(s, no, 'Andi Pratama', { result: 'tidak-ada' })) };
+    expect(closureCompleteness(s.incidents.find((i) => i.no === no)!).complete).toBe(true);
+  });
+  it('Waktu operasi pulih ditolak sebelum kejadian atau setelah jam demo', async () => {
+    const { restoredAtError } = await import('./workflow.handling');
+    expect(restoredAtError('2026-10-28T00:30', '2026-10-28T01:00:00', '2026-10-28T13:00:00')).toMatch(/sebelum waktu kejadian/);
+    expect(restoredAtError('2026-10-29T16:10', '2026-10-28T01:00:00', '2026-10-28T13:00:00')).toMatch(/setelah waktu sekarang/);
+    expect(restoredAtError('2026-10-28T07:00', '2026-10-28T01:00:00', '2026-10-28T13:00:00')).toBeNull();
+    expect(restoredAtError(undefined, '2026-10-28T01:00:00')).toBeNull();
+  });
+  it('Perbarui proses hukum: status insiden dan waktu penutupan tetap, Riwayat bertambah satu', async () => {
+    const { updateLegalProcess } = await import('./workflow.handling');
+    const { CLOSURE_DEMO_NO, closureDemoIncident } = await import('./seedClosure');
+    const { closeIncident } = await import('./workflow.closure');
+    let s: ReturnType<typeof seedState> = seedState();
+    s = { ...s, incidents: [closureDemoIncident(), ...s.incidents] };
+    s = { ...s, ...st(closeIncident(s, CLOSURE_DEMO_NO, 'Sari Wulandari', { confirmedContracts: true, followUp: 'lanjut' })) };
+    const before = s.incidents.find((i) => i.no === CLOSURE_DEMO_NO)!;
+    const n = before.timeline?.length ?? 0;
+    s = { ...s, ...st(updateLegalProcess(s, CLOSURE_DEMO_NO, 'Sari Wulandari', { status: 'penyidikan', lpNo: 'LP/B/412/X/2026' })) };
+    const after = s.incidents.find((i) => i.no === CLOSURE_DEMO_NO)!;
+    expect(after.status).toBe('ditutup');
+    expect(after.handling?.closure?.closedAt).toBe(before.handling?.closure?.closedAt);
+    expect(after.handling?.closure?.legal).toMatchObject({ status: 'penyidikan', updatedBy: 'Sari Wulandari' });
+    expect(after.timeline?.length).toBe(n + 1);
+    expect(after.timeline?.at(-1)?.text).toBe('Proses hukum diperbarui: Dilaporkan ke polisi → Penyidikan');
   });
 });

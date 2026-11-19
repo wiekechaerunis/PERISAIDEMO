@@ -53,6 +53,7 @@ export function closureDemoIncident(over: Partial<Incident> = {}): Incident {
       ],
       closure: {
         partners: ['bujp', 'polri'], casualtiesFinal: {}, lossFinalIdr: 21_400_000, opsHoursFinal: 6,
+        restoredAt: '2026-10-29T16:10', result: 'tidak-ada', legal: { status: 'dilaporkan', lpNo: 'LP/B/412/X/2026' },
         cause: 'Celah pengamanan fisik', causeDetail: 'Panel listrik berada di luar jangkauan CCTV dan pagar sisi panel rendah.',
         factors: ['Lemahnya pengawasan malam', 'Celah pagar'], actions: 'Kabel diganti, laporan polisi dibuat.',
         outcome: 'Kabel 40 m diganti, pompa menyala 29 Okt 16.10. Laporan polisi dibuat. Gembok panel diganti tipe anti potong.',

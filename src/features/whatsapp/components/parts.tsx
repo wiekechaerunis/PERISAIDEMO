@@ -1,5 +1,6 @@
 // Potongan bersama form WhatsApp (board I20, I21, I21b, I22): kepala isian dengan chip AI + "Perlu dicek", baris status, pesan asli, kartu Pengajuan.
 import { Fragment, useState, type ReactNode } from 'react';
+import { SamplePhoto } from './monitor/pesan/PhotoPreview';
 import { Icon } from '@/components/ui/Icon';
 import { formatWibFull } from '@/lib/format';
 import type { WaDraft, WaMessage } from '@/services/types';
@@ -137,6 +138,58 @@ export function OriginalMessageCard({ message, draft }: { message: WaMessage; dr
         </p>
       )}
     </section>
+  );
+}
+
+/** Panel samping "Pesan asli" (dibuka dari tombol "Lihat pesan asli" di samping judul Temuan): semua bubble, sorotan AI, dan foto. */
+export function OriginalMessagePanel({ message, draft, onClose }: { message: WaMessage; draft: WaDraft; onClose: () => void }) {
+  const bubbles = [{ at: message.at, text: message.text }, ...(message.bubbles ?? [])];
+  return (
+    <>
+      <div className="lk-scrim" onClick={onClose}></div>
+      <aside className="lk-side" role="dialog" aria-modal="true" aria-label="Pesan asli" style={{ position: 'fixed', zIndex: 61, maxWidth: '100vw' }}>
+        <div className="sh">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <b style={{ fontSize: 16 }}>Pesan asli</b>
+            <span className="p-cap">{message.group} · {message.at.slice(11, 16)} WIB</span>
+          </div>
+          <button type="button" className="p-ibtn ghost" style={{ width: 32, height: 32 }} aria-label="Tutup panel" onClick={onClose}><Icon name="close" size={16} /></button>
+        </div>
+        <div className="sb" style={{ overflow: 'auto', padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span className="lk-av">{senderInitials(message)}</span>
+            <span style={{ display: 'flex', flexDirection: 'column' }}>
+              <b style={{ fontWeight: 600, fontSize: 13 }}>{senderLabel(message)}</b>
+              <span className="p-cap">{bubbles.length} bubble · {message.photos.length} foto</span>
+            </span>
+          </div>
+          {bubbles.map((b) => (
+            <div key={b.at + b.text}>
+              <p style={{ margin: 0, fontSize: 13, lineHeight: '20px', padding: '10px 12px', borderRadius: 'var(--radius-lg)', background: 'var(--surface-sunken)' }}>
+                <MessageText text={b.text} draft={draft} />
+              </p>
+              <span className="p-cap">{b.at.slice(11, 16)} WIB</span>
+            </div>
+          ))}
+          {message.photos.length > 0 && (
+            <>
+              <span className="p-lbl">Foto ({message.photos.length})</span>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                {message.photos.map((p) => (
+                  <figure key={p.id} style={{ margin: 0 }}>
+                    <SamplePhoto name={p.name} />
+                    <figcaption className="p-cap">{p.name} · {p.sizeKb} KB</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </>
+          )}
+          {draft.aiState === 'ok' && (
+            <p className="p-cap" style={{ margin: 0 }}>Bagian yang disorot dipakai AI untuk mengisi saran. Arahkan kursor ke chip <b>AI</b> untuk melihat kutipan dan keyakinannya.</p>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }
 

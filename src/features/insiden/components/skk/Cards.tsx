@@ -1,4 +1,5 @@
 // Kartu-kartu detail SKK untuk insiden disetujui (board P31, P35, P36). Semua dari store; hanya baca.
+import { ClosureExtraRows } from '../closure/ClosureExtraRows';
 import { useFollowUps } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { handleDaysOf } from '@/lib/deadline';
 import { closureSummary } from '@/services/mock/workflow.handling';
@@ -173,6 +174,7 @@ export function ClosureDataCard({ incident: i, hl, hlFiles, hlLoss }: { incident
           ))}
           {row('Bukti', c.evidence?.length ? c.evidence.map((f) => f.name).join(', ') : 'Belum diisi', hlFiles ? 'in-hl' : undefined)}
           {row('Kerugian akhir', c.lossFinalIdr != null ? <>{formatRupiah(c.lossFinalIdr)}{d.lossIdr != null && sub(`Perkiraan pelapor ${formatRupiah(d.lossIdr)}`)}</> : 'Belum diisi', hlLoss ? 'in-hl' : undefined)}
+          <ClosureExtraRows c={c} />
         </dl>
       )}
     </section>

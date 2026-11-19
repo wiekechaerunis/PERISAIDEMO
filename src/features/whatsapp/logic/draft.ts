@@ -10,7 +10,7 @@ export const TOAST_UNLINKED = 'Tautan pesan dilepas. Pesan kembali ke kotak masu
 
 export const WA_STEPS = ['Temuan', 'Kejadian & dampak', 'Lampiran', 'Ringkasan'];
 export const WA_ROUTES = {
-  inbox: '/insiden/wa',
+  inbox: '/pemantauan-whatsapp',
   temuan: '/insiden/wa/temuan',
   kejadian: '/insiden/wa/kejadian',
   lampiran: '/insiden/wa/lampiran',

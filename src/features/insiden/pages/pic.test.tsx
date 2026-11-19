@@ -58,7 +58,7 @@ describe('Halaman kerja PIC', () => {
       }),
     );
     renderAt(`/insiden/${NO}/tangani`);
-    expect(screen.getByText('4 dari 5 isian wajib')).toBeInTheDocument();
+    expect(screen.getByText('4 dari 6 isian wajib')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Ajukan penutupan/ }));
     expect(screen.getByText('Lengkapi Tim terlibat sebelum menutup insiden.')).toBeInTheDocument();
     expect(inc().status).toBe('dalam-penanganan');
@@ -68,7 +68,7 @@ describe('Halaman kerja PIC', () => {
     useDemoStore.getState().decide((s) =>
       saveClosure(s, NO, 'Andi Pratama', {
         actions: 'Kabel diganti.', partners: ['bujp'], partnerNames: ['PT Garda Nusantara Sejahtera · BUJP'], cause: 'Celah pengamanan fisik',
-        factors: ['Celah pagar'], evidence: [{ name: 'a.jpg', sizeKb: 10, caption: '' }],
+        factors: ['Celah pagar'], evidence: [{ name: 'a.jpg', sizeKb: 10, caption: '' }], result: 'tidak-ada',
       }),
     );
     renderAt(`/insiden/${NO}/tangani`);

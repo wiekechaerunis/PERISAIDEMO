@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useWaSimUi } from '@/features/whatsapp/sim/WaSimPanel';
 import { Link } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { Icon, type IconName } from '../ui/Icon';
@@ -40,6 +41,7 @@ function ProfileMenu({ role }: { role: Role }) {
               <span className="p-cap">{DEMO_USERS[r].roleLabel}</span>
             </button>
           ))}
+          <button type="button" role="menuitem" className="p-btn p-btn-secondary p-btn-sm" style={{ marginTop: 4 }} onClick={() => { useWaSimUi.getState().toggle(); setOpen(false); }}>Simulasi WhatsApp</button>
           <button type="button" role="menuitem" className="p-btn p-btn-secondary p-btn-sm" style={{ marginTop: 4 }} onClick={() => { resetDemo(); setOpen(false); }}>Reset data</button>
         </div>
       )}
@@ -100,7 +102,7 @@ export function Sidebar({ active, role, taskCount }: Props) {
       <span className="p-lbl" style={{ padding: '14px 8px 6px 8px' }}>Security incident</span>
       <Item to="/analitik" icon="chart" label="Analitik" on={active === 'analitik'} />
       <Item to="/insiden" icon="alert" label="Insiden" on={active === 'insiden'} />
-      {!isSkk(role) && <Item to="/insiden/wa" icon="whatsapp" label="Pemantauan WhatsApp" on={active === 'whatsapp'} />}
+      {!isSkk(role) && <Item to="/pemantauan-whatsapp" icon="whatsapp" label="Pemantauan WhatsApp" on={active === 'whatsapp'} />}
       {role === 'admin' && (
         <>
           <span className="p-lbl" style={{ padding: '14px 8px 6px 8px' }}>Administrasi</span>
