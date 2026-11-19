@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mobile · Tarik kembali</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="in-m" style="height: 844px">
+<div class="top"><a href="M1-Daftar.dc.html" class="ib44" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a><span class="ttl">Detail insiden</span><button type="button" class="ib44" aria-label="Aksi lain"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg></button></div><div class="body"><div style="display: flex; flex-direction: column; gap: 8px"><b style="font-size: 20px; line-height: 28px">Pencurian kabel listrik sumur ADR-07</b><span class="p-mono" style="font-size: 12px; color: var(--ink-muted)">INS-SEN-2026-0007</span><div style="display: flex; gap: 6px"><span class="p-tag t-info">Review internal</span><span class="p-tag s-high"><span class="dot"></span>Tinggi</span></div></div><div class="card" style="height: 160px; background: var(--surface)"><span class="p-sk" style="height: 14px; width: 60%"></span><span class="p-sk" style="height: 10px; width: 85%"></span><span class="p-sk" style="height: 10px; width: 40%"></span></div><div class="card" style="height: 140px; background: var(--surface)"><span class="p-sk" style="height: 14px; width: 60%"></span><span class="p-sk" style="height: 10px; width: 85%"></span><span class="p-sk" style="height: 10px; width: 40%"></span></div></div><sc-if value="{{confirm}}" hint-placeholder-val="{{true}}"><div class="scrim"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t"><div class="grab" aria-hidden="true"></div><div class="sb"><div style="display: flex; gap: 10px; align-items: center"><b id="sh-t" style="font-size: 17px; line-height: 24px">Tarik kembali jadi draf?</b></div><span style="color: var(--ink-subtle)">Anda bisa mengubah isinya lagi, lalu mengajukan ulang.</span><dl class="kv"><dt>Status</dt><dd>Review internal → Draf</dd><dt>Verifikasi</dt><dd>Dibatalkan</dd><dt>SKK Migas</dt><dd>Diberi tahu bahwa laporan ditarik</dd></dl></div><div class="sf"><button type="button" class="p-btn p-btn-primary">Tarik kembali</button><button type="button" class="p-btn p-btn-secondary">Batal</button></div></div></sc-if><sc-if value="{{late}}" hint-placeholder-val="{{false}}"><div class="toastm" style="bottom: 16px"><div class="p-toast err" role="alert"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span class="msg">Laporan sudah diproses Pejabat Berwenang dan tidak bisa ditarik kembali.</span></div></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["konfirmasi", "sudah diproses"], "default": "konfirmasi"}, "$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  renderVals() { const s = this.props.state ?? 'konfirmasi'; return { confirm: s === 'konfirmasi', late: s === 'sudah diproses' }; }
+}
+</script>
+</body>
+</html>

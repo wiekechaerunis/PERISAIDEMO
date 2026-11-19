@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Catatan desain Batch 1</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="lk-app" style="min-height: 1500px; flex-direction: column; padding: 32px; gap: 16px">
+  <div><h1 style="margin: 0; font-size: 24px; line-height: 32px">Catatan desain · Batch 1 · Pelaporan insiden (INS-01)</h1><p style="margin: 4px 0 0 0; color: var(--ink-muted)">28 Okt 2026 · Mino · DS v2 Lime (K1–K7 diputuskan PM, belum dicatat di Decision Log)</p></div>
+  <section class="in-note"><h2>18 Nov 2026 · Keputusan PM (Mino, 17–18 Nov) yang diterapkan ke semua layar</h2><ul>
+    <li><b>Modul Risk dihapus.</b> Tidak ada lagi Keterkaitan risiko, Risiko terkait, RS-SEN-, Risk Register, penyusun risiko, atau email EI9; layar V12c/V12d/EI9 dihapus. Observasi menjadi Kerawanan (KRW-SEN-); "Ubah jenis" menjadi "Jadikan kerawanan". Tren risiko diganti tautan Lihat tren di Analitik.</li>
+    <li><b>Mitra.</b> Pelapor tidak memilih mitra; opsional menjawab "Sudah ada yang menangani?" (Belum ada/Security internal/BUJP/TNI/Polri). PIC wajib isi Tim terlibat (mitra, tanpa nama personel); isian wajib jadi 5. Pejabat mengonfirmasi Kontrak mitra yang terlibat saat tinjau penutupan; tautan KPI ditunda.</li>
+    <li><b>Keparahan 5 tingkat:</b> Sangat rendah, Rendah, Sedang, Tinggi, Kritis. Sistem menyarankan dari dampak (Konfigurasi Modul › Insiden › Matriks keparahan); pelapor boleh beda dengan alasan; Pejabat menetapkan yang resmi; AI tidak memilih.</li>
+    <li><b>Kategori dan dampak (18 Nov).</b> Kategori mengikuti daftar SKK (+ Serangan fisik, Serangan data sebagai usulan); Dampak dipilih dulu per sumbu (Properti/operasi, Manusia, Lingkungan pengamanan, Data dan informasi), saran keparahan dari sumbu tertinggi.</li>
+    <li><b>Menu.</b> Menu Kerawanan digabung ke Insiden sebagai tab; Analitik di atas Insiden.</li>
+    <li><b>Naikkan jadi insiden tanpa approver tambahan.</b> Yang menaikkan adalah Pejabat Berwenang (pemeriksa), langsung tetapkan PIC. <b>Jadikan kerawanan:</b> alasan wajib, SKK diberi tahu bila Tinggi/Kritis, terlihat di Analitik SKK.</li>
+    <li><b>Pelapor bisa mengajukan, kondisi memburuk dicatat (18 Nov).</b> Pelapor dan pengguna KKKS di WK yang sama bisa Ajukan jadi insiden (lewat verifikasi Pejabat). Kondisi memburuk tanpa dampak: Tambah perkembangan + tanda Makin rawan, Pejabat diberi tahu seketika (KD5, KD6; lonceng EK.2).</li>
+    <li><b>Tenggat penanganan (18 Nov).</b> Tenggat penanganan per keparahan dipindah ke Konfigurasi Modul › Insiden (CFG-01 FR-CFG-08); nilai contoh, menunggu SKK. Menu "Pengaturan" menjadi "Konfigurasi Modul" (CFG-Daftar, CFG-Tenggat).</li>
+  </ul><h2 style="margin-top: 12px">Data contoh kanonik</h2><table><thead><tr><th>No</th><th>Kasus</th><th>Kategori</th><th>Keparahan</th><th>Relasi</th></tr></thead><tbody>
+    <tr><td>INS-SEN-2026-0007</td><td>Pencurian kabel listrik sumur ADR-07</td><td>Pencurian/Perampokan</td><td>Tinggi</td><td>Induk, sedang ditangani</td></tr>
+    <tr><td>INS-SEN-2026-0009</td><td>Kabel pompa ADR-07 dipotong (dari WA)</td><td>Pencurian/Perampokan</td><td>Tinggi</td><td>Digabung ke 0007</td></tr>
+    <tr><td>INS-SEN-2026-0006</td><td>Perusakan pagar perimeter terminal</td><td>Perusakan material</td><td>Sedang</td><td>—</td></tr>
+    <tr><td>INS-SEN-2026-0005</td><td>Penghadangan truk logistik oleh warga</td><td>Blokade area</td><td>Kritis</td><td>—</td></tr>
+    <tr><td>INS-SEN-2026-0003</td><td>Perusakan CCTV gerbang 2</td><td>Perusakan material</td><td>Sedang</td><td>—</td></tr>
+    <tr><td>INS-SEN-2026-0010</td><td>Drone tidak dikenal di atas sumur ADR-07</td><td>Lainnya</td><td>Sedang</td><td>—</td></tr>
+    <tr><td>INS-SEN-2026-0011</td><td>Pagar sisi barat ADR-07 roboh, kabel panel hilang</td><td>Pencurian/Perampokan</td><td>Rendah</td><td>Dari KRW-SEN-2026-0047 · Dalam penanganan</td></tr>
+    <tr><td>INS-SEN-2026-0004</td><td>Pencurian solar di tangki T-02</td><td>Pencurian minyak · Dari tangki/fasilitas (usulan)</td><td>Sedang</td><td>—</td></tr>
+  </tbody></table><p style="margin: 8px 0 0 0">Kerawanan yang dinaikkan menjadi satu catatan insiden; nomor KRW tetap sebagai asal.</p><p style="margin: 8px 0 0 0">Korban: pelapor memilih kondisi paling parah (+ Belum diketahui) dan jumlah; PIC mengisi rincian per tingkat cedera saat penutupan. P3K = Sangat rendah, klinik = Rendah, luka berat/cacat = Tinggi, meninggal = Kritis.</p></section>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start">
+    <section class="in-note"><h2>Traceability</h2><table><thead><tr><th>Layar</th><th>FR / tabel PRD</th><th>Status</th></tr></thead><tbody>
+      <tr><td>1.1 Daftar · Pelapor</td><td>FR-INS-14, 15</td><td>Lengkap</td></tr>
+      <tr><td>1.2 Form · pilih jenis</td><td>FR-LK-25, FR-INS-01</td><td>Lengkap</td></tr>
+      <tr><td>1.3 Form · Kejadian &amp; dampak</td><td>FR-INS-01–06, K-1</td><td>Lengkap</td></tr>
+      <tr><td>1.4 Ringkasan</td><td>FR-INS-09</td><td>Lengkap</td></tr>
+      <tr><td>1.5 Detail setelah diajukan</td><td>FR-INS-16, T-1, U-1 #16</td><td>Lengkap</td></tr>
+      <tr><td>2.0 Form dari WhatsApp · Temuan</td><td>FR-INS-12, W-2</td><td>Lengkap · chip AI + Perlu dicek sama dengan Kerawanan</td></tr>
+      <tr><td>2.1 Form dari WhatsApp</td><td>FR-INS-12, W-2, U-1 #7</td><td>Lengkap</td></tr>
+      <tr><td>2.2 Kemungkinan ganda</td><td>FR-INS-11, 13, U-1 #14</td><td>Lengkap</td></tr>
+      <tr><td>2.3 Detail dari WhatsApp</td><td>FR-INS-12, T-1</td><td>Lengkap</td></tr>
+      <tr><td>3.1 Daftar · SKK</td><td>FR-INS-15, P-04</td><td>Lengkap</td></tr>
+      <tr><td>3.2 Detail · SKK belum terverifikasi</td><td>FR-INS-16, U-1 #20</td><td>Partial: aksi Beri arahan di Batch 3</td></tr>
+      <tr><td>S01–S12</td><td>V-1, U-1 #1–4, 6, 11–13, 17–19; FR-INS-08, 10, 17</td><td>Lengkap</td></tr>
+      <tr><td>S13 Lokasi di luar WK</td><td>FR-INS-06</td><td>Usulan: pilih WK wajib</td></tr>
+      <tr><td>M1–M6</td><td>FR-INS-18, RS-1</td><td>Lengkap</td></tr>
+    </tbody></table></section>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <section class="in-note"><h2>Komponen</h2><ul>
+        <li><b>DS v2:</b> PageHeader (bar atas K7), Sidebar, Stepper, FormFooter, OptionCard, Combobox, Select, Tag (status + severitas), QuickFilter, FilterPanel, AppliedFilter (chip), Banner, Toast, Skeleton, Dialog, Timeline, TextField, Textarea, EmptyState, StatusPage, LocationPicker (disederhanakan).</li>
+        <li><b>Belum ada di DS v2 (ditandai):</b> Tooltip ikon info untuk waktu, kartu ringkas insiden pembanding, bottom sheet daftar opsi berkelompok.</li>
+      </ul></section>
+      <section class="in-note"><h2>Keputusan desain [USULAN]</h2><ul>
+        <li>Form panjang = halaman penuh berlangkah, bukan modal. Dialog hanya untuk konfirmasi pendek (ganti jenis, tarik kembali).</li>
+        <li>Dari menu Insiden, jenis Insiden sudah terpilih. Memilih Kerawanan menampilkan banner "Laporan ini masuk ke tab Kerawanan". Kebalikannya ada di form Kerawanan.</li>
+        <li>Kemungkinan ganda: Ajukan nonaktif sampai pelapor memilih (tambahkan ke insiden itu atau tetap ajukan).</li>
+        <li>SKK: pintasan "Belum terverifikasi" di daftar.</li>
+        <li>Keparahan memakai titik severitas DS, bukan lime. Lime hanya untuk pilihan aktif.</li>
+      </ul></section>
+      <section class="in-note"><h2>Gap</h2><ul>
+        <li><s>Kategori dan jenis insiden masih contoh fiktif (K-05).</s> Kategori mengikuti daftar SKK (18 Nov).</li>
+        <li>Definisi level keparahan masih usulan (AB-01 = level dampak).</li>
+        <li>Jendela laporan ganda ±6 jam / 1 km masih usulan (AB-24).</li>
+        <li>Tombol Jadikan draf laporan di WhatsApp masih fase 2 (K-INS-5).</li>
+        <li>[USULAN] Durasi gangguan operasi + "Masih berlangsung saat melapor": belum ada di PRD. Perlu diputuskan siapa yang memperbarui durasi setelah insiden terkunci (usul: PIC saat penanganan/penutupan, INS-03).</li>
+      </ul></section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Tugas saya · verifikasi insiden</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}
+.tg-t td{vertical-align:middle;white-space:nowrap}
+.tg-t td .sub{display:block}
+.tg-n{font-weight:600;color:var(--ink);text-decoration:none}
+.tg-d{display:block;font-size:12px;line-height:16px;color:var(--ink-muted);margin-top:2px}
+.tg-old{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--caution-ink)}</style>
+</helmet>
+<div class="lk-app" style="min-height: 840px">
+  <dc-import name="Sidebar" user="Sari Wulandari" role="Pejabat Berwenang KKKS" active="tugas" task-count="{{n}}" h="840" hint-size="240px,840px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar top"><div class="hdr"><button type="button" class="p-sbtoggle" aria-expanded="true" aria-controls="nav-utama" aria-label="Perkecil sidebar" title="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button><div class="p-col ttl"><h1>Tugas saya</h1><span class="sub">Pengajuan dari semua modul yang menunggu keputusan, verifikasi, atau tinjauan Anda.</span></div><div class="acts" style="position: relative"></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><span aria-hidden="true" style="display: inline-flex"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></span><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi, 3 belum dibaca"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="p-count">3</span></button></div></div></header>
+    <main class="lk-content">
+      <section class="p-card" style="padding: 0">
+        <div class="p-toolbar" style="padding: 16px 20px 12px">
+          <h2 class="p-h2" style="flex: 1">Menunggu Anda <span class="p-count" style="margin-left: 6px">{{n}}</span></h2>
+          <span class="p-input" style="width: 260px; height: 36px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5"/></svg><span class="ph" style="flex: 1">Cari KKKS, WK, atau nomor</span></span>
+          <button type="button" class="p-btn p-btn-secondary p-btn-sm"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M3 6h18M7 12h10M10 18h4"/></svg>Filter</button>
+        </div>
+        <table class="p-table lk-tbl tg-t">
+          <thead><tr><th style="padding-left: 20px">Tugas</th><th>Modul</th><th>KKKS · wilayah kerja</th><th>Masuk</th><th style="padding-right: 20px; width: 110px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Aksi</span></th></tr></thead>
+          <tbody><sc-for list="{{rows}}" as="r" hint-placeholder-count="4"><tr>
+            <td style="padding-left: 20px"><span style="display: flex; align-items: center; gap: 8px"><a href="{{r.href}}" class="tg-n">{{r.t}}</a><span class="p-tag {{r.cls}}" style="height: 20px; font-size: 11px">{{r.st}}</span></span><span class="tg-d">{{r.d}}</span></td>
+            <td>{{r.m}}</td>
+            <td><span>{{r.kk}}</span><span class="sub">{{r.wk}}</span></td>
+            <td><sc-if value="{{r.old}}" hint-placeholder-val="{{false}}"><span class="tg-old" title="Lebih dari 1 hari kerja"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 13px; height: 13px"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"/></svg>{{r.at}}</span></sc-if><sc-if value="{{r.notOld}}" hint-placeholder-val="{{true}}"><span>{{r.at}}</span></sc-if><span class="sub">{{r.from}}</span></td>
+            <td style="padding-right: 20px; text-align: right"><a href="{{r.href}}" class="p-btn p-btn-secondary p-btn-sm">{{r.cta}}</a></td></tr></sc-for></tbody>
+        </table>
+        <div class="p-pager"><span>{{n}} tugas · urut dari yang paling lama menunggu</span><span></span></div>
+      </section>
+    </main>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":840}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = (t, d, st, cls, m, kk, wk, at, from, cta, href, old) => ({ t, d, st, cls, m, kk, wk, at, from, cta, href, old: !!old, notOld: !old });
+    const K = 'PT Sumber Energi Nusantara', W = 'WK Andalas Darat';
+    const rows = [
+      T('Perusakan pagar perimeter terminal', 'INS-SEN-2026-0006 · Sedang · Perusakan material · batas periksa terlewat 1 hari kerja', 'Lewat batas', 't-caution', 'Insiden', K, W, '27 Okt 2026, 08:30', 'dari Rina Lestari', 'Periksa', 'VS5-LewatBatas.dc.html', true),
+      T('Pencurian kabel listrik sumur ADR-07', 'INS-SEN-2026-0007 · Tinggi · Pencurian/Perampokan · batas 29 Okt 07:00', 'Menunggu pemeriksaan', 't-caution', 'Insiden', K, W, '28 Okt 2026, 07:00', 'dari Budi Santoso', 'Periksa', 'V12-Review.dc.html'),
+      T('Kabel pompa ADR-07 dipotong', 'INS-SEN-2026-0009 · Tinggi · kemungkinan ganda dengan INS-SEN-2026-0007', 'Kemungkinan ganda', 't-info', 'Insiden', K, W, '28 Okt 2026, 09:40', 'dari Andi Pratama', 'Tinjau', 'V21-ReviewGanda.dc.html'),
+      T('Pre-WP&B 2027', 'Total Rp30.900.000.000 · perlu persetujuan sebelum diajukan ke SKK', 'Menunggu persetujuan Anda', 't-caution', 'Anggaran WP&B', K, W, '28 Okt 2026, 10:05', 'dari Admin KKKS', 'Tinjau', '#')
+    ];
+    return { rows, n: String(rows.length) };
+  }
+}
+</script>
+</body>
+</html>

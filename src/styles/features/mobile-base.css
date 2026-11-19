@@ -1,0 +1,13 @@
+/* Mobile di dalam aplikasi (bukan artboard 390×844): .in-m.app mengisi layar dan menggulir. */
+.in-m.app{width:100%;min-height:100dvh;height:auto;overflow:visible}
+.in-m.app .top{position:sticky;top:0;z-index:10}
+.in-m.app .body{overflow:visible}
+.in-m.app .foot{position:sticky;bottom:0;z-index:5}
+.in-m.app .p-fab{position:fixed}
+.in-m.app .scrim{position:fixed}
+.in-m.app .sheet{position:fixed;max-height:92dvh}
+/* Pengganti peran demo di layar sempit: tombol kecil "Demo" di kiri bawah, membuka panel */
+@media (max-width:480px){
+  .demo-roles{left:8px;right:8px;bottom:8px;flex-wrap:wrap;z-index:200}
+  .demo-roles.demo-roles-fab{right:auto;width:auto;height:28px;padding:0 10px;bottom:8px;border:0;opacity:.55;font:inherit;font-size:11px;cursor:pointer}
+}

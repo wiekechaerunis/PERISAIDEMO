@@ -1,0 +1,7 @@
+/* Daftar mobile (M1, M12, MP1, MV1, MK1, MS08–MS12). Hanya tambahan; CSS vendor tidak diubah. */
+.in-m .p-qf a.qa{display:inline-flex;align-items:center;gap:6px;height:40px;flex:1;justify-content:center;padding:0 12px;border-radius:6px;font-size:13px;line-height:18px;font-weight:500;color:var(--ink-subtle);text-decoration:none;white-space:nowrap}
+.in-m .p-qf a.qa:hover{color:var(--ink);background:rgba(28,29,33,.04)}
+.in-m .p-qf a.qa:focus-visible{outline:2px solid var(--focus-ring);outline-offset:1px}
+/* .p-fab disembunyikan ≥768px oleh bundle.css; pada mode ?m=1 di desktop tetap tampil */
+.in-m.app .p-fab{display:inline-flex}
+.in-m .ml-fields{display:flex;flex-direction:column;gap:16px}

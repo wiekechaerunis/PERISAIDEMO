@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email pengingat tenggat H-1</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Tenggat penanganan insiden besok" nama="Andi Pratama" konteks="Insiden yang Anda tangani mencapai tenggat dalam 1 hari. Catat perkembangan atau minta ditutup bila sudah selesai." rows="{{rows}}" tombol="Buka penanganan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Bila tenggat terlewat, insiden otomatis dieskalasi ke Pejabat Berwenang." hint-size="600px,820px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Tenggat", "v": "31 Okt 2026, 07:00 WIB"}, {"k": "Data penutupan", "v": "Belum diisi"}] };
+  }
+}
+</script>
+</body>
+</html>

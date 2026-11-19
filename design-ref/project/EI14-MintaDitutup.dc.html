@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email permintaan penutupan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden menunggu penutupan Anda" nama="Sari Wulandari" konteks="Andi Pratama sudah mengisi data penutupan dan meminta insiden berikut ditutup." rows="{{rows}}" tombol="Tinjau penutupan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Anda bisa menutup atau mengembalikannya ke PIC dengan alasan." hint-size="600px,900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Penyebab", "v": "Celah pengamanan fisik"}, {"k": "Bukti", "v": "2 file"}, {"k": "Tindak lanjut", "v": "2 masih berjalan"}, {"k": "Batas", "v": "1 Nov 2026 (2 hari kerja)"}] };
+  }
+}
+</script>
+</body>
+</html>

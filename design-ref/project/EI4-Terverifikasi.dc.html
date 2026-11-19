@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden terverifikasi (penerima jalur cepat)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden INS-SEN-2026-0007 terverifikasi" nama="Hendra Wijaya" konteks="Sari Wulandari, Pejabat Berwenang PT Samudra Energi Nusantara, menyetujui insiden yang Anda terima lewat jalur cepat. Insiden kini data resmi dan sedang ditangani." rows="{{rows}}" tombol="Buka insiden" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Bila keparahan resmi lebih rendah dari keparahan awal, email ini menampilkan keduanya." hint-size="600px,900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Klasifikasi", "v": "Pencurian/Perampokan · Keparahan Tinggi · Prioritas Tinggi"}, {"k": "PIC penanganan", "v": "Andi Pratama"}, {"k": "Tenggat penanganan", "v": "31 Okt 2026"}, {"k": "Diverifikasi", "v": "28 Okt 2026, 13:20 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>

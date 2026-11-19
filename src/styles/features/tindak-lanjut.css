@@ -1,0 +1,22 @@
+/* Modul Tindak lanjut (board T1..T9): gaya dari <helmet> board, tanpa mengubah CSS vendor. */
+.tl-insmini{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:var(--radius-lg);background:var(--surface-sunken)}
+.tl-insmini .r{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tl-dur{display:flex;gap:8px;align-items:center}
+.tl-pick{cursor:pointer}
+.tl-asal{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--action-subtle-ink);background:var(--action-subtle-bg);border-radius:999px;padding:2px 10px;align-self:flex-start}
+.tl-src-card{display:flex;flex-direction:column;gap:8px}
+.tl-src-card .r{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tl-kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 12px;margin:0;font-size:13px;line-height:19px}
+.tl-kv dt{color:var(--ink-muted)}
+.tl-kv dd{margin:0}
+.tl-files{display:flex;flex-direction:column;gap:6px}
+.tl-file{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-md);box-shadow:inset 0 0 0 1px var(--border);font-size:13px}
+.tl-file .n{flex:1;min-width:0}
+.tl-file .s{font-size:11px;font-weight:600;color:var(--ink-muted)}
+.tl-quote{padding:10px 12px;border-radius:var(--radius-lg);background:var(--surface-sunken);font-size:13px;line-height:19px}
+.tl-verif{display:flex;flex-direction:column;gap:12px}
+/* tambahan di luar board (ASSUMPTION): kontrol isian sungguhan di dialog dan Pengerjaan */
+.tl-field{flex:1;border:0;outline:0;background:none;font:inherit;color:inherit;min-width:0}
+.tl-area{resize:vertical}
+.tl-link{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+button.tl-drop{cursor:pointer;border:0;font:inherit;width:100%}

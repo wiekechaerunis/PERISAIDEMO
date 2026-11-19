@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden ditarik kembali</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden INS-SEN-2026-0007 ditarik kembali oleh pelapor" nama="Hendra Wijaya" konteks="Budi Santoso menarik kembali insiden yang Anda terima lewat jalur cepat untuk diperbaiki." rows="{{rows}}" tombol="Buka insiden" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Notifikasi ini juga tampil di PERISAI." hint-size="600px,840px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":840}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Ditarik", "v": "28 Okt 2026, 07:20 WIB"}, {"k": "Status", "v": "Draft · sedang diperbaiki pelapor"}] };
+  }
+}
+</script>
+</body>
+</html>

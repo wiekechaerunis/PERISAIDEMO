@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ajukan gagal · jaringan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1120px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1120" hint-size="240px,1120px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Laporan baru</h1><span class="p-tag t-draft">Draf</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page">Laporan baru</li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><span class="lbl">Tanya AI</span></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Temuan</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Kejadian &amp; dampak</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Lampiran</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step on" aria-current="step"><span class="n">4</span>Ringkasan</li></ol>
+      <div class="lk-grid">
+        <div class="c8 lk-stack">
+          <section class="p-card"><div class="in-sumhead"><h2 class="in-h">Temuan</h2><a href="#" class="lk-alink">Ubah</a></div><dl class="in-sum"><dt>Jenis</dt><dd>Insiden</dd><dt>Judul</dt><dd>Pencurian kabel listrik sumur ADR-07</dd><dt>Waktu kejadian</dt><dd>28 Okt 2026, 01:00 WIB</dd></dl></section>
+          <section class="p-card"><div class="in-sumhead"><h2 class="in-h">Kejadian &amp; dampak</h2><a href="#" class="lk-alink">Ubah</a></div><dl class="in-sum"><dt>Keparahan awal</dt><dd><span class="p-tag s-high"><span class="dot"></span>Tinggi</span></dd><dt>Operasi</dt><dd>Berhenti · 6 jam</dd><dt>Sudah menangani</dt><dd>BUJP</dd></dl></section>
+        </div>
+        <aside class="c4 lk-stack"><div class="p-note" style="align-items: flex-start"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; flex: none; margin-top: 1px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"/></svg><span>Belum terkirim, jadi SKK Migas juga belum diberi tahu.</span></div></aside>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 0 -24px"><a href="#" class="p-btn p-btn-secondary">Sebelumnya</a><div style="display: flex; gap: 8px"><button type="button" class="p-btn p-btn-secondary">Simpan draf</button><a href="I15-Detail.dc.html" class="p-btn p-btn-primary">Ajukan lagi</a></div></div>
+    </form>
+  </div>
+  <div class="in-toastpos" style="bottom: 88px"><div class="p-toast err" role="alert"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span class="msg">Laporan belum terkirim. Periksa koneksi lalu coba lagi.</span><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup notifikasi"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1120}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

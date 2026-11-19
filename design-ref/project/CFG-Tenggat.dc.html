@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Konfigurasi Modul · Tenggat penanganan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 980px">
+  <dc-import name="Sidebar" active="pengaturan" user="Rina Hapsari" role="Admin SKK" task-count="0" h="980" hint-size="240px,980px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="CFG-Daftar.dc.html" class="p-ibtn" aria-label="Kembali ke Konfigurasi Modul"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><h1>Tenggat penanganan</h1><ol class="p-crumb"><li><a href="CFG-Daftar.dc.html">Konfigurasi Modul</a></li><li aria-hidden="true">›</li><li>Insiden</li><li aria-hidden="true">›</li><li aria-current="page">Tenggat penanganan</li></ol></div>
+      <div class="acts"></div>
+      <span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div>
+    </div></header>
+    <main class="lk-content" style="padding-bottom: 0">
+      <div class="p-note" style="align-items: flex-start; margin-bottom: 16px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; flex: none"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"/></svg><span>Batas waktu menyelesaikan insiden, dihitung sejak registrasi sesuai keparahan. Berlaku untuk semua KKKS. <b>Nilai di bawah adalah contoh</b>, menunggu keputusan SKK.</span></div>
+      <div class="lk-stack">
+        <section class="p-card" style="padding: 0; overflow: hidden">
+          <div class="lk-card-head" style="padding: 16px 20px; margin: 0"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Tenggat per keparahan</h2><span class="p-cap">Dalam hari, sejak registrasi.</span></div><span class="p-tag t-caution">Nilai contoh</span></div>
+          <table class="p-table lk-tbl" style="width: 100%"><thead><tr><th style="padding-left: 20px">Keparahan</th><th>Tenggat</th><th style="padding-right: 20px">Contoh</th></tr></thead><tbody>
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="5"><tr><td style="padding-left: 20px"><span class="{{r.tag}}"><span class="dot"></span>{{r.l}}</span></td><td><span class="p-input" style="height: 32px; width: 120px"><span class="num" style="flex: 1">{{r.v}}</span><span class="affix">hari</span></span><sc-if value="{{r.chg}}" hint-placeholder-val="{{false}}"><span class="p-cap" style="display: block; margin-top: 4px">sebelumnya {{r.old}} hari</span></sc-if></td><td style="padding-right: 20px"><span class="p-cap">{{r.ex}}</span></td></tr></sc-for>
+          </tbody></table>
+          <div style="padding: 12px 20px; border-top: 1px solid var(--border-subtle)"><span class="p-cap">Berlaku untuk insiden yang diregistrasi setelah disimpan. Insiden yang sudah berjalan tetap memakai tenggatnya.</span></div>
+        </section>
+        <section class="p-card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="p-h2">Riwayat perubahan</h2>
+          <ol class="lk-tl"><sc-for list="{{hist}}" as="h" hint-placeholder-count="1"><li><b>{{h.t}}</b> oleh {{h.by}}<br>{{h.at}}</li></sc-for></ol>
+        </section>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 16px -24px 0"><span class="p-cap">{{footCap}}</span><div style="display: flex; gap: 8px; align-items: center"><button type="button" class="p-btn p-btn-secondary" onClick="{{reset}}">Batal</button><sc-if value="{{dirty}}" hint-placeholder-val="{{false}}"><button type="button" class="p-btn p-btn-primary" onClick="{{save}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M20 6 9 17l-5-5"/></svg>Simpan</button></sc-if><sc-if value="{{clean}}" hint-placeholder-val="{{true}}"><button type="button" class="p-btn p-btn-primary" disabled="disabled" style="opacity: .45"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M20 6 9 17l-5-5"/></svg>Simpan</button></sc-if></div></div>
+    </main>
+  </div>
+  <sc-if value="{{saved}}" hint-placeholder-val="{{false}}"><div class="p-toast" role="status" style="position: fixed; right: 24px; bottom: 88px"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span><span class="msg">Tenggat disimpan. Berlaku untuk insiden baru.</span></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["lihat","diubah","disimpan"],"default":"lihat"},"$preview":{"width":1366,"height":980}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { m: (p || {}).mode || 'lihat' }; }
+  renderVals() {
+    const m = this.state.m;
+    const ch = m === 'diubah'; const sv = m === 'disimpan';
+    const kritis = (ch || sv) ? '2' : '1';
+    const R = [
+      ['Kritis', 'p-tag s-crit', kritis, '1', 'Registrasi 18 Nov, 10:42 → 19 Nov, 10:42'],
+      ['Tinggi', 'p-tag s-high', '3', '3', 'Registrasi 18 Nov, 10:42 → 21 Nov, 10:42'],
+      ['Sedang', 'p-tag s-med', '7', '7', 'Registrasi 18 Nov, 10:42 → 25 Nov, 10:42'],
+      ['Rendah', 'p-tag s-low', '14', '14', 'Registrasi 18 Nov, 10:42 → 2 Des, 10:42'],
+      ['Sangat rendah', 'p-tag s-vlow', '14', '14', 'Registrasi 18 Nov, 10:42 → 2 Des, 10:42']
+    ];
+    let hist = [ { t: 'Diisi nilai contoh: Kritis 1, Tinggi 3, Sedang 7, Rendah 14, Sangat rendah 14 hari', by: 'Sistem', at: '18 Nov 2026, 09:00 WIB' } ];
+    if (sv) hist = [ { t: 'Kritis 1 → 2 hari', by: 'Rina Hapsari, Admin SKK', at: '18 Nov 2026, 14:10 WIB' } ].concat(hist);
+    return {
+      rows: R.map(([l, tag, v, old, ex]) => ({ l, tag, v, old, ex: l === 'Kritis' && kritis === '2' ? 'Registrasi 18 Nov, 10:42 → 20 Nov, 10:42' : ex, chg: ch && v !== old })),
+      hist, dirty: ch, clean: !ch, saved: sv,
+      footCap: ch ? '1 perubahan belum disimpan' : (sv ? 'Terakhir diubah Rina Hapsari · 18 Nov 2026, 14:10 WIB' : 'Terakhir diubah Sistem · 18 Nov 2026, 09:00 WIB'),
+      reset: () => this.setState({ m: 'lihat' }), save: () => this.setState({ m: 'disimpan' })
+    };
+  }
+}
+</script>
+</body>
+</html>

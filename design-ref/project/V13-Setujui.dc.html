@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Setujui verifikasi</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app" style="min-height: 1500px; display: block; position: relative"><dc-import name="V12b-ReviewSiap" hint-size="1366px,2074px"></dc-import><div class="in-scrim"></div><div class="in-dlg" style="width: 560px" role="dialog" aria-modal="true" aria-labelledby="dlg-t"><div class="p-dialog"><div class="dh"><h3 id="dlg-t">Setujui insiden ini?</h3><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup dialog"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="db"><dl style="margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--border-subtle); min-width: 0"><dt class="p-cap" style="font-weight: 600">Klasifikasi</dt><dd style="margin: 0; font-weight: 600">Pencurian/Perampokan</dd><dd class="p-cap" style="margin: 0">Tidak ada jenis untuk kategori ini</dd></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--border-subtle); min-width: 0"><dt class="p-cap" style="font-weight: 600">Keparahan</dt><dd style="margin: 0; font-weight: 600"><span class="p-tag s-high" style="height: 20px"><span class="dot"></span>Tinggi</span></dd><dd class="p-cap" style="margin: 0">Prioritas Tinggi</dd></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--border-subtle); min-width: 0"><dt class="p-cap" style="font-weight: 600">PIC penanganan</dt><dd style="margin: 0; font-weight: 600">{{picNm}}</dd><dd class="p-cap" style="margin: 0">{{picCap}}</dd></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--border-subtle); min-width: 0; grid-column: 1 / -1"><dt class="p-cap" style="font-weight: 600">Saran langkah ke PIC</dt><dd style="margin: 0; font-weight: 600">2 langkah dikirim sebagai saran</dd><dd class="p-cap" style="margin: 0">Ganti kabel dan pastikan pengamanan panel; Lakukan patroli tambahan. Tidak wajib bagi PIC.</dd></div></dl><span class="p-cap">{{foot}}</span></div><div class="df"><a href="V12b-ReviewSiap.dc.html" class="p-btn p-btn-secondary">Periksa lagi</a><a href="V14-Terverifikasi.dc.html" class="p-btn p-btn-primary"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M20 6 9 17l-5-5"/></svg>Setujui insiden</a></div></div></div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"pic":{"editor":"enum","options":["perorangan","grup"],"default":"perorangan"},"$preview": {"width": 1366, "height": 1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const G = this.props.pic === 'grup';
+    return { picNm: G ? 'Tim Pengamanan ADR Area 2' : 'Andi Pratama', picCap: G ? '4 anggota · tenggat 31 Okt 2026' : 'Tenggat 31 Okt 2026',
+      foot: G ? 'Insiden jadi data resmi. Pelapor dan semua anggota tim diberi tahu. Anggota pertama yang mengambil alih menjadi PIC.' : 'Insiden jadi data resmi. Pelapor dan PIC diberi tahu, lalu penanganan dimulai.' };
+  }
+}
+</script>
+</body>
+</html>

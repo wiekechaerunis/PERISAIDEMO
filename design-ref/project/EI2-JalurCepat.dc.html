@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden Tinggi/Kritis baru ke SKK</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden Tinggi dilaporkan, belum terverifikasi" nama="Hendra Wijaya" konteks="PT Samudra Energi Nusantara baru saja melaporkan insiden berkeparahan Tinggi. Verifikasi KKKS masih berjalan, jadi isinya masih bisa berubah." rows="{{rows}}" tombol="Buka insiden" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Anda akan menerima kabar bila insiden ini diverifikasi, dibatalkan, digabung, atau ditutup." hint-size="600px,940px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":940}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Kategori", "v": "Pencurian/Perampokan"}, {"k": "Keparahan awal", "v": "Tinggi · Belum terverifikasi"}, {"k": "Lokasi", "v": "Sumur ADR-07, Kab. Musi Banyuasin · WK Andalas Darat"}, {"k": "Waktu kejadian", "v": "28 Okt 2026, 01:00 WIB"}, {"k": "Diajukan", "v": "28 Okt 2026, 07:00 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>

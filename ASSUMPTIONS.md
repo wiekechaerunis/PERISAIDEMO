@@ -1,0 +1,89 @@
+# Asumsi dan konflik antar-board
+
+| # | Hal | Keputusan sementara |
+|---|---|---|
+| A1 | Seed vs hitungan board `Main` (tab Insiden 6) | Seed memuat semua nomor kanonik; `hiddenFor` dan batas periode 30 hari menyelaraskan daftar Pelapor dengan board. Hitungan tab dihitung dari store. |
+| A2 | INS-0006: `Main` = Perlu perbaikan, `V11` = Review internal | Seed memakai `Main` (Perlu perbaikan). Daftar Pejabat karenanya hanya menampilkan 0007 dan 0009 menunggu verifikasi. Perlu keputusan PM. |
+| A3 | Nama KKKS | "PT Samudra Energi Nusantara" (satu-satunya yang muncul di board). |
+| A4 | Pimpinan SKK | Tidak punya board; memakai tampilan Pengawas SKK dan Analitik skk. |
+| A5 | Logo PERISAI/SKK (`/_blob/...`) | Tidak ada di artifact; diganti wordmark teks. |
+| A6 | KRW-0040 s.d. 0046 | Hanya KRW-0047 yang tertulis jelas di board; judul/lokasi lainnya dikarang, disesuaikan di fase 5. |
+| A7 | Ambang kerugian USD matriks keparahan | Nilai contoh di `seed.ts`; disamakan dengan `CFG-MatriksKeparahan` di fase 8. |
+| A8 | Kurs | Satu kurs tetap (Rp16.000/USD); board memakai kurs per tanggal kejadian. |
+| A9 | Pintasan daftar peran selain Pelapor | Disusun dari ringkasan; diperhalus terhadap V11/P11/I31 saat paritas. |
+| A10 | Versi artifact berganti saat unduhan | Berkas T*, V*, VS* berasal dari versi `1794990322-f2ae`, sisanya `1794989798-b5e6`. |
+| A11 | Nomor insiden baru | Nomor berikutnya dari store (INS-SEN-2026-0011); board memakai 0007 sebagai contoh, yang sudah ada di seed. |
+| A12 | Copilot mock | Kirim tanpa mengetik memakai cerita demo kabel ADR-07; ekstraksi hanya mengenali pola kata kunci. |
+| A13 | Detail insiden setelah Ajukan | Navigasi ke `/insiden/:no` (belum dibangun, fase 4); toast lewat `location.state.toast`. |
+| A14 | Kerawanan: sumberInformasi, hasilPengamanan | Masih state lokal halaman, belum masuk `ReportDraft`. |
+| A15 | Pintasan daftar Pejabat | Mengikuti V11 (tanpa "Menunggu verifikasi"); tugas Pejabat menghitung insiden Dieskalasi (P20) sehingga sidebar Pejabat = 3, board V11 = 4 karena INS-0006 (A2). |
+| A16 | Data riwayat insiden serupa | `seedHistory.ts` (9 insiden Ditutup karangan) agar median cocok board V12: 14 jam, Rp16,8 jt, 2,5 hari. |
+| A17 | INS-0007 di V12 | Lewat batas verifikasi 5 jam terhadap DEMO_NOW (tampil VS5), bukan "sisa 18 jam" seperti V12. |
+| A18 | Seed vs board SKK | SKK melihat 8 insiden (board 6): `seedExtra.ts` menambah INS-RMB-2026-0012, INS-PRA-2026-0031. |
+| A19 | Toast keputusan Pejabat | Hanya V14 dan Kerawanan ada di board; teks gabung/revisi/batalkan/terbatas dikarang. |
+| A20 | Layar Pejabat penanganan | Memakai `CLOSURE_NOW` (30 Okt 2026 09:40) sebagai "sekarang", bukan `DEMO_NOW`, agar tanggal board P22/P24 cocok. |
+| A21 | PIC grup | `takeOver` hanya mengisi `handling.takenBy`; daftar/tugas belum menganggap pengambil alih sebagai PIC. |
+| A22 | Persetujuan penutupan SKK (DL-74) | Tanpa status terpisah; layar P36 lewat `?persetujuan=skk`. |
+| A23 | Data mitra, penyebab, faktor penutupan | Karangan (taksonomi menunggu K-05). |
+| A24 | Insiden demo penutupan INS-SEN-2026-0012 | `seedClosure.ts`, hanya untuk tes; tidak ada di seed utama. |
+| A25 | Naikkan jadi insiden, cabang (b) kejadian baru | Membuka Laporan baru dengan lokasi terisi; insiden baru belum otomatis tertaut ke KRW (`linkNewIncident` ada, belum dipanggil dari alur lapor). |
+| A26 | Waktu layar Kerawanan | Memakai `KRW_NOW` (18 Nov 2026 10:42) agar tenggat Rendah = 2 Des 10:42 seperti KD4; berbeda dari `DEMO_NOW` dan `CLOSURE_NOW`. |
+| A27 | Wilayah kerja | Semua pengguna KKKS dianggap satu WK untuk hak Ajukan jadi insiden. |
+| A28 | Jam modul Tindak lanjut | `TL_NOW` = 5 Nov 2026 09:12 (T5/T6) dan `TL_CREATE_NOW` = 30 Okt 16:05 (T1); berbeda dari `DEMO_NOW`, `CLOSURE_NOW`, `KRW_NOW`. |
+| A29 | Verifikator TL | PIC insiden saat ini, fallback pembuat TL bila INS-0007 masih Review internal; PIC TL boleh bertindak bila namanya sama. |
+| A30 | Tugas TL | Hanya untuk peran `pic-tl` (PIC) dan peran bernama sama dengan verifikator; PIC TL lain (Budi/Dedi) tidak punya peran demo. |
+| A31 | Status `dikembalikan` | Tampil "Dikerjakan" di judul detail, "Dikembalikan" di daftar dan Tugas saya. |
+| A32 | Bukti | Tidak wajib untuk Ajukan selesai; unggah bukti adalah mock (menambah berkas contoh). |
+| A33 | TL baru | Hanya untuk insiden berjalan (Dalam penanganan, Minta ditutup, Ditutup). |
+| A34 | Arahan SKK → TL | PIC = PIC insiden, tenggat 5 hari kerja. |
+| A35 | Daftar `/tindak-lanjut` | Tidak ada board; tabel minimal dengan pola daftar insiden. |
+| A36 | Nama PIC tindak lanjut | Rudi Hartono (di ringkasan awal hanya "Rudi"). |
+| A37 | Konfigurasi | Tunggal untuk semua KKKS; versi matriks hanya dicatat di `config.history` dan berlaku langsung saat disimpan (tanggal mulai berlaku informatif). |
+| A38 | Waktu simpan konfigurasi | Tetap `CFG_NOW` (18 Nov 2026, 14:10 WIB) agar riwayat sama dengan board. |
+| A39 | Non-admin di `/konfigurasi*` | Melihat state terbatas, bukan tampilan baca-saja. |
+| A40 | Ambang kerugian seed (A7) | Sama dengan board: USD 1.000 / 10.000 / 100.000 / 1.000.000. Kurs tetap 16.000 (board contoh 16.500), jadi pratinjau Rupiah sedikit berbeda. |
+| A41 | Deteksi mobile | Lebar viewport ≤480 atau `?m=1`; halaman tanpa padanan mobile (Analitik, Tugas saya, Tindak lanjut, Konfigurasi, Kerawanan detail) tetap memakai tampilan desktop. |
+| A42 | Mobile: sheet AI layar penuh | Satu komponen berstate di dalam halaman, bukan rute baru; MS04 (draf WhatsApp) menunggu alur WhatsApp. |
+| A43 | Mobile: kemungkinan ganda (M5) | Hanya lewat `?state=ganda` saat Ajukan agar alur Ajukan biasa sama dengan desktop. |
+| A44 | Mobile: sheet tanpa board | Jadikan kerawanan, Tandai terbatas, Pilih lokasi, Wilayah kerja dibangun dari `BottomSheet` dengan teks desktop. |
+| A45 | Mobile: M3-Mitra | `MitraSheet` ada dan teruji tetapi belum dipasang (di langkah 2 board mitra hanya chip jenis; nama mitra dicatat PIC). |
+| A46 | Pengganti peran demo di mobile | Tombol kecil "Demo" di kiri bawah yang membuka panel. |
+| A47 | Email | Logo diganti wordmark "SKK Migas \| PERISAI"; IBM Plex Sans tidak ada, jatuh ke Segoe UI/Arial; isi memakai data contoh board; baris EI.8b ditambahkan sendiri (penerima/kategori tebakan). |
+| A48 | Kotak masuk WhatsApp `/insiden/wa` | Tanpa board; markup bikinan (`wa-*`); tiga pesan seed (WAM-001 sumber INS-0009, WAM-002 sitrep, WAM-003 untuk uji alur ganda). |
+| A49 | Jendela ganda WA | ±6 jam dan ≤1 km (usulan AB-24), kandidat hanya Review internal atau Dalam penanganan. |
+| A50 | Draf WA | Selalu insiden (kartu Kerawanan nonaktif); nomor berikutnya dari store (INS-0011), bukan 0009 seperti board; isian "Perlu dicek" harus dikonfirmasi sebelum Berikutnya. |
+| A51 | Menu "Lepas tautan" (I25) | Halaman sendiri `/insiden/wa/tautan/:no`; belum dipasang di Riwayat halaman Pejabat. |
+| A52 | Model Copilot `claude` | `claude-opus-5-5` dengan `effort: low` (bawaan skill Claude API; Opus 5.5 tidak bisa mematikan thinking). Belum diuji dengan API key nyata dan latensinya terhadap batas 8 detik belum diukur; bila sering timeout, ganti model di `server/copilotCore.ts`. |
+| A53 | Gagal AI | Tidak otomatis jatuh ke mock: menampilkan S19 dulu; pengguna memilih Coba lagi atau Pakai mode contoh. |
+| A54 | Refusal fallback server-side | Tidak diaktifkan; penolakan Claude diperlakukan sebagai gagal (S19). |
+| A55 | S21 suara kurang jelas | Dipicu bila pengenalan suara mengembalikan < 8 karakter; tanpa dukungan suara di browser, mikrofon menampilkan S20 (demo tidak memakai cerita contoh untuk rekaman). |
+| A56 | Wawancara Copilot (desktop) | Copilot terus bertanya sampai isian wajib terisi atau ditolak: jenis laporan, kategori (+jenis), waktu, lokasi, yang terdampak, kondisi per sumbu (operasi dan kerugian, korban, sebaran lingkungan, data), kronologi, tindakan awal. Daftar ini usulan dari permintaan produk, bukan dari board; kerugian, sebaran, dan tindakan awal tidak divalidasi form (boleh dilewati). Aturan di `copilot/interview.ts`. Mobile ikut wawancara yang sama lewat `useMobileCopilot` dan `AiSheet`. |
+| A57 | Penolakan isian | Kartu "Tidak" hanya menolak usulan; isiannya tetap ditanyakan sekali dengan chip. Chip "Lewati" menolak isian (ditandai "Dilewati" di ringkasan). |
+| A58 | Peringatan K3 dan WK | K3 hanya dipicu kategori Kecelakaan kerja tanpa kata kunci keamanan. Cocok-tidaknya blok di cerita dengan WK titik peta dinilai dari kata nama blok (mis. "rokan" tidak ada di "WK Andalas Darat"); batas WK tetap kotak contoh (A14). "Lokasi saya sekarang" memakai titik demo sumur ADR-07. |
+| A59 | Tanggal acuan Copilot | Waktu relatif ("tadi pagi", "kemarin") dihitung dari jam browser, bukan `DEMO_NOW`, sehingga skenario kabel ADR-07 kini bertanggal hari ini, bukan 28 Okt 2026. Layar lain tetap memakai `DEMO_NOW`. |
+| A60 | Kutipan "dari cerita" | Hanya ditampilkan bila potongan persis ada di cerita (tanpa membedakan huruf besar kecil); selain itu barisnya disembunyikan. Prompt adapter `claude` diminta mengutip persis. |
+| A61 | Field baru `initialAction` | Ditambah ke draf, `IncidentDetail`, ringkasan langkah 4 desktop, dan kolom "Tindakan awal" di langkah 2. Mobile: kolom di langkah 2 dan baris di ringkasan. Draf lama di `localStorage` dilengkapi lewat migrasi versi 1. |
+| A62 | Tindak lanjut di luar Insiden | Menu Tindak lanjut, baris kartu, dan tombol Buat menaut ke artifact Tindak Lanjut (`TL_MODULE_URL`, tab baru). Halaman daftar/detail/baru TL di prototipe dihapus (cadangan di scratchpad sesi); `/tindak-lanjut*` menampilkan satu halaman penunjuk. Dialog Tambah dari saran/arahan (`?tl=saran`) masih ada karena T12 tidak bisa dibuka dari sini. Status TL baru `belum-dimulai`. |
+| A63 | Isi kanonik TL INS-0007 | Tiga baris (0034 Dikembalikan 3 Nov, 0039 Dikerjakan 5 Nov, 0041 Belum dimulai 6 Nov). Insiden demo penutupan INS-0012 memakai salinan tiga baris yang sama di data lamanya, jadi nomor TL sama muncul di dua insiden. Layar TL memakai jam `TL_NOW` (5 Nov), layar lain `DEMO_NOW`. |
+| A64 | Diperiksa oleh | Komponen `ReviewerSelect`; pilihan disimpan di draf (Ringkasan) dan state lokal (penutupan, ajukan jadi insiden), belum memengaruhi siapa yang menerima tugas di data demo. Nama Pejabat: Sari Wulandari, Hendra Saputra, Dewi Anggraini (Hendra Saputra bukan Hendra Wijaya, Pengawas SKK). Tidak ada versi mobile untuk Ajukan jadi insiden karena layarnya belum ada. |
+| A65 | Analitik | Dibangun dari board Analitik.dc.html. Pemilih periode dan rentang khusus ada di baris filter (bukan di bar atas); filter KKKS/Wilayah/Kategori/Keparahan hanya tampilan, belum menyaring; tautan "Buka" dan nama baris menuju daftar Insiden. Tidak ada layar Analitik mobile di board. |
+| A66 | Copilot sesuai revisi 18 Nov | Chip "Isi sendiri di form" menggantikan "Lewati"; peringatan K3 berbunyi "…Tetap catat?" (revisi pesan awal: "…sebagai Kecelakaan kerja?"); chip WK "Pakai titik peta" / "Pilih ulang di peta". K3 juga untuk Kebakaran dan Kecelakaan lalu lintas tanpa kata kunci keamanan. |
+| A67 | Modul Tindak Lanjut di prototipe | Dibangun ulang dari artifact TLJ-01 (daftar Tabel/Papan, panel Filter, tampilan SKK, detail semua status, dialog Ubah tenggat/Ganti PIC/Batalkan, form Arahan SKK); menggantikan A62 (versi tautan keluar). Status PRD: Belum dimulai, Dikerjakan, Menunggu verifikasi, Selesai, Dibatalkan; "Dikembalikan" tetap status internal yang tampil sebagai Sedang dikerjakan dengan banner (kartu Insiden memakai label "Dikembalikan"). Seret-lepas papan belum ada (menu Pindahkan ke). Dedi Kurniawan bukan peran demo, hanya data. Jam TL memakai `TL_NOW` (5 Nov) sehingga banyak baris terlambat. |
+| A68 | HAK-02 cakupan WK | `DEMO_USERS[].scope`: Budi dan Rudi dibatasi WK Andalas Darat (ditambah insiden yang mereka laporkan atau tangani); peran lain semua WK organisasi. Bawaan daftar Insiden "Semua" kecuali Pejabat ("Perlu tindakan saya"). Board P12n-DetailBukanPIC tidak ada di artifact; detail bukan PIC memakai halaman detail yang sudah hanya-lihat, ditambah kartu Tindak lanjut dan keterangan. |
+
+## A69–A73 (penyesuaian 19 Nov 2026)
+- A69: Teks UI diganti mengikuti tabel keputusan A (Verifikasi → Pemeriksaan, Review internal → Menunggu pemeriksaan, Terverifikasi/Diverifikasi → Disetujui). Kunci internal (`review-internal`, `menunggu-verifikasi`, `saran-verifikator`, layout `verifikasi`), nama file board dan ID rute tidak diubah.
+- A70: Tenggat penanganan dihitung hari kerja WIB lewat `src/lib/workdays.ts` (`addWorkingDays`, kalender mock `WORK_CALENDAR`); satuan tidak bisa dipilih. 28 Okt 07:00 + 3 hari kerja = 2 Nov 07:00.
+- A71: Isian V13 (angka hari kerja, varian 10 hari kerja dengan alasan wajib) belum ada di dialog Setujui; dialog hanya menampilkan tenggat hasil hitung. Seksi "Pengingat pemeriksaan" memang tidak ada di halaman Tenggat prototipe ini.
+- A72: Andi Pratama = Koordinator Security. Rudi Hartono tetap berlabel di AddFollowUpDialog sesuai kode lama (tidak ada instruksi board).
+- A73: Pembuat TL yang juga PIC: Ajukan selesai langsung Selesai ("Diperiksa sendiri"), tanpa pemeriksaan kedua. Desain live tidak ditarik ulang pada putaran ini; acuannya tabel keputusan di prompt.
+- A74: Desain live ditarik ulang (19 Nov). V13 kini punya isian hari kerja (bawaan dari konfigurasi, beda wajib beralasan, tenggat disimpan 07:00 WIB). Label TL disamakan dengan board: Dikerjakan, Menunggu pemeriksaan; riwayat "Diperiksa selesai".
+- A75: Belum dibangun karena board-only: panel notifikasi dan pencarian global (Topbar/N3), email modul Tindak lanjut (E9–E20), SKK tingkat 2 (V35), pesan "kalah cepat" T26, tautan jawaban cepat "Periksa waktu kejadian" (I14), empty state K13 dengan keterangan. Dialog Tambah TL (P13) belum diselaraskan penuh (label "Dikerjakan oleh", tombol "Tugaskan").
+- A76: Konflik antar-board: P13 memakai "Bukti yang diminta", TLForm memakai "Bukti selesai"; subjudul Tugas saya K11 vs P10/V10/K12/K13; judul "Review insiden" masih dipakai board V12/MV2.
+- A77 (Papan, 19 Nov): seret-lepas HTML5 + menu "Pindahkan ke" (`boardMoves` di logic/followups.ts). Pegangan ⋮⋮ hanya di kartu yang boleh dipindah pengguna; bar Keterangan selalu tampil; kolom sah bergaris putus hijau, lainnya redup. Dialog Ajukan/Setujui/Kembalikan dibuka di detail lewat ?aksi=. Ajukan lewat papan ditolak bila belum ada bukti. Kartu Belum dimulai tidak bisa diseret langsung ke Menunggu pemeriksaan (menunggu keputusan PM, §9 #20); lewat detail tetap bisa.
+- A78: Keterlambatan TL kini hari kerja ("Terlambat n hari kerja"). Rudi Hartono berlabel Pelapor KKKS di sidebar. Label "PIC" di form/Rincian TL jadi "Dikerjakan oleh"; "Pemberi tugas" di Rincian jadi "Pemeriksa". Seed baru TL-SEN-2026-0043 (pemeriksa Andi) untuk uji jalur pemeriksa.
+- A79 (konflik untuk PM): teks Keterangan T35D (PIC "antara Belum dimulai dan Dikerjakan") diikuti PRD: tidak ada jalan kembali ke Belum dimulai. Pesan saat menyeret kartu terkunci belum ada di desain; prototipe memakai tooltip "Tidak bisa dipindah. Hanya PIC atau pemeriksa…". Belum dicek penuh: pesan kalah cepat T31, state gagal muat T29, gagal simpan.
+- A80 (tampilan Papan, 19 Nov): kartu, pegangan ⋮⋮ (SVG), ⋯ di pojok kanan atas, garis hijau 3 px kartu "Perlu Anda", tenggat terlambat berikon peringatan, bukti berikon klip, kartu terangkat (ghost miring), kolom sah/redup, Keterangan satu baris 4 butir, reduced-motion. SrcIc dipindah ke components/SrcIc.tsx. Seed tambahan: TL-0036 dan TL-0037 (Selesai) agar kolom Selesai > 3. Logika transisi tidak diubah. Tidak ada beda PRD vs desain yang ditemukan pada butir ini; teks tooltip kartu terkunci mengikuti prompt ("Hanya PIC atau pemeriksa yang bisa memindahkan kartu ini.").
+- A81 (uji e2e 19 Nov): B1 ringkasan penutupan satu sumber (`closureSummary`, `closureCompleteness`; simpan draf memakai patch, bukan salinan form lama); B2 unggah bukti tidak mengubah status; B3/B4 `handleDays` disimpan saat Setujui, caption "n hari kerja sejak registrasi"; B5 `remainingLabel` satu fungsi (hari kerja penuh, jam demo); B6 dialog Tutup memakai status asli TL; B7 jam demo `services/mock/clock.ts` (maju 3 menit per aksi `decide`; reset saat Reset data); B8 waktu kejadian tidak boleh setelah jam demo (kata pesan error dikarang, board S01 tidak memuatnya); B9 toast/banner penutupan mengikuti "Diperiksa oleh"; B10 `useDismiss` (klik luar dan Escape); B11 seed INS-0010 (tenggat 7 hari kerja, entri Disetujui, kejadian sebelum registrasi), INS-0005 (dampak Kritis), TL-0039 Menunggu pemeriksaan, TL insiden yang masih Menunggu pemeriksaan disembunyikan sampai disetujui.
+- A82 (konflik/keputusan yang tidak diambil sendiri): D1 pintasan "Ditangani saya" TETAP karena board Main/P11 memuatnya (Semua · Perlu tindakan saya · Ditangani saya · Laporan saya), berbeda dari klaim di prompt. D2: Rudi "Teknisi pengamanan", Dedi "Koordinator BUJP lapangan" (P13); T14N memakai Dedi "Staf Security". Rudi sebelumnya diminta berlabel Pelapor KKKS di sidebar; prompt terbaru (D2) menang. D6: Tindakan awal dihapus (tidak ada di I13); slot Copilot dan kartu saran ikut dihapus. Konflik desain 1–3 dari prompt (batas pemeriksaan 0007, nama KKKS, Rudi Pimpinan SKK) dibiarkan.
+- A83 (belum dikerjakan): D4 (0006 Lewat batas di Tugas saya Pejabat), D5 (entri riwayat jalur cepat), D8 (Copilot langkah 2), D9 (lampiran I13b), D10 (tombol Buat laporan mobile), toast Tugaskan dengan link Lihat dan tag Baru/Dari saran, indeks rute 60 board, screenshot Playwright, e2e Playwright (paket belum terpasang; unduhan butuh izin). Pengganti: `src/services/mock/alur-0007.test.ts` menjalankan skenario 2–7 di level state.

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden Tinggi/Kritis baru · kemungkinan sama</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden Tinggi dilaporkan, kemungkinan sama dengan laporan sebelumnya" nama="Hendra Wijaya" konteks="PT Samudra Energi Nusantara melaporkan insiden Tinggi yang mirip dengan insiden yang sudah Anda terima. Pejabat Berwenang KKKS akan memutuskan apakah keduanya kejadian yang sama." rows="{{rows}}" tombol="Buka insiden" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0009" penutup="Bila keduanya digabung, Anda menerima satu kabar &quot;Digabung ke INS-SEN-2026-0007&quot;." hint-size="600px,940px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":940}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0009\nKabel pompa ADR-07 dipotong"}, {"k": "Kemungkinan sama dengan", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Keparahan awal", "v": "Tinggi · Belum terverifikasi"}, {"k": "Sumber", "v": "WhatsApp · grup Pam ADR Area 2"}, {"k": "Diajukan", "v": "28 Okt 2026, 08:34 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+/* Layar Review/verifikasi (IncidentReviewPage). Tambahan di atas CSS board; CSS vendor tidak diubah. */
+
+/* Dialog board memakai posisi absolut di kanvas; di aplikasi nyata dipasang ke viewport. */
+.rv-modal .in-scrim{position:fixed}
+.rv-modal .in-dlg{position:fixed;top:max(48px,8vh);max-width:calc(100vw - 32px);max-height:calc(100vh - 96px);overflow:auto;border-radius:var(--radius-xl)}
+.rv-modal .in-dlg .p-dialog{max-height:none}
+
+/* Toast di pojok kanan bawah viewport */
+.rv-toastpos{position:fixed;right:24px;bottom:24px;z-index:120}
+
+/* Pemicu combobox berupa <button> */
+.rv-sel{width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;border:0}
+.rv-sel:disabled{cursor:default}
+.rv-sel .p-cap{color:var(--ink-muted)}
+textarea.p-area{width:100%;box-sizing:border-box;font:inherit;color:inherit;resize:vertical;border:0;display:block}
+.in-pop .op .lk-av{flex:none}

@@ -1,0 +1,9 @@
+/* Layar Pejabat insiden berjalan (PejabatHandlingPage). Tambahan di atas CSS board; CSS vendor tidak diubah. */
+
+/* Panel samping dan scrim board memakai posisi absolut di kanvas; di aplikasi nyata dipasang ke viewport. */
+.cl-over .lk-scrim{position:fixed;z-index:60}
+.cl-over .lk-side{position:fixed;z-index:61;max-width:100vw;overflow:auto}
+/* Pemicu combobox kontrak mitra di kartu keputusan */
+.cl-dec .rv-sel{background:var(--surface)}
+.cl-dec .in-cbx{display:block}
+.in-menu button{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border:0;background:none}

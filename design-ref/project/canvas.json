@@ -1,0 +1,2489 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Analitik.dc.html": {
+      "h": 1980,
+      "is_interactive": true,
+      "page": "banalitik",
+      "title": "Analitik insiden · prop peran skk/kkks · toggle Jumlah/Kerugian · usulan 18 Nov (angka demo)",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "Artboard-xvc7.dc.html": {
+      "h": 600,
+      "page": "b2alur",
+      "title": "Artboard 1",
+      "w": 800,
+      "x": 10302,
+      "y": 7136
+    },
+    "CFG-MatriksKeparahan.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "page": "bcfg",
+      "title": "CFG Matriks keparahan · 5 level, ambang USD + pratinjau Rp, versi — Admin SKK · usulan 18 Nov (nilai contoh, K-2)",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "Catatan.dc.html": {
+      "h": 1500,
+      "page": "b1catatan",
+      "title": "Catatan desain Batch 1 · traceability, komponen, gap",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "EI1-MenungguVerifikasi.dc.html": {
+      "h": 900,
+      "page": "bemail",
+      "title": "EI.1 insiden menunggu verifikasi — R-06 penyetuju tingkat aktif · INS-01 Ajukan · INS-02 FR-INS-20",
+      "w": 600,
+      "x": 0,
+      "y": 1400
+    },
+    "EI10-DitarikKembali.dc.html": {
+      "h": 840,
+      "page": "bemail",
+      "title": "EI.10 insiden ditarik kembali — Penerima jalur cepat · INS-01 U-1 #17 · INS-03 FR-INS-42",
+      "w": 600,
+      "x": 2720,
+      "y": 2460
+    },
+    "EI11-TenggatBesok.dc.html": {
+      "h": 820,
+      "page": "bemail",
+      "title": "EI.11 pengingat tenggat H-1 — PIC · INS-03 FR-INS-50",
+      "w": 600,
+      "x": 0,
+      "y": 3920
+    },
+    "EI12-LewatTenggat.dc.html": {
+      "h": 860,
+      "page": "bemail",
+      "title": "EI.12 lewat tenggat, eskalasi otomatis — R-06 organisasi · INS-03 FR-INS-46",
+      "w": 600,
+      "x": 680,
+      "y": 3920
+    },
+    "EI13-Dieskalasi.dc.html": {
+      "h": 880,
+      "page": "bemail",
+      "title": "EI.13 insiden dieskalasi — Tujuan eskalasi (R-06 atau Pengawas SKK) · INS-03 FR-INS-45, 59",
+      "w": 600,
+      "x": 1360,
+      "y": 3920
+    },
+    "EI14-MintaDitutup.dc.html": {
+      "h": 900,
+      "page": "bemail",
+      "title": "EI.14 permintaan penutupan — R-06 penyetuju penutupan · INS-03 FR-INS-54",
+      "w": 600,
+      "x": 2040,
+      "y": 3920
+    },
+    "EI15-PenutupanDikembalikan.dc.html": {
+      "h": 840,
+      "page": "bemail",
+      "title": "EI.15 penutupan dikembalikan — PIC · INS-03 FR-INS-55",
+      "w": 600,
+      "x": 0,
+      "y": 4980
+    },
+    "EI16-Ditutup.dc.html": {
+      "h": 900,
+      "page": "bemail",
+      "title": "EI.16 insiden ditutup — Pelapor, PIC; penerima jalur cepat bila Tinggi/Kritis · INS-03 FR-INS-55",
+      "w": 600,
+      "x": 680,
+      "y": 4980
+    },
+    "EI17-DibukaKembali.dc.html": {
+      "h": 860,
+      "page": "bemail",
+      "title": "EI.17 insiden dibuka kembali — PIC + penerima jalur cepat · INS-03 FR-INS-57",
+      "w": 600,
+      "x": 1360,
+      "y": 4980
+    },
+    "EI18-ArahanSKK.dc.html": {
+      "h": 880,
+      "page": "bemail",
+      "title": "EI.18 arahan SKK — PIC + R-06 · INS-03 FR-INS-59",
+      "w": 600,
+      "x": 2040,
+      "y": 4980
+    },
+    "EI2-JalurCepat.dc.html": {
+      "h": 940,
+      "page": "bemail",
+      "title": "EI.2 jalur cepat ke SKK — Semua Pengawas SKK & Pimpinan SKK + R-06 organisasi pelapor · INS-03 FR-INS-40, 41",
+      "w": 600,
+      "x": 680,
+      "y": 1400
+    },
+    "EI3-JalurCepatGanda.dc.html": {
+      "h": 940,
+      "page": "bemail",
+      "title": "EI.3 jalur cepat · kemungkinan sama — Penerima jalur cepat · INS-03 FR-INS-42, P-06",
+      "w": 600,
+      "x": 1360,
+      "y": 1400
+    },
+    "EI4-Terverifikasi.dc.html": {
+      "h": 900,
+      "page": "bemail",
+      "title": "EI.4 insiden terverifikasi (penerima jalur cepat) — Penerima jalur cepat · INS-03 FR-INS-42 · INS-02 FR-INS-22",
+      "w": 600,
+      "x": 2040,
+      "y": 1400
+    },
+    "EI5-Dibatalkan.dc.html": {
+      "h": 860,
+      "page": "bemail",
+      "title": "EI.5 insiden dibatalkan — Pelapor + penerima jalur cepat · INS-02 FR-INS-26a, 26b · INS-03 FR-INS-42",
+      "w": 600,
+      "x": 2720,
+      "y": 1400
+    },
+    "EI6-Digabung.dc.html": {
+      "h": 860,
+      "page": "bemail",
+      "title": "EI.6 insiden digabung — Pelapor insiden sumber + penerima jalur cepat · INS-02 FR-INS-25 · INS-03 FR-INS-42",
+      "w": 600,
+      "x": 0,
+      "y": 2460
+    },
+    "EI7-RevisiDiminta.dc.html": {
+      "h": 880,
+      "page": "bemail",
+      "title": "EI.7 revisi insiden diminta — Pelapor · INS-02 FR-INS-26",
+      "w": 600,
+      "x": 680,
+      "y": 2460
+    },
+    "EI8-PICDitunjuk.dc.html": {
+      "h": 880,
+      "page": "bemail",
+      "title": "EI.8 ditunjuk sebagai PIC insiden — PIC baru · INS-03 FR-INS-43",
+      "w": 600,
+      "x": 1360,
+      "y": 2460
+    },
+    "EI8b-GrupDitunjuk.dc.html": {
+      "h": 980,
+      "page": "bemail",
+      "title": "EI.8b grup ditunjuk sebagai PIC (Ambil alih) — semua anggota grup PIC · INS-03 FR-INS-43 [USULAN]",
+      "w": 600,
+      "x": 3400,
+      "y": 2460
+    },
+    "EK1-RingkasanKerawanan.dc.html": {
+      "h": 1480,
+      "page": "bemail",
+      "title": "EK.1 Ringkasan kerawanan harian · Pejabat Berwenang KKKS · usulan 18 Nov",
+      "w": 600,
+      "x": 2720,
+      "y": 3920
+    },
+    "Email.dc.html": {
+      "h": 820,
+      "page": "bemail",
+      "title": "Kerangka email (EmailTemplate DS v1)",
+      "w": 600,
+      "x": 1466,
+      "y": 0
+    },
+    "EmailKatalog.dc.html": {
+      "h": 1280,
+      "page": "bemail",
+      "title": "Katalog email Insiden (INS-03 Tabel N-1)",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "I12-Jenis.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.2 Form · langkah 1, pilih Insiden — Pelapor · FR-LK-25, FR-INS-01",
+      "w": 1366,
+      "x": 1446,
+      "y": 0
+    },
+    "I12e-CopilotKosong.dc.html": {
+      "h": 1259,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.2a Form · AI Copilot kosong (interaktif) — Pelapor [USULAN]",
+      "w": 1366,
+      "x": 8676,
+      "y": 0
+    },
+    "I12o-CopilotLuarCakupan.dc.html": {
+      "h": 2100,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.2d Form · AI Copilot, pertanyaan di luar cakupan (interaktif) — Pelapor [USULAN]",
+      "w": 1366,
+      "x": 13014,
+      "y": 0
+    },
+    "I12p-CopilotProses.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.2c Form · AI Copilot membaca rekaman (interaktif) — Pelapor [USULAN]",
+      "w": 1366,
+      "x": 11568,
+      "y": 0
+    },
+    "I12r-CopilotRekam.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.2b Form · AI Copilot merekam suara (interaktif) — Pelapor [USULAN]",
+      "w": 1366,
+      "x": 10122,
+      "y": 0
+    },
+    "I13-Kejadian.dc.html": {
+      "h": 2280,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.3 Form · Kejadian & dampak (interaktif) — Pelapor · FR-INS-01–06",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "I13b-Lampiran.dc.html": {
+      "h": 1240,
+      "page": "b1flow",
+      "title": "1.3b Lampiran — Pelapor · INS-01 (upload, keterangan, gagal format) · AI Copilot memeriksa file",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "I13r-CopilotRekam.dc.html": {
+      "h": 2280,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.3a Form · langkah 2, Copilot merekam suara (interaktif) — Pelapor · FR-INS-62 [USULAN]",
+      "w": 1366,
+      "x": 14460,
+      "y": 0
+    },
+    "I14-Ringkasan.dc.html": {
+      "h": 1380,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.4 Form · Ringkasan & Ajukan — Pelapor · FR-INS-09 · AI Copilot memeriksa isian",
+      "w": 1366,
+      "x": 5784,
+      "y": 0
+    },
+    "I14s-RingkasanSedang.dc.html": {
+      "h": 1380,
+      "page": "b1flow",
+      "title": "1.4s Form · Ringkasan & Ajukan, keparahan Sedang (tanpa jalur cepat) — Pelapor · FR-INS-09",
+      "w": 1366,
+      "x": 5784,
+      "y": 4080
+    },
+    "I15-Detail.dc.html": {
+      "h": 1560,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.5 Detail insiden setelah diajukan (Tinggi) — Pelapor · FR-INS-16, T-1, U-1 #16",
+      "w": 1366,
+      "x": 7230,
+      "y": 0
+    },
+    "I20-WATemuan.dc.html": {
+      "h": 1420,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.0 Form dari WhatsApp · langkah 1, saran AI — Pelapor · FR-INS-12, W-2 · AI Copilot",
+      "w": 1366,
+      "x": 0,
+      "y": 2380
+    },
+    "I21-WAKejadian.dc.html": {
+      "h": 1430,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.1 Form dari WhatsApp · langkah 2, saran AI — Pelapor · FR-INS-12, W-2 · AI Copilot",
+      "w": 1366,
+      "x": 1446,
+      "y": 2380
+    },
+    "I21b-WALampiran.dc.html": {
+      "h": 1370,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.1b Form dari WhatsApp · langkah 3, Lampiran (foto dari pesan) · AI Copilot — Pelapor · FR-INS-12, RSK-10 lampiran dari",
+      "w": 1366,
+      "x": 2892,
+      "y": 2380
+    },
+    "I22-RingkasanGanda.dc.html": {
+      "h": 1420,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.2 Ringkasan · kemungkinan laporan ganda — Pelapor · FR-INS-11, 13 · banyak insiden mirip [USULAN]",
+      "w": 1366,
+      "x": 4338,
+      "y": 2380
+    },
+    "I22b-HapusDraf.dc.html": {
+      "h": 1360,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.2b Konfirmasi Hapus draf (opsi C) — Pelapor · FR-INS-11",
+      "w": 1366,
+      "x": 7230,
+      "y": 2380
+    },
+    "I22b-RingkasanGandaTutup.dc.html": {
+      "h": 1420,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.2b Ringkasan · kemungkinan ganda, daftar disembunyikan — Pelapor · FR-INS-11, 13 [USULAN]",
+      "w": 1366,
+      "x": 8676,
+      "y": 2380
+    },
+    "I23-DetailWA.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.3 Detail insiden dari WhatsApp — Pelapor · FR-INS-12, T-1",
+      "w": 1366,
+      "x": 5784,
+      "y": 2380
+    },
+    "I24-TautkanInsiden.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.4 Detail pesan · dialog Tautkan ke insiden (interaktif) — Pelapor · FR-INS-49, 95, 96",
+      "w": 1366,
+      "x": 10122,
+      "y": 2380
+    },
+    "I25-LepasTautan.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "2.5 Detail insiden · modal konfirmasi Lepas tautan (interaktif) — Pejabat Berwenang/PIC · FR-INS-97",
+      "w": 1366,
+      "x": 11568,
+      "y": 2380
+    },
+    "I31-DaftarSKK.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "3.1 Daftar insiden — Pengawas SKK · FR-INS-15, P-04",
+      "w": 1366,
+      "x": 0,
+      "y": 4080
+    },
+    "I32-DetailSKK.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "3.2 Detail insiden jalur cepat belum terverifikasi — Pengawas SKK · FR-INS-15, 16, U-1 #20",
+      "w": 1366,
+      "x": 1446,
+      "y": 4080
+    },
+    "IF1-Lapor.dc.html": {
+      "h": 8000,
+      "page": "b1alur",
+      "title": "Flow 1 · Lapor insiden dari lapangan",
+      "w": 5200,
+      "x": 0,
+      "y": 0
+    },
+    "IF2-WhatsApp.dc.html": {
+      "h": 5427,
+      "page": "b1alur",
+      "title": "Flow 2 · Insiden dari pesan WhatsApp",
+      "w": 4100,
+      "x": 0,
+      "y": 8058
+    },
+    "IF3-SKK.dc.html": {
+      "h": 3579,
+      "page": "b1alur",
+      "title": "Flow 3 · SKK memantau insiden",
+      "w": 3400,
+      "x": 0,
+      "y": 13785
+    },
+    "InsIsi.dc.html": {
+      "h": 520,
+      "w": 760,
+      "x": 7230,
+      "y": 0
+    },
+    "KD1-DetailKerawanan.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "K.3 Detail kerawanan + Naikkan jadi insiden (interaktif) — Pejabat Berwenang · usulan",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "KD2-NaikkanPilih.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "KD2 Naikkan jadi insiden · pilih: berdampak atau kejadian baru",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "KD3-NaikkanDampak.dc.html": {
+      "h": 2040,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "KD3 Naikkan jadi insiden · dampak, keparahan, alasan",
+      "w": 1366,
+      "x": 5784,
+      "y": 0
+    },
+    "KD4-Dinaikkan.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "KD4 Kerawanan sudah dinaikkan · tertaut INS-SEN-2026-0010",
+      "w": 1366,
+      "x": 7230,
+      "y": 0
+    },
+    "KD5-AjukanInsiden.dc.html": {
+      "x": 8676,
+      "y": 0,
+      "w": 1366,
+      "h": 2040,
+      "page": "bkrw",
+      "is_interactive": true,
+      "title": "KD5 Ajukan jadi insiden · Pelapor (lewat verifikasi Pejabat)"
+    },
+    "KD6-TambahPerkembangan.dc.html": {
+      "x": 10122,
+      "y": 0,
+      "w": 1366,
+      "h": 1000,
+      "page": "bkrw",
+      "is_interactive": true,
+      "title": "KD6 Tambah perkembangan · Makin rawan"
+    },
+    "KF1-NaikkanAlur.dc.html": {
+      "h": 4700,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "KF1 Alur Naikkan jadi insiden (a) berdampak (b) kejadian baru",
+      "w": 4000,
+      "x": 0,
+      "y": 2100
+    },
+    "Kerawanan.dc.html": {
+      "h": 1060,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "K.1 Daftar kerawanan — Pejabat Berwenang · usulan K-1 opsi A",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "M1-Daftar.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M1 Daftar insiden · FAB Buat laporan — Pelapor · FR-INS-14, RS-1",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "M10-WAKejadian.dc.html": {
+      "h": 1780,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M10 Draf dari WhatsApp · langkah 2, saran AI — Pelapor · FR-INS-12, W-2",
+      "w": 390,
+      "x": 470,
+      "y": 2100
+    },
+    "M11-DetailWA.dc.html": {
+      "h": 1420,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M11 Detail insiden dari WhatsApp — Pelapor · FR-INS-12, T-1",
+      "w": 390,
+      "x": 1410,
+      "y": 2100
+    },
+    "M12-DaftarSKK.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M12 Daftar insiden (tanpa FAB) — Pengawas SKK · FR-INS-15, P-04",
+      "w": 390,
+      "x": 0,
+      "y": 4200
+    },
+    "M2-Kejadian.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M2 Form langkah 2 · Kejadian & dampak (interaktif) — Pelapor · FR-INS-01–06",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "M2a-Temuan.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M2a Form langkah 1 · pilih jenis (interaktif) — Pelapor · FR-LK-25, FR-INS-01",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "M3-Mitra.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Mobile · PIC pilih Tim terlibat (bottom sheet) — PIC · keputusan 18 Nov",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "M4-Lampiran.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "M4 Form langkah 3 · Lampiran (unggah, gagal) — Pelapor · FR-INS-18",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "M5-Ganda.dc.html": {
+      "h": 1000,
+      "page": "b1mobile",
+      "title": "M5 Kemungkinan ganda (bottom sheet) — Pelapor · FR-INS-11 · banyak insiden mirip [USULAN]",
+      "w": 390,
+      "x": 940,
+      "y": 2100
+    },
+    "M5b-HapusDraf.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "M5b Konfirmasi hapus draf (bottom sheet) — Pelapor · FR-INS-11",
+      "w": 390,
+      "x": 1880,
+      "y": 2100
+    },
+    "M6-DetailSKK.dc.html": {
+      "h": 1560,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M6 Detail belum terverifikasi · ikon info waktu — Pengawas SKK · FR-INS-16, T-1",
+      "w": 390,
+      "x": 470,
+      "y": 4200
+    },
+    "M7-Ringkasan.dc.html": {
+      "h": 1600,
+      "page": "b1mobile",
+      "title": "M7 Form langkah 4 · Ringkasan & Ajukan — Pelapor · FR-INS-09",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "M7s-RingkasanSedang.dc.html": {
+      "h": 1600,
+      "page": "b1mobile",
+      "title": "M7s Ringkasan & Ajukan, keparahan Sedang (tanpa jalur cepat) — Pelapor · FR-INS-09",
+      "w": 390,
+      "x": 2350,
+      "y": 2100
+    },
+    "M8-Detail.dc.html": {
+      "h": 1640,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M8 Detail setelah diajukan + toast — Pelapor · FR-INS-16, T-1",
+      "w": 390,
+      "x": 2820,
+      "y": 0
+    },
+    "M9-WATemuan.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "M9 Draf dari WhatsApp · langkah 1, saran AI — Pelapor · FR-INS-12, W-2",
+      "w": 390,
+      "x": 0,
+      "y": 2100
+    },
+    "MA1-AIKartu.dc.html": {
+      "h": 1320,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA1 Form langkah 1 · kartu AI Copilot — Pelapor · FR-INS-60, 61 [USULAN]",
+      "w": 390,
+      "x": 0,
+      "y": 10100
+    },
+    "MA1b-AIKetik.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA1b AI Copilot layar penuh · mulai mengetik cerita — Pelapor · FR-INS-61 [USULAN]",
+      "w": 390,
+      "x": 470,
+      "y": 10100
+    },
+    "MA2-AISheet.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA2 AI Copilot layar penuh · saran isian — Pelapor · FR-INS-63, 64 [USULAN]",
+      "w": 390,
+      "x": 1410,
+      "y": 10100
+    },
+    "MA3-AIRekam.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA3 AI Copilot layar penuh · merekam suara — Pelapor · FR-INS-62 [USULAN]",
+      "w": 390,
+      "x": 940,
+      "y": 10100
+    },
+    "MA4-AIFormTerisi.dc.html": {
+      "h": 1320,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA4 Form langkah 1 · setelah AI mengisi — Pelapor · FR-INS-65 [USULAN]",
+      "w": 390,
+      "x": 1880,
+      "y": 10100
+    },
+    "MA5-AILangkah2.dc.html": {
+      "h": 1860,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA5 Form langkah 2 · tombol AI di bar bawah, saran mitra — Pelapor · FR-INS-60, 66 [USULAN]",
+      "w": 390,
+      "x": 2350,
+      "y": 10100
+    },
+    "MA6-AILampiran.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA6 Form langkah 3 · Lampiran dengan AI Copilot — Pelapor · FR-INS-85 [USULAN]",
+      "w": 390,
+      "x": 2820,
+      "y": 10100
+    },
+    "MA7-AIRingkasan.dc.html": {
+      "h": 1600,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "MA7 Form langkah 4 · Ringkasan dengan AI Copilot — Pelapor · FR-INS-86 [USULAN]",
+      "w": 390,
+      "x": 3290,
+      "y": 10100
+    },
+    "MK1-DaftarKerawanan.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "b2mobile",
+      "title": "MK1 Daftar · tab Kerawanan (mobile) · usulan 18 Nov",
+      "w": 390,
+      "x": 3290,
+      "y": 0
+    },
+    "MP1-DaftarPIC.dc.html": {
+      "h": 844,
+      "page": "b3mobile",
+      "title": "MP1 Daftar PIC — 4.8 Responsif",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "MP2-Penanganan.dc.html": {
+      "h": 2420,
+      "is_interactive": true,
+      "page": "b3mobile",
+      "title": "MP2 Detail Penanganan (menu ⋯ interaktif) — PIC · 4.8",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "MP3-DataPenutupan.dc.html": {
+      "h": 1280,
+      "page": "b3mobile",
+      "title": "MP3 Data penutupan layar penuh — PIC · 4.8",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "MP4-Eskalasi.dc.html": {
+      "h": 844,
+      "page": "b3mobile",
+      "title": "MP4 Eskalasi bottom sheet — PIC",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "MP5-Tutup.dc.html": {
+      "h": 844,
+      "page": "b3mobile",
+      "title": "MP5 Tutup bottom sheet — R-06",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "MP6-UbahTenggat.dc.html": {
+      "h": 844,
+      "page": "b3mobile",
+      "title": "MP6 Ubah tenggat + pemilih tanggal — R-06",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "MS01-Validasi.dc.html": {
+      "h": 1240,
+      "page": "b1mobile",
+      "title": "Negative · Ajukan ditolak validasi — Pelapor · V-1, U-1 #13",
+      "w": 390,
+      "x": 0,
+      "y": 6100
+    },
+    "MS02-TanpaKontrak.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Edge · Tim terlibat, WK tanpa kontrak Aktif — PIC · keputusan 18 Nov (mitra pindah ke penanganan)",
+      "w": 390,
+      "x": 470,
+      "y": 6100
+    },
+    "MS03-GantiJenis.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Edge · Ganti jenis (bottom sheet) — Pelapor · FR-LK-25",
+      "w": 390,
+      "x": 940,
+      "y": 6100
+    },
+    "MS04-AIGagal.dc.html": {
+      "h": 1300,
+      "page": "b1mobile",
+      "title": "Negative · Saran AI gagal / memuat — Pelapor · U-1 #6",
+      "w": 390,
+      "x": 1410,
+      "y": 6100
+    },
+    "MS05-GagalKirim.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Negative · Ajukan gagal (jaringan) — Pelapor · U-1 #11",
+      "w": 390,
+      "x": 1880,
+      "y": 6100
+    },
+    "MS06-DrafBentrok.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Edge · Draf diubah rekan — Pelapor · FR-INS-08, U-1 #12",
+      "w": 390,
+      "x": 2350,
+      "y": 6100
+    },
+    "MS07-TarikKembali.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Edge · Tarik kembali (bottom sheet) — Pelapor · FR-INS-10, U-1 #17",
+      "w": 390,
+      "x": 2820,
+      "y": 6100
+    },
+    "MS08-Memuat.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "State · Daftar memuat — semua role · U-1 #1",
+      "w": 390,
+      "x": 0,
+      "y": 7800
+    },
+    "MS09-Kosong.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "State · Belum ada insiden — Pelapor · U-1 #3",
+      "w": 390,
+      "x": 470,
+      "y": 7800
+    },
+    "MS10-FilterKosong.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "State · Filter kosong — Pelapor · U-1 #4",
+      "w": 390,
+      "x": 940,
+      "y": 7800
+    },
+    "MS11-GagalMuat.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Negative · Daftar gagal dimuat — semua role · U-1 #2",
+      "w": 390,
+      "x": 1410,
+      "y": 7800
+    },
+    "MS12-Terbatas.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Negative · Insiden terbatas — semua role · FR-INS-17, U-1 #19",
+      "w": 390,
+      "x": 1880,
+      "y": 7800
+    },
+    "MS13-LuarWK.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Edge · Lokasi di luar cakupan WK — Pelapor · FR-INS-06",
+      "w": 390,
+      "x": 2350,
+      "y": 7800
+    },
+    "MS14-Kategori.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Mobile · kategori (bottom sheet) — Pelapor · INS-01 RS-1",
+      "w": 390,
+      "x": 0,
+      "y": 9044
+    },
+    "MS15-Jenis.dc.html": {
+      "h": 844,
+      "page": "b1mobile",
+      "title": "Mobile · jenis (bottom sheet) — Pelapor · INS-01 RS-1",
+      "w": 390,
+      "x": 470,
+      "y": 9044
+    },
+    "MS16-AIGagal.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "Negative · AI Copilot tidak tersedia (mobile) — Pelapor · FR-INS-75 [USULAN]",
+      "w": 390,
+      "x": 940,
+      "y": 9044
+    },
+    "MS17-MikDitolak.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "page": "b1mobile",
+      "title": "Negative · izin mikrofon ditolak (mobile) — Pelapor · FR-INS-62 [USULAN]",
+      "w": 390,
+      "x": 1410,
+      "y": 9044
+    },
+    "MV1-Daftar.dc.html": {
+      "h": 844,
+      "page": "b2mobile",
+      "title": "MV1 Daftar penyetuju (Filter · 1) — R-06 · 4.9",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "MV2-Review.dc.html": {
+      "h": 2560,
+      "page": "b2mobile",
+      "title": "MV2 Review + Keputusan, Setujui menempel — R-06 · 4.9",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "MV2m-PetaSerupa.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "b2mobile",
+      "title": "MV2m Peta insiden serupa layar penuh · sorot pola · dari peta mini MV2",
+      "w": 390,
+      "x": 470,
+      "y": 2640
+    },
+    "MV3-Setujui.dc.html": {
+      "h": 844,
+      "page": "b2mobile",
+      "title": "MV3 Sheet Setujui — R-06 · U-1 #6",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "MV4-AksiLain.dc.html": {
+      "h": 844,
+      "page": "b2mobile",
+      "title": "MV4 Sheet aksi lain (⋯) — R-06 · FR-INS-21",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "MV4b-MintaRevisi.dc.html": {
+      "h": 844,
+      "page": "b2mobile",
+      "title": "MV4b Sheet Minta revisi — R-06 · FR-INS-26",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "MV5-Gabung.dc.html": {
+      "h": 1000,
+      "page": "b2mobile",
+      "title": "MV5 Sheet Gabung — R-06 · FR-INS-25",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "MV6-Batalkan.dc.html": {
+      "h": 844,
+      "page": "b2mobile",
+      "title": "MV6 Sheet Batalkan — R-06 · FR-INS-26a",
+      "w": 390,
+      "x": 2820,
+      "y": 0
+    },
+    "Main-Filter.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Daftar insiden · filter terbuka (PIC, status, keparahan, kategori, WK, periode, lainnya) + pintasan Perlu tindakan saya",
+      "w": 1366,
+      "x": 0,
+      "y": 7720
+    },
+    "Main.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "page": "b1flow",
+      "title": "1.1 Daftar insiden — Pelapor · FR-INS-14, 15",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "P10-TugasSayaPIC.dc.html": {
+      "h": 760,
+      "page": "b3flow",
+      "title": "6.0 Tugas saya · PIC — PIC · RKJ-03, FR-INS-43",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "P11-DaftarPIC.dc.html": {
+      "h": 760,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.1 Daftar · pintasan PIC (interaktif) — PIC · FR-INS-53",
+      "w": 1366,
+      "x": 1446,
+      "y": 0
+    },
+    "P12-Penanganan.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.2 Detail insiden · PIC + banner Langkah berikutnya (interaktif: Riwayat, Jejak audit) — PIC · FR-INS-47, 58",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "P12g-DetailPICGrup.dc.html": {
+      "h": 1820,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.2g Detail insiden · PIC grup, belum diambil alih (interaktif: Ambil alih) — anggota grup PIC · FR-INS-43 [USULAN]",
+      "w": 1366,
+      "x": 11568,
+      "y": 0
+    },
+    "P12h-GrupSudahDiambil.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.2h Detail insiden · anggota grup lain setelah diambil alih (hanya lihat) — anggota grup PIC · FR-INS-43 [USULAN]",
+      "w": 1366,
+      "x": 13014,
+      "y": 0
+    },
+    "P14-Tangani.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.3 Tangani insiden · halaman kerja (interaktif: Simpan catatan, Lihat detail lengkap) — PIC · FR-INS-47, 48, 54",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "P15-Eskalasi.dc.html": {
+      "h": 1700,
+      "page": "b3flow",
+      "title": "6.2c Dialog Eskalasi (dari Detail) — PIC · FR-INS-45, U-1 #7",
+      "w": 1366,
+      "x": 5784,
+      "y": 0
+    },
+    "P16-DataPenutupan.dc.html": {
+      "h": 1880,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.4 Tangani insiden · data penutupan lengkap → Minta ditutup aktif — PIC · FR-INS-54, Tabel F-2",
+      "w": 1366,
+      "x": 7230,
+      "y": 0
+    },
+    "P17-MenungguPenutupan.dc.html": {
+      "h": 2020,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "6.5 Menunggu penutupan + toast — PIC · U-1 #11",
+      "w": 1366,
+      "x": 8676,
+      "y": 0
+    },
+    "P20-TugasSaya.dc.html": {
+      "h": 760,
+      "page": "b3flow",
+      "title": "7.0 Tugas saya · R-06 — R-06 · RKJ-03, FR-INS-44, 46, 54",
+      "w": 1366,
+      "x": 0,
+      "y": 3380
+    },
+    "P21-DaftarR06.dc.html": {
+      "h": 760,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "7.1 Daftar · pintasan R-06 (interaktif) — R-06 · FR-INS-53",
+      "w": 1366,
+      "x": 1446,
+      "y": 3380
+    },
+    "P22-ReviewTutup.dc.html": {
+      "h": 1800,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "7.2 Detail · permintaan penutupan (menu interaktif) — R-06 · FR-INS-55",
+      "w": 1366,
+      "x": 2892,
+      "y": 3380
+    },
+    "P22c-ReviewTutupCocok.dc.html": {
+      "h": 1800,
+      "page": "b3flow",
+      "title": "7.2c Permintaan penutupan, semua klaim cocok (kotak Belum cocok tidak tampil) — R-06 · INS-04 FR-INS-94",
+      "w": 1366,
+      "x": 10122,
+      "y": 3380
+    },
+    "P22g-ReviewTutupGrup.dc.html": {
+      "h": 1800,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "7.2g Permintaan penutupan dari PIC grup — R-06 · FR-INS-43, 55 [USULAN]",
+      "w": 1366,
+      "x": 8676,
+      "y": 3380
+    },
+    "P22k-ReviewTutupDataMinim.dc.html": {
+      "h": 1800,
+      "page": "b3flow",
+      "title": "7.2k Permintaan penutupan, data sekitar belum cukup (perkiraan kosong, tanpa kabar OSINT) — R-06 · FR-INS-55b [USULAN]",
+      "w": 1366,
+      "x": 11568,
+      "y": 3380
+    },
+    "P23-Tutup.dc.html": {
+      "h": 1300,
+      "page": "b3flow",
+      "title": "7.3 Dialog Tutup + tindak lanjut berjalan — R-06 · FR-INS-55, 56, U-1 #12",
+      "w": 1366,
+      "x": 4338,
+      "y": 3380
+    },
+    "P24-Ditutup.dc.html": {
+      "h": 1340,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "7.4 Detail ditutup + toast — R-06 · FR-INS-55, T-1",
+      "w": 1366,
+      "x": 5784,
+      "y": 3380
+    },
+    "P25-KembalikanPIC.dc.html": {
+      "h": 1300,
+      "page": "b3flow",
+      "title": "7.5 Kembalikan ke PIC — R-06 · FR-INS-55, U-1 #13",
+      "w": 1366,
+      "x": 0,
+      "y": 6500
+    },
+    "P26-GantiPIC.dc.html": {
+      "h": 1300,
+      "page": "b3flow",
+      "title": "7.6 Ganti PIC — R-06 · FR-INS-44, U-1 #8",
+      "w": 1366,
+      "x": 1446,
+      "y": 6500
+    },
+    "P27-UbahTenggat.dc.html": {
+      "h": 1300,
+      "page": "b3flow",
+      "title": "7.7 Ubah tenggat — R-06 · FR-INS-51, U-1 #9",
+      "w": 1366,
+      "x": 2892,
+      "y": 6500
+    },
+    "P28-BukaKembali.dc.html": {
+      "h": 2220,
+      "page": "b3flow",
+      "title": "7.8 Buka kembali — R-06 · FR-INS-57",
+      "w": 1366,
+      "x": 4338,
+      "y": 6500
+    },
+    "P29-AksiLainR06.dc.html": {
+      "h": 1800,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "7.2b Menu Aksi lain terbuka (R-06) — Kembalikan, Ganti PIC, Ubah tenggat, Eskalasi, Tandai terbatas · FR-INS-44, 45, 51,",
+      "w": 1366,
+      "x": 7230,
+      "y": 3380
+    },
+    "P31-DetailSKK.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "8.1 Detail SKK · dieskalasi (interaktif: Beri arahan) — Pengawas SKK · FR-INS-45, 59",
+      "w": 1366,
+      "x": 0,
+      "y": 9620
+    },
+    "P32-BeriArahan.dc.html": {
+      "h": 1700,
+      "page": "b3flow",
+      "title": "8.2 Dialog Beri arahan — Pengawas SKK · FR-INS-59",
+      "w": 1366,
+      "x": 1446,
+      "y": 9620
+    },
+    "P33-ArahanMasuk.dc.html": {
+      "h": 1660,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "8.3 Arahan di kronologi + Jadikan tindak lanjut — R-06 · FR-INS-59, TLJ-01 FR-TL-03b",
+      "w": 1366,
+      "x": 2892,
+      "y": 9620
+    },
+    "P34-Riwayat.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "b3flow",
+      "title": "7.9 Jejak audit · panel samping (dari Kronologi › Jejak audit lengkap) — semua · FR-INS-58",
+      "w": 1366,
+      "x": 5784,
+      "y": 6500
+    },
+    "P35-DitutupSKK.dc.html": {
+      "h": 1340,
+      "page": "b3flow",
+      "title": "8.4 Detail insiden ditutup · SKK (hanya baca) — Pengawas SKK · FR-INS-55",
+      "w": 1366,
+      "x": 4338,
+      "y": 9620
+    },
+    "P36-ReviewTutupSKK.dc.html": {
+      "h": 1800,
+      "page": "b3flow",
+      "title": "8.5 Persetujuan penutupan · SKK, bila dikonfigurasi (DL-74): Kesiapan + Kondisi sekitar, tanpa panel AI, hanya Setujui/K",
+      "w": 1366,
+      "x": 5784,
+      "y": 9620
+    },
+    "PF6-PIC.dc.html": {
+      "h": 8000,
+      "page": "b3alur",
+      "title": "Flow 6 · PIC menangani insiden",
+      "w": 5000,
+      "x": 0,
+      "y": 0
+    },
+    "PF7-Penutupan.dc.html": {
+      "h": 7755,
+      "page": "b3alur",
+      "title": "Flow 7 · Pejabat Berwenang menutup insiden",
+      "w": 5000,
+      "x": 0,
+      "y": 8500
+    },
+    "PF8-SKK.dc.html": {
+      "h": 3999,
+      "page": "b3alur",
+      "title": "Flow 8 · SKK menerima eskalasi",
+      "w": 4200,
+      "x": 0,
+      "y": 16480
+    },
+    "PS1-LewatTenggat.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Lewat tenggat + eskalasi otomatis — PIC · FR-INS-46, U-1 #6",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "PS10-TenggatError.dc.html": {
+      "h": 1300,
+      "page": "b3state",
+      "title": "Ubah tenggat ditolak — R-06 · V-1",
+      "w": 1366,
+      "x": 1446,
+      "y": 5820
+    },
+    "PS11-Dikembalikan.dc.html": {
+      "h": 2060,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Penutupan dikembalikan, PIC melihat alasan — PIC · U-1 #13",
+      "w": 1366,
+      "x": 2892,
+      "y": 5820
+    },
+    "PS2-KronologiKosong.dc.html": {
+      "h": 1560,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Kronologi kosong — PIC · U-1 #2",
+      "w": 1366,
+      "x": 1446,
+      "y": 0
+    },
+    "PS3-KronologiGagal.dc.html": {
+      "h": 1460,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Kronologi gagal dimuat — PIC · U-1 #3",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "PS4-CatatanGagal.dc.html": {
+      "h": 1920,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Catatan gagal tersimpan (halaman kerja) — PIC · U-1 #5",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "PS5-TanpaPIC.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Insiden tanpa PIC — R-06 · FR-INS-44, U-1 #14",
+      "w": 1366,
+      "x": 0,
+      "y": 2700
+    },
+    "PS6-DataBelumLengkap.dc.html": {
+      "h": 1760,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Data penutupan belum lengkap (halaman kerja) — PIC · V-1, U-1 #10",
+      "w": 1366,
+      "x": 1446,
+      "y": 2700
+    },
+    "PS7-BukaLewat30.dc.html": {
+      "h": 2220,
+      "page": "b3state",
+      "title": "Buka kembali lewat 30 hari — R-06 · V-1",
+      "w": 1366,
+      "x": 2892,
+      "y": 2700
+    },
+    "PS8-RiwayatKosong.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "b3state",
+      "title": "Jejak audit · filter tanpa hasil — U-1 #16",
+      "w": 1366,
+      "x": 4338,
+      "y": 2700
+    },
+    "PS9-Memuat.dc.html": {
+      "h": 760,
+      "page": "b3state",
+      "title": "Tab Penanganan memuat — U-1 #1",
+      "w": 1366,
+      "x": 0,
+      "y": 5820
+    },
+    "Piece-e4pz.dc.html": {
+      "frameless": true,
+      "h": 552,
+      "page": "b3alur",
+      "title": "Image",
+      "w": 482,
+      "x": 5263,
+      "y": 3539
+    },
+    "S01-Validasi.dc.html": {
+      "h": 1380,
+      "page": "b1state",
+      "title": "Negative · Ajukan ditolak validasi — Pelapor · FR-INS-09, V-1, U-1 #13",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "S03-GantiJenis.dc.html": {
+      "h": 1020,
+      "page": "b1state",
+      "title": "Edge · Ganti jenis Insiden → Kerawanan selama Draf — Pelapor · FR-LK-25 [usulan]",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "S04-AIGagal.dc.html": {
+      "h": 1200,
+      "page": "b1state",
+      "title": "Negative · Saran AI gagal — Pelapor · U-1 #6",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "S05-GagalKirim.dc.html": {
+      "h": 1120,
+      "page": "b1state",
+      "title": "Negative · Ajukan gagal (jaringan) — Pelapor · U-1 #11",
+      "w": 1366,
+      "x": 0,
+      "y": 1600
+    },
+    "S06-DrafBentrok.dc.html": {
+      "h": 1020,
+      "page": "b1state",
+      "title": "Edge · Draf sudah diubah rekan — Pelapor · FR-INS-08, U-1 #12",
+      "w": 1366,
+      "x": 1446,
+      "y": 1600
+    },
+    "S07-TarikKembali.dc.html": {
+      "h": 1000,
+      "page": "b1state",
+      "title": "Edge · Tarik kembali setelah jalur cepat terkirim — Pelapor · FR-INS-10, U-1 #17",
+      "w": 1366,
+      "x": 2892,
+      "y": 1600
+    },
+    "S08-Memuat.dc.html": {
+      "h": 860,
+      "page": "b1state",
+      "title": "State · Daftar memuat — semua role · U-1 #1",
+      "w": 1366,
+      "x": 4338,
+      "y": 1600
+    },
+    "S09-Kosong.dc.html": {
+      "h": 860,
+      "page": "b1state",
+      "title": "State · Belum ada insiden — Pelapor · U-1 #3",
+      "w": 1366,
+      "x": 0,
+      "y": 3040
+    },
+    "S10-FilterKosong.dc.html": {
+      "h": 860,
+      "page": "b1state",
+      "title": "State · Hasil filter kosong — Pelapor · U-1 #4",
+      "w": 1366,
+      "x": 1446,
+      "y": 3040
+    },
+    "S11-GagalMuat.dc.html": {
+      "h": 860,
+      "page": "b1state",
+      "title": "Negative · Daftar gagal dimuat — semua role · U-1 #2",
+      "w": 1366,
+      "x": 2892,
+      "y": 3040
+    },
+    "S12-Terbatas.dc.html": {
+      "h": 860,
+      "page": "b1state",
+      "title": "Negative · Insiden terbatas / di luar cakupan — semua role · FR-INS-17, U-1 #19",
+      "w": 1366,
+      "x": 4338,
+      "y": 3040
+    },
+    "S13-LuarWK.dc.html": {
+      "h": 1120,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Edge · Lokasi di luar cakupan WK — Pelapor · FR-INS-06, RSK-01 F-1",
+      "w": 1366,
+      "x": 0,
+      "y": 4300
+    },
+    "S14-Kategori.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Kategori · daftar pilihan (interaktif) — Pelapor · INS-01 F-1, 4.7 · contoh [ASUMSI] K-05",
+      "w": 1366,
+      "x": 0,
+      "y": 5820
+    },
+    "S15-Jenis.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Jenis · turunan kategori (interaktif) — Pelapor · INS-01 F-1",
+      "w": 1366,
+      "x": 1446,
+      "y": 5820
+    },
+    "S16-FormObservasi.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "1.2k Form · langkah 1, pilih Kerawanan (interaktif) — Pelapor · usulan K-1 opsi A",
+      "w": 1366,
+      "x": 2892,
+      "y": 5820
+    },
+    "S16b-DetailKerawanan.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "bkrw",
+      "title": "K.2 Form kerawanan · langkah 2, Detail & lampiran (interaktif) — Pelapor · usulan",
+      "w": 1366,
+      "x": 1446,
+      "y": 0
+    },
+    "S17-JenisLainnya.dc.html": {
+      "h": 1620,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Jenis Lainnya · ketik manual — Pelapor · INS-01",
+      "w": 1366,
+      "x": 4338,
+      "y": 5820
+    },
+    "S18-KategoriLainnya.dc.html": {
+      "h": 1620,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Kategori Lainnya · ketik manual — Pelapor · INS-01",
+      "w": 1366,
+      "x": 5784,
+      "y": 5820
+    },
+    "S19-CopilotGagal.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Negative · AI Copilot tidak tersedia (gagal / kuota habis) — Pelapor · FR-INS-75 [USULAN]",
+      "w": 1366,
+      "x": 0,
+      "y": 8900
+    },
+    "S20-MikDitolak.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Negative · izin mikrofon ditolak — Pelapor · FR-INS-62, V-INS-AI [USULAN]",
+      "w": 1366,
+      "x": 1446,
+      "y": 8900
+    },
+    "S21-SuaraTakJelas.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Negative · suara kurang jelas — Pelapor · FR-INS-63, V-INS-AI [USULAN]",
+      "w": 1366,
+      "x": 2892,
+      "y": 8900
+    },
+    "S22-Rekam3Menit.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Edge · rekaman mencapai 3 menit — Pelapor · FR-INS-62 [USULAN]",
+      "w": 1366,
+      "x": 4338,
+      "y": 8900
+    },
+    "S23-TanpaSaran.dc.html": {
+      "h": 1840,
+      "is_interactive": true,
+      "page": "b1state",
+      "title": "Edge · cerita belum cukup, tidak ada saran — Pelapor · FR-INS-71 [USULAN]",
+      "w": 1366,
+      "x": 5784,
+      "y": 8900
+    },
+    "Sidebar.dc.html": {
+      "h": 980,
+      "page": "b1catatan",
+      "title": "Komponen · Sidebar dengan menu Insiden",
+      "w": 240,
+      "x": 0,
+      "y": 1700
+    },
+    "T1-TambahTL.dc.html": {
+      "h": 1260,
+      "page": "b3flow",
+      "title": "9.1 Tambah tindak lanjut dari insiden (interaktif: isi Tindakan, pilih PIC, Simpan) — PIC insiden · INS-06 FR-INS-48, 11",
+      "w": 1366,
+      "x": 0,
+      "y": 12960
+    },
+    "T1b-JadikanTLSaran.dc.html": {
+      "h": 1260,
+      "page": "b3flow",
+      "title": "9.1b Jadikan tindak lanjut dari saran verifikator (interaktif) — PIC insiden · INS-06 FR-INS-112, U-1 #3",
+      "w": 1366,
+      "x": 1446,
+      "y": 12960
+    },
+    "T3-DetailTL.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.2 Detail tindak lanjut · kartu Sumber Insiden — PIC tindak lanjut · INS-06 FR-INS-110, 113 (pengerjaan mengikuti TLJ-0",
+      "w": 1366,
+      "x": 2892,
+      "y": 12960
+    },
+    "T3b-DetailTLInsidenDitutup.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.2b Detail tindak lanjut · insiden sumber sudah ditutup — PIC tindak lanjut · INS-06 FR-INS-56, U-1 #6",
+      "w": 1366,
+      "x": 4338,
+      "y": 12960
+    },
+    "T4-TugasSayaTL.dc.html": {
+      "h": 760,
+      "page": "b3flow",
+      "title": "9.3 Tugas saya · PIC insiden memverifikasi tindak lanjut — PIC insiden · INS-06 FR-INS-117, Tabel J-INS",
+      "w": 1366,
+      "x": 5784,
+      "y": 12960
+    },
+    "T4b-TugasSayaPICTL.dc.html": {
+      "h": 760,
+      "page": "b3flow",
+      "title": "9.3b Tugas saya · PIC tindak lanjut, termasuk dikembalikan — PIC tindak lanjut · INS-06 FR-INS-117, Tabel J-INS",
+      "w": 1366,
+      "x": 7230,
+      "y": 12960
+    },
+    "T5-AjukanSelesai.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.4 Ajukan selesai → Menunggu verifikasi (interaktif: Ajukan, Tarik pengajuan) — PIC tindak lanjut · INS-06 FR-INS-122,",
+      "w": 1366,
+      "x": 0,
+      "y": 14460
+    },
+    "T6-VerifikasiTL.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.5 Verifikasi tindak lanjut (interaktif: Setujui selesai, Kembalikan) — PIC insiden · INS-06 FR-INS-124, 125, U-2 #6, #",
+      "w": 1366,
+      "x": 1446,
+      "y": 14460
+    },
+    "T7-DikembalikanTL.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.6 Dikembalikan ke PIC · banner alasan, bukti bisa diganti — PIC tindak lanjut · INS-06 FR-INS-124, 128",
+      "w": 1366,
+      "x": 2892,
+      "y": 14460
+    },
+    "T8-SelesaiTL.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.7 Selesai · final, bukti resmi, tanpa aksi — PIC insiden · INS-06 FR-INS-124, 125, U-2 #9",
+      "w": 1366,
+      "x": 4338,
+      "y": 14460
+    },
+    "T9-DibatalkanTL.dc.html": {
+      "h": 1100,
+      "page": "b3flow",
+      "title": "9.8 Dibatalkan otomatis karena insiden digabung — PIC tindak lanjut · INS-06 FR-INS-56, 129, U-2 #10",
+      "w": 1366,
+      "x": 5784,
+      "y": 14460
+    },
+    "V10-TugasSaya.dc.html": {
+      "h": 840,
+      "page": "b2flow",
+      "title": "4.0 Tugas saya · verifikasi insiden — R-06 · FR-INS-20, RKJ-03",
+      "w": 1366,
+      "x": 0,
+      "y": 6520
+    },
+    "V11-Daftar.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.1 Daftar · pintasan Menunggu verifikasi (interaktif) — R-06 · FR-INS-20, U-1 #11",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "V12-Review.dc.html": {
+      "h": 2074,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.2 Review + Keputusan verifikasi (interaktif) — R-06 · FR-INS-21, 23, 24, 27, 30, P-04",
+      "w": 1366,
+      "x": 1446,
+      "y": 0
+    },
+    "V12b-ReviewSiap.dc.html": {
+      "h": 2074,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.2b Review · keterkaitan dan PIC terisi, siap disetujui (interaktif) — R-06 · FR-INS-23, 27",
+      "w": 1366,
+      "x": 5784,
+      "y": 0
+    },
+    "V12e-KasusBaru.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.2e Review · kasus baru, belum ada kasus serupa (interaktif) — rekomendasi AI dari SOP",
+      "w": 1366,
+      "x": 10122,
+      "y": 0
+    },
+    "V12f-RekomDataKurang.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.2f Review · rekomendasi kasus serupa, data belum cukup (2 kasus) — R-06 · INS-04 FR-INS-80",
+      "w": 1366,
+      "x": 11568,
+      "y": 0
+    },
+    "V12g-RekomKosong.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.2g Review · belum ada kasus serupa (usulan, alternatif 4.2e) — R-06 · INS-04 FR-INS-80",
+      "w": 1366,
+      "x": 13014,
+      "y": 0
+    },
+    "V13-Setujui.dc.html": {
+      "h": 1700,
+      "page": "b2flow",
+      "title": "4.3 Konfirmasi Setujui — R-06 · FR-INS-22, U-1 #6",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "V13g-SetujuiGrup.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "4.3g Dialog Setujui · PIC grup + saran langkah — R-06 · FR-INS-22, 43, 83 [USULAN]",
+      "w": 1366,
+      "x": 14460,
+      "y": 0
+    },
+    "V14-Terverifikasi.dc.html": {
+      "h": 1560,
+      "page": "b2flow",
+      "title": "4.4 Detail terverifikasi + toast — R-06 · FR-INS-22, 24, T-1",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "V21-ReviewGanda.dc.html": {
+      "h": 1780,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "5.1 Review dengan tanda kemungkinan ganda — R-06 · FR-INS-25, U-1 #4 · banyak insiden mirip [USULAN]",
+      "w": 1366,
+      "x": 0,
+      "y": 2120
+    },
+    "V21b-ReviewGandaTutup.dc.html": {
+      "h": 1780,
+      "is_interactive": true,
+      "page": "b2flow",
+      "title": "5.1b Review · kemungkinan ganda, daftar disembunyikan — R-06 · FR-INS-25 [USULAN]",
+      "w": 1366,
+      "x": 2892,
+      "y": 2120
+    },
+    "V22-Gabung.dc.html": {
+      "h": 1860,
+      "page": "b2flow",
+      "title": "5.2 Dialog Gabung — R-06 · FR-INS-25, U-1 #9",
+      "w": 1366,
+      "x": 1446,
+      "y": 2120
+    },
+    "V31-MintaRevisi.dc.html": {
+      "h": 1700,
+      "page": "b2flow",
+      "title": "6.1 Minta revisi — R-06 · FR-INS-26, U-1 #7",
+      "w": 1366,
+      "x": 0,
+      "y": 4400
+    },
+    "V32-Batalkan.dc.html": {
+      "h": 1700,
+      "page": "b2flow",
+      "title": "6.2 Batalkan (jalur cepat terkirim) — R-06 · FR-INS-26a, U-1 #8",
+      "w": 1366,
+      "x": 1446,
+      "y": 4400
+    },
+    "V33-UbahJenis.dc.html": {
+      "h": 1700,
+      "page": "b2flow",
+      "title": "6.3 Jadikan kerawanan — R-06 · FR-INS-26b [usulan, menggantikan Ubah jadi Observasi]",
+      "w": 1366,
+      "x": 2892,
+      "y": 4400
+    },
+    "V34-Terbatas.dc.html": {
+      "h": 1700,
+      "page": "b2flow",
+      "title": "6.4 Tandai terbatas — R-06 · FR-INS-28, U-1 #10",
+      "w": 1366,
+      "x": 4338,
+      "y": 4400
+    },
+    "V35-SKKTingkat2.dc.html": {
+      "h": 1560,
+      "page": "b2flow",
+      "title": "6.5 SKK sebagai approver tingkat 2 — R-02 · DL-74, SK-06",
+      "w": 1366,
+      "x": 5784,
+      "y": 4400
+    },
+    "VF4-Verifikasi.dc.html": {
+      "h": 8000,
+      "page": "b2alur",
+      "title": "Flow 4 · Verifikasi & klasifikasi",
+      "w": 5200,
+      "x": 0,
+      "y": 0
+    },
+    "VF5-Ganda.dc.html": {
+      "h": 5268,
+      "page": "b2alur",
+      "title": "Flow 5 · Laporan ganda",
+      "w": 3900,
+      "x": 0,
+      "y": 9097
+    },
+    "VS1-Validasi.dc.html": {
+      "h": 1640,
+      "page": "b2state",
+      "title": "Negative · Setujui ditolak validasi — R-06 · V-1",
+      "w": 1366,
+      "x": 0,
+      "y": 0
+    },
+    "VS2-SudahDiputus.dc.html": {
+      "h": 1700,
+      "page": "b2state",
+      "title": "Edge · Sudah diputus penyetuju lain — R-06 · U-1 #3, NFR-INS-08",
+      "w": 1366,
+      "x": 1446,
+      "y": 0
+    },
+    "VS3-Kosong.dc.html": {
+      "h": 860,
+      "page": "b2state",
+      "title": "State · Tidak ada yang menunggu — R-06 · U-1 #2",
+      "w": 1366,
+      "x": 2892,
+      "y": 0
+    },
+    "VS4-Memuat.dc.html": {
+      "h": 900,
+      "page": "b2state",
+      "title": "State · Review memuat — U-1 #1",
+      "w": 1366,
+      "x": 4338,
+      "y": 0
+    },
+    "VS5-LewatBatas.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "page": "b2state",
+      "title": "Edge · Lewat batas verifikasi — R-06 · U-1 #11",
+      "w": 1366,
+      "x": 5784,
+      "y": 0
+    },
+    "CFG-Daftar.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1366,
+      "h": 960,
+      "page": "bcfg",
+      "is_interactive": true,
+      "title": "CFG Konfigurasi Modul · daftar (grup Insiden terbuka) · CFG-01 FR-CFG-01"
+    },
+    "CFG-Tenggat.dc.html": {
+      "x": 1446,
+      "y": 0,
+      "w": 1366,
+      "h": 980,
+      "page": "bcfg",
+      "is_interactive": true,
+      "title": "CFG Tenggat penanganan per keparahan · nilai contoh, menunggu SKK · CFG-01 FR-CFG-08"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-28T09:00:00Z",
+    "v": 1
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/F64DT1H6vpiwx4QQNcz42f",
+      "copiedAt": "2026-10-28T09:00:00Z",
+      "namespace": "perisailime",
+      "title": "PERISAI Design System v2 · Lime",
+      "version": "1792993184-ceb0"
+    }
+  ],
+  "launch": {
+    "page": "b1alur",
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "em",
+    "f1",
+    "f2",
+    "f3",
+    "mf1",
+    "mf2",
+    "mf3",
+    "ms1",
+    "ms2",
+    "ms4",
+    "mv",
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5",
+    "v4",
+    "v5",
+    "v6",
+    "vs",
+    "v0",
+    "f6",
+    "f7",
+    "f7b",
+    "f8",
+    "s6",
+    "s7",
+    "s8",
+    "mp",
+    "em3"
+  ],
+  "notes": {
+    "em": {
+      "kind": "title1",
+      "maxW": 3320,
+      "page": "bemail",
+      "text": "Email notifikasi Insiden",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "em3": {
+      "kind": "title1",
+      "maxW": 3320,
+      "page": "bemail",
+      "text": "Batch 3 · Penanganan & penutupan",
+      "w": 240,
+      "x": 0,
+      "y": 3620
+    },
+    "f1": {
+      "kind": "title1",
+      "maxW": 7150,
+      "page": "b1flow",
+      "text": "Flow 1 · Lapor insiden dari lapangan",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "f2": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b1flow",
+      "text": "Flow 2 · Dari pesan WhatsApp + kemungkinan ganda",
+      "w": 240,
+      "x": -44,
+      "y": 2100
+    },
+    "f3": {
+      "kind": "title1",
+      "maxW": 2812,
+      "page": "b1flow",
+      "text": "Flow 3 · SKK memantau insiden jalur cepat",
+      "w": 240,
+      "x": 0,
+      "y": 3901
+    },
+    "f6": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "b3flow",
+      "text": "Flow 6 · PIC menangani insiden",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "f7": {
+      "kind": "title1",
+      "maxW": 7150,
+      "page": "b3flow",
+      "text": "Flow 7 · Pejabat Berwenang menutup insiden",
+      "w": 240,
+      "x": 0,
+      "y": 3080
+    },
+    "f7b": {
+      "kind": "title1",
+      "maxW": 7150,
+      "page": "b3flow",
+      "text": "Flow 7 · Aksi lain Pejabat Berwenang",
+      "w": 240,
+      "x": 0,
+      "y": 6200
+    },
+    "f8": {
+      "kind": "title1",
+      "maxW": 4258,
+      "page": "b3flow",
+      "text": "Flow 8 · SKK menerima eskalasi dan memberi arahan",
+      "w": 240,
+      "x": 0,
+      "y": 9320
+    },
+    "mf1": {
+      "kind": "title1",
+      "maxW": 3210,
+      "page": "b1mobile",
+      "text": "Flow 1 · Lapor insiden dari lapangan",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "mf2": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "b1mobile",
+      "text": "Flow 2 · Dari pesan WhatsApp",
+      "w": 240,
+      "x": 0,
+      "y": 1800
+    },
+    "mf3": {
+      "kind": "title1",
+      "maxW": 860,
+      "page": "b1mobile",
+      "text": "Flow 3 · SKK memantau jalur cepat",
+      "w": 240,
+      "x": 0,
+      "y": 3900
+    },
+    "mp": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "b3mobile",
+      "text": "Mobile < 768 px · penanganan",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "ms1": {
+      "kind": "title1",
+      "maxW": 3210,
+      "page": "b1mobile",
+      "text": "State, negative & edge · form",
+      "w": 240,
+      "x": 0,
+      "y": 5800
+    },
+    "ms2": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "b1mobile",
+      "text": "State daftar, akses & lokasi",
+      "w": 240,
+      "x": 0,
+      "y": 7500
+    },
+    "ms4": {
+      "kind": "title1",
+      "maxW": 1000,
+      "page": "b1mobile",
+      "text": "Kategori & jenis",
+      "w": 240,
+      "x": 0,
+      "y": 8744
+    },
+    "mv": {
+      "kind": "title1",
+      "maxW": 3210,
+      "page": "b2mobile",
+      "text": "Mobile < 768 px · verifikasi",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "s1": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b1state",
+      "text": "Negative & edge · form",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "s2": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b1state",
+      "text": "Negative & edge · ajukan, draf, state daftar",
+      "w": 240,
+      "x": 0,
+      "y": 1300
+    },
+    "s3": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b1state",
+      "text": "State daftar & akses",
+      "w": 240,
+      "x": 0,
+      "y": 2740
+    },
+    "s4": {
+      "kind": "title1",
+      "maxW": 1366,
+      "page": "b1state",
+      "text": "Edge · lokasi & wilayah kerja",
+      "w": 240,
+      "x": 0,
+      "y": 4000
+    },
+    "s5": {
+      "kind": "title1",
+      "maxW": 4300,
+      "page": "b1state",
+      "text": "Isian kategori & jenis, ganti jenis",
+      "w": 240,
+      "x": 0,
+      "y": 5520
+    },
+    "s6": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b3state",
+      "text": "Negative, edge & state · PIC",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "s7": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b3state",
+      "text": "Negative, edge & state · R-06",
+      "w": 240,
+      "x": 0,
+      "y": 2400
+    },
+    "s8": {
+      "kind": "title1",
+      "maxW": 4258,
+      "page": "b3state",
+      "text": "State lain",
+      "w": 240,
+      "x": 0,
+      "y": 5520
+    },
+    "v0": {
+      "kind": "title1",
+      "maxW": 1366,
+      "page": "b2flow",
+      "text": "Tugas saya",
+      "w": 240,
+      "x": 0,
+      "y": 6220
+    },
+    "v4": {
+      "kind": "title1",
+      "maxW": 5704,
+      "page": "b2flow",
+      "text": "Flow 4 · Pejabat Berwenang memverifikasi insiden",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "v5": {
+      "kind": "title1",
+      "maxW": 2812,
+      "page": "b2flow",
+      "text": "Flow 5 · Laporan ganda",
+      "w": 240,
+      "x": 0,
+      "y": 1820
+    },
+    "v6": {
+      "kind": "title1",
+      "maxW": 7150,
+      "page": "b2flow",
+      "text": "Flow 6 · Aksi lain & SKK approver",
+      "w": 240,
+      "x": 0,
+      "y": 4100
+    },
+    "vs": {
+      "kind": "title1",
+      "maxW": 7150,
+      "page": "b2state",
+      "text": "Negative, edge & state",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    }
+  },
+  "order": [
+    "S01-Validasi.dc.html",
+    "S03-GantiJenis.dc.html",
+    "S04-AIGagal.dc.html",
+    "S05-GagalKirim.dc.html",
+    "S06-DrafBentrok.dc.html",
+    "S07-TarikKembali.dc.html",
+    "S08-Memuat.dc.html",
+    "S09-Kosong.dc.html",
+    "S10-FilterKosong.dc.html",
+    "S11-GagalMuat.dc.html",
+    "S12-Terbatas.dc.html",
+    "S13-LuarWK.dc.html",
+    "Catatan.dc.html",
+    "Sidebar.dc.html",
+    "M1-Daftar.dc.html",
+    "M2a-Temuan.dc.html",
+    "M2-Kejadian.dc.html",
+    "M3-Mitra.dc.html",
+    "M4-Lampiran.dc.html",
+    "M7-Ringkasan.dc.html",
+    "M7s-RingkasanSedang.dc.html",
+    "M8-Detail.dc.html",
+    "M9-WATemuan.dc.html",
+    "M10-WAKejadian.dc.html",
+    "M5-Ganda.dc.html",
+    "M5b-HapusDraf.dc.html",
+    "M11-DetailWA.dc.html",
+    "M12-DaftarSKK.dc.html",
+    "M6-DetailSKK.dc.html",
+    "MS01-Validasi.dc.html",
+    "MS02-TanpaKontrak.dc.html",
+    "MS03-GantiJenis.dc.html",
+    "MS04-AIGagal.dc.html",
+    "MS05-GagalKirim.dc.html",
+    "MS06-DrafBentrok.dc.html",
+    "MS07-TarikKembali.dc.html",
+    "MS08-Memuat.dc.html",
+    "MS09-Kosong.dc.html",
+    "MS10-FilterKosong.dc.html",
+    "MS11-GagalMuat.dc.html",
+    "MS12-Terbatas.dc.html",
+    "MS13-LuarWK.dc.html",
+    "Main-Filter.dc.html",
+    "VS1-Validasi.dc.html",
+    "VS2-SudahDiputus.dc.html",
+    "VS3-Kosong.dc.html",
+    "VS4-Memuat.dc.html",
+    "VS5-LewatBatas.dc.html",
+    "MV1-Daftar.dc.html",
+    "MV2-Review.dc.html",
+    "MV2m-PetaSerupa.dc.html",
+    "MV3-Setujui.dc.html",
+    "MV4-AksiLain.dc.html",
+    "MV4b-MintaRevisi.dc.html",
+    "MV5-Gabung.dc.html",
+    "MV6-Batalkan.dc.html",
+    "Email.dc.html",
+    "EI1-MenungguVerifikasi.dc.html",
+    "EI2-JalurCepat.dc.html",
+    "EI3-JalurCepatGanda.dc.html",
+    "EI4-Terverifikasi.dc.html",
+    "EI5-Dibatalkan.dc.html",
+    "EI6-Digabung.dc.html",
+    "EI7-RevisiDiminta.dc.html",
+    "EI8-PICDitunjuk.dc.html",
+    "EI10-DitarikKembali.dc.html",
+    "EmailKatalog.dc.html",
+    "S14-Kategori.dc.html",
+    "S15-Jenis.dc.html",
+    "S17-JenisLainnya.dc.html",
+    "S18-KategoriLainnya.dc.html",
+    "S16-FormObservasi.dc.html",
+    "MS14-Kategori.dc.html",
+    "MS15-Jenis.dc.html",
+    "PS1-LewatTenggat.dc.html",
+    "PS2-KronologiKosong.dc.html",
+    "PS3-KronologiGagal.dc.html",
+    "PS4-CatatanGagal.dc.html",
+    "PS5-TanpaPIC.dc.html",
+    "PS6-DataBelumLengkap.dc.html",
+    "PS7-BukaLewat30.dc.html",
+    "PS8-RiwayatKosong.dc.html",
+    "PS9-Memuat.dc.html",
+    "PS10-TenggatError.dc.html",
+    "PS11-Dikembalikan.dc.html",
+    "MP1-DaftarPIC.dc.html",
+    "MP2-Penanganan.dc.html",
+    "MP3-DataPenutupan.dc.html",
+    "MP4-Eskalasi.dc.html",
+    "MP5-Tutup.dc.html",
+    "MP6-UbahTenggat.dc.html",
+    "EI11-TenggatBesok.dc.html",
+    "EI12-LewatTenggat.dc.html",
+    "EI13-Dieskalasi.dc.html",
+    "EI14-MintaDitutup.dc.html",
+    "EI15-PenutupanDikembalikan.dc.html",
+    "EI16-Ditutup.dc.html",
+    "EI17-DibukaKembali.dc.html",
+    "EI18-ArahanSKK.dc.html",
+    "IF1-Lapor.dc.html",
+    "IF2-WhatsApp.dc.html",
+    "IF3-SKK.dc.html",
+    "InsIsi.dc.html",
+    "P10-TugasSayaPIC.dc.html",
+    "P11-DaftarPIC.dc.html",
+    "P12-Penanganan.dc.html",
+    "P14-Tangani.dc.html",
+    "P15-Eskalasi.dc.html",
+    "P16-DataPenutupan.dc.html",
+    "P17-MenungguPenutupan.dc.html",
+    "P20-TugasSaya.dc.html",
+    "P21-DaftarR06.dc.html",
+    "P22-ReviewTutup.dc.html",
+    "P23-Tutup.dc.html",
+    "P24-Ditutup.dc.html",
+    "P25-KembalikanPIC.dc.html",
+    "P26-GantiPIC.dc.html",
+    "P27-UbahTenggat.dc.html",
+    "P28-BukaKembali.dc.html",
+    "P34-Riwayat.dc.html",
+    "P31-DetailSKK.dc.html",
+    "P32-BeriArahan.dc.html",
+    "P33-ArahanMasuk.dc.html",
+    "P35-DitutupSKK.dc.html",
+    "P36-ReviewTutupSKK.dc.html",
+    "P29-AksiLainR06.dc.html",
+    "MA1-AIKartu.dc.html",
+    "MA1b-AIKetik.dc.html",
+    "MA3-AIRekam.dc.html",
+    "MA2-AISheet.dc.html",
+    "MA4-AIFormTerisi.dc.html",
+    "MA5-AILangkah2.dc.html",
+    "S19-CopilotGagal.dc.html",
+    "S20-MikDitolak.dc.html",
+    "S21-SuaraTakJelas.dc.html",
+    "S22-Rekam3Menit.dc.html",
+    "S23-TanpaSaran.dc.html",
+    "MS16-AIGagal.dc.html",
+    "MS17-MikDitolak.dc.html",
+    "MA6-AILampiran.dc.html",
+    "MA7-AIRingkasan.dc.html",
+    "V11-Daftar.dc.html",
+    "V12-Review.dc.html",
+    "V13-Setujui.dc.html",
+    "V14-Terverifikasi.dc.html",
+    "V21-ReviewGanda.dc.html",
+    "V22-Gabung.dc.html",
+    "V31-MintaRevisi.dc.html",
+    "V32-Batalkan.dc.html",
+    "V33-UbahJenis.dc.html",
+    "V34-Terbatas.dc.html",
+    "V35-SKKTingkat2.dc.html",
+    "V10-TugasSaya.dc.html",
+    "V12b-ReviewSiap.dc.html",
+    "V12e-KasusBaru.dc.html",
+    "V12f-RekomDataKurang.dc.html",
+    "V12g-RekomKosong.dc.html",
+    "V21b-ReviewGandaTutup.dc.html",
+    "EI8b-GrupDitunjuk.dc.html",
+    "P12g-DetailPICGrup.dc.html",
+    "P22g-ReviewTutupGrup.dc.html",
+    "P22c-ReviewTutupCocok.dc.html",
+    "P22k-ReviewTutupDataMinim.dc.html",
+    "P12h-GrupSudahDiambil.dc.html",
+    "V13g-SetujuiGrup.dc.html",
+    "PF6-PIC.dc.html",
+    "PF7-Penutupan.dc.html",
+    "PF8-SKK.dc.html",
+    "T1-TambahTL.dc.html",
+    "T1b-JadikanTLSaran.dc.html",
+    "T3-DetailTL.dc.html",
+    "T3b-DetailTLInsidenDitutup.dc.html",
+    "T4-TugasSayaTL.dc.html",
+    "T4b-TugasSayaPICTL.dc.html",
+    "T5-AjukanSelesai.dc.html",
+    "T6-VerifikasiTL.dc.html",
+    "T7-DikembalikanTL.dc.html",
+    "T8-SelesaiTL.dc.html",
+    "T9-DibatalkanTL.dc.html",
+    "Kerawanan.dc.html",
+    "S16b-DetailKerawanan.dc.html",
+    "KD1-DetailKerawanan.dc.html",
+    "CFG-Daftar.dc.html",
+    "CFG-Tenggat.dc.html",
+    "CFG-MatriksKeparahan.dc.html",
+    "I12-Jenis.dc.html",
+    "I12e-CopilotKosong.dc.html",
+    "I12r-CopilotRekam.dc.html",
+    "I12p-CopilotProses.dc.html",
+    "I12o-CopilotLuarCakupan.dc.html",
+    "I13-Kejadian.dc.html",
+    "I13b-Lampiran.dc.html",
+    "I14-Ringkasan.dc.html",
+    "I14s-RingkasanSedang.dc.html",
+    "I15-Detail.dc.html",
+    "I20-WATemuan.dc.html",
+    "I21-WAKejadian.dc.html",
+    "I21b-WALampiran.dc.html",
+    "I22-RingkasanGanda.dc.html",
+    "I22b-HapusDraf.dc.html",
+    "I23-DetailWA.dc.html",
+    "I31-DaftarSKK.dc.html",
+    "I32-DetailSKK.dc.html",
+    "Main.dc.html",
+    "I13r-CopilotRekam.dc.html",
+    "I22b-RingkasanGandaTutup.dc.html",
+    "I24-TautkanInsiden.dc.html",
+    "I25-LepasTautan.dc.html",
+    "VF4-Verifikasi.dc.html",
+    "VF5-Ganda.dc.html",
+    "Artboard-xvc7.dc.html",
+    "MK1-DaftarKerawanan.dc.html",
+    "EK1-RingkasanKerawanan.dc.html",
+    "Piece-e4pz.dc.html",
+    "KD2-NaikkanPilih.dc.html",
+    "KD3-NaikkanDampak.dc.html",
+    "KD4-Dinaikkan.dc.html",
+    "KF1-NaikkanAlur.dc.html",
+    "Analitik.dc.html",
+    "KD5-AjukanInsiden.dc.html",
+    "KD6-TambahPerkembangan.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "b1alur",
+      "name": "Batch 1 · Alur (grooming)"
+    },
+    {
+      "id": "b1flow",
+      "name": "Batch 1 · Layar per flow"
+    },
+    {
+      "id": "b1state",
+      "name": "Batch 1 · State, negative & edge case"
+    },
+    {
+      "id": "b1mobile",
+      "name": "Batch 1 · Mobile"
+    },
+    {
+      "id": "b1catatan",
+      "name": "Batch 1 · Catatan desain"
+    },
+    {
+      "id": "bkrw",
+      "name": "Kerawanan (usulan, modul Risk keluar)"
+    },
+    {
+      "id": "bcfg",
+      "name": "Konfigurasi Modul · Insiden (usulan 18 Nov)"
+    },
+    {
+      "id": "banalitik",
+      "name": "Analitik insiden (usulan 18 Nov)"
+    },
+    {
+      "id": "b2alur",
+      "name": "Batch 2 · Alur (grooming)"
+    },
+    {
+      "id": "b2flow",
+      "name": "Batch 2 · Layar per flow"
+    },
+    {
+      "id": "b2state",
+      "name": "Batch 2 · State, negative & edge case"
+    },
+    {
+      "id": "b2mobile",
+      "name": "Batch 2 · Mobile"
+    },
+    {
+      "id": "b3alur",
+      "name": "Batch 3 · Alur (grooming)"
+    },
+    {
+      "id": "b3flow",
+      "name": "Batch 3 · Layar per flow"
+    },
+    {
+      "id": "b3state",
+      "name": "Batch 3 · State, negative & edge case"
+    },
+    {
+      "id": "b3mobile",
+      "name": "Batch 3 · Mobile"
+    },
+    {
+      "id": "bemail",
+      "name": "Email notifikasi"
+    }
+  ],
+  "title": "PERISAI · Security Incident Management · Desain v2"
+}

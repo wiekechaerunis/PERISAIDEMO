@@ -1,0 +1,7 @@
+/* Halaman kerja PIC (PicHandlingPage). Tambahan di atas CSS board; CSS vendor tidak diubah. */
+/* Tombol Ajukan penutupan tampak nonaktif tetapi tetap bisa diklik untuk memunculkan PS6. */
+.p-btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.dt-fix .lk-scrim{position:fixed;z-index:60}
+.dt-fix .lk-side{position:fixed;z-index:61}
+.in-sticky{position:sticky;top:16px;align-self:flex-start}
+textarea.p-area.err{box-shadow:inset 0 0 0 1px var(--error-ink)}

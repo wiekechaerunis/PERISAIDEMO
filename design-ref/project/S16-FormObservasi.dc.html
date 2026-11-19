@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Form laporan · langkah 1 · pilih Kerawanan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}.jn{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-lg);border:0;background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);text-align:left;font:inherit;color:inherit;cursor:pointer;transition:box-shadow .12s ease,background-color .12s ease}.jn:hover{box-shadow:inset 0 0 0 1px var(--border-control)}.jn:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}.jn[aria-checked="true"]{background:var(--accent-card-bg);box-shadow:inset 0 0 0 1.5px var(--action-line)}.jn .ic{width:28px;height:28px;border-radius:var(--radius-md);flex:none;display:flex;align-items:center;justify-content:center;background:var(--surface-sunken);color:var(--ink-subtle)}.jn[aria-checked="true"] .ic{background:var(--action);color:var(--on-action)}.jn .tx{display:flex;flex-direction:column;gap:2px;min-width:0}.jn b{font-weight:600}.jn[aria-checked="true"] b{font-weight:700}.jn[aria-disabled="true"]{opacity:.5;cursor:not-allowed;background:var(--surface-sunken)}.jn[aria-disabled="true"]:hover{box-shadow:inset 0 0 0 1px var(--border)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1100px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1100" hint-size="240px,1100px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali ke Insiden"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Laporan baru</h1><span class="p-tag t-draft">Draf</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page">Laporan baru</li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step on" aria-current="step"><span class="n">1</span>Temuan</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">2</span>{{step2}}</li><li class="p-conn" aria-hidden="true" style="display: {{s34}}"></li><li class="p-step" style="display: {{s34}}"><span class="n">3</span>Lampiran</li><li class="p-conn" aria-hidden="true" style="display: {{s34}}"></li><li class="p-step" style="display: {{s34}}"><span class="n">4</span>Ringkasan</li></ol>
+      <div class="lk-grid">
+        <div class="c8 lk-stack">
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Temuan</h2></div>
+            <div class="lk-f2">
+              <div class="p-field lk-span2"><span class="p-lbl" id="dmp-l" style="color: var(--ink)">Ada kerugian, korban, atau operasi terganggu?<span class="p-req">*</span></span><div class="p-qf" role="radiogroup" aria-labelledby="dmp-l" style="align-self: flex-start"><sc-for list="{{dmpOpts}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="min-width: 96px; justify-content: center">{{o.l}}</button></sc-for></div></div>
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Jenis laporan<span class="p-req">*</span></span>
+                <div role="radiogroup" aria-label="Jenis laporan" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+                  <sc-for list="{{types}}" as="t" hint-placeholder-count="2"><button type="button" role="radio" class="jn" aria-checked="{{t.on}}" aria-disabled="{{t.dis}}" onClick="{{t.pick}}" style="{{t.span}}"><span class="ic"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="{{t.icon}}"/></svg></span><span class="tx"><span style="display: flex; align-items: center; gap: 6px"><b>{{t.label}}</b><span class="p-tag t-info" title="Saran sistem dari jawaban dampak · bisa diubah" style="display: {{t.sugD}}; height: 18px; font-size: 11px; gap: 3px; cursor: help"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 11px; height: 11px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>Saran</span></span><span class="p-cap">{{t.desc}}</span></span></button></sc-for>
+                </div>
+              </div>
+              <span class="lk-span2 p-cap" style="display: {{gCapD}}">{{gCap}}</span>
+              <div class="lk-span2 in-bn {{bnCls}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"/></svg><div class="body"><b>{{bnTitle}}</b> {{bnText}}</div></div>
+              <div class="p-field"><span class="p-lbl" style="color: var(--ink); display: inline-flex; align-items: center; gap: 2px">{{timeLabel}}<span class="p-req">*</span><span class="in-tw"><button type="button" class="ib" aria-label="Penjelasan {{timeLabel}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"/></svg></button><span class="in-tip" role="tooltip">{{timeTip}}</span></span></span><div style="display: flex; gap: 8px; align-items: center"><div class="p-input" style="flex: 1"><span style="flex: 1">28 Okt 2026</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M3 5h18v16H3zM16 3v4M8 3v4M3 10h18"/></svg></div><div class="p-input" style="width: 84px"><span>01:00</span></div><span class="p-cap">WIB</span></div></div>
+              <div></div>
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Judul<span class="p-req">*</span></span><div class="p-input"><span style="flex: 1">Pagar sisi barat sumur ADR-07 roboh</span></div><span class="p-help row"><span></span><span>36/120</span></span></div>
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Lokasi kejadian<span class="p-req">*</span></span><div class="p-loc filled" role="group" aria-label="Lokasi terpilih"><span class="thumb" style="position:relative;display:block"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" fill="#EEF0EA"/><path d="M0 38 C 14 33 26 44 52 36 L52 52 L0 52Z" fill="#D6E4F5"/><path d="M0 16 L52 22" stroke="#fff" stroke-width="4"/><path d="M16 0 L20 52" stroke="#fff" stroke-width="3"/></svg><svg viewBox="0 0 34 44" width="14" height="18" style="position:absolute;left:19px;top:11px" aria-hidden="true"><path d="M17 43s15-13.5 15-26A15 15 0 0 0 2 17c0 12.5 15 26 15 26z" fill="#1C1D21"/><circle cx="17" cy="17" r="6.5" fill="#BED630"/></svg></span><span style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0"><b style="font-weight: 600">Sumur ADR-07</b><span class="co">-2.98512, 104.04213</span></span><button type="button" class="p-tbtn">Ubah</button><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Hapus lokasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><span class="p-help row"><span>Kab. Musi Banyuasin · Dalam WK Andalas Darat</span><span></span></span></div>
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Patokan lokasi<span class="p-req">*</span></span><div class="p-input"><span style="flex: 1">Sumur ADR-07, pagar sisi barat</span></div><span class="p-help row"><span>Patokan yang mudah dikenali. Terisi otomatis dari lokasi yang dipilih.</span><span>32/120</span></span></div>
+            </div>
+          </section>
+        </div>
+        <aside class="c4 lk-stack">
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Pengajuan</h2></div><dl class="lk-kv1"><dt>Nomor laporan</dt><dd><span class="p-mono" style="font-size: 12px">{{nomor}}</span></dd><dt>Status</dt><dd><span class="p-tag t-draft">Draf</span></dd><dt>Tercatat di</dt><dd>{{menu}}</dd><dt>{{pnyL}}</dt><dd>{{pny}}</dd></dl></section>        </aside>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 0 -24px"><a href="Main.dc.html" class="p-btn p-btn-secondary">Batal</a><div style="display: flex; gap: 8px"><button type="button" class="p-btn p-btn-secondary">Simpan draf</button><a href="{{nextHref}}" class="p-btn p-btn-primary">Berikutnya</a></div></div>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pick: 'krw', dmp: 'tidak' }; }
+  renderVals() {
+    const defs = [
+      ['ins', 'Insiden', 'Sudah terjadi dan menimbulkan kerugian, korban, atau gangguan operasi, mis. pencurian, penghadangan.', 'M7 18v-6a5 5 0 0 1 10 0v6M5 21h14v-3H5zM12 2v2M4.2 5.2l1.4 1.4M19.8 5.2l-1.4 1.4'],
+      ['krw', 'Kerawanan', 'Kondisi atau kejadian tanpa kerugian, korban, atau gangguan operasi, mis. pagar rusak, lampu padam, orang mencurigakan.', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01']
+    ];
+    const s = this.state;
+    const dmp = s.dmp || 'tidak';
+    const pick = dmp === 'ya' ? 'ins' : s.pick;
+    const cur = defs.find((d) => d[0] === pick);
+    const isIns = pick === 'ins';
+    return {
+      dmpOpts: [['ya', 'Ya'], ['tidak', 'Tidak'], ['belum', 'Belum tahu']].map(([k, l]) => ({ l, on: dmp === k ? 'true' : 'false', pick: () => this.setState({ dmp: k, pick: k === 'tidak' ? s.pick : 'ins' }) })),
+      types: defs.map(([k, l, d, ic]) => ({ label: l, desc: d, icon: ic, on: pick === k ? 'true' : 'false', dis: dmp === 'ya' && k === 'krw' ? 'true' : 'false', sugD: dmp === 'tidak' && k === 'krw' ? 'inline-flex' : 'none', pick: () => { if (dmp === 'ya' && k === 'krw') return; this.setState({ pick: k }); }, span: '' })),
+      gCap: dmp === 'ya' ? 'Ada dampak, jadi dilaporkan sebagai insiden.' : 'Bila ragu, laporkan sebagai insiden. Pejabat Berwenang bisa menjadikannya kerawanan.',
+      gCapD: dmp === 'tidak' ? 'none' : 'block',
+      bnCls: isIns ? 'info' : 'caution',
+      bnTitle: isIns ? 'Insiden dipilih.' : 'Kerawanan dipilih. Laporan ini masuk ke tab Kerawanan di menu Insiden.',
+      bnText: isIns ? 'Langkah 2 menanyakan dampak dan penanganan di lokasi. Keparahan disarankan dari dampak. Bila Tinggi atau Kritis, SKK Migas langsung diberi tahu saat diajukan.' : 'Langkah 2 hanya menanyakan jenis kerawanan. Kerawanan langsung tercatat tanpa pemeriksaan, keparahan, atau PIC, dan tidak dihitung sebagai insiden.',
+      step2: isIns ? 'Kejadian & dampak' : 'Detail & lampiran',
+      s34: isIns ? '' : 'none',
+      nomor: isIns ? 'INS-SEN-2026-0007' : 'KRW-SEN-2026-0047',
+      menu: isIns ? 'Insiden' : 'Insiden › tab Kerawanan',
+      pnyL: isIns ? 'Dikirim ke' : 'Pemeriksaan',
+      pny: isIns ? 'Semua Pejabat Berwenang KKKS' : 'Tidak perlu, langsung tercatat',
+      timeLabel: isIns ? 'Waktu kejadian' : 'Waktu diketahui',
+      timeTip: isIns ? 'Kapan kejadian terjadi menurut Anda. Bukan waktu Anda melapor.' : 'Kapan kondisi atau kejadian ini Anda lihat atau ketahui.',
+      nextHref: isIns ? 'I13-Kejadian.dc.html' : 'S16b-DetailKerawanan.dc.html'
+    };
+  }
+}
+</script>
+</body>
+</html>

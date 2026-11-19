@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Kartu isi insiden</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<article class="p-card" aria-labelledby="ins-judul" style="padding: 0; overflow: hidden; font-family: var(--font-sans); font-size: 13px; line-height: 18px; color: var(--ink); box-sizing: border-box">
+  <header style="padding: 24px 24px 20px 24px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--border-subtle)">
+    <span class="p-mono" style="font-size: 12px; line-height: 16px; color: var(--ink-muted)">{{d.nomor}}</span>
+    <h2 id="ins-judul" style="margin: 0; font-size: 22px; line-height: 30px; font-weight: 700">{{d.judul}}</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px"><span class="lk-meta"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18v-6a5 5 0 0 1 10 0v6M5 21h14v-3H5zM12 2v2M4.2 5.2l1.4 1.4M19.8 5.2l-1.4 1.4"/></svg>Jenis: Insiden</span><span class="lk-meta"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01"/></svg>{{d.kategori}}</span><span class="lk-meta"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v16H3zM16 3v4M8 3v4M3 10h18"/></svg>Kejadian {{d.waktu}}</span><span class="{{sevCls}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>Keparahan awal: {{d.sev}} · setara {{sevAlt}}</span></div>
+  </header>
+  <div style="padding: 20px 24px 4px 24px; display: flex; flex-direction: column; gap: 6px">
+    <h3 class="p-lbl" style="margin: 0">Dampak keamanan</h3>
+    <p style="margin: 0; font-size: 14px; line-height: 22px">{{d.dampak}}</p>
+  </div>
+  <dl style="margin: 16px 24px 20px 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px"><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><dt class="p-lbl">Lokasi</dt><dd style="margin: 0; display: flex; flex-direction: column; gap: 2px"><span>{{d.lokasi}}</span><span class="p-cap" style="color: var(--ink-subtle)">{{d.kota}} · WK {{d.wk}}</span><a href="#" class="p-link" style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; align-self: flex-start" title="{{d.koord}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>Lihat di peta</a></dd></div><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><dt class="p-lbl">Sudah menangani (menurut pelapor)</dt><dd style="margin: 0; display: flex; flex-direction: column; gap: 2px"><span>{{tim}}</span><span class="p-cap" style="color: var(--ink-subtle)">Mitra dan kontraknya dicatat PIC saat penanganan</span></dd></div><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><dt class="p-lbl">Pelapor</dt><dd style="margin: 0; display: flex; flex-direction: column; gap: 2px"><span>{{d.pelapor}}</span><span class="p-cap" style="color: var(--ink-subtle)">{{tglPelapor}}</span></dd></div><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><dt class="p-lbl">Sumber informasi</dt><dd style="margin: 0; display: flex; flex-direction: column; gap: 2px"><span>{{d.sumber}}</span></dd></div></dl>
+  <div style="padding: 0 24px 24px 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px"><div style="background: var(--surface-subtle); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; gap: 12px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: var(--ink-muted); margin-top: 1px"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg><div style="display: flex; flex-direction: column; gap: 4px"><h3 class="p-lbl" style="margin: 0">Kondisi operasi</h3><p style="margin: 0; line-height: 20px; font-weight: 600">{{d.operasi}}</p></div></div><div style="background: var(--surface-subtle); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; gap: 12px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: var(--ink-muted); margin-top: 1px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg><div style="display: flex; flex-direction: column; gap: 4px"><h3 class="p-lbl" style="margin: 0">Korban</h3><p style="margin: 0; line-height: 20px; font-weight: 600">{{d.korban}}</p></div></div><div style="background: var(--surface-subtle); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; gap: 12px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: var(--ink-muted); margin-top: 1px"><path d="M2 7h20v12H2zM16 13h.01M2 11h20"/></svg><div style="display: flex; flex-direction: column; gap: 4px"><h3 class="p-lbl" style="margin: 0">Perkiraan kerugian</h3><p style="margin: 0; line-height: 20px; font-weight: 600">{{d.kerugian}}</p></div></div></div>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kasus":{"editor":"enum","options":["adr07","wa0009","pagar0006","blok0005","cctv0003","drone0010"],"default":"adr07"},"$preview":{"width":760,"height":500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const data = {
+      adr07: { nomor: 'INS-SEN-2026-0007', judul: 'Pencurian kabel listrik sumur ADR-07', kategori: 'Pencurian/Perampokan', waktu: '28 Okt 2026, 01:00 WIB', sev: 'Tinggi',
+        dampak: 'Sekitar 40 m kabel hilang. Panel listrik pompa terbuka.', pelapor: 'Budi Santoso', diajukan: '28 Okt 2026, 07:00 WIB',
+        lokasi: 'Sumur ADR-07, sisi panel listrik', kota: 'Kab. Musi Banyuasin', wk: 'Andalas Darat', koord: '-2.98512, 104.04213',
+        mitra: 'PT Garda Nusantara Sejahtera', sumber: 'Temuan langsung · Patroli malam', operasi: 'Berhenti · 6 jam', korban: 'Tidak terdampak', kerugian: 'Rp18.500.000' },
+      wa0009: { nomor: 'INS-SEN-2026-0009', judul: 'Kabel pompa ADR-07 dipotong', kategori: 'Pencurian/Perampokan', waktu: '28 Okt 2026, 01:00 WIB', sev: 'Tinggi',
+        dampak: 'Kabel listrik pompa ADR-07 dipotong dan hilang.', pelapor: 'Andi Pratama', diajukan: '28 Okt 2026, 08:34 WIB',
+        lokasi: 'Jalan masuk sumur ADR-07', kota: 'Kab. Musi Banyuasin', wk: 'Andalas Darat', koord: '-2.98377, 104.04530',
+        mitra: 'PT Garda Nusantara Sejahtera', sumber: 'WhatsApp · Pam ADR Area 2 · Joko (Danru BUJP)', operasi: 'Berhenti · 3 jam', korban: 'Tidak terdampak', kerugian: 'Belum diisi' },
+      pagar0006: { nomor: 'INS-SEN-2026-0006', judul: 'Perusakan pagar perimeter terminal', kategori: 'Perusakan material', waktu: '26 Okt 2026, 22:15 WIB', sev: 'Sedang',
+        dampak: 'Pagar perimeter terminal dijebol sepanjang 4 m.', pelapor: 'Budi Santoso', diajukan: '27 Okt 2026, 06:00 WIB',
+        lokasi: 'Pagar utara Terminal Arunika', kota: 'Kab. Musi Banyuasin', wk: 'Terminal Arunika', koord: '-2.97110, 104.05220',
+        mitra: 'PT Garda Nusantara Sejahtera', sumber: 'Temuan langsung · Patroli regu A', operasi: 'Tidak terganggu', korban: 'Tidak terdampak', kerugian: 'Rp4.000.000' },
+      blok0005: { nomor: 'INS-SEN-2026-0005', judul: 'Penghadangan truk logistik oleh warga', kategori: 'Blokade area', waktu: '25 Okt 2026, 09:00 WIB', sev: 'Kritis',
+        dampak: 'Sekitar 60 warga menutup jalan akses; 4 truk logistik tertahan.', pelapor: 'Andi Pratama', diajukan: '25 Okt 2026, 09:40 WIB',
+        lokasi: 'Jalan akses Desa Batu Ampar', kota: 'Kab. Banyuasin', wk: 'Batu Ampar', koord: '-2.88410, 104.61230',
+        mitra: 'Polres Banyuasin', sumber: 'Temuan langsung · Pos jaga 2', operasi: 'Terganggu sebagian · 8 jam', korban: 'Tidak terdampak', kerugian: 'Rp35.000.000' },
+      cctv0003: { nomor: 'INS-SEN-2026-0003', judul: 'Perusakan CCTV gerbang 2', kategori: 'Perusakan material', waktu: '26 Okt 2026, 22:15 WIB', sev: 'Sedang',
+        dampak: 'Satu kamera CCTV gerbang 2 dipecahkan; rekaman 22.10–22.20 hilang.', pelapor: 'Budi Santoso', diajukan: '27 Okt 2026, 06:30 WIB',
+        lokasi: 'Gerbang 2 Terminal Arunika', kota: 'Kab. Musi Banyuasin', wk: 'Terminal Arunika', koord: '-2.97210, 104.05010',
+        mitra: 'PT Garda Nusantara Sejahtera', sumber: 'Temuan langsung · Patroli regu B', operasi: 'Tidak terganggu', korban: 'Tidak terdampak', kerugian: 'Rp7.500.000' }
+,
+      drone0010: { nomor: 'INS-SEN-2026-0010', judul: 'Drone tidak dikenal terbang di atas sumur ADR-07', kategori: 'Lainnya', waktu: '28 Okt 2026, 23:40 WIB', sev: 'Sedang',
+        dampak: 'Drone tanpa identitas berputar sekitar 10 menit di atas area pompa dan panel listrik, lalu terbang ke arah timur. Operatornya tidak terlihat.', pelapor: 'Budi Santoso', diajukan: '29 Okt 2026, 00:15 WIB',
+        lokasi: 'Area pompa sumur ADR-07', kota: 'Kab. Musi Banyuasin', wk: 'Andalas Darat', koord: '-2.98512, 104.04213',
+        mitra: 'PT Garda Nusantara Sejahtera', sumber: 'Temuan langsung · Patroli malam', operasi: 'Tidak terganggu', korban: 'Tidak terdampak', kerugian: 'Belum diketahui' }
+    };
+    const dd = data[this.props.kasus ?? 'adr07'] || data.adr07;
+    return { d: dd, sevAlt: ({ 'Sangat rendah': 'Insignificant', 'Rendah': 'Minor', 'Sedang': 'Moderate', 'Tinggi': 'Significant', 'Kritis': 'Catastrophic' })[dd.sev] || '', tim: dd.mitra.indexOf('Polres') === 0 ? 'Polri' : 'BUJP', tglPelapor: 'Diajukan ' + dd.diajukan, sevCls: (dd.sev === 'Tinggi' || dd.sev === 'Kritis') ? 'lk-meta urg' : 'lk-meta' };
+  }
+}
+</script>
+</body>
+</html>

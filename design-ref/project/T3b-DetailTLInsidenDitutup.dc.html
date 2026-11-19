@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Detail tindak lanjut, insiden sumber sudah ditutup</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}.tl-src-card{display:flex;flex-direction:column;gap:8px}.tl-src-card .r{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.tl-kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 12px;margin:0;font-size:13px;line-height:19px}.tl-kv dt{color:var(--ink-muted)}.tl-kv dd{margin:0}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1100px">
+  <dc-import name="Sidebar" active="tindak" user="Rudi Hartono" role="Pelapor KKKS" task-count="2" h="1100" hint-size="240px,1100px"></dc-import>
+  <div class="lk-main"><header class="p-appbar child"><div class="hdr"><button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button><a href="#" class="p-ibtn" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a><div class="p-col ttl"><div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><h1>Detail tindak lanjut</h1><span class="p-tag t-info">Dikerjakan</span></div><ol class="p-crumb"><li><a href="#">Tindak lanjut</a></li><li aria-hidden="true">›</li><li aria-current="page">TL-SEN-2026-0041</li></ol></div><div class="acts"><button type="button" class="p-btn p-btn-primary"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M20 6 9 17l-5-5"/></svg>Ajukan selesai</button></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div></div></header>
+  <main class="lk-content"><div class="lk-grid"><div class="c8 lk-stack">
+  <sc-if value="{{closed}}" hint-placeholder-val="{{false}}"><div class="in-bn info"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"/></svg><div class="body"><b>Insiden sumber sudah ditutup 1 Nov 2026.</b> Tindak lanjut ini tetap berjalan sampai diverifikasi Andi Pratama.</div></div></sc-if>
+  <section class="p-card in-sec"><span class="p-mono" style="font-size: 12px; color: var(--ink-muted)">TL-SEN-2026-0041</span><h2 class="in-h" style="font-size: 18px; line-height: 26px">Perbaiki pagar sisi panel ADR-07 dengan panel beton</h2><dl class="tl-kv"><dt>Bukti selesai</dt><dd>Foto pagar setelah diperbaiki</dd><dt>Asal</dt><dd>Dibuat PIC insiden dari halaman Tangani insiden</dd></dl></section>
+  <section class="p-card in-sec"><h2 class="in-h">Pengerjaan</h2><span class="p-cap">Catatan progres, bukti, dan pengajuan selesai: INS-06 FR-INS-120 s.d. 123.</span><div class="p-input p-area" style="min-height: 72px; align-items: flex-start"><span class="ph">Tulis catatan progres</span></div><div class="p-drop"><span class="di"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></span><b>Seret bukti ke sini atau pilih file</b><span class="p-cap">Bukti selesai: Foto pagar setelah diperbaiki</span></div><ol class="p-tl in-kr" aria-label="Catatan progres"><li><span class="nd" aria-hidden="true"></span><div><div class="hd"><b>Catatan</b> · Rudi Hartono</div><div class="tm">31 Okt 2026, 14:10 WIB</div><div class="body">Panel beton dipesan, datang 4 Nov. Sementara ditutup seng.</div></div></li></ol></section>
+  </div><aside class="c4 lk-stack">
+  <section class="p-card in-sec tl-src-card" aria-label="Sumber"><h2 class="in-h">Sumber · Insiden</h2><div class="r"><span class="p-mono" style="font-size: 12px; color: var(--ink-muted)">INS-SEN-2026-0007</span><span class="p-tag s-high" style="height: 20px; font-size: 11px"><span class="dot"></span>Tinggi</span><span class="{{insCls}}" style="height: 20px; font-size: 11px">{{insSt}}</span></div><a href="P12-Penanganan.dc.html" style="font-weight: 600; text-decoration: underline; text-underline-offset: 3px">Pencurian kabel listrik sumur ADR-07</a><dl class="tl-kv"><dt>PIC insiden</dt><dd style="display: flex; gap: 6px; align-items: center"><span class="in-av" style="width: 20px; height: 20px; font-size: 9px">AP</span>Andi Pratama</dd><dt>Lokasi</dt><dd>Sumur ADR-07 · WK Andalas Darat</dd></dl></section>
+  <section class="p-card in-sec"><h2 class="in-h">Ringkasan</h2><dl class="tl-kv"><dt>PIC</dt><dd style="display: flex; gap: 6px; align-items: center"><span class="in-av" style="width: 20px; height: 20px; font-size: 9px">RH</span>Rudi Hartono</dd><dt>Pemberi tugas</dt><dd>Andi Pratama<div class="p-cap">PIC insiden · juga verifikator</div></dd><dt>Tenggat</dt><dd><b>6 Nov 2026</b><div><span class="in-due ok"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"/></svg>sisa 4 hari kerja</span></div></dd><dt>Dibuat</dt><dd>30 Okt 2026, 16:05 WIB</dd></dl></section>
+  </aside></div></main></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"insidenDitutup":{"editor":"bool","default":true},"$preview":{"width":1366,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() { const c = (this.props.insidenDitutup ?? true); return { closed: c, insCls: c ? 'p-tag t-muted' : 'p-tag t-info', insSt: c ? 'Ditutup' : 'Dalam penanganan' }; }
+}
+</script>
+</body>
+</html>

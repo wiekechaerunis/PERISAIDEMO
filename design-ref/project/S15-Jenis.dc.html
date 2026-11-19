@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Form laporan · pilihan jenis</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1500px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1500" hint-size="240px,1500px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali ke Insiden"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Laporan baru</h1><span class="p-tag t-draft">Draf</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page">Laporan baru</li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Temuan</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step on" aria-current="step"><span class="n">2</span>Kejadian &amp; dampak</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">3</span>Lampiran</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">4</span>Ringkasan</li></ol>
+      <div class="lk-grid">
+        <div class="c8 lk-stack">
+          <section class="p-card in-sec">
+            <h2 class="in-h">Jenis kejadian</h2>
+            <div class="lk-f2">
+              <div class="p-field in-cbx"><span class="p-lbl" style="color: var(--ink)">Kategori<span class="p-req">*</span></span><button type="button" class="p-input" aria-haspopup="listbox" aria-expanded="{{kOpenStr}}" onClick="{{kT}}" style="text-align: left; cursor: pointer; font: inherit; color: inherit; border: 0; width: 100%"><span class="{{katCls}}" style="flex: 1">{{katLabel}}</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></button><sc-if value="{{kOpen}}" hint-placeholder-val="{{false}}"><div class="in-pop" role="listbox" aria-label="Kategori" style="top: 70px; width: 380px; right: auto"><div class="grp">Kategori insiden · {{katCount}} pilihan</div><sc-for list="{{kats}}" as="k" hint-placeholder-count="6"><button type="button" role="option" class="{{k.cls}}" aria-selected="{{k.on}}" onClick="{{k.pick}}" style="min-height: 48px"><span class="t"><b>{{k.label}}</b><span>{{k.desc}}</span></span><span class="p-cap" style="flex: none">{{k.n}}</span></button></sc-for></div></sc-if></div><div class="p-field in-cbx"><span class="p-lbl" style="color: var(--ink)">Jenis <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><button type="button" class="p-input" aria-haspopup="listbox" aria-expanded="{{jOpenStr}}" onClick="{{jT}}" style="text-align: left; cursor: pointer; font: inherit; color: inherit; border: 0; width: 100%"><span class="{{jenCls}}" style="flex: 1">{{jenLabel}}</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></button><span class="p-help">{{jenHelp}}</span><sc-if value="{{jOpen}}" hint-placeholder-val="{{false}}"><div class="in-pop" role="listbox" aria-label="Jenis" style="top: 70px"><div class="grp">Jenis · {{katLabel}}</div><sc-for list="{{jens}}" as="j" hint-placeholder-count="5"><button type="button" role="option" class="{{j.cls}}" aria-selected="{{j.on}}" onClick="{{j.pick}}" style="min-height: 44px"><span class="t"><b>{{j.label}}</b></span></button></sc-for></div></sc-if></div>
+            </div>
+          </section>
+
+          <section class="p-card in-sec">
+            <h2 class="in-h">Dampak</h2>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Dampak keamanan<span class="p-req">*</span></span><span class="p-input p-area" style="min-height: 72px">Sambungan ilegal ditemukan di pipa trunkline. Minyak merembes di sekitar titik.</span><span class="p-help row"><span>Apa yang hilang, rusak, atau terbuka.</span><span>79/500</span></span></div>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Apa saja yang terdampak?<span class="p-req">*</span></span><div class="in-chips" role="group" aria-label="Yang terdampak"><button type="button" class="p-chip" aria-pressed="true">Properti atau operasi</button><button type="button" class="p-chip" aria-pressed="false">Manusia</button><button type="button" class="p-chip" aria-pressed="false">Lingkungan pengamanan</button><button type="button" class="p-chip" aria-pressed="false">Data dan informasi</button></div><span class="p-help">Boleh lebih dari satu. Isian lanjutan muncul sesuai pilihan; yang tidak dipilih dianggap tidak terdampak.</span></div>
+            <div class="lk-divider" style="margin: 4px 0"></div>
+            <span class="p-lbl" style="color: var(--ink-muted)">Properti dan operasi</span>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Perkiraan kerugian <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><span class="p-input" style="max-width: 320px"><span class="affix">Rp</span><span class="num">18.500.000</span></span><span class="p-help">Isi dalam Rupiah. Sistem mengonversi ke USD dengan kurs tanggal kejadian untuk menghitung saran keparahan.</span></div>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Kondisi operasi<span class="p-req">*</span></span>
+              <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap">
+                <div class="in-chips" role="radiogroup" aria-label="Dampak operasional"><sc-for list="{{ops}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" class="p-chip" aria-pressed="{{o.on}}" aria-checked="{{o.on}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div>
+                <sc-if value="{{showDur}}" hint-placeholder-val="{{true}}"><div style="flex-basis: 100%; display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: var(--radius-lg); background: var(--surface-subtle)"><span class="p-lbl" style="color: var(--ink)">{{durLabel}}<span class="p-req">*</span></span><div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap"><span class="{{durCls}}" style="width: 140px"><span class="num" style="flex: 1">{{durVal}}</span><span class="affix">jam</span></span><button type="button" class="in-checked" role="checkbox" aria-checked="{{ongoingStr}}" onClick="{{toggleOngoing}}" style="font-size: 13px; color: var(--ink)"><span class="{{chkCls}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 11px; height: 11px"><path d="M20 6 9 17l-5-5"/></svg></span>Masih berlangsung saat melapor</button></div><span class="p-help">{{durHelp}}</span></div></sc-if>
+              </div>
+            </div>
+                      </section>
+
+          <section class="p-card in-sec">
+            <h2 class="in-h">Seberapa parah?</h2>
+            <div class="in-sevauto"><div class="r1"><span class="{{curTag}}"><span class="dot"></span>{{curLabel}}</span><span class="p-cap">setara {{curAlt}}</span><span class="{{srcTag}}" style="height: 20px; font-size: 11px">{{srcTxt}}</span><span style="flex: 1"></span><button type="button" class="p-btn p-btn-secondary p-btn-sm" onClick="{{toggleEdit}}">{{editTxt}}</button></div><span class="p-cap">Dari dampak: operasi berhenti 6 jam.</span></div>
+            <sc-if value="{{editing}}" hint-placeholder-val="{{false}}"><div class="in-seg5" role="radiogroup" aria-label="Keparahan awal" style="margin-top: 10px"><sc-for list="{{segs}}" as="g" hint-placeholder-count="5"><button type="button" role="radio" aria-checked="{{g.on}}" onClick="{{g.pick}}"><i style="background: {{g.dot}}"></i>{{g.label}}<span class="s">{{g.sug}}</span></button></sc-for></div></sc-if>
+            <sc-if value="{{diff}}" hint-placeholder-val="{{false}}"><div class="p-field" style="margin-top: 12px"><span class="p-lbl" style="color: var(--ink)">Kenapa berbeda dari saran?<span class="p-req">*</span></span><div class="p-input p-area" style="min-height: 64px"><span class="ph">mis. Kerugian sebenarnya jauh lebih besar dari perkiraan awal.</span></div><span class="p-help row"><span></span><span>0/300</span></span></div></sc-if>
+            <sc-if value="{{fast}}" hint-placeholder-val="{{true}}">
+              <div class="in-bn caution" style="margin-top: 12px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><div class="body"><b>SKK Migas langsung diberi tahu</b> saat diajukan.</div></div>
+            </sc-if>
+          </section>
+
+          <section class="p-card in-sec">
+            <h2 class="in-h">Penanganan di lokasi</h2>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Sudah ada yang menangani? <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><div class="in-chips" role="group" aria-label="Yang sudah menangani"><button type="button" class="p-chip" aria-pressed="false">Belum ada</button><button type="button" class="p-chip" aria-pressed="false">Security internal</button><button type="button" class="p-chip" aria-pressed="true">BUJP</button><button type="button" class="p-chip" aria-pressed="false">TNI</button><button type="button" class="p-chip" aria-pressed="false">Polri</button></div><span class="p-help">Boleh lebih dari satu. Pilih Belum ada kalau belum ada yang datang. Nama mitra dan kontraknya dicatat PIC saat penanganan.</span></div>
+          </section>
+        </div>
+        <aside class="c4 lk-stack">
+          <section class="p-card"><h2 class="in-h" style="margin-bottom: 12px">Pengajuan</h2><dl class="lk-kv1"><dt>Nomor</dt><dd><span class="p-mono" style="font-size: 12px">INS-SEN-2026-0007</span></dd><dt>Status</dt><dd><span class="p-tag t-draft">Draf</span></dd><dt>Terakhir disimpan</dt><dd>28 Okt 2026, 06:52 WIB</dd><dt>Dikirim ke</dt><dd>Semua Pejabat Berwenang KKKS</dd></dl></section>
+          <div class="p-note" style="align-items: flex-start"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; flex: none; margin-top: 1px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"/></svg><span>Keparahan disarankan dari dampak yang Anda isi. Pejabat Berwenang menetapkan level resmi.</span></div>
+        </aside>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 0 -24px"><a href="I12-Jenis.dc.html" class="p-btn p-btn-secondary">Sebelumnya</a><div style="display: flex; gap: 8px"><button type="button" class="p-btn p-btn-secondary">Simpan draf</button><a href="I14-Ringkasan.dc.html" class="p-btn p-btn-primary">Berikutnya</a></div></div>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1500}}'>
+const KAT = [["pr", "Pencurian/Perampokan", "Aset, material, atau barang diambil tanpa hak, termasuk dengan kekerasan", []], ["pm", "Pencurian minyak", "Minyak mentah, kondensat, atau BBM diambil tanpa hak", ["Drilling", "Tapping", "Penggesekan", "Dari tangki/fasilitas (usulan)"]], ["pe", "Pemerasan", "Meminta uang atau barang dengan ancaman", []], ["bl", "Blokade area", "Akses jalan atau lokasi ditutup pihak lain", []], ["ps", "Penyanderaan aset", "Aset atau peralatan ditahan pihak lain", []], ["ph", "Penghentian kegiatan/operasi", "Kegiatan dihentikan paksa oleh pihak lain", []], ["ur", "Unjuk rasa", "Aksi massa menyampaikan tuntutan", []], ["sb", "Sabotase", "Aset sengaja dirusak untuk mengganggu operasi", []], ["pk", "Perusakan material", "Material atau fasilitas dirusak", []], ["kt", "Kasus tanah", "Sengketa atau klaim lahan yang mengganggu kegiatan", []], ["an", "Ancaman", "Ancaman atau intimidasi terhadap pekerja atau fasilitas", []], ["pc", "Penculikan", "Pekerja atau orang diculik", []], ["dt", "DTT", "Pelanggaran Daerah Terbatas/Terlarang · arti menunggu konfirmasi SKK", []], ["kb", "Kebakaran", "K3 · masuk cakupan atau tidak menunggu Q-048", []], ["kk", "Kecelakaan kerja", "K3 · menunggu Q-048", []], ["kl", "Kecelakaan lalu lintas", "K3 · menunggu Q-048", []], ["sf", "Serangan fisik", "Penganiayaan atau perkelahian terhadap pekerja atau petugas · usulan, belum ada di daftar SKK", []], ["sd", "Serangan data", "Pencurian atau kebocoran data/informasi perusahaan · usulan, belum ada di daftar SKK", []], ["ln", "Lainnya", "Tidak cocok dengan kategori di atas; jelaskan singkat", []]];
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sev: 'hi', op: 'stop', open: false, ongoing: false, kat: 'pm', jen: 1, kOpen: false, jOpen: true }; }
+  renderVals() {
+    const sd = [ ['vl', 'Sangat rendah', 'Kerugian sangat kecil, operasi normal', 'Insignificant'], ['lo', 'Rendah', 'Kerugian kecil atau gangguan singkat', 'Minor'], ['me', 'Sedang', 'Kerugian cukup besar atau operasi terganggu', 'Moderate'], ['hi', 'Tinggi', 'Kerugian besar, operasi berhenti, atau ada korban luka', 'Significant'], ['cr', 'Kritis', 'Korban jiwa atau kerugian sangat besar', 'Catastrophic'] ];
+    const od = [ ['none', 'Tidak terganggu'], ['part', 'Terganggu sebagian'], ['stop', 'Berhenti'] ];
+    const s = this.state;
+    const kf = KAT.find((x) => x[0] === s.kat);
+    const jl = kf ? kf[3] : [];
+    const kv = {
+      kOpen: s.kOpen, kOpenStr: s.kOpen ? 'true' : 'false', kT: () => this.setState({ kOpen: !s.kOpen, jOpen: false, open: false }),
+      jOpen: s.jOpen, jOpenStr: s.jOpen ? 'true' : 'false', jT: () => { if (jl.length) this.setState({ jOpen: !s.jOpen, kOpen: false, open: false }); },
+      katLabel: kf ? kf[1] : 'Pilih kategori', katCls: kf ? '' : 'ph', katCount: KAT.length,
+      kats: KAT.map(([k, l, d, j]) => ({ label: l, desc: d, n: '', on: s.kat === k ? 'true' : 'false', cls: s.kat === k ? 'op on' : 'op', pick: () => this.setState({ kat: k, jen: null, kOpen: false, jOpen: false }) })),
+      jens: jl.map((l, i) => ({ label: l, on: s.jen === i ? 'true' : 'false', cls: s.jen === i ? 'op on' : 'op', pick: () => this.setState({ jen: i, jOpen: false }) })),
+      jenLabel: !jl.length ? 'Tidak ada jenis untuk kategori ini' : (s.jen === null || s.jen === undefined ? 'Pilih jenis' : jl[s.jen]), jenCls: (s.jen === null || s.jen === undefined || !jl.length) ? 'ph' : '',
+      jenHelp: jl.length ? 'Pilihan menyesuaikan kategori. Nanti ditetapkan ulang saat verifikasi.' : 'Tidak wajib. Jelaskan kejadiannya di Dampak keamanan.'
+    };
+
+    return {
+      segs: [['vl', 'Sangat rendah', 'var(--ink-subtle)'], ['lo', 'Rendah', 'var(--sev-low-dot)'], ['me', 'Sedang', 'var(--sev-medium-dot)'], ['hi', 'Tinggi', 'var(--sev-high-dot)'], ['cr', 'Kritis', 'var(--sev-critical-dot)']].map(([k, l, c]) => ({ label: l, dot: c, sug: k === 'hi' ? '· saran' : '', on: s.sev === k ? 'true' : 'false', pick: () => this.setState({ sev: k }) })),
+      curLabel: ({ vl: 'Sangat rendah', lo: 'Rendah', me: 'Sedang', hi: 'Tinggi', cr: 'Kritis' })[s.sev], curAlt: ({ vl: 'Insignificant', lo: 'Minor', me: 'Moderate', hi: 'Significant', cr: 'Catastrophic' })[s.sev],
+      curTag: ({ vl: 'p-tag s-vlow', lo: 'p-tag s-low', me: 'p-tag s-med', hi: 'p-tag s-high', cr: 'p-tag s-crit' })[s.sev],
+      srcTag: s.sev === 'hi' ? 'p-tag t-info' : 'p-tag t-caution', srcTxt: s.sev === 'hi' ? 'Otomatis' : 'Diubah pelapor',
+      editing: !!s.sevEdit, editTxt: s.sevEdit ? 'Selesai' : 'Ubah', toggleEdit: () => this.setState({ sevEdit: !s.sevEdit }),
+      diff: s.sev !== 'hi',
+      fast: s.sev === 'hi' || s.sev === 'cr',
+      ops: od.map(([k, l]) => ({ label: l, on: s.op === k ? 'true' : 'false', pick: () => this.setState({ op: k }) })),
+      showDur: s.op !== 'none',
+      durLabel: s.op === 'stop' ? 'Berapa lama operasi berhenti?' : 'Berapa lama operasi terganggu?',
+      durVal: '6',
+      durCls: 'p-input',
+      ongoingStr: s.ongoing ? 'true' : 'false',
+      chkCls: s.ongoing ? 'p-check on' : 'p-check',
+      toggleOngoing: () => this.setState({ ongoing: !s.ongoing }),
+      durHelp: s.ongoing ? 'Isi lama sampai saat ini. Perbarui setelah operasi pulih.' : 'Dari mulai terganggu sampai pulih. Perkiraan boleh.',
+      open: s.open,
+      openStr: s.open ? 'true' : 'false',
+      toggle: () => this.setState({ open: !s.open, kOpen: false, jOpen: false }),
+      ...kv
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ajukan ditolak validasi</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1380px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1380" hint-size="240px,1380px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Laporan baru</h1><span class="p-tag t-draft">Draf</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page">Laporan baru</li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><span class="lbl">Tanya AI</span></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Temuan</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step on warn" aria-current="step"><span class="n">!</span>Kejadian &amp; dampak</li><li class="p-conn" aria-hidden="true"></li><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Lampiran</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">4</span>Ringkasan</li></ol>
+      <div class="in-bn err" role="alert"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><div class="body"><b>1 isian belum lengkap.</b> Lengkapi lalu ajukan lagi dari Ringkasan.</div></div>
+      <div class="lk-grid">
+        <div class="c8 lk-stack">
+          <section class="p-card in-sec">
+            <h2 class="in-h">Dampak</h2>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Dampak keamanan<span class="p-req">*</span></span><span class="p-input p-area" style="min-height: 64px">Sekitar 40 m kabel hilang. Panel listrik pompa terbuka.</span></div>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Apa saja yang terdampak?<span class="p-req">*</span></span><div class="in-chips" role="group" aria-label="Yang terdampak"><button type="button" class="p-chip" aria-pressed="true">Properti atau operasi</button><button type="button" class="p-chip" aria-pressed="false">Manusia</button><button type="button" class="p-chip" aria-pressed="false">Lingkungan pengamanan</button><button type="button" class="p-chip" aria-pressed="false">Data dan informasi</button></div><span class="p-help">Boleh lebih dari satu. Isian lanjutan muncul sesuai pilihan; yang tidak dipilih dianggap tidak terdampak.</span></div>
+            <div class="lk-divider" style="margin: 4px 0"></div>
+            <span class="p-lbl" style="color: var(--ink-muted)">Properti dan operasi</span>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Perkiraan kerugian <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><span class="p-input" style="max-width: 320px"><span class="affix">Rp</span><span class="num">18.500.000</span></span><span class="p-help">Isi dalam Rupiah. Sistem mengonversi ke USD dengan kurs tanggal kejadian untuk menghitung saran keparahan.</span></div>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Kondisi operasi<span class="p-req">*</span></span><div class="in-chips"><button type="button" class="p-chip" aria-pressed="false">Tidak terganggu</button><button type="button" class="p-chip" aria-pressed="false">Terganggu sebagian</button><button type="button" class="p-chip" aria-pressed="true">Berhenti</button></div><div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: var(--radius-lg); background: var(--surface-subtle)"><span class="p-lbl" style="color: var(--ink)">Berapa lama operasi berhenti?<span class="p-req">*</span></span><div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap"><span class="p-input err" style="width: 140px"><span class="num" style="flex: 1; color: var(--ink-muted)">—</span><span class="affix">jam</span></span><span class="in-checked" style="font-size: 13px; color: var(--ink)"><span class="p-check"></span>Masih berlangsung saat melapor</span></div><span class="p-help err"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>Isi berapa jam operasi berhenti.</span></div></div>
+          </section>
+          <section class="p-card in-sec">
+            <h2 class="in-h">Seberapa parah?</h2>
+            <div class="in-sevauto"><div class="r1"><span class="p-tag s-high"><span class="dot"></span>Tinggi</span><span class="p-cap">setara Significant</span><span class="p-tag t-info" style="height: 20px; font-size: 11px">Otomatis</span><span style="flex: 1"></span><button type="button" class="p-btn p-btn-secondary p-btn-sm">Ubah</button></div><span class="p-cap">Dari dampak: operasi berhenti (durasi belum diisi).</span></div>
+          </section>
+          <section class="p-card in-sec">
+            <h2 class="in-h">Penanganan di lokasi</h2>
+            <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Sudah ada yang menangani? <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><div class="in-chips" role="group" aria-label="Yang sudah menangani"><button type="button" class="p-chip" aria-pressed="false">Belum ada</button><button type="button" class="p-chip" aria-pressed="false">Security internal</button><button type="button" class="p-chip" aria-pressed="true">BUJP</button><button type="button" class="p-chip" aria-pressed="false">TNI</button><button type="button" class="p-chip" aria-pressed="false">Polri</button></div><span class="p-help">Boleh lebih dari satu. Nama mitra dicatat PIC saat penanganan.</span></div>
+          </section>
+        </div>
+        <aside class="c4 lk-stack"><div class="p-note" style="align-items: flex-start"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; flex: none; margin-top: 1px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"/></svg><span>Isian lain tetap tersimpan. Tidak ada yang hilang.</span></div></aside>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 0 -24px"><a href="#" class="p-btn p-btn-secondary">Sebelumnya</a><div style="display: flex; gap: 8px"><button type="button" class="p-btn p-btn-secondary">Simpan draf</button><a href="#" class="p-btn p-btn-primary">Berikutnya</a></div></div>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1380}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

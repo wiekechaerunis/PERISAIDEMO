@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Kerangka email PERISAI</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 600px; background: #ffffff; font-family: 'IBM Plex Sans','Segoe UI',Arial,sans-serif; color: #1d1c1a">
+  <div style="height: 80px; padding: 0 40px; border-bottom: 1px solid #ecebe6; display: flex; align-items: center; gap: 12px; box-sizing: border-box">
+    <img src="/_blob/8e8d58706f0984252cfbad3aba73d237" alt="SKK Migas" width="40" height="26" style="width: 40px; height: 26px; object-fit: contain">
+    <span aria-hidden="true" style="width: 1px; height: 34px; background: #e4e2dd"></span>
+    <img src="/_blob/1c38f8eba59b050dffe8bcbb29b3d42a" alt="PERISAI" width="104" height="35" style="width: 104px; height: 35px; object-fit: contain">
+  </div>
+  <div aria-hidden="true" style="display: flex; height: 2px"><div style="flex: 4; background: #ea292b"></div><div style="flex: 1; background: #bed630"></div></div>
+  <div style="padding: 24px 40px 40px 40px">
+    <h1 style="margin: 0; font-size: 22px; line-height: 30px; font-weight: 600">{{judul}}</h1>
+    <p style="margin: 16px 0 0 0; font-size: 15px; line-height: 24px">Halo {{nama}},</p>
+    <p style="margin: 12px 0 0 0; font-size: 15px; line-height: 24px">{{konteks}}</p>
+    <dl style="margin: 24px 0 0 0; background: #f7f6f3; border-radius: 6px; padding: 6px 20px">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+        <div style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e4e2dd">
+          <dt style="width: 120px; flex: none; font-size: 13px; line-height: 20px; font-weight: 500; color: #5e5b55">{{r.k}}</dt>
+          <dd style="margin: 0; font-size: 15px; line-height: 22px; white-space: pre-line">{{r.v}}</dd>
+        </div>
+      </sc-for>
+    </dl>
+    <sc-if value="{{adaTombol}}" hint-placeholder-val="{{true}}">
+      <a href="#" style="display: inline-flex; align-items: center; height: 44px; padding: 0 24px; margin-top: 24px; border-radius: 6px; background: #1d1c1a; color: #ffffff; font-size: 15px; font-weight: 500; text-decoration: none">{{tombol}}</a>
+      <p style="margin: 16px 0 0 0; font-size: 12px; line-height: 16px; color: #6b675f">Jika tombol tidak berfungsi, salin tautan berikut ke browser:</p>
+      <p style="margin: 4px 0 0 0; font-family: 'IBM Plex Mono',Consolas,monospace; font-size: 12px; line-height: 16px; color: #1d1c1a; text-decoration: underline">{{tautan}}</p>
+    </sc-if>
+    <p style="margin: 24px 0 0 0; font-size: 15px; line-height: 24px">{{penutup}}</p>
+    <div aria-hidden="true" style="height: 64px; display: flex; align-items: center"><div style="flex: 1; height: 1px; background: #ecebe6"></div></div>
+    <p style="margin: 0; font-size: 12px; line-height: 16px; color: #6b675f">{{catatan}}</p>
+  </div>
+  <div style="height: 46px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 16px; color: #6b675f">© 2026 SKK Migas. Hak cipta dilindungi.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"judul":{"editor":"text","default":"[Judul hasil]"},"nama":{"editor":"text","default":"[nama pengguna]"},"konteks":{"editor":"text","default":"[konteks]"},"rows":{"editor":null},"tombol":{"editor":"text","default":"[Aksi]"},"tautan":{"editor":"text","default":"https://perisai.skkmigas.go.id/…"},"penutup":{"editor":"text","default":"Notifikasi ini juga tampil di PERISAI."},"catatan":{"editor":"text","default":"Email ini dikirim otomatis oleh PERISAI. Jangan membalas email ini."},"$preview":{"width":600,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const tombol = this.props.tombol ?? '[Aksi]';
+    return {
+      judul: this.props.judul ?? '[Judul hasil]',
+      nama: this.props.nama ?? '[nama pengguna]',
+      konteks: this.props.konteks ?? '[konteks]',
+      rows: this.props.rows ?? [{ k: '[label]', v: '[nilai]' }],
+      tombol,
+      adaTombol: tombol !== '',
+      tautan: this.props.tautan ?? 'https://perisai.skkmigas.go.id/…',
+      penutup: this.props.penutup ?? 'Notifikasi ini juga tampil di PERISAI.',
+      catatan: this.props.catatan ?? 'Email ini dikirim otomatis oleh PERISAI. Jangan membalas email ini.'
+    };
+  }
+}
+</script>
+</body>
+</html>

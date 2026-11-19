@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mobile · Daftar insiden (SKK)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="in-m" style="height: 844px">
+<div class="top"><button type="button" class="ib44" aria-label="Buka menu"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 22px; height: 22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><span class="ttl">Insiden</span><button type="button" class="ib44" aria-label="Cari"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5"/></svg></button><button type="button" class="ib44" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div><div class="body"><div class="p-qf" role="radiogroup" aria-label="Insiden dan kerawanan" style="display: flex; width: 100%; box-sizing: border-box; flex: none"><button type="button" role="radio" aria-checked="true" style="flex: 1; justify-content: center; height: 40px">Insiden<span class="c">3</span></button><a href="MK1-DaftarKerawanan.dc.html" role="radio" aria-checked="false" style="display: inline-flex; align-items: center; gap: 6px; height: 40px; flex: 1; justify-content: center; padding: 0 12px; border-radius: 6px; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--ink-subtle); text-decoration: none; white-space: nowrap">Kerawanan<span class="c">8</span></a></div><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><button type="button" class="p-chip" aria-pressed="true" style="min-height: 44px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M3 6h18M7 12h10M10 18h4"/></svg>Filter · 1</button><span style="font-size: 12px; color: var(--ink-muted)">{{countText}}</span></div><sc-for list="{{rows}}" as="r" hint-placeholder-count="2"><a href="M6-DetailSKK.dc.html" class="card" style="text-decoration: none; color: inherit"><div style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 14px; line-height: 20px">{{r.title}}</b><span class="p-mono" style="font-size: 12px; color: var(--ink-muted)">{{r.no}}</span></div><span style="font-size: 12px; color: var(--ink-subtle); font-weight: 600">{{r.kkks}}</span><div style="display: flex; gap: 6px; flex-wrap: wrap"><span class="p-tag {{r.sevCls}}"><span class="dot"></span>{{r.sev}}</span><span class="p-tag {{r.stCls}}">{{r.st}}</span></div><span style="font-size: 12px; color: var(--ink-muted)">{{r.meta}}</span></a></sc-for><span style="text-align: center; font-size: 12px; color: var(--ink-muted)">{{countText}}</span></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { f: 'unv' }; }
+  renderVals() {
+    const all = [
+      { title: 'Pencurian kabel listrik sumur ADR-07', no: 'INS-SEN-2026-0007', kkks: 'PT Samudra Energi Nusantara', sev: 'Tinggi', sevCls: 's-high', st: 'Belum terverifikasi', stCls: 't-caution', meta: 'Sumur ADR-07 · 28 Okt, 01:00', unv: true },
+      { title: 'Kabel pompa ADR-07 dipotong', no: 'INS-SEN-2026-0009', kkks: 'PT Samudra Energi Nusantara', sev: 'Tinggi', sevCls: 's-high', st: 'Belum terverifikasi', stCls: 't-caution', meta: 'Jalan masuk ADR-07 · 28 Okt, 01:00', unv: true },
+      { title: 'Penghadangan truk logistik oleh warga', no: 'INS-PRA-2026-0012', kkks: 'PT Pratama Hulu Energi', sev: 'Kritis', sevCls: 's-crit', st: 'Dalam penanganan', stCls: 't-info', meta: 'SP Batu Ampar · 25 Okt, 07:40', unv: false }
+    ];
+    const f = this.state.f;
+    const rows = all.filter((r) => f === 'all' || r.unv);
+    return { rows, chipAll: f === 'all' ? 'true' : 'false', chipUnv: f === 'unv' ? 'true' : 'false',
+      pickAll: () => this.setState({ f: 'all' }), pickUnv: () => this.setState({ f: 'unv' }), countText: rows.length + ' belum terverifikasi' };
+  }
+}
+</script>
+</body>
+</html>

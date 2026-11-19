@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Analitik insiden</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}
+.an-bars{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:12px;height:200px;align-items:end;border-bottom:1px solid var(--chart-grid);background:linear-gradient(to top,var(--chart-grid) 1px,transparent 1px) 0 0/100% 25%}
+.an-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;min-width:0}
+.an-col i{display:block;width:100%;max-width:40px;border-radius:4px 4px 0 0;background:var(--chart-series-1)}
+.an-col .v{font-size:11px;line-height:14px;font-weight:600;color:var(--ink-subtle);white-space:nowrap}
+.an-x{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:12px;margin-top:6px;text-align:center;font-size:11px;line-height:14px;color:var(--ink-muted)}
+.an-hb{display:grid;grid-template-columns:150px minmax(0,1fr) 76px;gap:10px;align-items:center;font-size:12px;line-height:16px}
+.an-hb .t{height:10px;border-radius:5px;background:var(--surface-sunken);overflow:hidden}
+.an-hb .t i{display:block;height:100%;border-radius:5px;background:var(--chart-series-1)}
+.an-hb.rest .t i{background:var(--border-control)}
+.an-hb .n{text-align:right;font-weight:600;white-space:nowrap}
+.an-stack{display:flex;height:16px;border-radius:8px;overflow:hidden;gap:2px;background:var(--surface-sunken)}
+.an-stack i{display:block;height:100%}
+.an-sevl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:14px}
+.an-sevl div{display:flex;flex-direction:column;gap:2px}
+.an-sevl .k{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-muted);font-weight:600}
+.an-sevl .k i{width:8px;height:8px;border-radius:50%;flex:none}
+.an-sevl b{font-size:18px;line-height:24px}
+.an-map{height:340px;cursor:default}
+.an-map .land{fill:var(--surface);stroke:var(--border-control);stroke-width:1}
+.an-dot{position:absolute;border-radius:50%;transform:translate(-50%,-50%);background:color-mix(in srgb,var(--chart-series-1) 45%,transparent);box-shadow:0 0 0 1.5px var(--chart-series-1)}
+.an-att{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0}
+.an-att .ic{width:28px;height:28px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;background:var(--caution-bg);color:var(--caution-ink)}
+.an-att b{display:block;font-size:13px;line-height:18px}
+.an-spark polyline{fill:none;stroke:var(--chart-series-2);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.an-row1{height:470px;box-sizing:border-box;overflow:hidden}
+.an-attc{display:flex;flex-direction:column;overflow:hidden}
+.an-attc .lk-rows{flex:1;min-height:0;overflow-y:auto;margin-right:-8px;padding-right:8px}
+.an-per .p-opt[aria-checked="true"]{background:var(--action-subtle-bg)}
+.an-opt{border:0;background:none;font:inherit;color:var(--ink);width:100%;text-align:left;cursor:pointer;height:auto;padding:8px 10px;align-items:flex-start;flex-direction:column;gap:2px}
+</style>
+</helmet>
+
+<div class="lk-app p-app" style="min-height: 1980px">
+  <dc-import name="Sidebar" active="analitik" user="{{user}}" role="{{role}}" task-count="{{tasks}}" h="1980" hint-size="240px,1980px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar top"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"></path></svg></button>
+      <div class="p-col ttl"><h1>Analitik insiden</h1><span class="sub">{{subtitle}}</span></div>
+      <div class="acts" style="position: relative; display: flex; gap: 8px; align-items: center">
+        <button type="button" class="p-input" aria-label="Periode" aria-haspopup="listbox" aria-expanded="{{perOpenStr}}" onClick="{{togglePer}}" style="height: 36px; border: 0; font: inherit; font-weight: 600; cursor: pointer"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M3 5h18v16H3zM16 3v4M8 3v4M3 10h18"></path></svg>{{perLbl}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"></path></svg></button>
+        <sc-if value="{{perOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop an-per" role="listbox" aria-label="Periode" style="position: absolute; left: 0; top: 44px; width: 280px; z-index: 30"><div class="p-list"><sc-for list="{{pers}}" as="o" hint-placeholder-count="7"><button type="button" role="option" aria-checked="{{o.on}}" class="p-opt an-opt" onClick="{{o.pick}}"><b>{{o.l}}</b><span class="p-cap">{{o.d}}</span></button></sc-for></div><p class="p-cap" style="margin: 0; padding: 8px 12px 10px 12px; border-top: 1px solid var(--border-subtle)">Pembanding: periode yang sama tahun sebelumnya.</p></div></sc-if>
+        <sc-if value="{{isSkk}}" hint-placeholder-val="{{true}}"><button type="button" class="p-btn p-btn-secondary p-btn-sm" aria-haspopup="menu" aria-expanded="{{dlOpenStr}}" onClick="{{toggleDl}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>Unduh<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"></path></svg></button></sc-if>
+        <sc-if value="{{isKkks}}" hint-placeholder-val="{{false}}"><button type="button" class="p-btn p-btn-secondary p-btn-sm"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>Unduh PDF</button></sc-if>
+        <sc-if value="{{dlOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop" role="menu" aria-label="Unduh" style="position: absolute; right: 0; top: 44px; width: 300px; z-index: 30"><div class="p-list">
+          <button type="button" role="menuitem" class="p-opt an-opt" onClick="{{toggleDl}}"><b>PDF laporan pimpinan</b><span class="p-cap">Ringkasan angka dan grafik sesuai filter aktif</span></button>
+          <button type="button" role="menuitem" class="p-opt an-opt" onClick="{{toggleDl}}"><b>Excel rekap format SKK</b><span class="p-cap">Satu baris per insiden, kolom mengikuti rekap SKK</span></button>
+        </div></div></sc-if>
+      </div>
+      <span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"></path></svg></button></div>
+    </div></header>
+    <main class="lk-content">
+      <sc-if value="{{isKkks}}" hint-placeholder-val="{{false}}"><div class="p-note" style="align-items: flex-start"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span><b>Hanya data organisasi Anda.</b> Angka di halaman ini mencakup PT Samudra Energi Nusantara saja. Data dan rata-rata KKKS lain tidak ditampilkan.</span></div></sc-if>
+
+      <section class="p-card" style="padding: 12px 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button type="button" class="p-input" style="height: 36px; border: 0; font: inherit; cursor: pointer"><span class="p-cap" style="font-weight: 600">{{f.k}}</span><span style="font-weight: 600">{{f.v}}</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="m6 9 6 6 6-6"></path></svg></button></sc-for>
+        <span style="flex: 1"></span>
+        <span class="p-lbl">Tampilkan</span>
+        <div class="p-qf" role="radiogroup" aria-label="Ukuran grafik"><sc-for list="{{measures}}" as="q" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{q.on}}" onClick="{{q.pick}}">{{q.label}}</button></sc-for></div>
+      </section>
+
+      <div class="lk-grid">
+        <div class="c12" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px"><sc-for list="{{kpis}}" as="k" hint-placeholder-count="4"><div class="p-kpi">
+          <div class="k-head">{{k.label}}</div>
+          <div><span class="k-val">{{k.val}}</span><span class="k-unit">{{k.unit}}</span></div>
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap"><span class="p-trend {{k.trCls}}">{{k.tr}}</span><span class="p-cap">{{k.cmp}}</span></div>
+          <a class="k-link" href="{{k.href}}">{{k.link}}</a>
+        </div></sc-for></div>
+
+        <section class="p-card c8 an-row1">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Peta sebaran</h2><span class="p-cap">Ukuran titik = {{mLblLow}} per kabupaten/kota</span></div><span class="p-tag t-caution">Basis peta menunggu Q-272</span></div>
+          <div class="p-map an-map" role="img" aria-label="{{mapAria}}">
+            <svg class="base" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true">
+              <ellipse class="land" cx="122" cy="146" rx="178" ry="40" transform="rotate(50 122 146)"></ellipse>
+              <ellipse class="land" cx="326" cy="312" rx="106" ry="15" transform="rotate(9 326 312)"></ellipse>
+              <ellipse class="land" cx="476" cy="338" rx="58" ry="8" transform="rotate(-4 476 338)"></ellipse>
+              <ellipse class="land" cx="420" cy="140" rx="92" ry="102"></ellipse>
+              <ellipse class="land" cx="560" cy="185" rx="20" ry="88" transform="rotate(-8 560 185)"></ellipse>
+              <ellipse class="land" cx="604" cy="138" rx="44" ry="11" transform="rotate(-12 604 138)"></ellipse>
+              <ellipse class="land" cx="598" cy="220" rx="36" ry="10" transform="rotate(20 598 220)"></ellipse>
+              <ellipse class="land" cx="700" cy="170" rx="18" ry="26"></ellipse>
+              <ellipse class="land" cx="920" cy="245" rx="92" ry="56" transform="rotate(8 920 245)"></ellipse>
+              <ellipse class="land" cx="288" cy="48" rx="12" ry="8"></ellipse>
+            </svg>
+            <sc-for list="{{dots}}" as="d" hint-placeholder-count="10"><span class="an-dot" title="{{d.tip}}" style="left: {{d.x}}; top: {{d.y}}; width: {{d.s}}; height: {{d.s}}"></span></sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px"><sc-for list="{{topLoc}}" as="l" hint-placeholder-count="3"><span class="p-cap"><b style="color: var(--ink)">{{l.n}}</b> {{l.v}}</span></sc-for></div>
+        </section>
+
+        <section class="p-card c4 an-row1 an-attc">
+          <div class="lk-card-head" style="margin-bottom: 4px"><h2 class="p-h2">Butuh perhatian</h2><span class="p-tag t-caution">{{attnCount}}</span></div>
+          <div class="lk-rows"><sc-for list="{{attn}}" as="a" hint-placeholder-count="4"><div class="an-att">
+            <span class="ic" aria-hidden="true"><svg class="p-ic" viewBox="0 0 24 24" style="width: 15px; height: 15px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"></path></svg></span>
+            <div><b>{{a.t}}</b><span class="p-cap">{{a.d}}</span></div>
+            <a class="p-btn p-btn-secondary p-btn-sm" href="{{a.href}}">Buka</a>
+          </div></sc-for></div>
+        </section>
+
+        <section class="p-card c7">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Tren per bulan</h2><span class="p-cap">{{mLbl}} · Jan–Okt 2026</span></div><span class="p-cap">Total <b style="color: var(--ink)">{{trendTotal}}</b></span></div>
+          <div class="an-bars" role="img" aria-label="{{trendAria}}"><sc-for list="{{trend}}" as="b" hint-placeholder-count="10"><div class="an-col"><span class="v">{{b.lbl}}</span><i style="height: {{b.h}}"></i></div></sc-for></div>
+          <div class="an-x" aria-hidden="true"><sc-for list="{{trend}}" as="b" hint-placeholder-count="10"><span>{{b.m}}</span></sc-for></div>
+        </section>
+
+        <section class="p-card c5">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Per kategori</h2><span class="p-cap">8 teratas · {{mLbl}}</span></div></div>
+          <div style="display: flex; flex-direction: column; gap: 12px"><sc-for list="{{cats}}" as="c" hint-placeholder-count="9"><div class="{{c.cls}}"><span>{{c.n}}</span><span class="t"><i style="width: {{c.w}}"></i></span><span class="n">{{c.lbl}}</span></div></sc-for></div>
+          
+        </section>
+
+        <section class="p-card c8">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Per keparahan</h2><span class="p-cap">{{mLbl}} · 5 level sesuai matriks keparahan</span></div></div>
+          <div class="an-stack" role="img" aria-label="{{sevAria}}"><sc-for list="{{sev}}" as="v" hint-placeholder-count="5"><i style="width: {{v.w}}; background: {{v.c}}"></i></sc-for></div>
+          <div class="an-sevl"><sc-for list="{{sev}}" as="v" hint-placeholder-count="5"><div><span class="k"><i style="background: {{v.c}}"></i>{{v.n}}</span><b>{{v.lbl}}</b><span class="p-cap">{{v.pct}}</span></div></sc-for></div>
+        </section>
+
+        <section class="p-card c4">
+          <div class="lk-card-head" style="margin-bottom: 8px"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Kerawanan (indikator awal)</h2><span class="p-cap">Tidak dihitung sebagai insiden</span></div></div>
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+            <div><span class="metric" style="font-size: 28px; line-height: 34px; font-weight: 700">{{krTotal}}</span><span class="p-cap" style="display: block">kerawanan tercatat Jan–Okt 2026</span></div>
+            <svg class="an-spark" viewBox="0 0 200 48" width="160" height="48" role="img" aria-label="{{krAria}}"><polyline points="{{krPts}}"></polyline></svg>
+          </div>
+          <div class="lk-divider" style="margin: 14px 0 10px 0"></div>
+          <a class="lk-alink" href="Kerawanan.dc.html">Lihat daftar kerawanan</a>
+        </section>
+
+        <section class="p-card c12" style="padding: 0; overflow: hidden">
+          <div class="p-toolbar" style="justify-content: space-between; padding: 16px 20px 12px 20px"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">{{tblTitle}}</h2><span class="p-cap">{{tblSub}}</span></div></div>
+          <div style="overflow-x: auto"><table class="p-table lk-tbl" style="width: 100%"><thead><tr>
+            <th style="padding-left: 20px">{{col0}}</th>
+            <sc-for list="{{cols}}" as="h" hint-placeholder-count="5"><th aria-sort="{{h.sort}}" style="text-align: right"><button type="button" class="lk-sort" onClick="{{h.pick}}">{{h.l}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="{{h.ic}}"></path></svg></button></th></sc-for>
+            <th style="padding-right: 20px">{{colLast}}</th>
+          </tr></thead><tbody><sc-for list="{{rows}}" as="r" hint-placeholder-count="6"><tr>
+            <td style="padding-left: 20px"><a class="ttl" href="{{r.href}}">{{r.n}}</a><span class="sub">{{r.sub}}</span></td>
+            <td style="text-align: right; font-weight: 600">{{r.cnt}}</td>
+            <td style="text-align: right">{{r.rpL}}</td>
+            <td style="text-align: right">{{r.tk}}</td>
+            <td style="text-align: right">{{r.durL}}</td>
+            <td style="padding-right: 20px"><sc-if value="{{r.hasKep}}" hint-placeholder-val="{{true}}"><span class="lk-mit"><span class="p-prog"><span style="width: {{r.kepW}}"></span></span><span>{{r.kepL}}</span></span></sc-if><sc-if value="{{r.noKep}}" hint-placeholder-val="{{false}}">{{r.last}}</sc-if></td>
+          </tr></sc-for></tbody></table></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--ink-muted)"><span>{{tblFoot}}</span><sc-if value="{{isSkk}}" hint-placeholder-val="{{true}}"><span style="display: flex; gap: 4px"><span class="p-pg on" aria-current="page">1</span><span class="p-pg">2</span><span class="p-pg">3</span></span></sc-if></div>
+        </section>
+      </div>
+      
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"peran":{"editor":"enum","options":["skk","kkks"],"default":"skk"},"$preview":{"width":1366,"height":1980}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { m: 'n', sort: 'cnt', dir: 'desc', dl: false, per: 'ytd', perOpen: false }; }
+  renderVals() {
+    const skk = (this.props.peran ?? 'skk') !== 'kkks';
+    const s = this.state; const N = s.m === 'n';
+    const rp = (jt) => { if (!jt) return 'Rp0'; if (jt >= 1000) { let v = (jt / 1000).toFixed(2).replace(/0$/, '').replace('.', ','); return 'Rp' + v + ' M'; } return 'Rp' + jt + ' jt'; };
+    const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt'];
+    const SEN = 'PT Samudra Energi Nusantara';
+    const D = skk ? {
+      mn: [14, 11, 16, 12, 18, 15, 13, 19, 17, 21], mr: [420, 310, 580, 290, 760, 510, 380, 890, 640, 1120],
+      cat: [['Pencurian/Perampokan', 48, 1840], ['Pencurian minyak', 27, 2150], ['Unjuk rasa', 18, 120], ['Blokade area', 14, 980], ['Perusakan material', 12, 310], ['Ancaman', 10, 0], ['Kasus tanah', 8, 60], ['Lainnya', 7, 90], ['Pemerasan', 4, 85], ['Kebakaran', 3, 180], ['Penghentian kegiatan/operasi', 2, 40], ['Serangan fisik (usulan)', 2, 25], ['Kecelakaan lalu lintas', 1, 20]],
+      sn: [31, 52, 46, 21, 6], sr: [40, 610, 1950, 2300, 1000],
+      dots: [['Musi Banyuasin', 196, 200, 21, 910], ['Banyuasin', 214, 186, 13, 510], ['Mimika', 913, 252, 28, 1960], ['Kutai Kartanegara', 478, 150, 22, 640], ['Siak', 141, 126, 19, 710], ['Bojonegoro', 380, 306, 15, 390], ['Aceh Timur', 40, 36, 9, 240], ['Natuna', 289, 48, 6, 190], ['Luwu', 548, 214, 8, 150], ['Indramayu', 272, 292, 7, 110], ['Tabalong', 446, 186, 8, 90]],
+      kr: [14, 16, 19, 15, 21, 18, 17, 22, 20, 24],
+      prevN: 139, prevR: 4800, prevTK: 24
+    } : {
+      mn: [2, 3, 4, 2, 5, 3, 2, 4, 3, 6], mr: [60, 85, 140, 40, 210, 95, 55, 190, 120, 425],
+      cat: [['Pencurian/Perampokan', 11, 260], ['Pencurian minyak', 7, 470], ['Blokade area', 4, 420], ['Perusakan material', 4, 85], ['Unjuk rasa', 3, 15], ['Ancaman', 2, 0], ['Lainnya', 2, 60], ['Kebakaran', 1, 110]],
+      sn: [6, 12, 9, 5, 2], sr: [10, 140, 380, 470, 420],
+      dots: [['Sumur ADR-07 · Musi Banyuasin', 196, 200, 9, 160], ['WK Andalas Darat (lokasi lain)', 180, 214, 12, 750], ['Terminal Arunika', 222, 196, 7, 340], ['Jalan akses SP Batu Ampar', 210, 176, 6, 170]],
+      kr: [3, 4, 5, 3, 5, 4, 4, 5, 4, 5],
+      prevN: 29, prevR: 1100, prevTK: 5
+    };
+    const sum = (a) => a.reduce((x, y) => x + y, 0);
+    const totN = sum(D.mn), totR = sum(D.mr), tk = D.sn[3] + D.sn[4];
+    const pct = (a, b) => Math.round((a - b) / b * 100);
+    const up = (a, b) => (a >= b ? '▲ ' : '▼ ') + Math.abs(pct(a, b)) + '%';
+    const vals = N ? D.mn : D.mr; const mx = Math.max.apply(null, vals);
+    const trend = vals.map((v, i) => ({ m: MO[i], lbl: N ? String(v) : rp(v), h: (v / mx * 86).toFixed(1) + '%' }));
+    const ci = N ? 1 : 2;
+    const sorted = D.cat.slice().sort((a, b) => b[ci] - a[ci]);
+    const top = sorted.slice(0, 8), rest = sorted.slice(8);
+    const cmax = top[0][ci];
+    const cats = top.map((c) => ({ n: c[0], w: (c[ci] / cmax * 100).toFixed(1) + '%', lbl: N ? String(c[1]) : rp(c[2]), cls: 'an-hb' }));
+    if (rest.length) { const rv = sum(rest.map((c) => c[ci])); cats.push({ n: 'Kategori lain (' + rest.length + ')', w: (rv / cmax * 100).toFixed(1) + '%', lbl: N ? String(rv) : rp(rv), cls: 'an-hb rest' }); }
+    const SL = [['Sangat rendah', 'var(--ink-subtle)'], ['Rendah', 'var(--sev-low-dot)'], ['Sedang', 'var(--sev-medium-dot)'], ['Tinggi', 'var(--sev-high-dot)'], ['Kritis', 'var(--sev-critical-dot)']];
+    const sv = N ? D.sn : D.sr; const st = sum(sv);
+    const sev = SL.map(([n, c], i) => ({ n, c, w: (sv[i] / st * 100).toFixed(1) + '%', lbl: N ? String(sv[i]) : rp(sv[i]), pct: Math.round(sv[i] / st * 100) + '% dari total' }));
+    const di = N ? 3 : 4; const dmax = Math.max.apply(null, D.dots.map((d) => d[di]));
+    const dots = D.dots.map((d) => ({ x: (d[1] / 10) + '%', y: (d[2] / 4) + '%', s: Math.round(10 + Math.sqrt(d[di] / dmax) * 30) + 'px', tip: d[0] + ': ' + (N ? d[3] + ' insiden' : rp(d[4])) }));
+    const topLoc = D.dots.slice().sort((a, b) => b[di] - a[di]).slice(0, 3).map((d) => ({ n: d[0], v: N ? d[3] + ' insiden' : rp(d[4]) }));
+    const kmax = Math.max.apply(null, D.kr), kmin = Math.min.apply(null, D.kr);
+    const krPts = D.kr.map((v, i) => (4 + i * 21.3).toFixed(1) + ',' + (42 - (v - kmin) / (kmax - kmin) * 36).toFixed(1)).join(' ');
+    const mLbl = N ? 'Jumlah insiden' : 'Kerugian (Rp)';
+
+    const kpis = [
+      { label: 'Insiden', val: String(totN), unit: 'insiden', tr: up(totN, D.prevN), trCls: totN > D.prevN ? 'tr-bad' : 'tr-good', cmp: 'vs Jan–Okt 2025 (' + D.prevN + ')', link: 'Lihat daftar', href: skk ? 'I31-DaftarSKK.dc.html' : 'Main.dc.html' },
+      { label: 'Kerugian', val: rp(totR), unit: '', tr: up(totR, D.prevR), trCls: totR > D.prevR ? 'tr-bad' : 'tr-good', cmp: 'vs Jan–Okt 2025 (' + rp(D.prevR) + ')', link: 'Rincian per kategori', href: '#' },
+      { label: 'Tinggi & Kritis', val: String(tk), unit: 'insiden', tr: up(tk, D.prevTK), trCls: tk > D.prevTK ? 'tr-bad' : 'tr-good', cmp: 'vs Jan–Okt 2025 (' + D.prevTK + ')', link: 'Lihat daftar', href: skk ? 'I31-DaftarSKK.dc.html' : 'Main.dc.html' },
+      skk ? { label: 'KKKS mengirim laporan', val: '13', unit: 'dari 131 KKKS', tr: 'Okt 2026', trCls: 'tr-flat', cmp: 'insiden atau kerawanan · 9–13 per bulan sejak Jan', link: 'Lihat daftar KKKS', href: '#' }
+          : { label: 'Rata-rata lama penanganan', val: '6,2', unit: 'hari', tr: '▼ 0,8 hari', trCls: 'tr-good', cmp: 'vs Jan–Okt 2025 (7,0 hari)', link: 'Lihat yang lewat tenggat', href: 'Main.dc.html' }
+    ];
+    const attn = skk ? [
+      { t: '2 insiden Tinggi/Kritis lewat tenggat', d: 'Penghadangan truk logistik (Kritis) · ' + SEN + ', dan 1 lainnya.', href: 'P31-DetailSKK.dc.html' },
+      { t: 'Lokasi berulang: Sumur ADR-07', d: '3 insiden dalam 90 hari · ' + SEN + '.', href: 'I31-DaftarSKK.dc.html' },
+      { t: '2 insiden Tinggi belum diverifikasi > 3 hari', d: 'Belum masuk angka di halaman ini.', href: 'I31-DaftarSKK.dc.html' },
+      { t: '3 insiden diturunkan jadi kerawanan bulan ini · 1 di antaranya Tinggi', d: 'Keluar dari hitungan insiden dan tenggat penanganan. Alasan tercatat di jejak audit.', href: 'I31-DaftarSKK.dc.html' }
+    ] : [
+      { t: 'Penghadangan truk logistik lewat tenggat', d: 'INS-SEN-2026-0005 · Kritis · Dalam penanganan.', href: 'I15-Detail.dc.html' },
+      { t: 'Lokasi berulang: Sumur ADR-07', d: '3 insiden dalam 90 hari, 1 belum diverifikasi.', href: 'Main.dc.html' },
+      { t: '2 laporan belum diverifikasi', d: 'INS-SEN-2026-0007 dan INS-SEN-2026-0006 belum masuk angka dan rekap SKK.', href: 'Main.dc.html' }
+    ];
+
+    const T = skk ? [
+      { n: SEN, sub: '2 WK · Sumatera Selatan', cnt: 34, rp: 1420, tk: 7, dur: 6.2, kep: 10, href: 'I31-DaftarSKK.dc.html' },
+      { n: 'PT Rimba Bumi Energi', sub: '1 WK · Papua Tengah', cnt: 28, rp: 1960, tk: 9, dur: 11.4, kep: 8, href: 'I31-DaftarSKK.dc.html' },
+      { n: 'PT Pesisir Raya Energi', sub: '1 WK · Kalimantan Timur', cnt: 22, rp: 640, tk: 3, dur: 4.8, kep: 10, href: 'I31-DaftarSKK.dc.html' },
+      { n: 'PT Lintas Andalas Petro', sub: '1 WK · Riau', cnt: 19, rp: 710, tk: 2, dur: 5.5, kep: 7, href: 'I31-DaftarSKK.dc.html' },
+      { n: 'PT Tanjung Mas Hulu', sub: '1 WK · Jawa Timur', cnt: 15, rp: 390, tk: 2, dur: 7.1, kep: 6, href: 'I31-DaftarSKK.dc.html' },
+      { n: 'PT Serambi Utara Energi', sub: '1 WK · Aceh', cnt: 9, rp: 240, tk: 1, dur: 8.3, kep: 4, href: 'I31-DaftarSKK.dc.html' }
+    ] : [
+      { n: 'WK Andalas Darat', sub: 'Musi Banyuasin', cnt: 21, rp: 910, tk: 4, dur: 5.8, last: 'Sumur ADR-07 (3)', href: 'Main.dc.html' },
+      { n: 'WK Batu Ampar', sub: 'Banyuasin', cnt: 13, rp: 510, tk: 3, dur: 6.9, last: 'Jalan akses SP Batu Ampar (2)', href: 'Main.dc.html' }
+    ];
+    const key = s.sort, dir = s.dir === 'asc' ? 1 : -1;
+    const rows = T.slice().sort((a, b) => (a[key] - b[key]) * dir).map((r) => ({ ...r, cnt: String(r.cnt), rpL: rp(r.rp), tk: String(r.tk), durL: String(r.dur).replace('.', ',') + ' hari', hasKep: skk, noKep: !skk, kepW: (r.kep || 0) * 10 + '%', kepL: (r.kep || 0) + '/10 bln', last: r.last || '' }));
+    const CD = [['cnt', 'Insiden'], ['rp', 'Kerugian'], ['tk', 'Tinggi & Kritis'], ['dur', 'Rata-rata lama penanganan']];
+    if (skk) CD.push(['kep', 'Bulan dengan laporan']);
+    const cols = CD.slice(0, 4).map(([k, l]) => ({ l, sort: key === k ? (s.dir === 'asc' ? 'ascending' : 'descending') : 'none', ic: key === k ? (s.dir === 'asc' ? 'M12 19V5M5 12l7-7 7 7' : 'M12 5v14M19 12l-7 7-7-7') : 'M8 9l4-4 4 4M16 15l-4 4-4-4', pick: () => this.setState({ sort: k, dir: key === k && s.dir === 'desc' ? 'asc' : 'desc' }) }));
+
+    return {
+      isSkk: skk, isKkks: !skk,
+      user: skk ? 'Hendra Wijaya' : 'Sari Wulandari', role: skk ? 'Pengawas SKK' : 'Pejabat Berwenang KKKS', tasks: skk ? '2' : '4',
+      subtitle: (skk ? 'Insiden yang sudah diverifikasi KKKS.' : 'Insiden organisasi Anda yang sudah diverifikasi.') + ' Data per 18 Nov 2026, 06:00 WIB.',
+      dlOpen: skk && s.dl, dlOpenStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }),
+      filters: (skk ? [{ k: 'KKKS', v: 'Semua' }, { k: 'Wilayah', v: 'Semua' }] : [{ k: 'Wilayah kerja', v: 'Semua' }]).concat([{ k: 'Kategori', v: 'Semua' }, { k: 'Keparahan', v: 'Semua' }]),
+      measures: [['n', 'Jumlah'], ['rp', 'Kerugian (Rp)']].map(([k, l]) => ({ label: l, on: s.m === k ? 'true' : 'false', pick: () => this.setState({ m: k }) })),
+      perLbl: ({ m1: 'Okt 2026', m3: 'Agt–Okt 2026', sm: 'Jul–Okt 2026', ytd: 'Jan–Okt 2026', l12: 'Nov 2025–Okt 2026', y25: 'Tahun 2025', cu: 'Rentang khusus' })[s.per], perOpen: s.perOpen, perOpenStr: s.perOpen ? 'true' : 'false', togglePer: () => this.setState({ perOpen: !s.perOpen, dl: false }),
+      pers: [['m1', 'Bulan ini', 'Okt 2026'], ['m3', '3 bulan terakhir', 'Agt–Okt 2026'], ['sm', 'Semester berjalan', 'Jul–Okt 2026'], ['ytd', 'Tahun berjalan', 'Jan–Okt 2026'], ['l12', '12 bulan terakhir', 'Nov 2025–Okt 2026'], ['y25', 'Tahun 2025', 'Jan–Des 2025'], ['cu', 'Rentang khusus', 'Pilih tanggal awal dan akhir']].map(([k, l, d]) => ({ l, d, on: s.per === k ? 'true' : 'false', pick: () => this.setState({ per: k, perOpen: false }) })),
+      kpis, attn, attnCount: String(attn.length),
+      mLbl, mLblLow: N ? 'jumlah insiden' : 'kerugian',
+      trend, trendTotal: N ? totN + ' insiden' : rp(totR), trendAria: 'Tren ' + mLbl.toLowerCase() + ' per bulan, Jan sampai Okt 2026',
+      cats, sev, sevAria: 'Sebaran keparahan: ' + sev.map((v) => v.n + ' ' + v.lbl).join(', '),
+      dots, topLoc, mapAria: 'Peta sebaran insiden: ' + topLoc.map((l) => l.n + ' ' + l.v).join(', '),
+      krTotal: String(sum(D.kr)), krPts, krAria: 'Tren kerawanan per bulan, ' + D.kr.join(', '),
+      tblTitle: skk ? 'Per KKKS' : 'Per wilayah kerja', tblSub: skk ? 'Klik nama KKKS untuk melihat daftar insidennya.' : 'Klik wilayah kerja untuk melihat daftar insidennya.',
+      col0: skk ? 'KKKS' : 'Wilayah kerja', colLast: skk ? 'Bulan dengan laporan' : 'Lokasi terbanyak', cols, rows,
+      tblFoot: skk ? '6 dari 18 KKKS yang punya insiden terverifikasi · 113 KKKS tanpa insiden pada periode ini' : '2 wilayah kerja',
+      foot: 'Angka hanya mencakup insiden yang sudah diverifikasi KKKS; draf dan laporan yang belum diverifikasi tidak dihitung. Insiden terbatas ikut dihitung di angka total tanpa rincian. Kerawanan tidak dihitung sebagai insiden.'
+    };
+  }
+}
+</script>
+</body>
+</html>

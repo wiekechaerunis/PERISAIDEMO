@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Daftar insiden · Pelapor</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 980px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="980" hint-size="240px,980px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar top"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <div class="p-col ttl"><h1>Insiden</h1><span class="sub">Kejadian yang sudah terjadi dan menimbulkan kerugian, korban, atau gangguan operasi.</span></div>
+      <div class="acts"><a href="I12-Jenis.dc.html" class="p-btn p-btn-primary"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 5v14M5 12h14"/></svg>Buat laporan</a></div>
+      <span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi, 2 belum dibaca"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="p-count">2</span></button></div>
+    </div><nav class="p-tabs" role="tablist" aria-label="Insiden dan kerawanan"><a href="Main.dc.html" role="tab" aria-selected="true" aria-current="page">Insiden<span class="p-count" style="background: var(--action); color: var(--on-action)">6</span></a><a href="Kerawanan.dc.html" role="tab" aria-selected="false">Kerawanan<span class="p-count" style="background: var(--surface-sunken); color: var(--ink-muted)">8</span></a></nav></header>
+    <main class="lk-content">
+      <section class="p-card" style="padding: 0; overflow: visible">
+        <div class="p-toolbar" style="justify-content: space-between">
+          <h2 class="p-h2">{{listTitle}}</h2>
+          <div style="display: flex; gap: 8px; align-items: center; position: relative">
+            <label class="p-input" style="width: 300px; height: 36px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5"/></svg><span class="ph">Cari nomor, judul, atau patokan</span></label>
+            <button type="button" class="p-btn p-btn-secondary p-btn-sm" aria-expanded="{{filterOpenStr}}" onClick="{{toggleFilter}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M3 6h18M7 12h10M10 18h4"/></svg>Filter<sc-if value="{{hasF}}" hint-placeholder-val="{{false}}"><span class="p-count" style="background: var(--action); color: var(--on-action)">{{fCount}}</span></sc-if></button>
+            <sc-if value="{{filterOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop" role="dialog" aria-label="Filter insiden" style="position: absolute; right: 0; top: 44px; width: 420px; z-index: 30"><div style="padding: 14px 16px 6px; display: flex; justify-content: space-between; align-items: center"><b style="font-size: 15px">Filter</b><span class="p-cap">{{fCountTxt}}</span></div><div style="padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 16px"><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">PIC penanganan</span><div class="in-chips" style="flex-wrap: wrap"><sc-for list="{{picOpts}}" as="o" hint-placeholder-count="4"><button type="button" class="p-chip" aria-pressed="{{o.pressed}}" onClick="{{o.toggle}}">{{o.label}}</button></sc-for></div><div class="p-input" style="height: 36px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px; color: var(--ink-muted)"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5"/></svg><span class="ph" style="flex: 1">Cari nama PIC lain</span></div></div><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">Status</span><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px"><sc-for list="{{stOpts}}" as="o" hint-placeholder-count="7"><button type="button" role="checkbox" aria-checked="{{o.pressed}}" onClick="{{o.toggle}}" style="display: flex; align-items: center; gap: 8px; min-height: 28px; border: 0; background: none; padding: 0; font: inherit; color: var(--ink); cursor: pointer; text-align: left"><span class="{{o.chk}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 11px; height: 11px"><path d="M20 6 9 17l-5-5"/></svg></span>{{o.label}}</button></sc-for></div></div><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">Keparahan</span><div class="in-chips" style="flex-wrap: wrap"><sc-for list="{{sevOpts}}" as="o" hint-placeholder-count="5"><button type="button" class="p-chip" aria-pressed="{{o.pressed}}" onClick="{{o.toggle}}"><span class="dot" style="background: {{o.dot}}"></span>{{o.label}}</button></sc-for></div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">Kategori</span><div class="p-input" style="height: 36px"><span style="flex: 1; color: var(--ink-muted)">Semua kategori</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></div></div><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">Wilayah kerja</span><div class="p-input" style="height: 36px"><span style="flex: 1; color: var(--ink-muted)">Semua WK</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></div></div></div><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">Periode kejadian</span><div class="p-input" style="height: 36px"><span style="flex: 1">30 hari terakhir</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></div></div><div style="display: flex; flex-direction: column; gap: 8px"><span class="p-lbl">Lainnya</span><div style="display: flex; flex-direction: column; gap: 6px"><sc-for list="{{flagOpts}}" as="o" hint-placeholder-count="3"><button type="button" role="checkbox" aria-checked="{{o.pressed}}" onClick="{{o.toggle}}" style="display: flex; align-items: center; gap: 8px; min-height: 28px; border: 0; background: none; padding: 0; font: inherit; color: var(--ink); cursor: pointer; text-align: left"><span class="{{o.chk}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 11px; height: 11px"><path d="M20 6 9 17l-5-5"/></svg></span>{{o.label}}</button></sc-for></div></div></div><div class="p-foot"><button type="button" class="p-link" onClick="{{clearAll}}">Hapus filter</button><button type="button" class="p-btn p-btn-primary p-btn-sm" onClick="{{toggleFilter}}">Tampilkan {{nRows}} insiden</button></div></div></sc-if>
+          </div>
+        </div>
+        <div class="lk-quick"><div class="p-qf" role="radiogroup" aria-label="Pintasan"><sc-for list="{{quick}}" as="q" hint-placeholder-count="4"><button type="button" role="radio" aria-checked="{{q.on}}" onClick="{{q.pick}}">{{q.label}}<sc-if value="{{q.hasN}}" hint-placeholder-val="{{true}}"><span class="c">{{q.n}}</span></sc-if></button></sc-for></div></div><sc-if value="{{hasF}}" hint-placeholder-val="{{false}}"><div class="lk-applied"><sc-for list="{{applied}}" as="a" hint-placeholder-count="2"><button type="button" class="p-chip" aria-pressed="true" onClick="{{a.remove}}">{{a.label}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></sc-for><button type="button" class="p-link" onClick="{{clearAll}}">Hapus semua</button></div></sc-if>
+        <sc-if value="{{hasRows}}" hint-placeholder-val="{{true}}">
+        <div style="overflow-x: auto"><table class="p-table lk-tbl" style="width: 100%"><thead><tr><th style="padding-left: 16px">Insiden</th><th>Kategori · lokasi</th><th>Keparahan</th><th>Waktu kejadian</th><th>Status</th><th style="padding-right: 16px">PIC</th></tr></thead>
+          <tbody><sc-for list="{{rows}}" as="r" hint-placeholder-count="6"><tr>
+            <td style="padding-left: 16px"><a class="ttl" href="{{r.href}}">{{r.title}}</a><span class="id">{{r.no}}</span></td>
+            <td>{{r.cat}}<div class="sub">{{r.loc}}</div></td>
+            <td><sc-if value="{{r.hasSev}}" hint-placeholder-val="{{true}}"><span class="p-tag {{r.sevCls}}"><span class="dot"></span>{{r.sev}}</span></sc-if><sc-if value="{{r.noSev}}" hint-placeholder-val="{{false}}"><span class="sub">—</span></sc-if></td>
+            <td style="white-space: nowrap">{{r.when}}</td>
+            <td><span class="p-tag {{r.stCls}}">{{r.st}}</span><sc-if value="{{r.act}}" hint-placeholder-val="{{false}}"><div class="sub" style="color: var(--caution-ink); font-weight: 600">{{r.actTxt}}</div></sc-if></td>
+            <td style="padding-right: 16px">{{r.pic}}<sc-if value="{{r.me}}" hint-placeholder-val="{{false}}"><span class="p-tag t-info" style="margin-left: 6px; height: 20px">Anda</span></sc-if></td>
+          </tr></sc-for></tbody></table></div>
+        <div class="p-pager" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--ink-muted)"><span>{{rangeText}}</span><span style="display: flex; gap: 4px"><span class="p-pg on" aria-current="page">1</span></span></div>
+        </sc-if>
+        <sc-if value="{{noRows}}" hint-placeholder-val="{{false}}">
+          <div class="lk-es"><svg class="il" viewBox="0 0 96 72" width="96" height="72" aria-hidden="true"><rect class="pa ln" x="16" y="10" width="52" height="52" rx="6"/><path class="ln" d="M28 26h28M28 36h20"/><circle class="ac ln" cx="68" cy="50" r="12"/><path class="ln" d="M64 50h8"/></svg><b>{{emptyTxt}}</b><button type="button" class="p-btn p-btn-secondary p-btn-sm" onClick="{{clearAll}}">Lihat semua insiden</button></div>
+        </sc-if>
+      </section>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":980}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { filterOpen: false, q: 'all', sev: [], st: [], pic: [], flags: [] }; }
+  renderVals() {
+    const ME = 'Budi Santoso';
+    const all = [
+      { title: 'Kebakaran lahan dekat flowline', no: 'INS-SEN-2026-0008', cat: 'Kebakaran', loc: 'Flowline ADR-03', sev: '', sevCls: '', when: '28 Okt 2026, 06:10', st: 'Draf', stCls: 't-draft', pic: '—', rep: ME, act: 'Lanjutkan draf', href: 'I13-Kejadian.dc.html', late: false, esc: false },
+      { title: 'Perusakan pagar perimeter terminal', no: 'INS-SEN-2026-0006', cat: 'Perusakan material', loc: 'Terminal Arunika · pagar utara', sev: 'Sedang', sevCls: 's-med', when: '26 Okt 2026, 22:15', st: 'Perlu perbaikan', stCls: 't-caution', pic: '—', rep: ME, act: 'Perbaiki laporan', href: 'I15-Detail.dc.html', late: false, esc: false },
+      { title: 'Ancaman bom lewat telepon ke pos jaga', no: 'INS-SEN-2026-0002', cat: 'Ancaman', loc: 'Pos jaga gerbang utama', sev: 'Rendah', sevCls: 's-low', when: '27 Okt 2026, 14:05', st: 'Dalam penanganan', stCls: 't-info', pic: ME, rep: 'Rina Lestari', act: 'Tangani · tenggat 3 Nov', href: 'P12-Penanganan.dc.html', late: false, esc: false },
+      { title: 'Pencurian kabel listrik sumur ADR-07', no: 'INS-SEN-2026-0007', cat: 'Pencurian/Perampokan', loc: 'Sumur ADR-07 · Musi Banyuasin', sev: 'Tinggi', sevCls: 's-high', when: '28 Okt 2026, 01:00', st: 'Review internal', stCls: 't-info', pic: '—', rep: ME, act: '', href: 'I15-Detail.dc.html', late: false, esc: false },
+      { title: 'Penghadangan truk logistik oleh warga', no: 'INS-SEN-2026-0005', cat: 'Blokade area', loc: 'Jalan akses SP Batu Ampar', sev: 'Kritis', sevCls: 's-crit', when: '25 Okt 2026, 07:40', st: 'Dalam penanganan', stCls: 't-info', pic: 'Andi Pratama', rep: 'Andi Pratama', act: '', href: 'I15-Detail.dc.html', late: true, esc: true },
+      { title: 'Pencurian solar di tangki T-02', no: 'INS-SEN-2026-0004', cat: 'Pencurian minyak', loc: 'Terminal Arunika · tangki T-02', sev: 'Sedang', sevCls: 's-med', when: '19 Okt 2026, 03:30', st: 'Ditutup', stCls: 't-ok', pic: 'Andi Pratama', rep: ME, act: '', href: 'I15-Detail.dc.html', late: false, esc: false }
+    ];
+    const s = this.state;
+    const tog = (key, v) => { const a = s[key].slice(); const i = a.indexOf(v); if (i === -1) a.push(v); else a.splice(i, 1); this.setState({ [key]: a }); };
+    const qdefs = [['all', 'Semua', null], ['act', 'Perlu tindakan saya', (r) => !!r.act], ['pic', 'Ditangani saya', (r) => r.pic === ME], ['rep', 'Laporan saya', (r) => r.rep === ME]];
+    const qf = qdefs.find((d) => d[0] === s.q)[2];
+    const picMatch = (r) => s.pic.length === 0 || s.pic.some((p) => (p === 'Saya' ? r.pic === ME : p === 'Belum ada PIC' ? r.pic === '—' : r.pic === p));
+    const flagMatch = (r) => s.flags.every((f) => (f === 'Lewat tenggat' ? r.late : f === 'Dieskalasi' ? r.esc : true));
+    const rows = all.filter((r) => (!qf || qf(r)) && (s.sev.length === 0 || s.sev.indexOf(r.sev) !== -1) && (s.st.length === 0 || s.st.indexOf(r.st) !== -1) && picMatch(r) && flagMatch(r))
+      .map((r) => ({ ...r, hasSev: !!r.sev, noSev: !r.sev, me: r.pic === ME, act: !!r.act && (s.q === 'act' || s.q === 'all'), actTxt: r.act }));
+    const sevDefs = [['Kritis', 'var(--sev-critical-dot)'], ['Tinggi', 'var(--sev-high-dot)'], ['Sedang', 'var(--sev-medium-dot)'], ['Rendah', 'var(--sev-low-dot)'], ['Sangat rendah', 'var(--ink-subtle)']];
+    const stDefs = ['Draf', 'Review internal', 'Perlu perbaikan', 'Dalam penanganan', 'Minta ditutup', 'Ditutup', 'Dibatalkan'];
+    const picDefs = ['Saya', 'Andi Pratama', 'Dedi Kurniawan', 'Belum ada PIC'];
+    const flagDefs = ['Lewat tenggat', 'Dieskalasi', 'Ditandai kemungkinan ganda'];
+    const box = (key, l) => { const on = s[key].indexOf(l) !== -1; return { label: l, pressed: on ? 'true' : 'false', chk: on ? 'p-check on' : 'p-check', toggle: () => tog(key, l) }; };
+    const applied = [].concat(s.pic.map((l) => ({ label: 'PIC: ' + l, remove: () => tog('pic', l) })), s.st.map((l) => ({ label: 'Status: ' + l, remove: () => tog('st', l) })), s.sev.map((l) => ({ label: 'Keparahan: ' + l, remove: () => tog('sev', l) })), s.flags.map((l) => ({ label: l, remove: () => tog('flags', l) })));
+    const nF = applied.length;
+    const cnt = (f) => all.filter(f).length;
+    return {
+      filterOpen: s.filterOpen, filterOpenStr: s.filterOpen ? 'true' : 'false',
+      toggleFilter: () => this.setState({ filterOpen: !s.filterOpen }),
+      quick: qdefs.map(([k, l, f]) => ({ label: l, on: s.q === k ? 'true' : 'false', pick: () => this.setState({ q: k }), hasN: !!f, n: f ? String(cnt(f)) : '' })),
+      listTitle: qdefs.find((d) => d[0] === s.q)[1] === 'Semua' ? 'Semua insiden' : qdefs.find((d) => d[0] === s.q)[1],
+      sevOpts: sevDefs.map(([l, d]) => ({ ...box('sev', l), dot: d })),
+      stOpts: stDefs.map((l) => box('st', l)), picOpts: picDefs.map((l) => box('pic', l)), flagOpts: flagDefs.map((l) => box('flags', l)),
+      applied, hasF: nF > 0, fCount: String(nF), fCountTxt: nF ? nF + ' filter aktif' : 'Belum ada filter',
+      clearAll: () => this.setState({ sev: [], st: [], pic: [], flags: [], q: 'all', filterOpen: false }),
+      rows, nRows: String(rows.length), hasRows: rows.length > 0, noRows: rows.length === 0,
+      emptyTxt: s.q === 'act' ? 'Tidak ada yang perlu Anda tindak lanjuti.' : s.q === 'pic' ? 'Tidak ada insiden yang Anda tangani.' : 'Tidak ada insiden yang cocok dengan filter.',
+      rangeText: rows.length + ' dari ' + all.length + ' insiden'
+    };
+  }
+}
+</script>
+</body>
+</html>

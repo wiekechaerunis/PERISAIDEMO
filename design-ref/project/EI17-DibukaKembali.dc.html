@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden dibuka kembali</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden INS-SEN-2026-0007 dibuka kembali" nama="Andi Pratama" konteks="Sari Wulandari membuka kembali insiden yang Anda tangani. Status kembali Dalam penanganan." rows="{{rows}}" tombol="Buka penanganan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Penerima jalur cepat juga diberi tahu." hint-size="600px,860px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Alasan", "v": "Kabel kembali dicuri di titik yang sama 2 Nov; penyebab belum tuntas."}, {"k": "Dibuka kembali", "v": "3 Nov 2026, 08:10 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>

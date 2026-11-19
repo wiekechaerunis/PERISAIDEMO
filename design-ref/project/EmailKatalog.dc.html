@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Katalog email insiden</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app" style="width: 1366px; min-height: 1280px; display: block; padding: 40px">
+<div class="in-note" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span class="p-tag t-info" style="align-self: flex-start">EmailTemplate DS v1 · email tetap gaya v1 (RSK-07)</span><h2 style="margin: 0; font-size: 22px; line-height: 30px">Katalog email Insiden</h2>
+<p class="p-cap" style="margin: 0; font-size: 14px; line-height: 20px">Setiap email juga tampil sebagai notifikasi lonceng. Satu email per kejadian per insiden, tanpa ringkasan harian untuk insiden (RSK-07). Kerawanan memakai satu ringkasan harian (EK.1). Kategori: Wajib = tidak bisa dimatikan; Info = bisa dimatikan di Akun saya › Notifikasi. Insiden Tinggi atau Kritis langsung diteruskan ke SKK saat diajukan, sebelum diverifikasi KKKS; "penerima kiriman langsung" = penerima EI.2.</p></div>
+<table><thead><tr><th style="width: 70px">Kode</th><th>Judul email</th><th style="width: 250px">Penerima</th><th style="width: 120px">Kategori</th><th style="width: 260px">Dasar</th></tr></thead><tbody><tr><td class="p-mono">EI.1</td><td><a href="EI1-MenungguVerifikasi.dc.html">Insiden menunggu verifikasi Anda</a></td><td>Semua Pejabat Berwenang KKKS (R-06) organisasi pelapor; pelapor sendiri hanya bila ia satu-satunya R-06</td><td>Wajib</td><td>INS-01 Ajukan · INS-02 FR-INS-20</td></tr><tr><td class="p-mono">EI.2</td><td><a href="EI2-JalurCepat.dc.html">Insiden Tinggi dilaporkan, belum terverifikasi</a></td><td>Semua Pengawas SKK & Pimpinan SKK + R-06 organisasi pelapor</td><td>Wajib</td><td>INS-03 FR-INS-40, 41</td></tr><tr><td class="p-mono">EI.3</td><td><a href="EI3-JalurCepatGanda.dc.html">Insiden Tinggi dilaporkan, kemungkinan sama dengan laporan sebelumnya</a></td><td>Penerima kiriman langsung</td><td>Wajib</td><td>INS-03 FR-INS-42, P-06</td></tr><tr><td class="p-mono">EI.4</td><td><a href="EI4-Terverifikasi.dc.html">Insiden INS-SEN-2026-0007 terverifikasi</a></td><td>Penerima kiriman langsung</td><td>Info [USULAN]</td><td>INS-03 FR-INS-42 · INS-02 FR-INS-22</td></tr><tr><td class="p-mono">EI.5</td><td><a href="EI5-Dibatalkan.dc.html">Insiden INS-SEN-2026-0007 dibatalkan</a></td><td>Pelapor + penerima kiriman langsung</td><td>Wajib</td><td>INS-02 FR-INS-26a, 26b · INS-03 FR-INS-42</td></tr><tr><td class="p-mono">EI.6</td><td><a href="EI6-Digabung.dc.html">Insiden INS-SEN-2026-0009 digabung ke INS-SEN-2026-0007</a></td><td>Pelapor insiden sumber + penerima kiriman langsung</td><td>Info [USULAN]</td><td>INS-02 FR-INS-25 · INS-03 FR-INS-42</td></tr><tr><td class="p-mono">EI.7</td><td><a href="EI7-RevisiDiminta.dc.html">Revisi diminta untuk insiden Anda</a></td><td>Pelapor</td><td>Wajib</td><td>INS-02 FR-INS-26</td></tr><tr><td class="p-mono">EI.8</td><td><a href="EI8-PICDitunjuk.dc.html">Anda ditunjuk sebagai PIC insiden</a></td><td>PIC baru</td><td>Wajib</td><td>INS-03 FR-INS-43</td></tr><tr><td class="p-mono">EI.10</td><td><a href="EI10-DitarikKembali.dc.html">Insiden INS-SEN-2026-0007 ditarik kembali oleh pelapor</a></td><td>Penerima kiriman langsung</td><td>Info [USULAN]</td><td>INS-01 U-1 #17 · INS-03 FR-INS-42</td></tr><tr><td class="p-mono">EI.11</td><td><a href="EI11-TenggatBesok.dc.html">Tenggat penanganan insiden besok</a></td><td>PIC</td><td>Pengingat</td><td>INS-03 FR-INS-50</td></tr><tr><td class="p-mono">EI.12</td><td><a href="EI12-LewatTenggat.dc.html">Insiden lewat tenggat dan dieskalasi ke Anda</a></td><td>R-06 organisasi</td><td>Wajib</td><td>INS-03 FR-INS-46</td></tr><tr><td class="p-mono">EI.13</td><td><a href="EI13-Dieskalasi.dc.html">Insiden dieskalasi ke Anda</a></td><td>Tujuan eskalasi (R-06 atau Pengawas SKK)</td><td>Wajib</td><td>INS-03 FR-INS-45, 59</td></tr><tr><td class="p-mono">EI.14</td><td><a href="EI14-MintaDitutup.dc.html">Insiden menunggu penutupan Anda</a></td><td>R-06 penyetuju penutupan</td><td>Wajib</td><td>INS-03 FR-INS-54</td></tr><tr><td class="p-mono">EI.15</td><td><a href="EI15-PenutupanDikembalikan.dc.html">Penutupan insiden dikembalikan</a></td><td>PIC</td><td>Wajib</td><td>INS-03 FR-INS-55</td></tr><tr><td class="p-mono">EI.16</td><td><a href="EI16-Ditutup.dc.html">Insiden INS-SEN-2026-0007 ditutup</a></td><td>Pelapor, PIC; penerima kiriman langsung bila Tinggi/Kritis</td><td>Info [USULAN]</td><td>INS-03 FR-INS-55</td></tr><tr><td class="p-mono">EI.17</td><td><a href="EI17-DibukaKembali.dc.html">Insiden INS-SEN-2026-0007 dibuka kembali</a></td><td>PIC + penerima kiriman langsung</td><td>Wajib</td><td>INS-03 FR-INS-57</td></tr><tr><td class="p-mono">EI.18</td><td><a href="EI18-ArahanSKK.dc.html">Arahan SKK Migas untuk insiden INS-SEN-2026-0007</a></td><td>PIC + R-06</td><td>Wajib</td><td>INS-03 FR-INS-59</td></tr><tr><td class="p-mono">EI.19</td><td>Insiden diturunkan jadi kerawanan<div class="p-cap">Saat insiden Tinggi atau Kritis dijadikan kerawanan. Board email belum dibuat.</div></td><td>Pengawas SKK & Pimpinan SKK sesuai cakupan</td><td>Info</td><td>Keputusan PM 18 Nov</td></tr><tr><td class="p-mono">EK.1</td><td><a href="EK1-RingkasanKerawanan.dc.html">Ringkasan kerawanan · 18 Nov 2026 · WK Andalas Darat</a><div class="p-cap">Harian 07:00 WIB bila ada kerawanan baru 24 jam terakhir</div></td><td>Pejabat Berwenang KKKS (cakupan WK)</td><td>Info</td><td>Keputusan PM 18 Nov: ringkasan harian menggantikan verifikasi per laporan kerawanan</td></tr></tbody></table>
+<ul>
+<li>Pelapor tidak menerima email saat insidennya terverifikasi; cukup lonceng (pola Kerawanan: pengaju in-app) [USULAN].</li>
+<li>"Keparahan dinaikkan" (FR-INS-41) memakai EI.2 dengan label "Keparahan dinaikkan" di judul; "keparahan diturunkan" memakai EI.4.</li>
+<li>Pengingat dan lewat batas verifikasi belum diatur di INS-02; diusulkan memakai pola pengingat RSK-07 (titipan PRD).</li><li>Ganti PIC memakai EI.8 untuk PIC baru; PIC lama hanya lonceng. Pesan WhatsApp ditautkan dan catatan kronologi baru hanya lonceng.</li>
+<li><b>EK.2 Kerawanan makin rawan</b> (bukan email): Lonceng (seketika) saat pelapor atau pengguna KKKS menandai perkembangan kerawanan sebagai Makin rawan. Penerima: Pejabat Berwenang KKKS cakupan WK. Tidak menunggu ringkasan harian EK.1. Dasar: Keputusan PM 18 Nov. Perlu tidaknya email menyusul belum diputuskan [ASUMSI].</li>
+<li>Kategori bertanda [USULAN] belum diputuskan.</li>
+</ul>
+</div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1280}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

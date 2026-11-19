@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Daftar insiden · belum ada</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 860px">
+  <dc-import name="Sidebar" active="insiden" user="Rina Lestari" role="Pelapor KKKS" task-count="0" h="860" hint-size="240px,860px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar top"><div class="hdr"><button type="button" class="p-sbtoggle" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button><div class="p-col ttl"><h1>Insiden</h1><span class="sub">Kejadian yang sudah terjadi dan menimbulkan kerugian, korban, atau gangguan operasi.</span></div><div class="acts"></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><span class="lbl">Tanya AI</span></button></div></div></header>
+    <main class="lk-content">
+      <section class="p-card" style="padding: 0; flex: 1 1 auto; display: flex; flex-direction: column">
+        <div class="lk-es" style="flex: 1 1 auto; justify-content: center">
+          <svg class="il" viewBox="0 0 120 96" width="120" height="96" aria-hidden="true"><path class="pa ln" d="M60 10l38 14v24c0 22-16 34-38 40C38 82 22 70 22 48V24z"/><path class="ac ln" d="M46 50l10 10 20-22"/></svg>
+          <b>Belum ada insiden yang dilaporkan.</b>
+          <span style="color: var(--ink-muted); max-width: 360px">Semoga tetap begitu. Bila terjadi, laporkan dari sini atau dari pesan WhatsApp.</span>
+          <a href="I12-Jenis.dc.html" class="p-btn p-btn-primary" style="margin-top: 8px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 5v14M5 12h14"/></svg>Buat laporan</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

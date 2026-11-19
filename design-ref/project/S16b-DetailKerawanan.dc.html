@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Form kerawanan · langkah 2 · Detail &amp; lampiran</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}.jn{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-lg);border:0;background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);text-align:left;font:inherit;color:inherit;cursor:pointer;transition:box-shadow .12s ease,background-color .12s ease}.jn:hover{box-shadow:inset 0 0 0 1px var(--border-control)}.jn:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}.jn[aria-checked="true"]{background:var(--accent-card-bg);box-shadow:inset 0 0 0 1.5px var(--action-line)}.jn .tx{display:flex;flex-direction:column;gap:2px;min-width:0}.jn b{font-weight:600}.jn[aria-checked="true"] b{font-weight:700}.usl{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:999px;font-size:11px;font-weight:600;color:var(--ink-subtle);box-shadow:inset 0 0 0 1px var(--border-control);margin-left:6px;vertical-align:middle}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1100px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1100" hint-size="240px,1100px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"></path></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali ke Insiden"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Laporan baru</h1><span class="p-tag t-draft">Draf</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page">Laporan baru</li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"></path></svg></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step done"><span class="n">1</span>Temuan</li><li class="p-conn" aria-hidden="true"></li><li class="p-step on" aria-current="step"><span class="n">2</span>Detail &amp; lampiran</li></ol>
+      <div class="lk-grid">
+        <div class="c8 lk-stack">
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Detail kerawanan</h2><span class="usl">Usulan</span></div>
+            <div class="lk-f2">
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Jenis kerawanan<span class="p-req">*</span></span>
+                <div role="radiogroup" aria-label="Jenis kerawanan" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px">
+                  <sc-for list="{{kinds}}" as="t" hint-placeholder-count="3"><button type="button" role="radio" class="jn" aria-checked="{{t.on}}" onClick="{{t.pick}}"><span class="p-radio {{t.rcls}}" style="margin-top: 2px"></span><span class="tx"><b>{{t.label}}</b><span class="p-cap">{{t.desc}}</span></span></button></sc-for>
+                </div>
+              </div>
+              <div class="p-field lk-span2" style="display: {{achD}}"><span class="p-lbl" style="color: var(--ink)">Hasil pengamanan<span class="p-req">*</span></span>
+                <div style="display: flex; gap: 20px"><sc-for list="{{ach}}" as="a" hint-placeholder-count="2"><label class="p-choice" role="checkbox" aria-checked="{{a.on}}" onClick="{{a.tg}}" style="cursor: pointer"><span class="p-check {{a.ccls}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px; display: {{a.tick}}"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{a.l}}</span></label></sc-for></div>
+                <span class="p-help row"><span>Aturan apakah upaya yang digagalkan dicatat sebagai kerawanan atau insiden masih menunggu keputusan.</span><span></span></span>
+              </div>
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Kondisi yang ditemukan<span class="p-req">*</span></span><div class="p-input" style="height: auto; min-height: 96px; align-items: flex-start; padding-top: 10px"><span style="flex: 1">{{uraian}}</span></div><span class="p-help row"><span>Apa yang terlihat dan kenapa berpotensi jadi insiden.</span><span>{{len}}/2000</span></span></div>
+              <div class="p-field lk-span2"><span class="p-lbl" style="color: var(--ink)">Foto atau dokumen</span><div class="p-drop"><span class="di"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 22px; height: 22px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg></span><span>Seret file ke sini atau <b>pilih file</b></span></div><span class="p-help row"><span>Opsional. JPG, PNG, atau PDF, maks. 10 MB per file.</span><span></span></span></div>
+              <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Sumber informasi<span class="p-req">*</span></span><div class="p-input"><span style="flex: 1">Patroli</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"></path></svg></div></div>
+              <div></div>
+            </div>
+          </section>
+        </div>
+        <aside class="c4 lk-stack">
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Pengajuan</h2></div><dl class="lk-kv1"><dt>Nomor laporan</dt><dd><span class="p-mono" style="font-size: 12px">KRW-SEN-2026-0047</span></dd><dt>Status</dt><dd><span class="p-tag t-draft">Draf</span></dd><dt>Tercatat di</dt><dd>Insiden › tab Kerawanan</dd><dt>Pemeriksaan</dt><dd>Tidak perlu, langsung tercatat</dd></dl></section>
+          
+        </aside>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 0 -24px"><a href="I12-Jenis.dc.html" class="p-btn p-btn-secondary">Sebelumnya</a><div style="display: flex; gap: 8px"><button type="button" class="p-btn p-btn-secondary">Simpan draf</button><a href="KD1-DetailKerawanan.dc.html" class="p-btn p-btn-primary">Catat kerawanan</a></div></div>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { k: 'kon', a: {} }; }
+  renderVals() {
+    const s = this.state;
+    const defs = [
+      ['kon', 'Kondisi rawan', 'Celah atau situasi yang bisa dimanfaatkan, mis. pagar roboh, lampu padam.'],
+      ['tdk', 'Kejadian tanpa dampak', 'Sudah terjadi tetapi tanpa kerugian, korban, atau gangguan operasi.'],
+      ['ggl', 'Upaya digagalkan', 'Aksi dihentikan petugas sebelum menimbulkan kerugian.']
+    ];
+    const ur = { kon: 'Pagar sisi barat sumur ADR-07 roboh sepanjang ±6 m setelah hujan deras. Area sumur bisa dimasuki dari kebun warga. Sudah dipasang garis pembatas sementara.', tdk: 'Dua orang tak dikenal terlihat memotret panel listrik sumur ADR-07 dari luar pagar, lalu pergi saat didekati petugas patroli.', ggl: 'Petugas patroli memergoki dua orang memotong pipa idle di dekat sumur ADR-07. Pelaku melarikan diri, pipa tidak sempat dibawa.' }[s.k];
+    const A = [['g', 'Aksi digagalkan'], ['t', 'Pelaku tertangkap']];
+    return {
+      kinds: defs.map(([k, l, d]) => ({ label: l, desc: d, on: s.k === k ? 'true' : 'false', rcls: s.k === k ? 'on' : '', pick: () => this.setState({ k }) })),
+      achD: s.k === 'ggl' ? 'flex' : 'none',
+      ach: A.map(([k, l]) => { const on = !!(s.a[k] || (k === 'g' && s.a.g === undefined)); return { l, on: on ? 'true' : 'false', ccls: on ? 'on' : '', tick: on ? 'block' : 'none', tg: () => this.setState({ a: Object.assign({}, s.a, { [k]: !on }) }) }; }),
+      uraian: ur, len: ur.length
+    };
+  }
+}
+</script>
+</body>
+</html>

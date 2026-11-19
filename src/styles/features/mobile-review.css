@@ -1,0 +1,24 @@
+/* Review/verifikasi Pejabat mobile (board MV2, MV2m, MV3–MV6). Tambahan di atas ins.css; CSS vendor tidak diubah. */
+
+/* Toast: menempel di viewport (board: absolut di atas bar bawah) */
+.in-m.app .toastm{position:fixed;bottom:84px}
+
+/* Kotak centang tersembunyi di dalam <label> (kotak visual = .p-check) */
+.in-m .mv-hid{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+
+/* Pemicu combobox <button> */
+.in-m .rv-sel{min-height:44px;box-sizing:border-box}
+
+/* Peta serupa layar penuh (MV2m) */
+.in-m.app.mpv{height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.in-m.app.mpv .top{position:static}
+.in-m .mpf{position:relative;flex:1;min-height:0}
+.in-m .mpf .rcv-wm{position:absolute;inset:0;height:auto;border-radius:0;box-shadow:none}
+.in-m .mpf .wm-ctl{top:12px;right:12px}
+.in-m .mps{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(0,0,0,.08);padding:8px 16px 20px;display:flex;flex-direction:column;gap:12px}
+.in-m .mps .grab{width:36px;height:4px;border-radius:2px;background:var(--border-control);align-self:center}
+.in-m .mps .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.in-m .mps .chips .p-chip{min-height:36px;white-space:nowrap;flex:none}
+.in-m .mps .sel{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:var(--surface-sunken)}
+.in-m .mps .sel .t{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-muted);font-weight:600}
+.in-m .mps .sel b{font-size:15px;line-height:20px}

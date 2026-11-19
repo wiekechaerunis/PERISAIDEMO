@@ -1,0 +1,12 @@
+/* Form lapor mobile langkah 1–2 + AI Copilot layar penuh (board M2a, M2-Kejadian, MA*, MS03/13/14/15/16/17). Hanya penyesuaian elemen <button> dan mode app. */
+.in-m .ma-cm button.in,.in-m .ma-bar{border:0;font:inherit;text-align:left;cursor:pointer}
+.in-m .ma-cm button.in{font-size:13px}
+.in-m .ma-bar{width:100%}
+.in-m .ma-cm .ib,.in-m .ma-sheet .cp-cm .ib,.in-m .ma-sheet .cp-recbar .ib{border:0;cursor:pointer}
+.in-m .ma-foot-ai{cursor:pointer}
+.in-m .sheet .op{cursor:pointer}
+/* di dalam app (bukan artboard 844): sheet AI mengisi 94% layar dan daftar saran menggulir */
+.in-m.app .sheet.ma-sheet{height:94dvh;max-height:94dvh}
+.in-m.app .ma-th{overflow-y:auto;min-height:0}
+.in-m.app .toastm{position:fixed;z-index:30}
+.in-m.app .ma-sheet .cp-err{flex:1}

@@ -1,0 +1,4 @@
+/* Halaman detail insiden: overlay dialog/toast tetap di viewport (board memakai absolute di kanvas statis). */
+.dt-fix .in-scrim{position:fixed}
+.dt-fix .in-dlg{position:fixed}
+.dt-toastpos{position:fixed;right:24px;bottom:24px;z-index:120}

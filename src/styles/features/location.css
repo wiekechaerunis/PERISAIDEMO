@@ -1,0 +1,14 @@
+/* Pemilih lokasi (peta skematik) */
+.lp-body{display:flex;flex-direction:column;gap:12px}
+.lp-map{display:block;width:100%;height:auto;border-radius:var(--radius-lg);box-shadow:inset 0 0 0 1px var(--border);cursor:crosshair;background:#EEF0EA;touch-action:manipulation}
+.lp-info{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:var(--radius-lg);background:var(--surface-subtle);box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.lp-info b{font-weight:600}
+/* DS .p-opt bertinggi tetap 36px; baris pilihan dua baris harus mengikuti isi */
+.p-opt{height:auto;min-height:36px}
+/* Daftar dropdown panjang (Kategori 19 pilihan, Jenis, dll.): tinggi dibatasi dan menggulir sendiri */
+.in-pop{max-height:min(320px,46vh);overflow-y:auto;overscroll-behavior:contain}
+.in-pop .grp{position:sticky;top:0;background:var(--surface);z-index:1}
+/* Peta DS di dalam dialog/sheet */
+.lp-body .p-map{height:340px}
+.in-m .p-map{height:300px}
+.p-map .srch .in-pop{left:0;right:0}

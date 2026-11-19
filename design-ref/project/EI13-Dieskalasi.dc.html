@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden dieskalasi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden dieskalasi ke Anda" nama="Hendra Wijaya" konteks="Andi Pratama, PIC di PT Samudra Energi Nusantara, mengeskalasi insiden berikut ke Anda. Penanganan tetap di KKKS; Anda bisa memberi arahan." rows="{{rows}}" tombol="Buka insiden" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Arahan Anda masuk ke kronologi insiden dan diberitahukan ke PIC." hint-size="600px,880px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Keparahan", "v": "Tinggi"}, {"k": "Alasan", "v": "Butuh dukungan koordinasi dengan Polres untuk patroli gabungan."}, {"k": "Dieskalasi", "v": "30 Okt 2026, 08:15 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>

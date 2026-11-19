@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email lewat tenggat, eskalasi otomatis</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden lewat tenggat dan dieskalasi ke Anda" nama="Sari Wulandari" konteks="Insiden berikut belum ditutup sampai tenggat. PERISAI mengeskalasinya ke Anda sebagai Pejabat Berwenang." rows="{{rows}}" tombol="Buka insiden" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0005" penutup="Anda bisa mengganti PIC atau mengubah tenggat dengan alasan dari halaman insiden." hint-size="600px,860px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0005\nPenghadangan truk logistik oleh warga"}, {"k": "Keparahan", "v": "Kritis"}, {"k": "PIC", "v": "Andi Pratama"}, {"k": "Tenggat", "v": "28 Okt 2026, 07:00 WIB · lewat 1 hari"}] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mobile · PIC pilih tim terlibat (bottom sheet)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="in-m">
+  <div class="top"><span class="ib44" aria-hidden="true"><svg class="p-ic" viewBox="0 0 24 24" style="width: 20px; height: 20px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span><span class="ttl">Catat penanganan</span></div>
+  <div class="body"><div class="card" style="height: 220px"></div><div class="card" style="height: 120px"></div></div>
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t" style="height: 78%">
+    <div class="grab" aria-hidden="true"></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 16px 8px 16px"><span style="display: flex; flex-direction: column; gap: 2px"><b id="sh-t" style="font-size: 16px">Tim terlibat</b><span class="p-cap">Siapa saja yang ikut menangani. Boleh lebih dari satu.</span></span><button type="button" class="ib44" aria-label="Tutup"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div style="padding: 0 16px 8px 16px"><span class="p-input"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5"/></svg><span class="ph">Cari mitra atau nomor kontrak</span></span></div>
+    <div class="in-pop" style="position: static; box-shadow: none; border-radius: 0; flex: 1; overflow: hidden">
+      <div class="grp">Kontrak aktif di WK Andalas Darat</div>
+      <button type="button" class="op on" role="checkbox" aria-checked="true"><span class="in-mi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="t"><b>PT Garda Nusantara Sejahtera</b><span>BUJP · <span class="p-mono">KTR-2026-0014</span></span></span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: var(--action-line)"><path d="M20 6 9 17l-5-5"/></svg></button>
+      <button type="button" class="op on" role="checkbox" aria-checked="true"><span class="in-mi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="t"><b>Polres Musi Banyuasin</b><span>PKS POLRI · <span class="p-mono">PKS-2025-0031</span></span></span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: var(--action-line)"><path d="M20 6 9 17l-5-5"/></svg></button>
+      <div class="grp">Mitra lain</div>
+      <button type="button" class="op"><span class="in-mi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="t"><b>Yonif 141/AYJP</b><span>PKT TNI · <span class="p-mono">PKT-2026-0002</span></span></span></button>
+      <div class="sep"></div>
+      <button type="button" class="op"><span class="in-mi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M4.9 4.9l14.2 14.2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"/></svg></span><span class="t"><b>Hanya security internal</b><span>Tidak ada BUJP, TNI, atau Polri yang terlibat</span></span></button>
+    </div>
+    <div style="padding: 10px 16px 18px 16px; border-top: 1px solid var(--border)"><button type="button" class="p-btn p-btn-primary" style="width: 100%; justify-content: center; min-height: 44px">Simpan · 2 dipilih</button></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

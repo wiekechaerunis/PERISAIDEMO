@@ -1,0 +1,14 @@
+/* Form lapor langkah 3-4 dan Kerawanan (board I13b, I14, S16b). Hanya tambahan; tidak mengubah CSS vendor. */
+.hero-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hero-ttl{margin:10px 0 12px 0;font-size:20px;line-height:28px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle)}
+.stats>div{display:flex;flex-direction:column;gap:2px}
+.stats>div+div{padding-left:16px;border-left:1px solid var(--border-subtle)}
+.stats .k{font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted)}
+.stats b{font-size:15px;line-height:22px;font-weight:600}
+.usl{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:999px;font-size:11px;font-weight:600;color:var(--ink-subtle);box-shadow:inset 0 0 0 1px var(--border-control);margin-left:6px;vertical-align:middle}
+/* kontrol asli di dalam .p-input (board memakai span statis) */
+.rb-in{appearance:none;flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;color:inherit;padding:0;resize:none;width:100%}
+.rb-in::placeholder{color:var(--ink-muted)}
+.rb-hide{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.rb-toast{position:fixed;right:24px;bottom:88px;z-index:50}

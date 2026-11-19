@@ -1,0 +1,3 @@
+/* Mobile formB (langkah 3–4 + detail insiden): toast mengambang menempel ke viewport, bukan ke ujung halaman. */
+.in-m.app .toastm{position:fixed;z-index:30}
+.in-m.app .sheet .sb{overflow-y:auto}

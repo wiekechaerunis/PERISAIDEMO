@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email grup ditunjuk sebagai PIC insiden</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Tim Anda ditunjuk sebagai PIC insiden" nama="Dedi Kurniawan" konteks="Sari Wulandari memverifikasi insiden berikut dan menunjuk Tim Pengamanan ADR Area 2 sebagai penanggung jawab penanganannya. Anggota pertama yang mengambil alih menjadi PIC; anggota lain diberi tahu dan hanya bisa melihat. Bila belum ada yang mengambil alih dalam 4 jam, tim dan Pejabat Berwenang diingatkan." rows="{{rows}}" tombol="Ambil alih penanganan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Email yang sama dikirim ke semua anggota tim. Tenggat penanganan tetap berjalan sejak registrasi." hint-size="600px,980px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Keparahan", "v": "Tinggi · Prioritas Tinggi"}, {"k": "Lokasi", "v": "Sumur ADR-07, Kab. Musi Banyuasin · WK Andalas Darat"}, {"k": "PIC", "v": "Tim Pengamanan ADR Area 2 (4 anggota)\nAndi Pratama, Dedi Kurniawan, Joko Susilo, Rina Wijaya"}, {"k": "Tenggat penanganan", "v": "31 Okt 2026 (3 hari sejak registrasi)"}, {"k": "Saran langkah", "v": "2 saran dari verifikator. Jadikan tindak lanjut atau abaikan di halaman penanganan."}] };
+  }
+}
+</script>
+</body>
+</html>

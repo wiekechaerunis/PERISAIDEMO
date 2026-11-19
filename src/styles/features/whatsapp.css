@@ -1,0 +1,13 @@
+/* INS-05 Insiden dari WhatsApp: kotak masuk Pemantauan WhatsApp (daftar demo, tanpa board).
+   Form, dialog, dan detail memakai class board (p-*, lk-*, in-*, cp-*) tanpa tambahan. */
+.wa-list { display: flex; flex-direction: column; gap: 12px; }
+.wa-msg { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); }
+.wa-msg .lk-av { flex: none; }
+.wa-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; }
+.wa-hd { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.wa-hd b { font-weight: 600; }
+.wa-acts { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 480px) {
+  .wa-msg { padding: 12px; }
+  .wa-acts .p-btn { min-height: 44px; }
+}

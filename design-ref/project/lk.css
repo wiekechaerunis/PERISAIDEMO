@@ -1,0 +1,153 @@
+/* PERISAI · pola layar di atas DS v2 Lime (bundle.css). Nilai dari tokens.css.
+   [G] = pola yang belum punya komponen DS v2. */
+.lk-app{box-sizing:border-box;display:flex;align-items:stretch;background:var(--surface-page);font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--ink);font-variant-numeric:tabular-nums;position:relative}
+.lk-app *{box-sizing:border-box}
+.lk-app b,.lk-app strong{font-weight:600}
+.lk-app h1,.lk-app h2,.lk-app h3{font-weight:700}
+.lk-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.lk-content{padding:24px;display:flex;flex-direction:column;gap:16px;flex:1 1 auto}
+.lk-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c7{grid-column:span 7}.c6{grid-column:span 6}.c5{grid-column:span 5}.c4{grid-column:span 4}.c3{grid-column:span 3}
+.lk-stack{display:flex;flex-direction:column;gap:16px}
+.lk-stack-sm{display:flex;flex-direction:column;gap:12px}
+.lk-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.lk-f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.lk-span2{grid-column:1 / -1}
+/* KeyValue dalam kartu [G] */
+.lk-kv1{display:grid;grid-template-columns:132px minmax(0,1fr);gap:10px 12px;margin:0}
+.lk-kv1 dt{color:var(--ink-muted);font-size:12px;line-height:18px;font-weight:600}
+.lk-kv1 dd{margin:0}
+.lk-block h3{margin:0 0 4px 0;font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted)}
+.lk-block p{margin:0;font-size:13px;line-height:20px}
+.lk-divider{height:1px;background:var(--border-subtle);margin:16px 0}
+/* Link aksi berdiri sendiri: tanpa garis bawah + panah (README › Tipografi) */
+.lk-alink{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ink-subtle);text-decoration:none}
+.lk-alink::after{content:"→";transition:transform .12s ease}
+.lk-alink:hover{color:var(--ink)}.lk-alink:hover::after{transform:translateX(2px)}
+/* Kartu aksen: ikon dalam kotak lime 28px (E3) */
+.lk-acc-ic{width:28px;height:28px;border-radius:var(--radius-md);background:var(--action);color:var(--on-action);display:inline-flex;align-items:center;justify-content:center;flex:none}
+/* Linimasa riwayat [G] */
+.lk-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.lk-tl li{position:relative;padding:0 0 14px 22px;font-size:12px;line-height:16px;color:var(--ink-muted)}
+.lk-tl li b{color:var(--ink);font-weight:600}
+.lk-tl li::before{content:"";position:absolute;left:3px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--surface);box-shadow:inset 0 0 0 2px var(--border-control)}
+.lk-tl li:first-child::before{background:var(--action);box-shadow:inset 0 0 0 1px var(--action-line)}
+.lk-tl li::after{content:"";position:absolute;left:7px;top:16px;bottom:0;width:2px;background:var(--border)}
+.lk-tl li:last-child{padding-bottom:0}.lk-tl li:last-child::after{display:none}
+/* OptionCard (DS v2) */
+.lk-opts{display:flex;flex-direction:column;gap:8px}
+.lk-opt{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:var(--radius-lg);border:1px solid var(--border);background:var(--surface);min-height:52px;text-align:left;font:inherit;color:inherit;width:100%;cursor:pointer;transition:background-color .12s ease,border-color .12s ease}
+.lk-opt:hover{border-color:var(--border-control)}
+.lk-opt .n{flex:none;width:22px;height:22px;border-radius:11px;background:var(--surface-sunken);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.lk-opt b{display:block;font-size:13px;line-height:20px;font-weight:600}
+.lk-opt span.d{display:block;font-size:12px;line-height:16px;color:var(--ink-muted);margin-top:2px}
+.lk-opt[aria-checked="true"]{background:var(--accent-card-bg);border-color:var(--action-line);box-shadow:inset 0 0 0 .5px var(--action-line)}
+.lk-opt[aria-checked="true"] .n{background:var(--action);color:var(--on-action)}
+.lk-opt[disabled]{color:var(--ink-disabled);background:var(--surface-subtle);cursor:not-allowed}
+.lk-opt[disabled] span.d{color:var(--ink-muted)}
+.lk-opts.row{flex-direction:row}.lk-opts.row .lk-opt{flex:1}
+/* PageHeader turunan */
+.lk-phc{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:14px}
+.lk-phc .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.lk-phc h1{margin:0;font-size:20px;line-height:28px;font-weight:700}
+.lk-back{width:40px;height:40px}
+/* FormFooter (DS v2) */
+.lk-ffoot{position:static;margin-top:8px;background:var(--surface);border-top:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.lk-lock{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-muted)}
+/* Dialog di atas layar, Toast kanan bawah [ASUMSI posisi, DS Toast] */
+.lk-scrim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.lk-dlgpos{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:6}
+.lk-toast-pos{position:absolute;right:24px;bottom:24px;z-index:7}
+.lk-banner-err{background:var(--error-bg);color:var(--error-ink)}
+.lk-banner-info{background:var(--status-info-bg);color:var(--status-info-ink)}
+.lk-menu{position:absolute;z-index:6;width:240px}
+.lk-av{width:28px;height:28px;border-radius:14px;background:var(--surface-sunken);font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none;color:var(--ink-subtle)}
+/* Tabel */
+.lk-tbl td{height:56px}
+.lk-tbl .ttl{font-weight:600;color:var(--ink);text-decoration:none;display:block}
+.lk-tbl .id{font-family:var(--font-mono);font-size:12px;line-height:16px;color:var(--ink-muted)}
+.lk-tbl .sub{font-size:12px;line-height:16px;color:var(--ink-muted)}
+.lk-quick{display:flex;gap:8px;padding:0 16px 12px 16px;flex-wrap:wrap}
+.lk-applied{display:flex;gap:8px;padding:0 16px 12px 16px;flex-wrap:wrap;align-items:center}
+/* EmptyState ilustrasi */
+.il .ln{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.il .pa{fill:var(--surface)}.il .so{fill:var(--surface-sunken)}.il .ac{fill:var(--action)}.il .at{fill:var(--accent-card-border)}.il .er{fill:var(--caution-bg)}.il .gr{fill:var(--surface-sunken)}
+.il rect.pa.ln,.il path.pa.ln,.il circle.pa.ln{fill:var(--surface)}.il .ac.ln{fill:var(--action)}.il .at.ln{fill:var(--accent-card-border)}.il .er.ln{fill:var(--caution-bg)}.il .so.ln{fill:var(--surface-sunken)}
+.lk-es{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:48px 16px 56px 16px}
+.lk-es b{font-size:15px;line-height:22px;font-weight:700}
+/* Meta chip non-interaktif (bukan status) · warna identitas chart-series-1 tipis [USULAN token meta-chip] */
+.lk-meta{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px 0 4px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--chart-series-1) 7%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--chart-series-1) 16%,var(--surface));color:var(--ink-subtle);font-size:12px;font-weight:600;white-space:nowrap}
+.lk-meta .p-ic{width:20px;height:20px;padding:3px;border-radius:10px;background:color-mix(in srgb,var(--chart-series-1) 14%,var(--surface));color:var(--status-info-ink);stroke-width:2.2}
+.lk-meta.urg{background:var(--caution-bg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--caution-ink) 18%,var(--caution-bg));color:var(--caution-ink)}
+.lk-meta.urg .p-ic{background:color-mix(in srgb,var(--caution-ink) 12%,var(--caution-bg));color:var(--caution-ink)}
+/* Panel samping (SidePanel DS) */
+.lk-side{position:absolute;top:0;right:0;bottom:0;width:480px;background:var(--surface);box-shadow:var(--shadow-floating);z-index:6;display:flex;flex-direction:column}
+.lk-side .sh{padding:18px 24px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between}
+.lk-side .sb{padding:20px 24px;display:flex;flex-direction:column;gap:18px;flex:1}
+.lk-side .sf{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.lk-legend{font-size:12px;font-weight:600;color:var(--ink-muted);margin:0 0 8px 0}
+/* Baris daftar dalam satu kartu */
+.lk-rows{display:flex;flex-direction:column}
+.lk-rows>*+*{border-top:1px solid var(--border-subtle)}
+/* Alur 2 */
+.lk-seg{display:inline-flex;padding:3px;border-radius:var(--radius-md);background:var(--surface-sunken);gap:2px}
+.lk-seg span{height:28px;padding:0 10px;border-radius:6px;display:inline-flex;align-items:center;font-size:12px;font-weight:600;color:var(--ink-muted)}
+.lk-seg span[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--border)}
+.lk-steps{border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden}
+.lk-steps>.st{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:14px;padding:16px}
+.lk-steps>.st+.st{border-top:1px solid var(--border-subtle)}
+.lk-steps>.st.err{background:color-mix(in srgb,var(--error-bg) 50%,var(--surface))}
+.lk-steps .no{width:24px;height:24px;border-radius:12px;background:var(--surface-sunken);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.lk-hasil{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-subtle);box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.lk-hasil .big{display:flex;align-items:center;gap:10px}
+.lk-hasil .big b{font-size:28px;line-height:34px;font-weight:700}
+.p-cell.prev{box-shadow:inset 0 0 0 2px var(--ink-muted);outline:2px dashed transparent}
+.lk-mxlbl{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:700;color:var(--ink-subtle);letter-spacing:.04em}
+.lk-bulk{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--action-subtle-bg);color:var(--action-subtle-ink);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)}
+.lk-cmp{width:100%;border-collapse:collapse}
+.lk-cmp th{text-align:left;font-size:12px;font-weight:600;color:var(--ink-muted);padding:8px 12px;background:var(--surface-subtle)}
+.lk-cmp td{padding:12px;border-top:1px solid var(--border-subtle);vertical-align:top;line-height:20px}
+.lk-cmp td.chg{background:color-mix(in srgb,var(--status-info-bg) 45%,var(--surface))}
+.lk-mit{display:flex;align-items:center;gap:8px;min-width:140px}
+.lk-mit .p-prog{width:56px;flex:none}
+.lk-seg span{white-space:nowrap}
+.lk-tbl td .sub{white-space:nowrap}
+/* DS 16 Okt (v 1792163853): link di dalam kalimat bergaris bawah tipis */
+.lk-app p a:not(.p-btn):not(.lk-alink),.lk-app .p-note a:not(.p-btn),.lk-app .p-banner a:not(.p-btn){text-decoration:underline;text-decoration-color:var(--border-control);text-underline-offset:3px;text-decoration-thickness:1px}
+.lk-app p a:hover,.lk-app .p-note a:hover{text-decoration-color:var(--ink)}
+.lk-vsep{display:inline-block;width:1px;height:24px;background:var(--border);margin:0 4px;align-self:center;flex:none}
+/* Empty state halaman penuh (komentar Mino 17 Okt): kartu yang memuat empty state mengisi sisa tinggi layar, empty state di tengah */
+.lk-content>.p-card:has(.lk-es),.lk-content>.p-card:has(.lk-es) :is(div,section):has(.lk-es){flex:1 1 auto;display:flex;flex-direction:column}
+.lk-content>.p-card:has(.lk-es) .lk-es{flex:1 1 auto;justify-content:center}
+.lk-content>.lk-grid:has(>.c12>.p-card .lk-es){flex:1 1 auto}
+.lk-grid>.c12:has(>.p-card .lk-es){display:flex;flex-direction:column;align-self:stretch}
+.lk-grid>.c12>.p-card:has(.lk-es){flex:1 1 auto;display:flex;flex-direction:column}
+.lk-grid>.c12>.p-card:has(.lk-es) .lk-es{flex:1 1 auto;justify-content:center}
+/* Kepala kolom yang bisa diurutkan (komentar Mino 17 Okt) */
+.lk-sort{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;font:inherit;font-weight:600;cursor:pointer;color:inherit}
+.lk-sort:hover{color:var(--ink)!important}
+th[aria-sort="none"] .lk-sort .p-ic{opacity:.6}
+/* Stepper: langkah yang diminta diperbaiki (Perlu perbaikan) */
+.p-step.warn{color:var(--caution-ink)}
+.p-step.warn .n{background:var(--caution-bg);color:var(--caution-ink);box-shadow:inset 0 0 0 1.5px var(--caution-ink)}
+
+/* Komentar Mino 17 Okt — tooltip hover untuk semua IconButton (anatomi DS .p-tip, teks = aria-label) */
+.p-ibtn[aria-label]{position:relative}
+.p-ibtn[aria-label]:not(:has(.p-tip)):hover::after,.p-ibtn[aria-label]:not(:has(.p-tip)):focus-visible::after{content:attr(aria-label);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:4px 8px;border-radius:var(--radius-sm);background:var(--ink);color:var(--surface);font-size:11px;font-weight:600;line-height:1.4;pointer-events:none;z-index:50;animation:p-fade-in .12s ease .4s both}
+.p-ibtn[data-tip]:not(:has(.p-tip)):hover::after,.p-ibtn[data-tip]:not(:has(.p-tip)):focus-visible::after{content:attr(data-tip);top:calc(100% + 6px);bottom:auto}
+/* Komentar Mino 17 Okt: indikator tenggat di tabel — ikon + teks caution, tanpa badge */
+.lk-dl{display:inline-flex;align-items:center;gap:6px;color:var(--caution-ink);font-size:13px;line-height:16px;font-weight:600;white-space:nowrap}
+.lk-dl .p-ic{flex:none}
+/* Durasi: nilai + satuan dalam satu grup */
+.lk-dur{display:inline-flex;align-items:stretch;flex:none}
+.lk-dur .p-input:first-child{width:64px;border-top-right-radius:0;border-bottom-right-radius:0}
+.lk-dur .p-input:last-child{width:136px;margin-left:-1px;border-top-left-radius:0;border-bottom-left-radius:0;cursor:pointer}
+/* Komentar Mino 17 Okt: ikon di chip meta (kategori, lokasi, PIC, jenis, ditemukan, urgensi) terlalu kecil → glyph 16px dalam lingkaran 24px */
+.lk-meta{height:30px;padding:0 12px 0 3px}
+.lk-meta .p-ic{width:24px!important;height:24px!important;padding:4px;box-sizing:border-box;flex:none}
+
+/* ikon jenis sumber tindak lanjut */
+.src-ic{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:var(--surface-sunken);color:var(--ink-subtle);flex:none;margin-right:6px}
+.src-ic .p-ic{width:13px;height:13px}
+.src-cell{display:inline-flex;align-items:center;white-space:nowrap}
+.kb-card .src{display:flex;align-items:center}

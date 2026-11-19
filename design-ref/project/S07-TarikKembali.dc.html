@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Tarik kembali insiden</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1000px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1000" hint-size="240px,1000px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 8px"><h1>Detail insiden</h1><span class="p-tag t-info">Review internal</span><span class="p-tag s-high"><span class="dot"></span>Tinggi</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page">Detail insiden</li></ol></div>
+      <div class="acts"><button type="button" class="p-btn p-btn-secondary">Tarik kembali</button></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><span class="lbl">Tanya AI</span></button></div>
+    </div></header>
+    <main class="lk-content"><div class="lk-grid"><div class="c8 lk-stack"><section class="p-card in-sec" style="min-height: 520px"><h2 class="in-h" style="font-size: 17px; line-height: 24px">Pencurian kabel listrik sumur ADR-07</h2><p style="margin: 0; color: var(--ink-muted)">Isi detail insiden (lihat layar 1.5).</p></section></div><aside class="c4"><section class="p-card" style="min-height: 320px"></section></aside></div></main>
+  </div>
+  <sc-if value="{{confirm}}" hint-placeholder-val="{{true}}">
+    <div class="in-scrim"></div>
+    <div class="in-dlg" role="dialog" aria-modal="true" aria-labelledby="t1"><div class="p-dialog">
+      <div class="dh"><h3 id="t1">Tarik kembali jadi draf?</h3><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup dialog"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="db"><span>Anda bisa mengubah isinya lagi, lalu mengajukan ulang.</span><dl class="p-kv"><dt>Status</dt><dd>Review internal → Draf</dd><dt>Verifikasi</dt><dd>Dibatalkan</dd><dt>SKK Migas</dt><dd>Diberi tahu bahwa laporan ditarik</dd></dl></div>
+      <div class="df"><button type="button" class="p-btn p-btn-secondary">Batal</button><button type="button" class="p-btn p-btn-primary">Tarik kembali</button></div>
+    </div></div>
+  </sc-if>
+  <sc-if value="{{late}}" hint-placeholder-val="{{false}}">
+    <div class="in-toastpos"><div class="p-toast err" role="alert"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span class="msg">Laporan sudah diproses Pejabat Berwenang dan tidak bisa ditarik kembali.</span><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup notifikasi"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["konfirmasi","sudah diproses"],"default":"konfirmasi"},"$preview":{"width":1366,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.props.state ?? 'konfirmasi';
+    return { confirm: s === 'konfirmasi', late: s === 'sudah diproses' };
+  }
+}
+</script>
+</body>
+</html>

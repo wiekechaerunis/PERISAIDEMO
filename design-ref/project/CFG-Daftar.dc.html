@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Konfigurasi Modul</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}
+.pg-t td{vertical-align:middle}
+.pg-t .sub{display:block}
+.pg-grp td{background:var(--surface-subtle);font-size:11px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);padding-top:8px;padding-bottom:8px}
+.pg-tg{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;padding:10px 20px;cursor:pointer;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit}.pg-tg:hover{background:var(--surface-sunken)}.pg-tg:focus-visible{outline:2px solid var(--focus-ring,#1C1D21);outline-offset:-2px}.pg-sum{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-muted)}.pg-grp td{padding:0}
+.pg-grp .n{font-weight:600;letter-spacing:0;text-transform:none;margin-left:6px}
+.pg-n{font-weight:600;color:var(--ink);text-decoration:none}
+.pg-d{display:block;font-size:12px;line-height:16px;color:var(--ink-muted);margin-top:2px;max-width:440px}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 960px">
+  <dc-import name="Sidebar" active="pengaturan" user="Rina Hapsari" role="Admin SKK" task-count="0" h="960" hint-size="240px,960px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar top"><div class="hdr"><button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button><div class="p-col ttl"><h1>Konfigurasi Modul</h1><span class="sub">Parameter sistem per modul yang dikelola Admin SKK. Berlaku untuk semua KKKS dan tercatat di jejak audit.</span></div><div class="acts"></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div></div></header>
+    <main class="lk-content">
+      <section class="p-card" style="padding: 0">
+        <div class="p-toolbar" style="padding: 16px 20px 12px">
+          <h2 class="p-h2" style="flex: 1">Semua konfigurasi</h2>
+          <span class="p-input" style="width: 260px; height: 36px"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5"/></svg><span class="ph" style="flex: 1">Cari konfigurasi</span></span>
+          <button type="button" class="p-btn p-btn-secondary p-btn-sm"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M3 6h18M7 12h10M10 18h4"/></svg>Filter</button>
+        </div>
+        <sc-if value="{{isFilter}}" hint-placeholder-val="{{false}}"><div class="lk-applied"><span class="p-pill">Modul: <b>{{fName}}</b><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M18 6 6 18M6 6l12 12"/></svg></span><a href="CFG-Daftar.dc.html" class="p-tbtn" style="text-decoration: none">Hapus filter</a></div></sc-if>
+        <div class="p-note" style="margin: 0 20px 12px; align-items: flex-start"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; flex: none"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"/></svg><span>Siapa yang menyetujui, termasuk persetujuan SKK, diatur di menu <b>Persetujuan</b>.</span></div>
+        <table class="p-table lk-tbl pg-t">
+          <thead><tr><th style="padding-left: 20px">Konfigurasi</th><th>Nilai saat ini</th><th>Terakhir diubah</th><th style="padding-right: 20px; width: 72px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Aksi</span></th></tr></thead>
+          <tbody><sc-for list="{{groups}}" as="g" hint-placeholder-count="2"><tr class="pg-grp"><td colspan="4" style="padding: 0"><button type="button" class="pg-tg" aria-expanded="{{g.exp}}" onClick="{{g.toggle}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; transform: rotate({{g.rot}})"><path d="m6 9 6 6 6-6"/></svg>{{g.t}}<span class="n">· {{g.n}}</span><sc-if value="{{g.closed}}" hint-placeholder-val="{{false}}"><span class="pg-sum">{{g.sum}}</span></sc-if></button></td></tr><sc-for list="{{g.vis}}" as="r" hint-placeholder-count="2"><tr>
+            <td style="padding-left: 20px"><a href="{{r.href}}" class="pg-n">{{r.t}}</a><span class="pg-d">{{r.d}}</span></td>
+            <td><sc-if value="{{r.isTag}}" hint-placeholder-val="{{false}}"><span class="p-tag {{r.cls}}">{{r.v}}</span></sc-if><sc-if value="{{r.isTxt}}" hint-placeholder-val="{{true}}"><span>{{r.v}}</span></sc-if><sc-if value="{{r.hasEx}}" hint-placeholder-val="{{false}}"><span class="sub p-cap">Nilai contoh, menunggu SKK</span></sc-if></td>
+            <td><span>{{r.at}}</span><span class="sub">{{r.by}}</span></td>
+            <td style="padding-right: 20px"><a href="{{r.href}}" class="p-tbtn" style="text-decoration: none; display: inline-flex; align-items: center">Buka</a></td></tr></sc-for></sc-for></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"modul": {"editor": "enum", "options": ["semua", "ins", "wpb", "pst", "kbj", "pks", "real"], "default": "semua"}, "buka": {"editor": "enum", "options": ["pertama", "semua"], "default": "pertama"}, "$preview": {"width": 1366, "height": 960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const f = this.props.modul ?? 'semua';
+    const R = (t, d, v, href, at, by, tag, ex) => ({ t, d, v, href, at, by, isTag: !!tag, isTxt: !tag, cls: tag || '', hasEx: !!ex });
+    const G = [
+      { k: 'ins', t: 'Insiden', rows: [
+        R('Matriks keparahan', 'Ambang dampak per level untuk saran keparahan.', '5 level · versi 2', 'CFG-MatriksKeparahan.dc.html', '18 Nov 2026', 'Rina Hapsari', '', true),
+        R('Tenggat penanganan', 'Batas waktu menyelesaikan insiden per keparahan, sejak registrasi.', '1–14 hari', 'CFG-Tenggat.dc.html', '18 Nov 2026', 'Sistem', '', true) ] },
+      { k: 'wpb', t: 'Anggaran WP&B', rows: [
+        R('Kategori anggaran', 'Kategori pengamanan untuk Pre-WP&B, Pleno, dan Revisi WP&B, beserta kode CSV (KAT-01 FR-KAT-01–07).', '11 aktif', '#', '20 Okt 2026', 'Sistem'),
+        R('Kurs USD per tahun anggaran', 'Untuk padanan USD di form, detail, dan MoM. Nilai tetap disimpan dalam Rupiah (FR-KAT-09).', '2027 · Rp17.500', '#', '20 Okt 2026', 'Sistem'),
+        R('Ambang Cek sebelum kirim', 'Perubahan dari nilai disetujui tahun sebelumnya yang dimunculkan sebagai pengingat di form Pre-WP&B (FR-KAT-10).', '10%', '#', '20 Okt 2026', 'Sistem') ] },
+      { k: 'pst', t: 'Persetujuan Teknis', rows: [
+        R('Komponen biaya Perstek', 'Kerangka komponen yang muncul otomatis di form Perstek (FR-PST-02, 20).', '4 aktif · 1 nonaktif', '#', '30 Okt 2026', 'Sari Wulandari'),
+        R('Pengingat masa berlaku', 'Ambang nilai, jendela pengingat, dan interval pengulangan untuk Perstek dan kontrak BUJP (FR-PST-14, 15; FR-KBJ-14).', 'Rp75 M · 12 / 6 bulan · tiap 30 hari', '#', '20 Okt 2026', 'Sistem') ] },
+      { k: 'kbj', t: 'Kontrak BUJP', rows: [
+        R('Label sisa waktu kontrak', 'Rentang hari untuk label sisa waktu kontrak di daftar dan detail (FR-KBJ-32).', '4 rentang', '#', '20 Okt 2026', 'Sistem') ] },
+      { k: 'pks', t: 'PKS/PKT', rows: [
+        R('Titik pengingat', 'Kapan pengingat masa berlaku PKS/PKT dikirim ke SKK dan KKKS (FR-PKS-12, 24).', '90 / 60 / 30 hari', '#', '20 Okt 2026', 'Sistem') ] },
+      { k: 'real', t: 'Realisasi & Monev', rows: [
+        R('Parameter Realisasi & Monev', 'Usulan, PRD menyusul.', 'Usulan', '#', '—', '—', 't-info') ] }
+    ];
+    const bawaan = this.props.buka ?? 'pertama';
+    const st = (this.state && this.state.open) || null;
+    const isOpen = (g, i) => st ? !!st[g.k] : (bawaan === 'semua' || f !== 'semua' || i === 0);
+    const groups = G.filter((g) => f === 'semua' || g.k === f).map((g, i) => {
+      const o = isOpen(g, i);
+      return { ...g, n: g.rows.length + ' konfigurasi', exp: o ? 'true' : 'false', rot: o ? '0deg' : '-90deg', closed: !o, vis: o ? g.rows : [], sum: g.rows.map((r) => r.t).join(' · '),
+        toggle: () => { const cur = {}; G.forEach((x, j) => { cur[x.k] = isOpen(x, j); }); cur[g.k] = !o; this.setState({ open: cur }); } };
+    });
+    const fName = (G.find((g) => g.k === f) || {}).t || '';
+    return { groups, isFilter: f !== 'semua', fName };
+  }
+}
+</script>
+</body>
+</html>

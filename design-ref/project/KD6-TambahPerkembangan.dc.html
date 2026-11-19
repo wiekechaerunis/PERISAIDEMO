@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Tambah perkembangan kerawanan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:var(--font-sans)}a{color:var(--ink)}.in-dlg,.in-dlg button,.in-dlg h3{font-family:var(--font-sans)}</style>
+</helmet>
+<div class="p-app" style="position: relative; width: 1366px; min-height: 1000px; font-family: var(--font-sans); font-size: 13px; line-height: 18px; color: var(--ink)">
+  <dc-import name="KD1-DetailKerawanan" role="pelapor" perkembangan="{{saved}}" hint-size="1366px,1000px"></dc-import>
+  <sc-if value="{{dlg}}" hint-placeholder-val="{{true}}"><div class="in-scrim"></div><div class="in-dlg" style="width: 560px" role="dialog" aria-modal="true" aria-labelledby="dlg-pk"><div class="p-dialog">
+    <div class="dh"><h3 id="dlg-pk">Tambah perkembangan</h3><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup dialog" onClick="{{closeDlg}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+    <div class="db">
+      <span class="p-cap"><span class="p-mono" style="font-size: 12px">KRW-SEN-2026-0047</span> · Pagar sisi barat sumur ADR-07 roboh</span>
+      <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Apa yang berubah?<span class="p-req">*</span></span><div class="p-input p-area" style="min-height: 96px"><span>Dua hari terakhir jejak motor masuk lewat pagar roboh, patroli malam melihat 3 orang di area sumur.</span></div><span class="p-help row"><span>Sejak kerawanan dicatat.</span><span>101/500</span></span></div>
+      <div class="p-field"><span class="p-lbl" style="color: var(--ink)">Foto <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><div class="p-drop"><span class="di"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg></span><span style="font-size: 13px">Tarik foto ke sini atau <button type="button" class="p-link">pilih file</button></span><span class="p-cap">Foto kondisi terbaru di lokasi.</span></div></div>
+      <button type="button" role="checkbox" aria-checked="{{mrStr}}" onClick="{{toggleMr}}" style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; border: 0; background: none; padding: 0; font: inherit; color: var(--ink); cursor: pointer; text-align: left"><span class="{{mrChk}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 11px; height: 11px"><path d="M20 6 9 17l-5-5"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><b style="font-weight: 600">Makin rawan, minta perhatian Pejabat Berwenang</b><span class="p-cap">Pejabat langsung diberi tahu, tidak menunggu ringkasan harian.</span></span></button>
+      <div class="in-bn info sm" role="status"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"></path></svg><span>Bila sudah ada kerugian, korban, atau gangguan operasi, gunakan <a href="KD5-AjukanInsiden.dc.html" class="lk-alink" style="font-weight: 600">Ajukan jadi insiden</a></span></div>
+    </div>
+    <div class="df"><button type="button" class="p-btn p-btn-secondary" onClick="{{closeDlg}}">Batal</button><button type="button" class="p-btn p-btn-primary" onClick="{{save}}">Simpan perkembangan</button></div>
+  </div></div></sc-if>
+  <sc-if value="{{toast}}" hint-placeholder-val="{{false}}"><div style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40"><div class="p-toast" role="status"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M20 6 9 17l-5-5"></path></svg></span><span class="msg">{{toastMsg}}</span></div></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dialog":{"editor":"bool","default":true},"$preview":{"width":1366,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { dlg: p.dialog !== false, mr: true, saved: false }; }
+  renderVals() {
+    const s = this.state;
+    return {
+      dlg: s.dlg, closeDlg: () => this.setState({ dlg: false }),
+      mrStr: s.mr ? 'true' : 'false', mrChk: s.mr ? 'p-check on' : 'p-check', toggleMr: () => this.setState({ mr: !s.mr }),
+      save: () => this.setState({ dlg: false, saved: true }),
+      saved: s.saved ? 'true' : 'false', toast: s.saved,
+      toastMsg: s.mr ? 'Perkembangan disimpan. Pejabat Berwenang diberi tahu.' : 'Perkembangan disimpan.'
+    };
+  }
+}
+</script>
+</body>
+</html>

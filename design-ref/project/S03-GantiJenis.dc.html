@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ganti jenis Insiden ke Kerawanan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}.jn{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-lg);border:0;background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);text-align:left;font:inherit;color:inherit;cursor:pointer;transition:box-shadow .12s ease,background-color .12s ease}.jn:hover{box-shadow:inset 0 0 0 1px var(--border-control)}.jn:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}.jn[aria-checked="true"]{background:var(--accent-card-bg);box-shadow:inset 0 0 0 1.5px var(--action-line)}.jn .ic{width:28px;height:28px;border-radius:var(--radius-md);flex:none;display:flex;align-items:center;justify-content:center;background:var(--surface-sunken);color:var(--ink-subtle)}.jn[aria-checked="true"] .ic{background:var(--action);color:var(--on-action)}.jn .tx{display:flex;flex-direction:column;gap:2px;min-width:0}.jn b{font-weight:600}.jn[aria-checked="true"] b{font-weight:700}</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1020px">
+  <dc-import name="Sidebar" active="insiden" user="Budi Santoso" role="Pelapor KKKS" task-count="3" h="1020" hint-size="240px,1020px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Pencurian kabel listrik sumur ADR-07</h1><span class="p-tag t-draft">Draf</span></div><ol class="p-crumb"><li><a href="Main.dc.html">Insiden</a></li><li aria-hidden="true">›</li><li aria-current="page"><span class="p-mono">INS-SEN-2026-0007</span></li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span><div class="util"><button type="button" class="p-ai"><span class="lbl">Tanya AI</span></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step on" aria-current="step"><span class="n">1</span>Temuan</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">2</span>Kejadian &amp; dampak</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">3</span>Lampiran</li><li class="p-conn" aria-hidden="true"></li><li class="p-step"><span class="n">4</span>Ringkasan</li></ol>
+      <div class="lk-grid"><div class="c8 lk-stack"><section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Temuan</h2></div><div class="p-field" style="margin-bottom: 12px"><span class="p-lbl" id="dmp-l" style="color: var(--ink)">Ada kerugian, korban, atau operasi terganggu?<span class="p-req">*</span></span><div class="p-qf" role="radiogroup" aria-labelledby="dmp-l" style="align-self: flex-start"><button type="button" role="radio" aria-checked="false" style="min-width: 96px; justify-content: center">Ya</button><button type="button" role="radio" aria-checked="true" style="min-width: 96px; justify-content: center">Tidak</button><button type="button" role="radio" aria-checked="false" style="min-width: 96px; justify-content: center">Belum tahu</button></div></div><div class="p-field"><span class="p-lbl" style="color: var(--ink)">Jenis laporan<span class="p-req">*</span></span><div role="radiogroup" aria-label="Jenis laporan" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px"><button type="button" role="radio" class="jn" aria-checked="false"><span class="ic"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M7 18v-6a5 5 0 0 1 10 0v6M5 21h14v-3H5zM12 2v2M4.2 5.2l1.4 1.4M19.8 5.2l-1.4 1.4"/></svg></span><span class="tx"><b>Insiden</b><span class="p-cap">Sudah terjadi dan menimbulkan kerugian, korban, atau gangguan operasi, mis. pencurian, penghadangan.</span></span></button><button type="button" role="radio" class="jn" aria-checked="true"><span class="ic"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01"/></svg></span><span class="tx"><b>Kerawanan</b><span class="p-cap">Kondisi atau kejadian tanpa kerugian, korban, atau gangguan operasi, mis. pagar rusak, lampu padam, orang mencurigakan.</span></span></button></div></div></section></div></div>
+    </form>
+  </div>
+  <div class="in-scrim"></div>
+  <div class="in-dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t"><div class="p-dialog">
+    <div class="dh"><h3 id="dlg-t">Jadikan kerawanan?</h3><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup dialog"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="db"><span>Laporan ini akan dicatat sebagai <b>kerawanan</b> dengan nomor baru <span class="p-mono" style="font-size: 12px">KRW-SEN-</span>, langsung tercatat tanpa pemeriksaan, dan tidak dihitung sebagai insiden.</span><span class="p-cap">Isian dampak, keparahan, dan “Sudah ada yang menangani?” akan dikosongkan.</span></div>
+    <div class="df"><button type="button" class="p-btn p-btn-secondary">Batal</button><button type="button" class="p-btn p-btn-primary">Jadikan kerawanan</button></div>
+  </div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1020}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Jadikan tindak lanjut dari saran verifikator</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}.tl-insmini{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:var(--radius-lg);background:var(--surface-sunken)}.tl-insmini .r{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.tl-dur{display:flex;gap:8px;align-items:center}.tl-pick{cursor:pointer}.tl-asal{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--action-subtle-ink);background:var(--action-subtle-bg);border-radius:999px;padding:2px 10px;align-self:flex-start}</style>
+</helmet>
+<div class="lk-app" style="min-height: 1260px; display: block; position: relative"><dc-import name="P14-Tangani" hint-size="1366px,1260px"></dc-import>
+<sc-if value="{{dlg}}" hint-placeholder-val="{{true}}"><div class="in-scrim"></div><div class="in-dlg" style="width: 560px; top: 90px" role="dialog" aria-modal="true" aria-labelledby="tl-t"><div class="p-dialog"><div class="dh"><h3 id="tl-t">{{dlgTitle}}</h3><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup dialog"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="db">
+<div class="tl-insmini"><span class="p-cap">Sumber · Insiden</span><div class="r"><span class="p-mono" style="font-size: 12px; color: var(--ink-muted)">INS-SEN-2026-0007</span><span class="p-tag s-high" style="height: 20px; font-size: 11px"><span class="dot"></span>Tinggi</span><span class="p-tag t-info" style="height: 20px; font-size: 11px">Dalam penanganan</span></div><b style="font-weight: 600">Pencurian kabel listrik sumur ADR-07</b></div>
+<sc-if value="{{isSaran}}" hint-placeholder-val="{{false}}"><span class="tl-asal">Dari saran verifikator · Sari Wulandari</span></sc-if>
+<div class="p-field"><span class="p-lbl" style="color: var(--ink)">Tindakan<span class="p-req">*</span></span><div class="p-input p-area tl-pick" style="min-height: 72px; align-items: flex-start" onClick="{{fillT}}"><span class="{{tCls}}">{{tTxt}}</span></div><span class="p-help row"><span>{{tHelp}}</span><span>{{tCount}}/300</span></span></div>
+<div class="p-field"><span class="p-lbl" style="color: var(--ink)">PIC<span class="p-req">*</span></span><span class="p-input tl-pick" onClick="{{togU}}"><span style="flex: 1; display: inline-flex; gap: 8px; align-items: center; color: {{uColor}}">{{uTxt}}</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></span><sc-if value="{{uOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop" style="padding: 6px; display: flex; flex-direction: column; gap: 2px"><button type="button" class="p-opt" onClick="{{pu0}}" style="height: auto; padding: 8px 10px; width: 100%; border: 0; background: {{ub0}}; font: inherit; color: inherit; text-align: left; cursor: pointer; display: flex; gap: 8px; align-items: center"><span class="in-av">RH</span><span style="display: flex; flex-direction: column; flex: 1"><b style="font-weight: 600">Rudi Hartono</b><span class="p-cap">Pelapor KKKS · WK Andalas Darat</span></span></button><button type="button" class="p-opt" onClick="{{pu1}}" style="height: auto; padding: 8px 10px; width: 100%; border: 0; background: {{ub1}}; font: inherit; color: inherit; text-align: left; cursor: pointer; display: flex; gap: 8px; align-items: center"><span class="in-av">DK</span><span style="display: flex; flex-direction: column; flex: 1"><b style="font-weight: 600">Dedi Kurniawan</b><span class="p-cap">Admin KKKS · WK Andalas Darat</span></span></button><button type="button" class="p-opt" onClick="{{pu2}}" style="height: auto; padding: 8px 10px; width: 100%; border: 0; background: {{ub2}}; font: inherit; color: inherit; text-align: left; cursor: pointer; display: flex; gap: 8px; align-items: center"><span class="in-av">AP</span><span style="display: flex; flex-direction: column; flex: 1"><b style="font-weight: 600">Andi Pratama</b><span class="p-cap">Pelapor KKKS · Anda, PIC insiden</span></span></button></div></sc-if><span class="p-help">Pengguna aktif organisasi ini yang cakupannya meliputi WK Andalas Darat. Anda boleh memilih diri sendiri.</span></div>
+<div class="p-field"><span class="p-lbl" style="color: var(--ink)">Tenggat<span class="p-req">*</span></span><div class="tl-dur"><div class="p-qf" role="radiogroup" aria-label="Cara isi tenggat"><button type="button" role="radio" aria-checked="true">Durasi</button><button type="button" role="radio" aria-checked="false">Tanggal</button></div><span class="p-input" style="width: 72px"><span>5</span></span><span class="p-input" style="width: 150px"><span style="flex: 1">Hari kerja</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"/></svg></span></div><span class="p-help">Perkiraan 6 Nov 2026.</span><div class="in-bn info sm"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"/></svg><div class="body">Tenggat ini setelah tenggat penanganan insiden (31 Okt 2026). Insiden tetap bisa ditutup sebelum tindak lanjut selesai.</div></div></div>
+<div class="p-field"><span class="p-lbl" style="color: var(--ink)">Bukti selesai <span style="font-weight: 500; color: var(--ink-muted)">· opsional</span></span><div class="p-input"><span class="{{bCls}}">{{bTxt}}</span></div><span class="p-help row"><span>Bukti yang diharapkan dari PIC saat mengajukan selesai.</span><span>{{bCount}}/200</span></span></div>
+<span class="p-cap">Anda menjadi pemberi tugas dan verifikator. Bila PIC insiden berganti, peran ini ikut pindah.</span>
+</div><div class="df"><button type="button" class="p-btn p-btn-secondary">Batal</button><button type="button" class="p-btn p-btn-primary" onClick="{{save}}" aria-disabled="{{dis}}" style="{{disSt}}">Simpan tindak lanjut</button></div></div></div></sc-if>
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}"><div class="in-toastpos"><div class="p-toast" role="status"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M20 6 9 17l-5-5"/></svg></span><span class="msg">Tindak lanjut TL-SEN-2026-0041 ditugaskan ke {{uName}}.</span></div></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"asal":{"editor":"enum","options":["pic","saran"],"default":"saran"},"$preview":{"width":1366,"height":1260}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); const s = (p.asal ?? 'saran') === 'saran'; this.state = { m: 'dlg', t: s, u: null, open: false }; }
+  renderVals() {
+    const saran = (this.props.asal ?? 'saran') === 'saran'; const s = this.state;
+    const users = [['RH','Rudi Hartono'],['DK','Dedi Kurniawan'],['AP','Andi Pratama']];
+    const tx = saran ? 'Ganti kabel dan pastikan pengamanan panel.' : 'Perbaiki pagar sisi panel ADR-07 dengan panel beton';
+    const bx = saran ? '' : 'Foto pagar setelah diperbaiki';
+    const ok = s.t && s.u !== null;
+    const v = { dlg: s.m === 'dlg', done: s.m === 'done', isSaran: saran,
+      dlgTitle: saran ? 'Jadikan tindak lanjut' : 'Tambah tindak lanjut',
+      tTxt: s.t ? tx : 'Klik untuk mengisi contoh: apa yang harus dikerjakan', tCls: s.t ? '' : 'ph', tCount: s.t ? String(tx.length) : '0',
+      tHelp: saran ? 'Terisi dari saran. Boleh diubah sebelum disimpan.' : '',
+      fillT: () => this.setState({ t: true }),
+      bTxt: s.t && bx ? bx : 'Mis. foto kondisi setelah diperbaiki', bCls: s.t && bx ? '' : 'ph', bCount: s.t && bx ? String(bx.length) : '0',
+      togU: () => this.setState({ open: !s.open }), uOpen: s.open,
+      uTxt: s.u === null ? 'Pilih PIC tindak lanjut' : users[s.u][1], uColor: s.u === null ? 'var(--ink-muted)' : 'var(--ink)', uName: s.u === null ? '' : users[s.u][1],
+      dis: ok ? 'false' : 'true', disSt: ok ? '' : 'opacity: .45; pointer-events: none',
+      save: () => { if (ok) this.setState({ m: 'done' }); } };
+    [0,1,2].forEach((i) => { v['pu'+i] = () => this.setState({ u: i, open: false }); v['ub'+i] = s.u === i ? 'var(--action-subtle-bg)' : 'transparent'; });
+    return v;
+  }
+}
+</script>
+</body>
+</html>

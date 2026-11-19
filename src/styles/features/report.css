@@ -1,0 +1,5 @@
+/* Tambahan form lapor: fokus untuk input nyata di dalam .p-input (board memakai span statis). */
+.p-input:focus-within{box-shadow:inset 0 0 0 2px var(--action-line)}
+.p-input.err:focus-within{box-shadow:inset 0 0 0 2px var(--error-ink)}
+.p-input input::placeholder,.p-input textarea::placeholder,textarea.p-input::placeholder{color:var(--ink-muted)}
+textarea.p-input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--action-line)}

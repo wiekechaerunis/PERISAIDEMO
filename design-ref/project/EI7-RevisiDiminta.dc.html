@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email revisi insiden diminta</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Revisi diminta untuk insiden Anda" nama="Budi Santoso" konteks="Sari Wulandari, Pejabat Berwenang di PT Samudra Energi Nusantara, meminta Anda melengkapi bagian berikut." rows="{{rows}}" tombol="Perbaiki laporan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Waktu registrasi tidak berubah saat Anda mengajukan ulang." hint-size="600px,880px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Bagian", "v": "Kejadian & dampak"}, {"k": "Alasan", "v": "Perkiraan kerugian masih kosong. Isi dari data gudang bila sudah ada."}, {"k": "Diminta", "v": "28 Okt 2026, 13:05 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>

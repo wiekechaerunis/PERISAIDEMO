@@ -1,0 +1,11 @@
+/* Dari <helmet><style> board V10/P10/P20/T4: tabel Tugas saya */
+.tg-t td{vertical-align:middle;white-space:nowrap}
+.tg-t td .sub{display:block}
+.tg-n{font-weight:600;color:var(--ink);text-decoration:none}
+.tg-d{display:block;font-size:12px;line-height:16px;color:var(--ink-muted);margin-top:2px}
+.tg-old{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--caution-ink)}
+
+/* Popover filter daftar (Main-Filter): style inline board dipindah ke class */
+.ls-pop{position:absolute;right:0;top:44px;width:420px;z-index:30;max-height:calc(100vh - 140px);overflow-y:auto}
+.ls-sec{display:flex;flex-direction:column;gap:8px}
+.ls-check{display:flex;align-items:center;gap:8px;min-height:28px;border:0;background:none;padding:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ringkasan · kemungkinan laporan ganda</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}
+.hero-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hero-ttl{margin:10px 0 12px 0;font-size:20px;line-height:28px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle)}
+.stats>div{display:flex;flex-direction:column;gap:2px}
+.stats>div+div{padding-left:16px;border-left:1px solid var(--border-subtle)}
+.stats .k{font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted)}
+.stats b{font-size:15px;line-height:22px;font-weight:600}
+</style>
+</helmet>
+<div class="lk-app p-app" style="min-height: 1420px">
+  <dc-import name="Sidebar" active="insiden" user="Andi Pratama" role="Pelapor KKKS" task-count="1" h="1420" hint-size="240px,1420px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar child"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+      <a href="Main.dc.html" class="p-ibtn" aria-label="Kembali"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="p-col ttl"><div style="display: flex; align-items: center; gap: 10px"><h1>Laporan baru</h1></div><ol class="p-crumb"><li><a href="#">Pemantauan WhatsApp</a></li><li aria-hidden="true">›</li><li aria-current="page">Jadikan draf laporan</li></ol></div>
+      <div class="acts"></div><span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div>
+    </div></header>
+    <form class="lk-content" style="padding-bottom: 0">
+      <ol class="p-stepper" aria-label="Langkah"><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Temuan</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Kejadian &amp; dampak</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step done"><span class="n"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="M20 6 9 17l-5-5"/></svg></span>Lampiran</li><li class="p-conn done" aria-hidden="true"></li><li class="p-step on" aria-current="step"><span class="n">4</span>Ringkasan</li></ol>
+
+      <sc-if value="{{showDup}}" hint-placeholder-val="{{true}}">
+      <div class="in-bn caution" role="region" aria-label="Kemungkinan laporan ganda"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        <div class="body"><div class="in-dhd"><div class="tx"><b>Sepertinya sudah dilaporkan.</b> 5 insiden berkategori sama di dekat lokasi ini, diurutkan dari yang paling mirip.</div><button type="button" class="in-dtog" aria-expanded="{{openStr}}" onClick="{{tog}}">{{togLbl}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M18 15l-6-6-6 6"/></svg></button></div><div style="color: var(--ink)"><div class="in-dups cmp" role="radiogroup" aria-label="Insiden mirip" style="display: {{listD}}"><sc-for list="{{dups}}" as="d" hint-placeholder-count="3"><div class="{{d.cls}}"><button type="button" class="in-dsel" role="radio" aria-checked="{{d.on}}" aria-disabled="{{d.dis}}" onClick="{{d.pick}}" title="{{d.t}}"><span class="in-rad" aria-hidden="true"></span><span class="ttl">{{d.t}}</span><span class="meta"><span class="p-mono">{{d.no}}</span> · {{d.who}} · <span class="st">{{d.st}}</span></span><span class="ch"><span class="in-match">{{d.dist}}</span><span class="in-match">Selisih {{d.dt}}</span></span><span class="p-tag {{d.sc}}"><span class="dot"></span>{{d.sev}}</span></button><a href="I15-Detail.dc.html" class="in-dopen" aria-label="Buka {{d.no}} di tab baru" title="Buka detail"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a></div></sc-for></div><div class="in-dsum" style="display: {{sumD}}">{{sumTxt}}</div></div><div class="in-dfoot"><button type="button" class="in-dmore" style="display: {{moreD}}" onClick="{{showMore}}">{{moreTxt}}</button><span>Bila salah satunya kejadian yang sama, pilih lalu tautkan: pesan dan foto masuk ke kronologinya, draf ini dihapus.</span></div><div class="acts"><button type="button" class="p-btn p-btn-secondary p-btn-sm" style="{{addStyle}}" aria-disabled="{{addDis}}" onClick="{{addTo}}">{{addLbl}}</button><button type="button" class="p-btn p-btn-secondary p-btn-sm" style="background: var(--surface)" onClick="{{keep}}">Tetap ajukan sebagai insiden baru</button><button type="button" class="p-btn p-btn-danger p-btn-sm" onClick="{{askDel}}">Hapus draf ini</button></div>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{kept}}" hint-placeholder-val="{{false}}">
+        <div class="in-bn info"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5"/></svg><div class="body">Ditandai <b>kemungkinan sama dengan 5 insiden</b>. Pejabat Berwenang yang memutuskan saat verifikasi.</div></div>
+      </sc-if>
+
+      <div class="lk-grid">
+        <div class="c8 lk-stack">
+          <section class="p-card">
+            <div class="lk-card-head" style="margin-bottom: 0"><div class="hero-top"><span class="p-tag t-info">Insiden</span><span class="p-tag s-high"><span class="dot"></span>Tinggi</span></div><a href="I20-WATemuan.dc.html" class="p-tbtn">Ubah</a></div>
+            <h2 class="hero-ttl">Kabel pompa ADR-07 dipotong</h2>
+            <dl class="lk-kv1"><dt>Waktu kejadian</dt><dd>28 Okt 2026, 01:00 WIB</dd><dt>Lokasi</dt><dd>Jalan masuk sumur ADR-07<span class="p-cap" style="display: block">Kab. Musi Banyuasin · WK Andalas Darat</span></dd><dt>Kategori</dt><dd>Pencurian/Perampokan</dd></dl>
+            <div class="stats"><div><span class="k">Operasi</span><b>Berhenti 3 jam</b></div><div><span class="k">Korban</span><b>Tidak ada</b></div><div><span class="k">Perkiraan kerugian</span><b style="color: var(--ink-muted)">Belum diisi</b></div></div>
+          </section>
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Kejadian &amp; dampak</h2><a href="I21-WAKejadian.dc.html" class="p-tbtn">Ubah</a></div>
+            <dl class="lk-kv1"><dt>Yang terdampak</dt><dd>Properti atau operasi</dd><dt>Dampak keamanan</dt><dd>Kabel listrik pompa ADR-07 dipotong dan hilang.</dd><dt>Sudah menangani</dt><dd>BUJP</dd><dt>Sumber</dt><dd>WhatsApp · Pam ADR Area 2 · Joko (Danru BUJP)</dd></dl>
+          </section>
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Lampiran · 2 file</h2><a href="#" class="p-tbtn">Ubah</a></div>
+            <div class="p-files">
+              <div class="p-file"><span class="fi">JPG</span><div class="grow"><b style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" title="IMG-20261028-WA0012.jpg">IMG-20261028-WA0012.jpg</b><span class="p-row" style="gap: 8px; flex-wrap: wrap"><span class="p-cap">1,8 MB</span></span><span class="p-cap" style="color: var(--ink-subtle)"><span style="color: var(--ink-muted); font-weight: 600">Keterangan:</span> Dari pesan WhatsApp</span></div><span class="p-row" style="gap: 2px; flex: none"><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Pratinjau"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg></button></span></div>
+              <div class="p-file"><span class="fi">JPG</span><div class="grow"><b style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" title="IMG-20261028-WA0013.jpg">IMG-20261028-WA0013.jpg</b><span class="p-row" style="gap: 8px; flex-wrap: wrap"><span class="p-cap">1,6 MB</span></span><span class="p-cap" style="color: var(--ink-subtle)"><span style="color: var(--ink-muted); font-weight: 600">Keterangan:</span> Dari pesan WhatsApp</span></div><span class="p-row" style="gap: 2px; flex: none"><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Pratinjau"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg></button></span></div>
+            </div>
+          </section>
+          <section class="in-pre" aria-label="Yang terjadi saat Anda menekan Ajukan"><h3>Yang terjadi saat Anda menekan Ajukan</h3><div class="rows"><div class="r"><span class="ic"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z"/></svg></span><span><b>Laporan terkunci</b>Isi dan lampiran tidak bisa diubah sampai Pejabat Berwenang memverifikasi. Perlu mengubah? Tarik kembali selama belum diverifikasi.</span></div><div class="r"><span class="ic"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span><b>SKK Migas langsung diberi tahu</b>Keparahan <b style="display: inline; margin: 0">Tinggi</b> langsung dikirim ke semua Pengawas SKK, beserta tanda kemungkinan sama. Pastikan keparahannya sudah sesuai.</span></div></div></section>
+        </div>
+        <aside class="c4 lk-stack">
+          
+          <section class="p-card"><div class="lk-card-head" style="margin-bottom: 12px"><h2 class="p-h2">Pengajuan</h2></div><dl class="lk-kv1"><dt>Nomor</dt><dd><span class="p-mono" style="font-size: 12px">INS-SEN-2026-0009</span></dd><dt>Status</dt><dd><span class="p-tag t-draft">Draf</span></dd><dt>Pertama dilaporkan</dt><dd>28 Okt 2026, 01:32 WIB</dd><dt>Dikirim ke</dt><dd>Semua Pejabat Berwenang KKKS</dd></dl></section>
+        </aside>
+      </div>
+      <div class="lk-ffoot" role="region" aria-label="Aksi formulir" style="margin: 0 -24px"><a href="I21-WAKejadian.dc.html" class="p-btn p-btn-secondary">Sebelumnya</a><div style="display: flex; gap: 8px"><button type="button" class="p-btn p-btn-secondary">Simpan draf</button><a href="{{submitHref}}" class="p-btn p-btn-primary" aria-disabled="{{submitDis}}" style="{{submitStyle}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Ajukan</a></div></div>
+    </form>
+  </div>
+<sc-if value="{{del}}" hint-placeholder-val="{{false}}"><div class="in-scrim"></div><div class="in-dlg" role="dialog" aria-modal="true" aria-labelledby="dd-t"><div class="p-dialog"><div class="dh"><h3 id="dd-t">Hapus draf ini?</h3><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup dialog" onClick="{{reset}}"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="db"><span>Pakai ini bila kejadiannya sama dan tidak ada informasi baru. Isian dan lampiran draf ini terhapus dan tidak bisa dikembalikan. Pesan WhatsApp sumbernya tetap ada.</span></div><div class="df"><button type="button" class="p-btn p-btn-secondary" onClick="{{reset}}">Batal</button><button type="button" class="p-btn p-btn-destructive" onClick="{{doDel}}">Hapus draf</button></div></div></div></sc-if>
+  <sc-if value="{{gone}}" hint-placeholder-val="{{false}}">
+    <div class="in-toastpos"><div class="p-toast" role="status"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="msg">Draf dihapus. Pesan WhatsApp sumbernya tetap ada di Pemantauan WhatsApp.</span><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup notifikasi" onClick="{{reset}}"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+  </sc-if>
+  <sc-if value="{{added}}" hint-placeholder-val="{{false}}">
+    <div class="in-toastpos"><div class="p-toast" role="status"><span class="ti"><svg class="p-ic" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="msg">{{addedMsg}}</span><button type="button" class="p-ibtn ghost" style="width: 28px; height: 28px" aria-label="Tutup notifikasi" onClick="{{reset}}"><svg class="p-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"daftar":{"editor":"enum","options":["buka","tutup"],"default":"buka"},"$preview":{"width":1366,"height":1420}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { mode: 'ask', sel: null, more: false, open: (p || {}).daftar !== 'tutup' }; }
+  dupList(s, note) { const D = [['0007', 'Pencurian kabel listrik sumur ADR-07', 'Budi Santoso', 'Review internal', '300 m', '40 menit', 's-high', 'Tinggi', 1], ['0008', 'Panel pompa ADR-07 dibongkar', 'Rina Wijaya', 'Dalam penanganan', '650 m', '1 jam 20 menit', 's-med', 'Sedang', 1], ['0004', 'Kabel jalur sumur ADR-06 dipotong', 'Hendra Saputra', 'Ditutup', '900 m', '5 jam', 's-med', 'Sedang', 0], ['0003', 'Orang tak dikenal di dekat sumur ADR-07', 'Joko Susilo', 'Review internal', '800 m', '5 jam 30 menit', 's-low', 'Rendah', 1], ['0002', 'Gembok panel ADR-08 rusak', 'Budi Santoso', 'Dalam penanganan', '950 m', '5 jam 50 menit', 's-low', 'Rendah', 1]]; const all = s.more ? D : D.slice(0, 3); return all.map(([id, t, who, st, dist, dt, sc, sev, ok]) => { const on = s.sel === id; return { t, who, st: ok ? st : st + ', tak bisa ditautkan', dist, dt, sc, sev, no: 'INS-SEN-2026-' + id, on: on ? 'true' : 'false', dis: ok ? 'false' : 'true', cls: 'in-dupw' + (on ? ' on' : '') + (ok ? '' : ' dis'), noteD: ok ? 'none' : 'flex', note, pick: () => { if (ok) this.setState({ sel: on ? null : id }); } }; }); }
+  renderVals() {
+    const s = this.state; const m = s.mode; const selNo = s.sel ? 'INS-SEN-2026-' + s.sel : '';
+    return {
+      openStr: s.open === false ? 'false' : 'true', listD: s.open === false ? 'none' : 'flex', sumD: s.open === false ? 'block' : 'none',
+      togLbl: s.open === false ? 'Tampilkan 5 insiden' : 'Sembunyikan', tog: () => this.setState({ open: s.open === false }),
+      sumTxt: s.sel ? ('Dipilih: INS-SEN-2026-' + s.sel) : 'Paling mirip: INS-SEN-2026-0007 · 300 m · selisih 40 menit',
+      moreD: s.more || s.open === false ? 'none' : 'inline-flex',
+      dups: this.dupList(s, 'Sudah ditutup, tidak bisa ditautkan'),
+      moreTxt: 'Lihat 2 lainnya', showMore: () => this.setState({ more: true }),
+      addLbl: s.sel ? 'Tautkan pesan ke ' + selNo : 'Tautkan pesan', addDis: s.sel ? 'false' : 'true', addStyle: s.sel ? 'background: var(--surface)' : 'background: var(--surface); opacity: .45; pointer-events: none',
+      addedMsg: 'Pesan ditautkan ke ' + selNo + '. Draf ini dihapus.',
+      showDup: m === 'ask' || m === 'del',
+      del: m === 'del', gone: m === 'gone', doDel: () => this.setState({ mode: 'gone' }),
+      askDel: () => this.setState({ mode: 'del' }),
+      kept: m === 'keep',
+      added: m === 'add',
+      keep: () => this.setState({ mode: 'keep' }),
+      addTo: () => { if (s.sel) this.setState({ mode: 'add' }); },
+      reset: () => this.setState({ mode: 'ask' }),
+      submitHref: (m === 'ask' || m === 'del') ? '#' : 'I23-DetailWA.dc.html',
+      submitDis: (m === 'ask' || m === 'del') ? 'true' : 'false',
+      submitStyle: (m === 'ask' || m === 'del') ? 'opacity: .45; pointer-events: none' : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

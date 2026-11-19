@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email ditunjuk sebagai PIC insiden</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Anda ditunjuk sebagai PIC insiden" nama="Andi Pratama" konteks="Sari Wulandari memverifikasi insiden berikut dan menunjuk Anda sebagai penanggung jawab penanganannya. Catat setiap langkah di tab Penanganan." rows="{{rows}}" tombol="Buka penanganan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Insiden ini juga tampil di Tugas saya." hint-size="600px,880px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Insiden", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Keparahan", "v": "Tinggi · Prioritas Tinggi"}, {"k": "Lokasi", "v": "Sumur ADR-07, Kab. Musi Banyuasin · WK Andalas Darat"}, {"k": "Tenggat penanganan", "v": "31 Okt 2026 (3 hari sejak registrasi)"}, {"k": "Saran langkah", "v": "2 saran dari verifikator. Jadikan tindak lanjut atau abaikan di halaman penanganan."}] };
+  }
+}
+</script>
+</body>
+</html>

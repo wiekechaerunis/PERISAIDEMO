@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Email insiden digabung</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<div style="width: 600px">
+  <dc-import name="Email" judul="Insiden INS-SEN-2026-0009 digabung ke INS-SEN-2026-0007" nama="Andi Pratama" konteks="Sari Wulandari menilai laporan Anda dan laporan Budi Santoso adalah kejadian yang sama. Foto dan pesan WhatsApp Anda kini ada di kronologi insiden tujuan." rows="{{rows}}" tombol="Buka insiden tujuan" tautan="https://perisai.skkmigas.go.id/insiden/INS-SEN-2026-0007" penutup="Penerima jalur cepat menerima kabar yang sama, satu kali." hint-size="600px,860px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [{"k": "Laporan Anda", "v": "INS-SEN-2026-0009 · Dibatalkan\nKabel pompa ADR-07 dipotong"}, {"k": "Digabung ke", "v": "INS-SEN-2026-0007\nPencurian kabel listrik sumur ADR-07"}, {"k": "Digabung", "v": "28 Okt 2026, 13:10 WIB"}] };
+  }
+}
+</script>
+</body>
+</html>
