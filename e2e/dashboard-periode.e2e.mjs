@@ -91,7 +91,7 @@ assert.match(r.start.sub, /^Semester I 2026 · /);
 assert.equal(r.expanded, 'true');
 assert.deepEqual(r.options, [
   'Semua waktu | 1 Jan – 30 Jun 2026', '7 hari terakhir | 23–30 Jun 2026', '30 hari terakhir | 31 Mei – 30 Jun 2026', 'Bulan ini | 1–30 Jun 2026',
-  '3 bulan terakhir | 30 Mar – 30 Jun 2026', 'Tahun berjalan | 1 Jan – 30 Jun 2026', 'Rentang khusus | Pilih tanggal Dari dan Sampai',
+  '3 bulan terakhir | 30 Mar – 30 Jun 2026', 'Tahun berjalan | 1 Jan – 30 Jun 2026', 'Rentang khusus | Pilih tanggal',
 ]);
 assert.equal(r.d7.btn, '7 hari terakhir');
 assert.equal(r.d7.url, '?periode=7h');

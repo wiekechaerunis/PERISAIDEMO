@@ -7,7 +7,9 @@ import { DASH_NOW, DASH_TODAY, DATA_CAPTION, useDashPeriod } from '../dashPeriod
 // (akhir data demo dashboard). Preset langsung berlaku; Rentang khusus memakai DateField DS dan tombol Terapkan.
 // Periode disimpan di URL (?periode= / ?dari=&sampai=) dan dioper ke logika dashboard (props.periode).
 
-const captionOf = (c: PeriodChoice) => (c === 'all' ? DATA_CAPTION : c === 'custom' ? 'Pilih tanggal Dari dan Sampai' : rangeCaption(periodRange(c, DASH_NOW)!));
+const captionOf = (c: PeriodChoice) => (c === 'all' ? DATA_CAPTION : c === 'custom' ? 'Pilih tanggal' : rangeCaption(periodRange(c, DASH_NOW)!));
+/** Garis pemisah sebelum kelompok: relatif (7/30 hari), kalender (bulan, 3 bulan, tahun), Rentang khusus. */
+const GROUP_START = new Set<PeriodChoice>(['7h', 'bulan', 'custom']);
 
 export function PeriodSelect() {
   const uid = useId();
@@ -97,12 +99,17 @@ export function PeriodSelect() {
       </button>
       {open && (
         <div className={'p-pop db-lvpop db-period db-per2' + (custom ? ' cu' : '')}>
+          <div className="hd2">
+            <b>Periode</b>
+            <span className="p-cap">Data s.d. 30 Jun 2026</span>
+          </div>
           <div id={`${uid}-lb`} role="listbox" aria-label="Periode">
             {PERIOD_CHOICES.map((c, i) => {
               const sel = c.key === draft.choice;
               return (
+                <div key={c.key} style={{ display: 'contents' }}>
+                {GROUP_START.has(c.key) && <div className="sep" role="presentation" />}
                 <div
-                  key={c.key}
                   id={optId(i)}
                   role="option"
                   aria-selected={sel}
@@ -111,15 +118,21 @@ export function PeriodSelect() {
                   onMouseEnter={() => setActive(i)}
                   onClick={() => pick(c.key)}
                 >
-                  <span className="tx">
-                    <span className="nm">{c.label}</span>
-                    <span className="p-cap">{captionOf(c.key)}</span>
+                  <span className="ck" aria-hidden="true">
+                    {sel && (
+                      <svg className="p-ic" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+                        <path d="M5 12l4 4 10-10" />
+                      </svg>
+                    )}
                   </span>
-                  {sel && (
-                    <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 16, height: 16 }}>
-                      <path d="M5 12l4 4 10-10" />
+                  <span className="nm">{c.label}</span>
+                  <span className="rg">{captionOf(c.key)}</span>
+                  {c.key === 'custom' && (
+                    <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 14, height: 14, color: 'var(--ink-muted)' }}>
+                      <path d={custom ? 'm6 9 6 6 6-6' : 'M9 18l6-6-6-6'} />
                     </svg>
                   )}
+                </div>
                 </div>
               );
             })}
