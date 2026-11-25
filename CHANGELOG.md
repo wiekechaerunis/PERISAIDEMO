@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 Nov 2026 · Tanya data di Temuan AI
+
+- Kolom "Tanya data" bisa diketik: saran saat fokus (↑/↓, Enter), "Dipahami sebagai" dengan chip yang bisa dihapus (debounce 250 ms), "Menghitung..." 500 ms, lalu jawaban di popover. Intent: saring, peringkat, banding, lokasi, tindakan; hasil 0, tidak dikenali, dan pembatasan peran KKKS.
+- Jawaban dihitung dari data demo dengan aturan saring yang sama seperti dashboard (`src/ask/`); "Terapkan ke dashboard" memasang filter di bar filter, "Sorot di Tren" menyorot bulan, lokasi membuka peta. Bukan AI (dicatat di docs/dashboard/DEVIATIONS.md).
+- Tes: 20 unit `parseQuery`, 10 unit `answer` (jumlah sama dengan kartu dashboard), e2e `node e2e/tanya-data.e2e.mjs`, screenshot di `screenshots/tanya-data/`.
+
 ## 25 Nov 2026 · Masukan PM setelah Iterasi 3
 
 - Tampilan nasional kembali ke gaya lama: provinsi putih bergaris abu tipis di atas laut, tanpa bidang wilayah berwarna dan tanpa garis antarwilayah. Keterangan peta nasional ikut kembali ("Area panas di lokasi insiden. ..."). Hover provinsi menyorot tipis seluruh wilayah SKK-nya, chip wilayah tetap hanya saat hover.

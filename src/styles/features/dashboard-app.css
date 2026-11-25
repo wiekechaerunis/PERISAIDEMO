@@ -147,3 +147,38 @@
 /* ---------- Klik titik / baris insiden: detail (masukan PM 25 Nov) ---------- */
 button.db-pt { border: 0; padding: 0; cursor: pointer; }
 button.pn-inc { border: 0; border-top: 1px solid var(--border-subtle); background: none; font: inherit; text-align: left; width: calc(100% + 16px); cursor: pointer; }
+
+/* ---------- S6 Tanya data: bisa diketik, jawaban di popover (tinggi kartu tetap) ---------- */
+.db-ai .db-askbox { position: relative; margin-top: auto; max-width: 900px; }
+.db-ai .db-askbox .ask { margin-top: 0; max-width: none; }
+.db-ai .db-askbox .ask:focus-within { border-color: var(--border-control); box-shadow: 0 0 0 2px var(--focus-ring); }
+.db-ai .db-askbox input.ph { border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: var(--ink); min-width: 0; height: 100%; padding: 0; }
+.db-ai .db-askbox input.ph::placeholder { color: var(--ink-muted); }
+.db-ai .db-askbox button.go { border: 0; padding: 0; cursor: pointer; }
+.db-ai .db-askbox button.go:disabled { cursor: default; opacity: .6; }
+.db-askpop { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 40; padding: 12px; display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; }
+.db-askpop .sec { display: flex; flex-direction: column; gap: 6px; }
+.db-askpop .hd { font-size: 12px; font-weight: 600; color: var(--ink-muted); }
+.db-askpop .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.db-askpop .p-chip { height: 28px; font-size: 12px; font-weight: 600; }
+.db-askpop .p-chip.sug { background: var(--surface-subtle); box-shadow: inset 0 0 0 1px var(--border); font-weight: 500; }
+.db-askpop .p-chip.sug:hover, .db-askpop .p-chip.sug.on { background: var(--surface-sunken); box-shadow: inset 0 0 0 1px var(--border-control); }
+.db-askpop .p-chip.got { cursor: default; padding-right: 4px; }
+.db-askpop .p-chip.got button { width: 20px; height: 20px; border: 0; border-radius: 4px; background: none; color: var(--ink-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.db-askpop .p-chip.got button:hover { background: var(--surface); color: var(--ink); }
+.db-askpop .ans:empty { display: none; }
+.db-askpop .busy { display: flex; flex-direction: column; gap: 6px; }
+.db-askpop .busy .sk { height: 14px; width: 70%; border-radius: 4px; background: linear-gradient(90deg, var(--surface-sunken), var(--surface-subtle), var(--surface-sunken)); background-size: 200% 100%; animation: db-sk 1s linear infinite; }
+@keyframes db-sk { to { background-position: -200% 0; } }
+.db-askpop .res { display: flex; flex-direction: column; gap: 8px; }
+.db-askpop .kal { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--ink); }
+.db-askpop .note { margin: 0; font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+.db-askpop .rank { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.db-askpop .rank button { width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 8px; border: 0; border-top: 1px solid var(--border-subtle); background: none; font: inherit; font-size: 13px; text-align: left; cursor: pointer; border-radius: var(--radius-sm); }
+.db-askpop .rank li:first-child button { border-top: 0; }
+.db-askpop .rank button:hover { background: var(--surface-sunken); }
+.db-askpop .rank .val { font-weight: 700; white-space: nowrap; }
+.db-askpop .acts { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.db-askpop .lnk { font-size: 13px; font-weight: 600; color: var(--ink); }
+.db-askpop .ft { margin: 0; padding-top: 8px; border-top: 1px solid var(--border-subtle); font-size: 11px; line-height: 14px; color: var(--ink-muted); }
+@media (prefers-reduced-motion: reduce) { .db-askpop .busy .sk { animation: none; } }

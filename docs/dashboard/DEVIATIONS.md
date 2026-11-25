@@ -17,3 +17,12 @@ Hal yang tidak 1:1 dengan `design/*.dc.html`, atau ditambahkan prototype.
 11. **Tidak ada:** unit test, backend, pustaka grafik/peta. Peta memakai SVG di `public/peta`.
 
 Belum diverifikasi: kecocokan piksel 1366px terhadap screenshot desain dan semua interaksi I1–I26 satu per satu (yang dicek: angka §13, rute, 5 halaman laporan, konsol bersih).
+
+## Tanya data (S6, kolom di kartu Temuan AI) · 25 Nov
+
+12. **Bukan AI.** Kolom "Tanya data" sekarang bisa diketik, tetapi jawabannya dihitung dari filter, tanpa LLM dan tanpa API. Kaki popover menampilkan "Demo · jawaban dihitung dari filter, bukan AI." Tombol "Tanya AI" di app bar tetap statis.
+13. **Panel jawaban berupa popover** (`.p-pop`) di bawah kolom, bukan bagian kartu, supaya tinggi Temuan AI tetap sama dengan Perlu tindakan. Popover ditutup otomatis bila jawaban memindahkan halaman (zoom peta, Terapkan ke dashboard, Sorot di Tren, klik item peringkat).
+14. **Bulan tidak bisa dipasang ke dashboard.** Dashboard dihitung per semester dan tidak punya filter bulan, jadi "Terapkan ke dashboard" hanya memasang wilayah, KKKS, lokasi, kategori, dan level; jawaban memberi catatan bila bulan disebut.
+15. **Sorot di Tren** menyorot bulan pembanding pada kartu Tren per bulan (ring seperti penanda desain) dan memasang filter kategori; grafik tren tidak punya seri per jenis.
+16. **Kerugian per jenis/KKKS** dihitung dengan rumus kerugian area dashboard (nilai area diskalakan dengan porsi level dan, untuk jenis, porsi insiden jenis itu di area).
+17. **Kamus manual** (tidak berasal dari data): alias wilayah (sumut, sumsel, sumatera bagian utara/selatan, jawa bali nusa tenggara, jawa bali nusra, kalimantan sulawesi, papua maluku, maluku papua, jakarta), sinonim kategori (pencurian, perampokan, maling, pengeboran ilegal/liar, sumur ilegal, sambungan ilegal, tapping, penghentian, penghadangan, demo, demonstrasi, unras, kebakaran, perusakan, vandalisme), nama bulan lengkap (januari–juni), kata intent (terbanyak, terbesar, tertinggi, top, paling, teratas, ranking, peringkat; vs, versus, dibanding(kan), banding(kan), tren, naik, turun; lewat tenggat, terlambat, telat, melewati tenggat, perlu tindakan; belum melapor, belum lapor, tidak melapor; kerugian, rugi), kata kelompok (kkks, perusahaan, operator, kontraktor; wilayah, region, perwakilan; jenis, kategori, tipe; lokasi, area, kabupaten, wk, wilayah kerja), dan kata pengisi (`STOPWORDS` di `src/ask/parseQuery.ts`). Nama wilayah, KKKS, area, WK, kategori, level, dan singkatan bulan diambil dari `W`, `A0`, `CAT`, `LV`, `MO`.

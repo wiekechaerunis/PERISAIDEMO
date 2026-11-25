@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import { routeHref } from '@/dc/route';
 import { downloadExcel } from '@/dc/download';
 import { AnimNum } from '../anim';
+import { AskBox } from '@/ask/AskBox';
 
 // S6
 export function AiFindings({ v }: { v: any }) {
@@ -33,17 +34,7 @@ export function AiFindings({ v }: { v: any }) {
 </svg>
 </button>
 </Fragment>))}</div>
-<label className="ask">
-<svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: "16px", height: "16px", color: "var(--ink-muted)" }}>
-<path d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z" />
-</svg>
-<span className="ph">{v.askPh}</span>
-<span className="go" aria-hidden="true">
-<svg viewBox="0 0 24 24" style={{ width: "14px", height: "14px" }}>
-<path d="M5 12h14M13 6l6 6-6 6" />
-</svg>
-</span>
-</label>
+<AskBox v={v} />
 </section></>
   );
 }

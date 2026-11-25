@@ -266,6 +266,9 @@ const LOGIC_PATCHES = [
   ["return { mask: 'url(/peta/wk-' + a.id + '.svg)', bg };", "return { id: a.id, mask: 'url(/peta/wk-' + a.id + '.svg)', bg, hov: a.n > 0 ? tint(LV[a.mx][1], 30) : 'rgba(142,146,157,.22)' };"],
   // Masukan PM setelah Iterasi 3: nasional kembali ke tampilan lama (tanpa bidang wilayah), keterangan ikut
   ["'Bidang = wilayah SKK, diwarnai level tertinggi. Area panas di lokasi insiden; makin pekat makin banyak.'", "'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.'"],
+  // Tanya data (S6): filter aktif, cara memasang filter, sorotan bulan di Tren per bulan
+  ['hasMk: i === mkI, ring: i === mkI ?', 'hasMk: i === mkI, ring: (s.hi || []).includes(i) || i === mkI ?'],
+  ['goUp: zoomOut,', "goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length }, askApply: (patch) => this.setState(patch),"],
 ];
 
 // Peta komponen ke ID bagian PRD §6a (S1..S19)
@@ -288,6 +291,9 @@ const patches = {
     [/<span className="k-val">\{k\.val\}<\/span>/, '<span className="k-val"><AnimNum text={k.val} /></span>'],
   ],
   AiFindings: [
+    // Tanya data: kolom statis diganti AskBox (bisa diketik, jawaban dari filter, tanpa AI)
+    [/<label className="ask">[\s\S]*?<\/label>/, '<AskBox v={v} />'],
+
     [/<section className="db-ai c7"/, '<section data-flash="" className="db-ai c7"'],
     [/<div className="db-ins">/, '<div className="db-ins db-fade" key={v.fk}>'],
     [/\{g\.m\}<\/span>/, '<AnimNum text={g.m} /></span>'],
@@ -371,7 +377,7 @@ function main() {
       const nestedImports = nested.map((n) => `import { ${n} } from './${n}';\n`).join('');
       write(
         path.join(ROOT, `src/features/dashboard/components/${name}.tsx`),
-        `${HEADER}import { Fragment } from 'react';\nimport { routeHref } from '@/dc/route';\nimport { downloadExcel } from '@/dc/download';\nimport { AnimNum } from '../anim';\n${name === 'FilterBar' ? "import { FilterSelect } from './FilterSelect';\n" : ''}${name === 'AppBar' ? "import { PeriodSelect } from './PeriodSelect';\n" : ''}${nestedImports}\n// ${S_TAG[name] ?? ''}\nexport function ${name}({ v }: { v: any }) {\n  void routeHref; void downloadExcel; void Fragment; void AnimNum;\n  return (\n    <>${pretty(body)}</>\n  );\n}\n`,
+        `${HEADER}import { Fragment } from 'react';\nimport { routeHref } from '@/dc/route';\nimport { downloadExcel } from '@/dc/download';\nimport { AnimNum } from '../anim';\n${name === 'FilterBar' ? "import { FilterSelect } from './FilterSelect';\n" : ''}${name === 'AppBar' ? "import { PeriodSelect } from './PeriodSelect';\n" : ''}${name === 'AiFindings' ? "import { AskBox } from '@/ask/AskBox';\n" : ''}${nestedImports}\n// ${S_TAG[name] ?? ''}\nexport function ${name}({ v }: { v: any }) {\n  void routeHref; void downloadExcel; void Fragment; void AnimNum;\n  return (\n    <>${pretty(body)}</>\n  );\n}\n`,
       );
     }
     const topLevel = new Set(Object.values(SPLITS).filter((_, i) => Object.keys(SPLITS)[i].split('/').length <= 5));
