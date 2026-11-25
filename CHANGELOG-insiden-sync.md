@@ -118,3 +118,9 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
 
 - ADJ-07 butir 8: tombol "Koreksi data" di kartu "Insiden ditutup" (Pejabat) → dialog Kerugian final + alasan; status tetap Ditutup,
   Riwayat mencatat sebelum → sesudah, SKK diberi tahu bila Tinggi/Kritis.
+
+## 13. Jejak audit (P34)
+
+- B-21, PA-15: halaman `/insiden/:no/jejak-audit` (dibuka dari "Jejak audit lengkap" di tab Riwayat): crumb Insiden › {nomor} ›
+  Jejak audit, "Periode: Sejak dibuat", pil "Objek: {nomor}" + Hapus filter (semua jejak dalam cakupan peran), kolom Waktu, Pelaku
+  (+organisasi), Sebagai, Modul, Aksi, Objek, Hasil, tombol Filter dan Ekspor CSV, panel samping "Detail jejak audit".
