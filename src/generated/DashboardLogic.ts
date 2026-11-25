@@ -345,7 +345,7 @@ export class DashboardLogic extends DCLogic {
       isSkk: skk, isKkks: !skk,
       user: skk ? 'Hendra Wijaya' : 'Sari Wulandari', role: skk ? 'Pengawas SKK' : 'Pejabat Berwenang KKKS', tasks: skk ? '2' : '4',
       subtitle: PL + ' · data per 25 Nov 2026, 08.00 WIB · hanya insiden terverifikasi',
-      filters: skk ? [{ k: 'Wilayah', v: lvl === 'nat' ? 'Semua' : W[z].n }, { k: 'KKKS', v: s.kk ? s.kk.replace('PT ', '') : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) }] : [{ k: 'Wilayah kerja', v: loc ? loc.wk : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : CAT[s.kat][0] }],
+      filters: skk ? [{ k: 'KKKS', v: s.kk ? s.kk.replace('PT ', '') : 'Semua' }, { k: 'Wilayah', v: lvl === 'nat' ? 'Semua' : W[z].n }, { k: 'Kategori', v: s.kat == null ? 'Semua' : (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) }] : [{ k: 'Wilayah kerja', v: loc ? loc.wk : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : CAT[s.kat][0] }],
       lvOpen: s.lvOpen, lvOpenStr: s.lvOpen ? 'true' : 'false', toggleLv: () => this.setState({ lvOpen: !s.lvOpen }), lvAll: () => this.setState({ lv: [1, 1, 1, 1, 1] }),
       lvSum: s.lv.every(Boolean) ? 'Semua' : (s.lv.filter(Boolean).length + ' dari 5'), lvDots: LV.filter((l, i) => s.lv[i]).map((l) => ({ c: l[1] })),
       clearAll: () => this.setState({ kk: null, kat: null, lv: [1, 1, 1, 1, 1], z: skk ? 'nat' : 'own', loc: null }),
@@ -363,7 +363,7 @@ export class DashboardLogic extends DCLogic {
         const wO = [{ n: 'Semua wilayah', on: lvl === 'nat', go: () => this.setState({ z: 'nat', loc: null }) }, ...WO.map((w) => ({ n: W[w].n, sub: W[w].nr ? 'belum ada laporan' : cnt((a) => a.w === w) + ' insiden', on: lvl !== 'nat' && z === w, go: () => this.setState({ z: w, loc: null }) }))];
         const kks = [...new Set(allA.map((a) => a[7]))].sort();
         const kO = [{ n: 'Semua KKKS', on: !s.kk, go: () => this.setState({ kk: null }) }, ...kks.map((kn) => ({ n: kn, sub: allA.filter((a) => a[7] === kn).map((a) => a[8]).join(', '), on: s.kk === kn, go: () => this.setState({ kk: kn }) }))];
-        return [wO, kO, katO];
+        return [kO, wO, katO];
       }
       const wkO = [{ n: 'Semua wilayah kerja', on: !loc, go: () => this.setState({ z: 'own', loc: null }) }, ...A.map((a) => ({ n: a.wk, sub: a.name + ' · ' + a.n + ' insiden', on: !!loc && loc.id === a.id, go: () => this.setState({ z: 'own', loc: a.id }) }))];
       return [wkO, katO];
