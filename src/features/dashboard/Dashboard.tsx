@@ -5,6 +5,7 @@ import { useDashboard, type DashboardProps } from './useDashboard';
 import { DashboardView } from './DashboardView';
 import { TipLayer } from './TipLayer';
 import { incidentFromDashboard, type IncInfo } from './openIncident';
+import { useDashPeriod } from './dashPeriod';
 
 export type { DashboardProps };
 
@@ -15,7 +16,9 @@ export type { DashboardProps };
 export function Dashboard(props: DashboardProps) {
   const [panelOpen, setPanelOpen] = useState(true);
   const [mapW, setMapW] = useState(1078);
-  const v = useDashboard({ ...props, panelOpen, mapW });
+  // Periode dari tombol Periode (URL); rentang penuh Jan–Jun 2026 = angka semester apa adanya
+  const { info: periode } = useDashPeriod();
+  const v = useDashboard({ ...props, panelOpen, mapW, periode });
   // Iterasi 3: di tingkat nasional panel ringkasan tersembunyi (bidang wilayah + chip sudah membawa informasinya);
   // panel muncul otomatis saat zoom ke wilayah atau WK. Tombol "Ringkasan" tetap bisa membukanya.
   const [lastLvl, setLastLvl] = useState<string | null>(null);

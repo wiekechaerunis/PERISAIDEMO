@@ -18,10 +18,12 @@ function activeOf(ctx: any): Filters {
   if (ctx.kat != null && ctx.kat < ctx.catN) f.cat = ctx.kat;
   if (ctx.lv && ctx.lv.some((x: number) => !x)) f.lv = ctx.lv.map((x: number, i: number) => (x ? i : -1)).filter((i: number) => i >= 0);
   if (ctx.kk) f.kk = ctx.kk;
+  // periode dashboard (tombol Periode) ikut membatasi jawaban
+  if (ctx.per) f.range = ctx.per;
   return f;
 }
 
-/** Filters → patch state dashboard (bar filter). Bulan tidak dipasang (dashboard per semester). */
+/** Filters → patch state dashboard (bar filter). Bulan dari ketikan tidak dipasang; periode diatur tombol Periode. */
 function patchOf(f: Filters, skk: boolean, areaW?: string) {
   return {
     z: f.area ? (skk ? areaW : 'own') : f.w ?? (skk ? 'nat' : 'own'),

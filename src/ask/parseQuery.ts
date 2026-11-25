@@ -26,6 +26,8 @@ export interface Filters {
   months?: number[];
   /** id area A0 */
   area?: string;
+  /** periode dashboard yang sedang terpasang (tombol Periode), tanggal ISO inklusif; bukan dari ketikan */
+  range?: { from: string; to: string; label: string };
 }
 
 export interface Parsed {

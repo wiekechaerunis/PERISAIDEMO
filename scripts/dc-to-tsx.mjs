@@ -224,6 +224,76 @@ function portLogic(cls, name, outFile, dataNames = [], logicPatches = []) {
 }
 
 
+// Periode dashboard (tombol Periode, masukan PM): props.periode = { from, to, full, label, cap, text } dari dashPeriod.ts.
+// full (rentang mencakup seluruh data Jan–Jun 2026) = angka semester apa adanya. Selain itu jumlah insiden dihitung tepat dari
+// tanggal lapor INC (INC cocok 1:1 dengan level per area A0 dan pola bulanan); kerugian, jenis, matriks, kerawanan, dan DTT
+// diskalakan dengan porsi insiden periode (perkiraan, diberi keterangan). Dipasang setelah patch lain, jadi teks yang dicocokkan
+// adalah hasil patch sebelumnya. Lihat DEVIATIONS.md D-D1..D-D6.
+const PERIOD_PATCHES = [
+  ['const dttOn = skk && s.dtt;', String.raw`const dttOn = skk && s.dtt;
+    // Periode (tombol Periode): jumlah insiden tepat dari tanggal lapor INC; kerugian, jenis, kerawanan, DTT diskalakan (perkiraan)
+    const PD = this.props.periode || null; const pFull = !PD || PD.full;
+    const MOI = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, Mei: 5, Jun: 6 };
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const dOf = (t) => { const p = String(t).trim().split(' '); return '2026-' + pad2(MOI[p[1]] || 0) + '-' + pad2(Number(p[0])); };
+    const inPd = (t) => pFull || (dOf(t) >= PD.from && dOf(t) <= PD.to);
+    const INCP = INC.filter((r) => inPd(r[6]));
+    const fracOf = (f) => { const all = INC.filter(f).length; return all ? INCP.filter(f).length / all : 0; };
+    const aF = {}; A0.forEach((a) => { aF[a[0]] = pFull ? 1 : fracOf((r) => r[1] === a[0]); });
+    const wF = {}; WO.forEach((w) => { const ids = A0.filter((a) => a[1] === w).map((a) => a[0]); wF[w] = pFull ? 1 : fracOf((r) => ids.includes(r[1])); });
+    const moCov = [31, 28, 31, 30, 31, 30].map((dn, i) => { if (pFull) return 1; let c = 0; for (let d = 1; d <= dn; d++) { const t = '2026-' + pad2(i + 1) + '-' + pad2(d); if (t >= PD.from && t <= PD.to) c++; } return c / dn; });
+    const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
+    const PL = PD ? PD.text : 'Semester I 2026';
+    const PCMP = pFull ? 'vs Sem. II 2025' : 'vs periode sebelumnya, perkiraan';`],
+  ['let lv = a[5].slice();', 'let lv = pFull ? a[5].slice() : [0, 1, 2, 3, 4].map((l) => INCP.filter((r) => r[1] === a[0] && r[3] === l).length);'],
+  ['lv = alloc(Math.min(catN[a[0]] || 0, sum(a[5])), lv);', 'lv = alloc(Math.min(Math.round((catN[a[0]] || 0) * aF[a[0]]), sum(lv)), lv);'],
+  ['lv[0] += DTT[a[0]];', 'lv[0] += Math.round(DTT[a[0]] * dttF);'],
+  ['.map((a) => a[5][i])) + (i === 0 && dttOn ? 422 : 0));', '.map((a) => pFull ? a[5][i] : INCP.filter((r) => r[1] === a[0] && r[3] === i).length)) + (i === 0 && dttOn ? Math.round(422 * dttF) : 0));'],
+  ['const pool = INC.filter((r) => r[1] === loc.id);', 'const pool = INCP.filter((r) => r[1] === loc.id);'],
+  ['incs = T.filter((t) => s.lv[t[2]])', "incs = T.filter((t) => s.lv[t[2]] && inPd(t[1].split(' · ')[1].replace(' 2026', '')))"],
+  ['const incS = INC.filter(', 'const incS = INCP.filter('],
+  ['const stA = [0, 1, 2].map(', 'const scAll = INC.filter((r) => scIds.includes(r[1])).length; const pShare = pFull ? 1 : (scAll ? INCP.filter((r) => scIds.includes(r[1])).length / scAll : 0);\n    const stA = [0, 1, 2].map('],
+  ["aCatS = cc[1] + ' insiden pada periode ini';", "aCatS = Math.round(cc[1] * pShare) + ' insiden pada periode ini' + (pFull ? '' : ' (perkiraan)');"],
+  ['const prevN = isNat ?', 'const prevN0 = isNat ?'],
+  [', prevR = isNat ?', ', prevR0 = isNat ?'],
+  ['(isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));', '(isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));\n    const prevN = (pFull || !(isNat || isOwn)) ? prevN0 : Math.max(1, Math.round(prevN0 * pShare)), prevR = (pFull || !(isNat || isOwn)) ? prevR0 : Math.max(1, Math.round(prevR0 * pShare));'],
+  ["'vs Sem. II 2025 ('", "PCMP + ' ('"],
+  ['const aiSeg = aiZoom ? aiZoom : skk ? [', String.raw`const aiSeg = aiZoom ? aiZoom : !pFull ? [
+      seg(PD.text + ' mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + ' (perkiraan). '),
+      seg(topLoc && topLoc.mx >= 0 && topLoc.n ? 'Level tertinggi ' + LV[topLoc.mx][0] + ' ada di ' : (ALL.n ? '' : 'Tidak ada insiden terverifikasi pada periode ini.')), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? topLoc.name : '', topLoc && topLoc.mx >= 0 && topLoc.n ? go(skk ? topLoc.w : 'own', topLoc.id) : null), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? '.' : '')
+    ] : skk ? [`],
+  ["      (skk && lvl === 'nat') ? { m: '2,4×',", "      (!pFull && (lvl === 'nat' || !skk)) ? { m: String(ALL.n), tone: 'neu', t: 'Insiden pada periode ini', d: 'Kerugian ' + rp(ALL.r) + ' (perkiraan) · ' + PD.cap, go: nop }\n        : (skk && lvl === 'nat') ? { m: '2,4×',"],
+  ["(skk && lvl === 'nat') ? { m: '48%'", "(skk && lvl === 'nat' && pFull) ? { m: '48%'"],
+  ["{ m: (krUp >= 0 ? '▲ ' : '▼ ') + Math.abs(krUp) + '%', tone: krUp > 20 ? 'warn' : 'info', t: 'Kerawanan ' + (krUp >= 0 ? 'naik' : 'turun') + ' sejak Januari', d: 'Tanda awal: ' + KR[0] + ' → ' + KR[5] + ' per bulan', go: nop }",
+    "(mI.length < 2 ? { m: String(krT), tone: 'info', t: 'Kerawanan pada periode ini', d: 'Perkiraan dari pola bulanan · ' + (PD ? PD.cap : ''), go: nop } : { m: (krUp >= 0 ? '▲ ' : '▼ ') + Math.abs(krUp) + '%', tone: krUp > 20 ? 'warn' : 'info', t: 'Kerawanan ' + (krUp >= 0 ? 'naik' : 'turun') + ' sejak ' + MOL[mI[0]], d: 'Tanda awal: ' + k0 + ' → ' + k1 + ' per bulan', go: nop })"],
+  ['const krUp = KR[0] ? Math.round((KR[5] - KR[0]) / KR[0] * 100) : 0;', "const mI = [0, 1, 2, 3, 4, 5].filter((i) => moCov[i] > 0); const MOL = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']; const k0 = KR[mI[0]] || 0, k1 = KR[mI[mI.length - 1]] || 0;\n    const krUp = k0 ? Math.round((k1 - k0) / k0 * 100) : 0;"],
+  ['const vN = baseN.map((v) => Math.round(v * Math.max(0, ALL.n - dttCnt) / (skk ? 106 : 24)));', 'const vN = pFull ? baseN.map((v) => Math.round(v * Math.max(0, ALL.n - dttCnt) / (skk ? 106 : 24))) : [0, 1, 2, 3, 4, 5].map((i) => incS.filter((r) => r[9] === i).length);\n    const rMo = pFull ? baseR.map((x) => Math.round(x * (ALL.r / (skk ? 1412 : 730)))) : vN.map((x) => Math.round(ALL.r * x / Math.max(1, sum(vN))));'],
+  ['const vals = N ? vN : baseR.map((v) => Math.round(v * (ALL.r / (skk ? 1412 : 730))));', 'const vals = N ? vN : rMo;'],
+  ['const tRp = baseR.map((x) => Math.round(x * (ALL.r / (skk ? 1412 : 730))));', 'const tRp = rMo;'],
+  ['DTT[a.id] || 0', 'Math.round((DTT[a.id] || 0) * dttF)'],
+  ['dN.map((v) => Math.round(v * dttCnt / 422))', 'dN.map((v, i) => Math.round(v * moCov[i] * dttCnt / Math.max(1, sum(dN.map((x, j) => x * moCov[j])))))'],
+  ['for (let i = 1; i < 6; i++) { const d = vals[i] - vals[i - 1];', 'for (let i = 1; i < 6; i++) { if (!(moCov[i] > 0 && moCov[i - 1] > 0)) continue; const d = vals[i] - vals[i - 1];'],
+  ['const curated = isNat || isOwn;', 'const curated = (isNat || isOwn) && pFull;'],
+  ["0 0 0 4px var(--ink)' : 'none' }));", "0 0 0 4px var(--ink)' : 'none' })).filter((b) => moCov[b.bulan - 1] > 0);"],
+  ["' · Semester I 2026' + (N && dttOn", "' · ' + PL + (N && dttOn"],
+  ['let v = catScope(c);', 'let v = catScope(c); if (v != null && !pFull) v = Math.round(v * pShare);'],
+  [String.raw`'\nSemester II 2025: '`, String.raw`'\n' + (pFull ? 'Semester II 2025' : 'Periode sebelumnya (perkiraan)') + ': '`],
+  ['.map((v) => Math.round(v * fS));\n    const IN =', ".map((v, i) => pFull ? Math.round(v * fS) : Math.round(v / (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4])[i] * vN[i]));\n    const IN ="],
+  ['[3, 4, 3, 5, 5, 4]).map((v) => Math.round(v * fS));', '[3, 4, 3, 5, 5, 4]).map((v, i) => pFull ? Math.round(v * fS) : vN[i]);'],
+  ["(KR[i] / ikMax * 130).toFixed(1) + 'px' }));", "(KR[i] / ikMax * 130).toFixed(1) + 'px' })).filter((b, i) => moCov[i] > 0);"],
+  ["' kerawanan').join('; ')", "' kerawanan').filter((x, i) => moCov[i] > 0).join('; ')"],
+  ['v: WO.map((w) => c[1][w] || 0) }));', 'v: WO.map((w) => Math.round((c[1][w] || 0) * wF[w])) }));'],
+  ["v: WO.map((w) => w === 'jbn' ? 422 : 0)", "v: WO.map((w) => w === 'jbn' ? Math.round(422 * dttF) : 0)"],
+  ['v: ws.map((w) => c[2][w[0]] || 0)', 'v: ws.map((w) => Math.round((c[2][w[0]] || 0) * aF[w[0]]))'],
+  ["mxCap: 'Klik sel untuk menyaring", "mxCap: (pFull ? '' : 'Angka per periode = perkiraan dari porsi insiden. ') + 'Klik sel untuk menyaring"],
+  ["subtitle: 'Semester I 2026 · data per", "subtitle: PL + ' · data per"],
+  ["const aiCap = 'Semester I 2026 · '", "const aiCap = PL + ' · '"],
+  ["' · Semester I 2026',", "' · ' + PL,"],
+  ["'Angka demo. Batas wilayah", "(pFull ? '' : 'Jumlah insiden dihitung dari tanggal lapor; kerugian, jenis, kerawanan, dan DTT diskalakan (perkiraan). ') + 'Angka demo. Batas wilayah"],
+  ["s.dtt, s.m].join('|')", "s.dtt, s.m, pFull ? '' : PD.from + PD.to].join('|')"],
+  ['catN: CAT.length }', 'catN: CAT.length, per: pFull ? null : { from: PD.from, to: PD.to, label: PD.label } }'],
+];
+
 // Iterasi 2 (disetujui PM 25 Nov): tambahan di logika peta. Lihat CHANGELOG.md.
 const LOGIC_PATCHES = [
   ['const k = Math.min(1000 / bw, 400 / bh);', "const mw = this.props.mapW || 1078; const fa = this.props.panelOpen === false ? 1 : Math.max(0.35, (mw - 376) / mw);\n    const k = Math.min(1000 * fa / bw, 400 / bh);"],
@@ -269,6 +339,7 @@ const LOGIC_PATCHES = [
   // Tanya data (S6): filter aktif, cara memasang filter, sorotan bulan di Tren per bulan
   ['hasMk: i === mkI, ring: i === mkI ?', 'hasMk: i === mkI, ring: (s.hi || []).includes(i) || i === mkI ?'],
   ['goUp: zoomOut,', "goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length }, askApply: (patch) => this.setState(patch),"],
+  ...PERIOD_PATCHES,
 ];
 
 // Peta komponen ke ID bagian PRD §6a (S1..S19)

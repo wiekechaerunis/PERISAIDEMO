@@ -37,3 +37,20 @@ Acuan: `docs/insiden-sync/` (INS-ADJ butir Disepakati, audit PA/B, peta board). 
 | S-06 | Main-Filter: Kategori dan WK dropdown tertutup | Dropdown pilih-banyak (daftar ikut alur panel, sama dengan D-P6) | Board tidak punya state terbuka |
 | S-07 | Main-Filter: Periode chip 7/30/90 hari, Tahun ini, Rentang tanggal | Chip itu menggantikan dropdown Periode (D-P1..D-P7 tetap berlaku untuk logika). Preset lama Bulan ini dan 3 bulan terakhir masih dibaca dari URL dan dipakai Dashboard, tetapi tidak ditawarkan di daftar | Menyesuaikan board; logika `period.ts` dipertahankan |
 | S-08 | Board menu ⋯ mobile (M1x-AksiDraf, M1y-AksiMenunggu) | Daftar mobile belum memakai menu ⋯ | Fokus alur desktop; dicatat untuk iterasi berikut |
+
+## Periode Dashboard insiden (tombol Periode di AppBar, `/analitik`)
+
+Board `design/dashboard/Dashboard.dc.html` hanya punya tombol Periode statis "Semester I 2026". Atas masukan pengguna,
+daftar pilihannya disamakan dengan filter Periode kejadian: Semua waktu, 7 hari terakhir, 30 hari terakhir, Bulan ini,
+3 bulan terakhir, Tahun berjalan, Rentang khusus. Logika dashboard diubah lewat `PERIOD_PATCHES` di `scripts/dc-to-tsx.mjs`,
+bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
+
+| ID | Desain / acuan | Prototype | Alasan |
+|---|---|---|---|
+| D-D1 | Jam demo aplikasi 28 Okt 2026 (`demoNow`) | "Hari ini" dashboard = **30 Jun 2026**, akhir data demo dashboard (Jan–Jun 2026). 7 hari = 23–30 Jun, 30 hari = 31 Mei – 30 Jun, Bulan ini = Jun, 3 bulan = 30 Mar – 30 Jun, Tahun berjalan = 1 Jan – 30 Jun | Dengan 28 Okt, empat preset tidak akan berisi data. Disetujui pengguna |
+| D-D2 | Tombol berisi "Semester I 2026" | Bawaan **Semua waktu**. Semua waktu dan Tahun berjalan mencakup seluruh data, jadi angka dashboard sama persis dengan versi semester (dijaga tes); subjudul Semua waktu tetap "Semester I 2026" | Tidak mengubah tampilan bawaan yang sudah disetujui |
+| D-D3 | Angka dashboard agregat per semester | **Jumlah insiden** per periode dihitung tepat dari tanggal lapor tiap insiden (data per insiden cocok 1:1 dengan level per area dan pola bulanan). **Kerugian, jenis terbanyak, matriks kategori × wilayah, kerawanan, dan DTT diskalakan** sesuai porsi insiden periode itu, dengan keterangan "perkiraan" di catatan kaki, matriks, dan tooltip | Data per tanggal untuk angka itu tidak ada. Pilihan "skala + label perkiraan" disetujui pengguna |
+| D-D4 | Pembanding "vs Sem. II 2025" | Selain periode penuh: "vs periode sebelumnya, perkiraan (n)" = angka pembanding semester × porsi periode | Data periode pembanding yang sebenarnya tidak ada |
+| D-D5 | Temuan AI dan ringkasan AI berisi kalimat kurasi semester (2,4×, 48%, 63%, "naik 15%") | Selain periode penuh, kalimat kurasi diganti kalimat yang dihitung (jumlah, kerugian perkiraan, lokasi level tertinggi, kerawanan pada periode). Daftar **Perlu tindakan** dan kartu "KKKS melapor (Jun 2026)" tidak ikut periode | Kalimat kurasi hanya benar untuk satu semester; Perlu tindakan menggambarkan keadaan saat ini |
+| D-D6 | Tren per bulan dan Insiden vs kerawanan menampilkan 6 bulan | Hanya bulan yang tersentuh periode yang ditampilkan (7 hari terakhir = 1 batang Jun). Tanya data ikut dibatasi periode dan menyebutnya ("pada periode 1–15 Mei 2026"); bulan dari ketikan tetap tidak dipasang ke dashboard | Batang di luar periode akan terbaca sebagai 0 insiden |
+| D-D7 | — | Preset langsung berlaku saat dipilih; Rentang khusus memakai tombol Terapkan, dengan galat yang sama seperti daftar Insiden. State di URL (`?periode=` / `?dari=&sampai=`), bertahan saat reload dan Back | Pola tombol Periode di AppBar: satu pilihan, tanpa panel filter |

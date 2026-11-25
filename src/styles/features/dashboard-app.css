@@ -182,3 +182,16 @@ button.pn-inc { border: 0; border-top: 1px solid var(--border-subtle); backgroun
 .db-askpop .lnk { font-size: 13px; font-weight: 600; color: var(--ink); }
 .db-askpop .ft { margin: 0; padding-top: 8px; border-top: 1px solid var(--border-subtle); font-size: 11px; line-height: 14px; color: var(--ink-muted); }
 @media (prefers-reduced-motion: reduce) { .db-askpop .busy .sk { animation: none; } }
+
+/* Periode dashboard: daftar pilihan sama dengan filter Periode kejadian daftar Insiden */
+.db-per2 { width: 280px; }
+.db-per2.cu { width: 320px; }
+.db-per2 .row { height: auto; min-height: 44px; padding: 6px 8px; justify-content: space-between; }
+.db-per2 .row.act { background: var(--surface-sunken); }
+.db-per2 .row[aria-selected="true"] .nm { font-weight: 600; }
+.db-per2 .tx { display: flex; flex-direction: column; min-width: 0; }
+.db-per2 .tx .p-cap { font-size: 12px; }
+.db-per2 .cuf { display: flex; flex-direction: column; gap: 8px; padding: 8px 4px 2px; margin-top: 4px; border-top: 1px solid var(--border-subtle); }
+.db-per2 .dts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.db-per2 .dt { display: flex; flex-direction: column; gap: 4px; }
+.db-per2 .ft { margin-top: 0; padding: 8px 0 0; align-items: center; }

@@ -1,5 +1,6 @@
 import { useDC } from '@/dc/runtime';
 import { DashboardLogic } from '@/generated/DashboardLogic';
+import type { DashPeriodInfo } from './dashPeriod';
 
 export interface DashboardProps {
   peran?: 'skk' | 'kkks';
@@ -11,6 +12,8 @@ export interface DashboardProps {
   panelOpen?: boolean;
   /** Iterasi 2: lebar kotak peta dalam px */
   mapW?: number;
+  /** Periode terpilih (tombol Periode). Tanpa nilai atau `full` = seluruh data Jan–Jun 2026 */
+  periode?: DashPeriodInfo;
 }
 
 /**

@@ -31,6 +31,20 @@ export class DashboardLogic extends DCLogic {
     // Kategori × wilayah (pola sheet WILAYAH rekap SKK, angka demo)
     const catIdx = s.kat == null ? -1 : s.kat;
     const dttOn = skk && s.dtt;
+    // Periode (tombol Periode): jumlah insiden tepat dari tanggal lapor INC; kerugian, jenis, kerawanan, DTT diskalakan (perkiraan)
+    const PD = this.props.periode || null; const pFull = !PD || PD.full;
+    const MOI = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, Mei: 5, Jun: 6 };
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const dOf = (t) => { const p = String(t).trim().split(' '); return '2026-' + pad2(MOI[p[1]] || 0) + '-' + pad2(Number(p[0])); };
+    const inPd = (t) => pFull || (dOf(t) >= PD.from && dOf(t) <= PD.to);
+    const INCP = INC.filter((r) => inPd(r[6]));
+    const fracOf = (f) => { const all = INC.filter(f).length; return all ? INCP.filter(f).length / all : 0; };
+    const aF = {}; A0.forEach((a) => { aF[a[0]] = pFull ? 1 : fracOf((r) => r[1] === a[0]); });
+    const wF = {}; WO.forEach((w) => { const ids = A0.filter((a) => a[1] === w).map((a) => a[0]); wF[w] = pFull ? 1 : fracOf((r) => ids.includes(r[1])); });
+    const moCov = [31, 28, 31, 30, 31, 30].map((dn, i) => { if (pFull) return 1; let c = 0; for (let d = 1; d <= dn; d++) { const t = '2026-' + pad2(i + 1) + '-' + pad2(d); if (t >= PD.from && t <= PD.to) c++; } return c / dn; });
+    const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
+    const PL = PD ? PD.text : 'Semester I 2026';
+    const PCMP = pFull ? 'vs Sem. II 2025' : 'vs periode sebelumnya, perkiraan';
     const wTot0 = {}; WO.forEach((w) => { wTot0[w] = sum(A0.filter((a) => a[1] === w).map((a) => sum(a[5]))); });
     // area setelah filter level, kategori, DTT
     // bagi bilangan bulat secara proporsional (largest remainder) supaya total tetap cocok
@@ -42,10 +56,10 @@ export class DashboardLogic extends DCLogic {
       else A0.forEach((a) => { catN[a[0]] = c[2][a[0]] || 0; });
     }
     const A = A0.filter((a) => (skk || a[7] === SEN) && (!s.kk || a[7] === s.kk)).map((a) => {
-      let lv = a[5].slice();
-      if (catIdx >= 0 && catIdx < CAT.length) lv = alloc(Math.min(catN[a[0]] || 0, sum(a[5])), lv);
+      let lv = pFull ? a[5].slice() : [0, 1, 2, 3, 4].map((l) => INCP.filter((r) => r[1] === a[0] && r[3] === l).length);
+      if (catIdx >= 0 && catIdx < CAT.length) lv = alloc(Math.min(Math.round((catN[a[0]] || 0) * aF[a[0]]), sum(lv)), lv);
       if (catIdx === CAT.length) lv = [0, 0, 0, 0, 0];
-      if (dttOn && DTT[a[0]] && (catIdx < 0 || catIdx === CAT.length)) lv[0] += DTT[a[0]];
+      if (dttOn && DTT[a[0]] && (catIdx < 0 || catIdx === CAT.length)) lv[0] += Math.round(DTT[a[0]] * dttF);
       lv = lv.map((v, i) => (s.lv[i] ? v : 0));
       const n = sum(lv); let mx = -1; lv.forEach((v, i) => { if (v > 0) mx = i; });
       const rpv = catIdx === CAT.length ? 0 : Math.round(a[6] * (sum(a[5]) ? Math.min(1, n / sum(a[5])) : 0));
@@ -56,7 +70,7 @@ export class DashboardLogic extends DCLogic {
     const sevOf = (m) => m < 0 ? { sn: 'Tidak ada', sc: 'var(--border-control)', sbg: 'var(--surface-subtle)', sink: 'var(--ink-muted)' } : { sn: LV[m][0], sc: LV[m][1], sbg: LV[m][2], sink: LV[m][3] };
     const addLv = (list) => [0, 1, 2, 3, 4].map((i) => sum(list.map((a) => a.lv[i])));
 
-    const lvAllCnt = [0, 1, 2, 3, 4].map((i) => sum(A0.filter((a) => skk || a[7] === SEN).map((a) => a[5][i])) + (i === 0 && dttOn ? 422 : 0));
+    const lvAllCnt = [0, 1, 2, 3, 4].map((i) => sum(A0.filter((a) => skk || a[7] === SEN).map((a) => pFull ? a[5][i] : INCP.filter((r) => r[1] === a[0] && r[3] === i).length)) + (i === 0 && dttOn ? Math.round(422 * dttF) : 0));
     // ===== zoom =====
     const z = s.z; const loc = s.loc ? A.find((a) => a.id === s.loc) : null;
     const own = A; // KKKS: hanya area milik sendiri
@@ -104,7 +118,7 @@ export class DashboardLogic extends DCLogic {
       const NM = { fas: 'Sumur ' + code + '-07', sta: 'Stasiun pengumpul ' + code, pipa: 'Jalur pipa ' + code + ' km 12', off: 'Anjungan lepas pantai ' + code };
       const SITE = SITES[loc.id].map((t) => [t[0] - loc.x, t[1] - loc.y, NM[t[2]], t[2]]);
       const order = []; loc.lv.forEach((v, i) => { for (let j = 0; j < v; j++) order.push(i); });
-      const pool = INC.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]], cat: CAT[r[2]] ? CAT[r[2]][0] : '', tgl: r[6], late: !!r[5], hari: r[8], area: loc.name, wk: loc.wk, kk: loc.kk }; };
+      const pool = INCP.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]], cat: CAT[r[2]] ? CAT[r[2]][0] : '', tgl: r[6], late: !!r[5], hari: r[8], area: loc.name, wk: loc.wk, kk: loc.kk }; };
       const shown = order.slice(-60).reverse();
       pts = shown.map((li, i) => { const si = i % 5 < 2 ? 0 : (i % 5 < 4 ? 1 : 2); const st = SITE[si]; const ang = i * 2.39996, rr = 0.18 + 0.32 * ((i * 7) % 5) / 5; return { x: sx(loc.x + st[0] + Math.cos(ang) * rr), y: sy(loc.y + st[1] + Math.sin(ang) * rr * 0.8), c: LV[li][1], tip: LV[li][0] + ' · ' + st[2], lvN: LV[li][0], site: st[2], inc: pickInc(li) }; });
       const ICS = { fas: 'M12 2v20M8 6h8M7 22h10M9 10h6', sta: 'M3 21V9l9-6 9 6v12H3zM9 21v-6h6v6', pipa: 'M3 12h18M7 8v8M17 8v8', off: 'M4 20h16M6 20l2-8h8l2 8M12 12V4M9 7h6' };
@@ -145,7 +159,8 @@ export class DashboardLogic extends DCLogic {
     const SC = loc ? [loc] : (lvl === 'nat' ? A : A.filter(inArea));
     const ALL = tot(SC);
     const scIds = SC.map((a) => a.id);
-    const incS = INC.filter((r) => scIds.includes(r[1]) && s.lv[r[3]] && (catIdx < 0 || catIdx === r[2]));
+    const incS = INCP.filter((r) => scIds.includes(r[1]) && s.lv[r[3]] && (catIdx < 0 || catIdx === r[2]));
+    const scAll = INC.filter((r) => scIds.includes(r[1])).length; const pShare = pFull ? 1 : (scAll ? INCP.filter((r) => scIds.includes(r[1])).length / scAll : 0);
     const stA = [0, 1, 2].map((k) => incS.filter((r) => r[4] === k).length);
     const incN = incS.length;
     const AREA = {}; A0.forEach((a) => { AREA[a[0]] = a; });
@@ -171,7 +186,7 @@ export class DashboardLogic extends DCLogic {
       aR = rp(T.r); aRs = skk ? (NAT.r ? Math.round(T.r / NAT.r * 100) : 0) + '% dari kerugian nasional' : 'perkiraan + final';
       aLv = lvStack(T.lv); aLvAriaS = lvAria(T.lv);
       const cc = CAT.map((c, i) => [c[0], skk ? (c[1][z] || 0) : sum(Object.values(c[2]))]).sort((a, b) => b[1] - a[1])[0];
-      aCat = cc[0]; aCatS = cc[1] + ' insiden pada periode ini';
+      aCat = cc[0]; aCatS = Math.round(cc[1] * pShare) + ' insiden pada periode ini' + (pFull ? '' : ' (perkiraan)');
       subHead = skk ? 'Lokasi · KKKS' : 'Wilayah kerja';
       const sm = Math.max(1, ...list.map((a) => a.n)), sr = Math.max(1, ...list.map((a) => a.rp));
       subRows = list.slice().sort((a, b) => b.n - a.n).map((a) => ({ hid: a.id, n: skk ? a.name : a.wk, sub: skk ? a.kk + ' · ' + a.wk : a.name, nw: (a.n / sm * 100).toFixed(1) + '%', nL: String(a.n), rw: (a.rp / sr * 100).toFixed(1) + '%', rL: rp(a.rp), ...sevOf(a.mx), go: go(z, a.id) }));
@@ -186,21 +201,22 @@ export class DashboardLogic extends DCLogic {
         ['Penghadangan truk logistik di jalan akses', 'Penghentian kegiatan/operasi · 28 Mei 2026', 3, 'Menunggu penutupan'],
         ['Perusakan pagar area sumur', 'Perusakan material · 19 Mei 2026', 2, 'Ditutup']
       ];
-      incs = T.filter((t) => s.lv[t[2]]).map((t, i) => ({ id: 'INS-' + code + '-2026-00' + (41 - i * 3), t: t[0], d: t[1], ...sevOf(t[2]), st: t[3], href: skk ? 'P31-DetailSKK.dc.html' : 'I15-Detail.dc.html' }));
+      incs = T.filter((t) => s.lv[t[2]] && inPd(t[1].split(' · ')[1].replace(' 2026', ''))).map((t, i) => ({ id: 'INS-' + code + '-2026-00' + (41 - i * 3), t: t[0], d: t[1], ...sevOf(t[2]), st: t[3], href: skk ? 'P31-DetailSKK.dc.html' : 'I15-Detail.dc.html' }));
       incFoot = 'Menampilkan ' + incs.length + ' dari ' + loc.n + ' insiden, diurutkan dari level tertinggi. Titik dengan lokasi rahasia tidak digambar, tetap dihitung.';
     }
 
     // ===== KPI =====
     const isNat = skk && lvl === 'nat', isOwn = !skk && !loc;
-    const prevN = isNat ? (dttOn ? 455 : 92) : (isOwn ? 21 : Math.max(1, Math.round(ALL.n * 0.86))), prevR = isNat ? 1100 : (isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));
+    const prevN0 = isNat ? (dttOn ? 455 : 92) : (isOwn ? 21 : Math.max(1, Math.round(ALL.n * 0.86))), prevR0 = isNat ? 1100 : (isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));
+    const prevN = (pFull || !(isNat || isOwn)) ? prevN0 : Math.max(1, Math.round(prevN0 * pShare)), prevR = (pFull || !(isNat || isOwn)) ? prevR0 : Math.max(1, Math.round(prevR0 * pShare));
     const tk = ALL.lv[3] + ALL.lv[4];
     const up = (a, b) => (a === 0 && b <= 1) ? 'tetap' : (a >= b ? '▲ ' : '▼ ') + Math.abs(Math.round((a - b) / b * 100)) + '%';
     const kpis = [
-      { label: 'Insiden terverifikasi', val: String(ALL.n), unit: 'insiden', tr: up(ALL.n, prevN), trCls: ALL.n > prevN ? 'tr-bad' : 'tr-good', cmp: 'vs Sem. II 2025 (' + prevN + ')', link: 'Lihat daftar', href: listHref },
-      { label: 'Kerugian', val: rp(ALL.r), unit: '', tr: up(ALL.r, prevR), trCls: ALL.r > prevR ? 'tr-bad' : 'tr-good', cmp: 'vs Sem. II 2025 (' + rp(prevR) + ')', link: 'Rincian per wilayah', href: '#' },
+      { label: 'Insiden terverifikasi', val: String(ALL.n), unit: 'insiden', tr: up(ALL.n, prevN), trCls: ALL.n > prevN ? 'tr-bad' : 'tr-good', cmp: PCMP + ' (' + prevN + ')', link: 'Lihat daftar', href: listHref },
+      { label: 'Kerugian', val: rp(ALL.r), unit: '', tr: up(ALL.r, prevR), trCls: ALL.r > prevR ? 'tr-bad' : 'tr-good', cmp: PCMP + ' (' + rp(prevR) + ')', link: 'Rincian per wilayah', href: '#' },
       { label: 'Tinggi & Kritis', val: String(tk), unit: 'insiden', tr: incS.filter((r) => r[3] >= 3 && r[4] < 2).length + ' masih terbuka', trCls: 'tr-bad', cmp: 'sisanya sudah ditutup', link: 'Lihat yang terbuka', href: listHref },
       skk ? { label: 'KKKS melapor (Jun 2026)', val: String(lvl === 'nat' ? 14 : W[z].rep), unit: 'dari ' + (lvl === 'nat' ? 131 : W[z].kk) + ' KKKS', tr: '7–14 per bulan', trCls: 'tr-flat', cmp: 'insiden atau nihil', link: 'Lihat yang belum melapor', href: '#' }
-          : { label: 'Median lama penanganan', val: String(med).replace('.', ','), unit: 'hari', tr: '▼ 1 hari', trCls: 'tr-good', cmp: 'vs Sem. II 2025 (' + String(med + 1).replace('.', ',') + ' hari)', link: 'Lihat yang lewat tenggat', href: listHref }
+          : { label: 'Median lama penanganan', val: String(med).replace('.', ','), unit: 'hari', tr: '▼ 1 hari', trCls: 'tr-good', cmp: PCMP + ' (' + String(med + 1).replace('.', ',') + ' hari)', link: 'Lihat yang lewat tenggat', href: listHref }
     ];
 
     { const wq = skk && lvl !== 'nat' ? '&wilayah=' + z : ''; const TO = ['/insiden?status=terverifikasi' + wq, '/insiden?urut=kerugian' + wq, '/insiden?level=tinggi,kritis&status=terbuka' + wq, skk ? '/insiden?kkks=belum-melapor' + wq : '/insiden?status=lewat-tenggat']; kpis.forEach((kp, i) => { kp.to = TO[i]; }); }
@@ -213,7 +229,10 @@ export class DashboardLogic extends DCLogic {
       seg(topLoc && topLoc.mx >= 0 ? 'Level tertinggi ' + LV[topLoc.mx][0] + ' ada di ' : ''), seg(topLoc && topLoc.mx >= 0 ? topLoc.name : '', topLoc && !loc ? go(z, topLoc.id) : null), seg('. '),
       seg(loc ? 'Lokasi ini berada di wilayah kerja ' + loc.kk + '.' : 'Jenis terbanyak: ' + CAT.map((c) => [c[0], c[1][z] || 0]).sort((a, b) => b[1] - a[1])[0][0] + '.')
     ] : null;
-    const aiSeg = aiZoom ? aiZoom : skk ? [
+    const aiSeg = aiZoom ? aiZoom : !pFull ? [
+      seg(PD.text + ' mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + ' (perkiraan). '),
+      seg(topLoc && topLoc.mx >= 0 && topLoc.n ? 'Level tertinggi ' + LV[topLoc.mx][0] + ' ada di ' : (ALL.n ? '' : 'Tidak ada insiden terverifikasi pada periode ini.')), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? topLoc.name : '', topLoc && topLoc.mx >= 0 && topLoc.n ? go(skk ? topLoc.w : 'own', topLoc.id) : null), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? '.' : '')
+    ] : skk ? [
       seg('Semester I 2026 mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + (dttOn ? ', termasuk 422 kasus DTT di Jabanusa. ' : ', naik 15% dari Semester II 2025. ')),
       seg('Sumbagsel', go('sbs')), seg(' menyumbang 63% kerugian walau hanya 36% insiden; kedua insiden Kritis ada di '), seg('Musi Banyuasin', go('sbs', 'mub')), seg('. '),
       seg('Pencurian/Perampokan tetap kategori terbanyak (80), terutama di '), seg('Sumbagut', go('sbu')), seg('. '),
@@ -242,38 +261,39 @@ export class DashboardLogic extends DCLogic {
     const dN = [35, 27, 70, 122, 66, 102];
     const baseR = skk ? [180, 95, 310, 240, 402, 185] : [60, 45, 160, 110, 240, 115];
     const N = s.m === 'n';
-    const dttCnt = (dttOn && s.lv[0] && (catIdx < 0 || catIdx === CAT.length)) ? sum(SC.map((a) => DTT[a.id] || 0)) : 0;
-    const vN = baseN.map((v) => Math.round(v * Math.max(0, ALL.n - dttCnt) / (skk ? 106 : 24)));
-    const vals = N ? vN : baseR.map((v) => Math.round(v * (ALL.r / (skk ? 1412 : 730))));
-    const dv = (N && dttCnt) ? dN.map((v) => Math.round(v * dttCnt / 422)) : [0, 0, 0, 0, 0, 0];
+    const dttCnt = (dttOn && s.lv[0] && (catIdx < 0 || catIdx === CAT.length)) ? sum(SC.map((a) => Math.round((DTT[a.id] || 0) * dttF))) : 0;
+    const vN = pFull ? baseN.map((v) => Math.round(v * Math.max(0, ALL.n - dttCnt) / (skk ? 106 : 24))) : [0, 1, 2, 3, 4, 5].map((i) => incS.filter((r) => r[9] === i).length);
+    const rMo = pFull ? baseR.map((x) => Math.round(x * (ALL.r / (skk ? 1412 : 730)))) : vN.map((x) => Math.round(ALL.r * x / Math.max(1, sum(vN))));
+    const vals = N ? vN : rMo;
+    const dv = (N && dttCnt) ? dN.map((v, i) => Math.round(v * moCov[i] * dttCnt / Math.max(1, sum(dN.map((x, j) => x * moCov[j]))))) : [0, 0, 0, 0, 0, 0];
     const mx = Math.max(1, ...vals.map((v, i) => v + dv[i]));
-    const curated = isNat || isOwn;
-    let gI = 1, gD = -1e9; for (let i = 1; i < 6; i++) { const d = vals[i] - vals[i - 1]; if (d > gD) { gD = d; gI = i; } }
+    const curated = (isNat || isOwn) && pFull;
+    let gI = 1, gD = -1e9; for (let i = 1; i < 6; i++) { if (!(moCov[i] > 0 && moCov[i - 1] > 0)) continue; const d = vals[i] - vals[i - 1]; if (d > gD) { gD = d; gI = i; } }
     const mkI = curated ? ((!skk && N) ? 3 : 4) : (gD > 0 ? gI : -1);
     const NOTE = !curated ? (gD > 0 ? [MO[gI] + ': ' + (N ? 'insiden' : 'kerugian') + ' naik dari ' + (N ? vals[gI - 1] : rp(vals[gI - 1])) + ' jadi ' + (N ? vals[gI] : rp(vals[gI])) + '.', 'Kenaikan terbesar dalam periode ini untuk area yang sedang dilihat.'] : ['Tidak ada kenaikan berarti.', 'Angka stabil atau turun sepanjang periode.']) : skk ? (N ? ['Mei: insiden naik 24% dari April (17 → 21).', 'Kenaikan terbesar di Sumbagsel (+3), kebanyakan Pencurian/Perampokan.'] : ['Mei: kerugian naik 1,7× dari April (Rp240 jt → Rp402 jt).', 'Penyumbang terbesar Illegal tapping di Sumbagsel.'])
       : (N ? ['April: insiden naik dari 3 jadi 5.', 'Dua di antaranya di Sumur ADR-07, WK Andalas Darat.'] : ['Mei: kerugian naik 2,2× dari April (Rp110 jt → Rp240 jt).', 'Hampir semuanya dari satu insiden Kritis di WK Andalas Darat.']);
-    const tRp = baseR.map((x) => Math.round(x * (ALL.r / (skk ? 1412 : 730))));
-    const trend = vals.map((v, i) => ({ bulan: i + 1, tip: MO[i] + ' 2026\nJumlah: ' + (vN[i] + dv[i]) + ' insiden\nKerugian: ' + rp(tRp[i]) + (i ? '\nDari ' + MO[i - 1] + ': ' + (N ? ((vN[i] - vN[i - 1] >= 0 ? '+' : '') + (vN[i] - vN[i - 1]) + ' insiden') : ((tRp[i] - tRp[i - 1] >= 0 ? '+' : '−') + rp(Math.abs(tRp[i] - tRp[i - 1])))) : ''), m: MO[i], lbl: N ? String(v + dv[i]) : rp(v), h: (v / mx * 150).toFixed(1) + 'px', hd: (dv[i] / mx * 150).toFixed(1) + 'px', hasD: dv[i] > 0, c: N ? 'var(--chart-series-1)' : 'var(--action-line)', hasMk: i === mkI, ring: (s.hi || []).includes(i) || i === mkI ? '0 0 0 2px var(--surface), 0 0 0 4px var(--ink)' : 'none' }));
+    const tRp = rMo;
+    const trend = vals.map((v, i) => ({ bulan: i + 1, tip: MO[i] + ' 2026\nJumlah: ' + (vN[i] + dv[i]) + ' insiden\nKerugian: ' + rp(tRp[i]) + (i ? '\nDari ' + MO[i - 1] + ': ' + (N ? ((vN[i] - vN[i - 1] >= 0 ? '+' : '') + (vN[i] - vN[i - 1]) + ' insiden') : ((tRp[i] - tRp[i - 1] >= 0 ? '+' : '−') + rp(Math.abs(tRp[i] - tRp[i - 1])))) : ''), m: MO[i], lbl: N ? String(v + dv[i]) : rp(v), h: (v / mx * 150).toFixed(1) + 'px', hd: (dv[i] / mx * 150).toFixed(1) + 'px', hasD: dv[i] > 0, c: N ? 'var(--chart-series-1)' : 'var(--action-line)', hasMk: i === mkI, ring: (s.hi || []).includes(i) || i === mkI ? '0 0 0 2px var(--surface), 0 0 0 4px var(--ink)' : 'none' })).filter((b) => moCov[b.bulan - 1] > 0);
 
     // ===== jenis terbanyak =====
     const PREVF = [0.78, 1.3, 0.7, 0.5, 1.2, 1, 1];
     let cats = CAT.map((c, i) => {
-      let v = catScope(c);
+      let v = catScope(c); if (v != null && !pFull) v = Math.round(v * pShare);
       if (v == null) { const wt = wTot0[loc.w] || 1; v = Math.round((c[1][loc.w] || 0) * sum(loc.lv) / wt); }
       return { i, n: c[0], v, prev: Math.round(v * PREVF[i]) };
     });
-    const dttScope = (dttOn && s.lv[0]) ? sum(SC.map((a) => DTT[a.id] || 0)) : 0;
+    const dttScope = (dttOn && s.lv[0]) ? sum(SC.map((a) => Math.round((DTT[a.id] || 0) * dttF))) : 0;
     if (dttScope) cats.push({ i: CAT.length, n: 'Daerah Terbatas Terlarang', v: dttScope, prev: Math.round(dttScope * 0.9), dtt: true });
     cats = cats.filter((c) => c.v > 0).sort((a, b) => b.v - a.v).slice(0, 6);
     const ctot = sum(cats.map((c) => c.v)) || 1, cmax = Math.max(1, ...cats.map((c) => c.v));
-    const topCat = cats.map((c) => { const d = c.v - c.prev; return { tip: c.n + '\n' + c.v + ' insiden · ' + Math.round(c.v / ctot * 100) + '% dari jenis teratas\nKerugian (perkiraan): ' + rp(ALL.r * c.v / ctot) + '\nSemester II 2025: ' + c.prev + ' insiden', n: c.n, v: String(c.v), w: (c.v / cmax * 100).toFixed(1) + '%', p: Math.round(c.v / ctot * 100) + '%', d: d > 0 ? '▲ ' + d : (d < 0 ? '▼ ' + (-d) : 'tetap'), dc: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq'), cls: (c.dtt ? 'dtt ' : '') + (s.kat === c.i ? 'sel' : ''), aria: c.n + ': ' + c.v + ' insiden', go: () => this.setState({ kat: s.kat === c.i ? null : c.i }) }; });
+    const topCat = cats.map((c) => { const d = c.v - c.prev; return { tip: c.n + '\n' + c.v + ' insiden · ' + Math.round(c.v / ctot * 100) + '% dari jenis teratas\nKerugian (perkiraan): ' + rp(ALL.r * c.v / ctot) + '\n' + (pFull ? 'Semester II 2025' : 'Periode sebelumnya (perkiraan)') + ': ' + c.prev + ' insiden', n: c.n, v: String(c.v), w: (c.v / cmax * 100).toFixed(1) + '%', p: Math.round(c.v / ctot * 100) + '%', d: d > 0 ? '▲ ' + d : (d < 0 ? '▼ ' + (-d) : 'tetap'), dc: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq'), cls: (c.dtt ? 'dtt ' : '') + (s.kat === c.i ? 'sel' : ''), aria: c.n + ': ' + c.v + ' insiden', go: () => this.setState({ kat: s.kat === c.i ? null : c.i }) }; });
     const catCap = (loc ? loc.name : (skk ? (lvl === 'nat' ? 'Semua wilayah' : 'Wilayah ' + W[z].n) : 'Wilayah kerja Anda')) + ' · ' + (cats.length ? cats.length + ' jenis teratas' : 'tidak ada insiden');
     // ===== insiden vs kerawanan =====
     const fS = Math.max(0, ALL.n - dttScope) / (skk ? 106 : 24);
-    const KR = (skk ? [31, 28, 35, 40, 38, 44] : [4, 5, 6, 5, 7, 6]).map((v) => Math.round(v * fS));
-    const IN = (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4]).map((v) => Math.round(v * fS));
+    const KR = (skk ? [31, 28, 35, 40, 38, 44] : [4, 5, 6, 5, 7, 6]).map((v, i) => pFull ? Math.round(v * fS) : Math.round(v / (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4])[i] * vN[i]));
+    const IN = (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4]).map((v, i) => pFull ? Math.round(v * fS) : vN[i]);
     const ikMax = Math.max(1, ...KR, ...IN);
-    const ikBars = MO.map((m, i) => ({ tip: m + ' 2026\nInsiden: ' + IN[i] + '\nKerawanan: ' + KR[i] + '\nNaik jadi insiden: ' + Math.round(KR[i] * (skk ? 0.083 : 0.09)), m, hn: (IN[i] / ikMax * 130).toFixed(1) + 'px', hk: (KR[i] / ikMax * 130).toFixed(1) + 'px' }));
+    const ikBars = MO.map((m, i) => ({ tip: m + ' 2026\nInsiden: ' + IN[i] + '\nKerawanan: ' + KR[i] + '\nNaik jadi insiden: ' + Math.round(KR[i] * (skk ? 0.083 : 0.09)), m, hn: (IN[i] / ikMax * 130).toFixed(1) + 'px', hk: (KR[i] / ikMax * 130).toFixed(1) + 'px' })).filter((b, i) => moCov[i] > 0);
     const krT = sum(KR), inT = sum(IN), upN = Math.round(krT * (skk ? 0.083 : 0.09));
     // ===== status penanganan =====
     const stDef = [['Dalam penanganan', 'var(--chart-series-1)'], ['Menunggu penutupan', 'var(--sev-medium-dot)'], ['Ditutup', 'var(--status-success-ink)']];
@@ -284,30 +304,32 @@ export class DashboardLogic extends DCLogic {
     const nop = () => {};
     const c0 = cats[0];
     const pctN = NAT.n ? Math.round(ALL.n / NAT.n * 100) : 0, pctR = NAT.r ? Math.round(ALL.r / NAT.r * 100) : 0;
-    const krUp = KR[0] ? Math.round((KR[5] - KR[0]) / KR[0] * 100) : 0;
+    const mI = [0, 1, 2, 3, 4, 5].filter((i) => moCov[i] > 0); const MOL = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']; const k0 = KR[mI[0]] || 0, k1 = KR[mI[mI.length - 1]] || 0;
+    const krUp = k0 ? Math.round((k1 - k0) / k0 * 100) : 0;
     const topA = SC.slice().sort((x, y) => y.n - x.n)[0];
     const ins = [
-      (skk && lvl === 'nat') ? { m: '2,4×', tone: 'bad', t: 'Kerugian Sumbagsel melonjak', d: 'Rp370 jt → Rp891 jt · 63% kerugian nasional dari 36% insiden', go: go('sbs') }
+      (!pFull && (lvl === 'nat' || !skk)) ? { m: String(ALL.n), tone: 'neu', t: 'Insiden pada periode ini', d: 'Kerugian ' + rp(ALL.r) + ' (perkiraan) · ' + PD.cap, go: nop }
+        : (skk && lvl === 'nat') ? { m: '2,4×', tone: 'bad', t: 'Kerugian Sumbagsel melonjak', d: 'Rp370 jt → Rp891 jt · 63% kerugian nasional dari 36% insiden', go: go('sbs') }
         : (skk ? { m: pctR + '%', tone: 'warn', t: 'Porsi dari kerugian nasional', d: 'Dari ' + pctN + '% jumlah insiden nasional', go: nop }
         : { m: '63%', tone: 'warn', t: 'Insiden terpusat di WK Andalas Darat', d: '15 dari 24 insiden, termasuk 2 Kritis', go: go('own', 'mub') }),
-      (skk && lvl === 'nat') ? { m: '48%', tone: 'warn', t: 'Sumbagut paling sering terjadi insiden', d: '51 insiden, hampir semua Pencurian/Perampokan', go: go('sbu') }
+      (skk && lvl === 'nat' && pFull) ? { m: '48%', tone: 'warn', t: 'Sumbagut paling sering terjadi insiden', d: '51 insiden, hampir semua Pencurian/Perampokan', go: go('sbu') }
         : ((skk && !loc && topA) ? { m: String(topA.n), tone: topA.mx >= 4 ? 'bad' : 'warn', t: topA.name + ' paling banyak insiden', d: 'Level tertinggi ' + (topA.mx >= 0 ? LV[topA.mx][0] : '-') + ' · ' + topA.wk, go: go(z, topA.id) } : null),
       c0 ? { m: String(c0.v), tone: 'neu', t: c0.n + ' jenis terbanyak', d: Math.round(c0.v / Math.max(1, ALL.n) * 100) + '% dari insiden pada periode ini', go: () => this.setState({ kat: c0.i }) } : null,
-      { m: (krUp >= 0 ? '▲ ' : '▼ ') + Math.abs(krUp) + '%', tone: krUp > 20 ? 'warn' : 'info', t: 'Kerawanan ' + (krUp >= 0 ? 'naik' : 'turun') + ' sejak Januari', d: 'Tanda awal: ' + KR[0] + ' → ' + KR[5] + ' per bulan', go: nop }
+      (mI.length < 2 ? { m: String(krT), tone: 'info', t: 'Kerawanan pada periode ini', d: 'Perkiraan dari pola bulanan · ' + (PD ? PD.cap : ''), go: nop } : { m: (krUp >= 0 ? '▲ ' : '▼ ') + Math.abs(krUp) + '%', tone: krUp > 20 ? 'warn' : 'info', t: 'Kerawanan ' + (krUp >= 0 ? 'naik' : 'turun') + ' sejak ' + MOL[mI[0]], d: 'Tanda awal: ' + k0 + ' → ' + k1 + ' per bulan', go: nop })
     ].filter(Boolean);
-    const aiCap = 'Semester I 2026 · ' + (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + ' · data 25 Nov 2026';
+    const aiCap = PL + ' · ' + (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + ' · data 25 Nov 2026';
     // ===== matriks =====
     let mxCols, mxRows;
     if (skk) {
-      const rows = CAT.map((c, i) => ({ n: c[0], i, v: WO.map((w) => c[1][w] || 0) }));
-      if (dttOn) rows.push({ n: 'Daerah Terbatas Terlarang (DTT)', i: CAT.length, v: WO.map((w) => w === 'jbn' ? 422 : 0), dtt: true });
+      const rows = CAT.map((c, i) => ({ n: c[0], i, v: WO.map((w) => Math.round((c[1][w] || 0) * wF[w])) }));
+      if (dttOn) rows.push({ n: 'Daerah Terbatas Terlarang (DTT)', i: CAT.length, v: WO.map((w) => w === 'jbn' ? Math.round(422 * dttF) : 0), dtt: true });
       const cm = Math.max(1, ...rows.filter((r) => !r.dtt).map((r) => Math.max(...r.v)));
       mxCols = WO.map((w) => ({ n: W[w].n, s: W[w].nr ? 'belum lapor' : (W[w].none ? 'nihil' : '') }));
       mxRows = rows.map((r) => ({ n: r.n, cls: r.dtt ? 'dtt' : '', tot: String(sum(r.v)), cells: r.v.map((v, j) => ({ v: v ? String(v) : '–', cls: v ? (s.kat === r.i && z === WO[j] ? 'sel' : '') : 'z', bg: v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(8 + Math.min(1, v / cm) * 52) + '%, var(--surface))' : 'var(--surface-subtle)', aria: r.n + ' di ' + W[WO[j]].n + ': ' + v, go: v ? () => this.setState({ kat: r.i, z: WO[j], loc: null }) : () => {} })) }));
     } else {
       const ws = [['mub', 'WK Andalas Darat'], ['bny', 'WK Batu Ampar']];
       mxCols = ws.map((w) => ({ n: w[1], s: '' }));
-      const rows = CAT.map((c, i) => ({ n: c[0], i, v: ws.map((w) => c[2][w[0]] || 0) })).filter((r) => sum(r.v) > 0);
+      const rows = CAT.map((c, i) => ({ n: c[0], i, v: ws.map((w) => Math.round((c[2][w[0]] || 0) * aF[w[0]])) })).filter((r) => sum(r.v) > 0);
       const cm = Math.max(1, ...rows.map((r) => Math.max(...r.v)));
       mxRows = rows.map((r) => ({ n: r.n, cls: '', tot: String(sum(r.v)), cells: r.v.map((v, j) => ({ v: v ? String(v) : '–', cls: v ? (s.kat === r.i ? 'sel' : '') : 'z', bg: v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(8 + v / cm * 52) + '%, var(--surface))' : 'var(--surface-subtle)', aria: r.n + ' di ' + ws[j][1] + ': ' + v, go: v ? () => this.setState({ kat: r.i, z: 'own', loc: ws[j][0] }) : () => {} })) }));
     }
@@ -322,7 +344,7 @@ export class DashboardLogic extends DCLogic {
     return {
       isSkk: skk, isKkks: !skk,
       user: skk ? 'Hendra Wijaya' : 'Sari Wulandari', role: skk ? 'Pengawas SKK' : 'Pejabat Berwenang KKKS', tasks: skk ? '2' : '4',
-      subtitle: 'Semester I 2026 · data per 25 Nov 2026, 08.00 WIB · hanya insiden terverifikasi',
+      subtitle: PL + ' · data per 25 Nov 2026, 08.00 WIB · hanya insiden terverifikasi',
       filters: skk ? [{ k: 'Wilayah', v: lvl === 'nat' ? 'Semua' : W[z].n }, { k: 'KKKS', v: s.kk ? s.kk.replace('PT ', '') : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) }] : [{ k: 'Wilayah kerja', v: loc ? loc.wk : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : CAT[s.kat][0] }],
       lvOpen: s.lvOpen, lvOpenStr: s.lvOpen ? 'true' : 'false', toggleLv: () => this.setState({ lvOpen: !s.lvOpen }), lvAll: () => this.setState({ lv: [1, 1, 1, 1, 1] }),
       lvSum: s.lv.every(Boolean) ? 'Semua' : (s.lv.filter(Boolean).length + ' dari 5'), lvDots: LV.filter((l, i) => s.lv[i]).map((l) => ({ c: l[1] })),
@@ -330,10 +352,10 @@ export class DashboardLogic extends DCLogic {
       lvChips: LV.map((l, i) => ({ n: l[0], c: l[1], cnt: String(lvAllCnt[i]), on: s.lv[i] ? 'true' : 'false', pick: () => { const nl = s.lv.slice(); nl[i] = nl[i] ? 0 : 1; if (nl.some(Boolean)) this.setState({ lv: nl }); } })),
       dtt: dttOn, dttStr: dttOn ? 'true' : 'false', dttCls: dttOn ? 'on' : '', toggleDtt: () => this.setState({ dtt: !s.dtt, kat: null }),
       hasAf: af.length > 0, af,
-      dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · Semester I 2026',
+      dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · ' + PL,
       ins, aiCap, aiSeg, askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
       kpis,
-      crumb, mapT, sites, lvl, locId: loc ? loc.id : null, zKey: lvl + '|' + z + '|' + (loc ? loc.id : ''), goTo: (zz, ll) => this.setState({ z: zz, loc: ll || null }), goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length }, askApply: (patch) => this.setState(patch), areaN: Object.fromEntries(A.map((a) => [a.id, a.n])), fOpts: (() => {
+      crumb, mapT, sites, lvl, locId: loc ? loc.id : null, zKey: lvl + '|' + z + '|' + (loc ? loc.id : ''), goTo: (zz, ll) => this.setState({ z: zz, loc: ll || null }), goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length, per: pFull ? null : { from: PD.from, to: PD.to, label: PD.label } }, askApply: (patch) => this.setState(patch), areaN: Object.fromEntries(A.map((a) => [a.id, a.n])), fOpts: (() => {
       const allA = A0.filter((a) => skk || a[7] === SEN);
       const cnt = (f) => sum(A.filter(f).map((a) => a.n));
       const katO = [{ n: 'Semua kategori', on: s.kat == null, go: () => this.setState({ kat: null }) }, ...CAT.map((c, i) => ({ n: c[0], on: s.kat === i, go: () => this.setState({ kat: i }) }))];
@@ -345,7 +367,7 @@ export class DashboardLogic extends DCLogic {
       }
       const wkO = [{ n: 'Semua wilayah kerja', on: !loc, go: () => this.setState({ z: 'own', loc: null }) }, ...A.map((a) => ({ n: a.wk, sub: a.name + ' · ' + a.n + ' insiden', on: !!loc && loc.id === a.id, go: () => this.setState({ z: 'own', loc: a.id }) }))];
       return [wkO, katO];
-    })(), fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m].join('|'), mapK: k, mapFa: fa, mapMw: mw, regs, wkm, showRegLines: lvl === 'nat', admOp: s.lay.adm ? '1' : '0', showWkLine: !!loc && s.lay.wk, wkLineSrc: loc ? '/peta/wkl-' + loc.id + '.svg' : '', showAreas: !!loc && s.lay.fas, areasSrc: loc ? '/peta/wka-' + loc.id + '.svg' : '',
+    })(), fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m, pFull ? '' : PD.from + PD.to].join('|'), mapK: k, mapFa: fa, mapMw: mw, regs, wkm, showRegLines: lvl === 'nat', admOp: s.lay.adm ? '1' : '0', showWkLine: !!loc && s.lay.wk, wkLineSrc: loc ? '/peta/wkl-' + loc.id + '.svg' : '', showAreas: !!loc && s.lay.fas, areasSrc: loc ? '/peta/wka-' + loc.id + '.svg' : '',
       layOpen: s.layOpen, layOpenStr: s.layOpen ? 'true' : 'false', toggleLay: () => this.setState({ layOpen: !s.layOpen }),
       layers: [['wk', 'Wilayah kerja', 'Cakupan WK dari modul Wilayah kerja'], ['fas', 'Fasilitas & jalur pipa', 'Area buatan sendiri di dalam WK'], ['adm', 'Batas administrasi', 'Kabupaten/kota dan kecamatan']].map(([kk, n, d]) => ({ n, d, on: s.lay[kk] ? 'true' : 'false', pick: () => this.setState({ lay: { ...s.lay, [kk]: !s.lay[kk] } }) })), baseOp: (lvl === 'nat' || !detSrc) ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
       showHint: true, hint,
@@ -355,19 +377,19 @@ export class DashboardLogic extends DCLogic {
       zNat: lvl === 'nat', zArea: lvl === 'area', zLoc: lvl === 'loc',
       wRows, aTitle, aN, aNs, aR, aRs, aLv, aLvAria: aLvAriaS, aCat, aCatS, subHead, subRows, aKkks, aWk, incs, incFoot, listHref,
       attn, attnCount: String(attn.length),
-      trCap: (N ? 'Jumlah insiden' : 'Kerugian (Rp)') + ' · Semester I 2026' + (N && dttOn ? ' · abu-abu = DTT' : ''),
+      trCap: (N ? 'Jumlah insiden' : 'Kerugian (Rp)') + ' · ' + PL + (N && dttOn ? ' · abu-abu = DTT' : ''),
       measures: [['n', 'Jumlah'], ['rp', 'Kerugian']].map(([kk, l]) => ({ label: l, on: s.m === kk ? 'true' : 'false', pick: () => this.setState({ m: kk }) })),
       trNoteT: NOTE[0], trNoteD: NOTE[1],
       topCat, catCap,
-      ikN: String(inT), ikK: String(krT), ikUp: upN + ' (' + (krT ? Math.round(upN / krT * 100) : 0) + '%)', ikBars, ikAria: 'Insiden dan kerawanan per bulan: ' + MO.map((m, i) => m + ' ' + IN[i] + ' insiden, ' + KR[i] + ' kerawanan').join('; '),
+      ikN: String(inT), ikK: String(krT), ikUp: upN + ' (' + (krT ? Math.round(upN / krT * 100) : 0) + '%)', ikBars, ikAria: 'Insiden dan kerawanan per bulan: ' + MO.map((m, i) => m + ' ' + IN[i] + ' insiden, ' + KR[i] + ' kerawanan').filter((x, i) => moCov[i] > 0).join('; '),
       ikNote: 'Kerawanan yang dinaikkan jadi insiden pindah ke hitungan insiden.' + (dttOn ? ' DTT dihitung sebagai insiden.' : ''),
       stCap: 'Klik status untuk melihat insidennya' + (dttOn ? ' · DTT tidak termasuk' : ''), st, stBar, stAria: 'Status penanganan: ' + stBar.map((v) => v.n + ' ' + v.v).join(', '), stLate: String(lateList.length), stMed: String(med).replace('.', ',') + ' hari', stClosed: String(closed.length), lateGo: () => this.setState({ stOpen: s.stOpen === 3 ? null : 3 }), lateOpenStr: s.stOpen === 3 ? 'true' : 'false',
 
       trend, trAria: 'Tren per bulan: ' + trend.map((b) => b.m + ' ' + b.lbl).join(', '),
       mxTitle: skk ? 'Kategori × wilayah' : 'Kategori × wilayah kerja',
-      mxCap: 'Klik sel untuk menyaring seluruh halaman dan zoom ke ' + (skk ? 'wilayah' : 'wilayah kerja') + ' itu.' + (skk ? ' 11 kategori tanpa insiden disembunyikan.' : ''),
+      mxCap: (pFull ? '' : 'Angka per periode = perkiraan dari porsi insiden. ') + 'Klik sel untuk menyaring seluruh halaman dan zoom ke ' + (skk ? 'wilayah' : 'wilayah kerja') + ' itu.' + (skk ? ' 11 kategori tanpa insiden disembunyikan.' : ''),
       mxCols, mxRows,
-      foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila "Hitung DTT" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'
+      foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila "Hitung DTT" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + (pFull ? '' : 'Jumlah insiden dihitung dari tanggal lapor; kerugian, jenis, kerawanan, dan DTT diskalakan (perkiraan). ') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'
     };
   }
 }

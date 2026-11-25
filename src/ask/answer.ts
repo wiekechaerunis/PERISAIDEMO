@@ -29,7 +29,7 @@ export interface Answer {
   link?: string;
   /** filter yang bisa dipasang ke bar filter dashboard */
   apply?: Filters;
-  /** bulan tidak bisa dipasang ke dashboard (dashboard per semester) */
+  /** bulan dari ketikan tidak dipasang ke dashboard (periode dashboard diatur lewat tombol Periode) */
   monthNote?: string;
   zoom?: { w: string; area: string };
   highlight?: { cat?: number; months: number[] };
@@ -49,11 +49,19 @@ export function scopeAreas(f: Filters, role: Role): AreaRow[] {
   );
 }
 
-/** Insiden yang cocok: sama dengan incS di logika dashboard, ditambah filter bulan. */
+const MOI: Record<string, number> = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, Mei: 5, Jun: 6 };
+/** "12 Jun" (tanggal lapor INC) → "2026-06-12" */
+const dateOf = (t: string) => {
+  const [d, m] = t.trim().split(' ');
+  return `2026-${String(MOI[m] ?? 0).padStart(2, '0')}-${d.padStart(2, '0')}`;
+};
+const inRange = (r: IncRow, f: Filters) => !f.range || (dateOf(r[6]) >= f.range.from && dateOf(r[6]) <= f.range.to);
+
+/** Insiden yang cocok: sama dengan incS di logika dashboard (termasuk periode terpasang), ditambah filter bulan. */
 export function matchInc(f: Filters, role: Role): IncRow[] {
   const ids = new Set(scopeAreas(f, role).map((a) => a[0]));
   return INCS.filter(
-    (r) => ids.has(r[1]) && (!f.lv || f.lv.includes(r[3])) && (f.cat == null || r[2] === f.cat) && (!f.months || f.months.includes(r[9])),
+    (r) => ids.has(r[1]) && (!f.lv || f.lv.includes(r[3])) && (f.cat == null || r[2] === f.cat) && (!f.months || f.months.includes(r[9])) && inRange(r, f),
   );
 }
 
@@ -63,6 +71,11 @@ const areaRp = (a: AreaRow, f: Filters) => {
   if (!all) return 0;
   const sel = f.lv ? a[5].filter((_, i) => f.lv!.includes(i)).reduce((x, y) => x + y, 0) : all;
   let r = a[6] * Math.min(1, sel / all);
+  if (f.range) {
+    // sama dengan dashboard: kerugian area diskalakan dengan porsi insiden dalam periode (perkiraan)
+    const tot = INCS.filter((x) => x[1] === a[0]).length;
+    r *= tot ? INCS.filter((x) => x[1] === a[0] && inRange(x, f)).length / tot : 0;
+  }
   if (f.cat != null) {
     const tot = INCS.filter((x) => x[1] === a[0]).length;
     r *= tot ? INCS.filter((x) => x[1] === a[0] && x[2] === f.cat).length / tot : 0;
@@ -87,7 +100,7 @@ export function linkOf(f: Filters, extra: Record<string, string> = {}): string {
   return '/insiden' + (s ? `?${s}` : '');
 }
 
-const isEmpty = (f: Filters) => !f.w && !f.kk && !f.area && f.cat == null && !f.lv && !f.months;
+const isEmpty = (f: Filters) => !f.w && !f.kk && !f.area && f.cat == null && !f.lv && !f.months && !f.range;
 
 /**
  * Jawaban dari hasil parsing. `active` = filter dashboard yang sedang terpasang; bagian yang disebut di ketikan
@@ -101,10 +114,13 @@ export function answer(p: Parsed, role: Role, active: Filters = {}): Answer {
   const f: Filters = { ...active, ...p.filters };
   if (p.filters.area) { delete f.w; delete f.kk; }
   const activeNote = !isEmpty(active) && Object.keys(active).some((k) => !(k in p.filters));
-  const suffix = activeNote ? ' (dengan filter aktif)' : '';
+  // periode dashboard (tombol Periode) disebut supaya angka tidak terbaca sebagai angka semester
+  const perTxt = f.range ? `periode ${f.range.label}` : '';
+  const suffix = activeNote ? ` (dengan filter aktif${perTxt ? `, ${perTxt}` : ''})` : '';
+  const perZ = perTxt ? ` pada ${perTxt}` : '';
   const lastChip = p.chips.filter((c) => c.kind !== 'kelompok' && c.kind !== 'ukuran').at(-1);
   const applyOf = (x: Filters): Filters => ({ w: x.w, kk: x.kk, area: x.area, cat: x.cat, lv: x.lv });
-  const monthNote = f.months ? `Bulan (${monthsOf(f.months)}) tidak dipasang ke dashboard karena dashboard dihitung per semester.` : undefined;
+  const monthNote = f.months ? `Bulan (${monthsOf(f.months)}) tidak dipasang ke dashboard. Untuk menyaring seluruh dashboard, pakai tombol Periode di kanan atas.` : undefined;
 
   if (p.intent === 'lokasi' && f.area) {
     const a = AREA[f.area];
@@ -124,7 +140,7 @@ export function answer(p: Parsed, role: Role, active: Filters = {}): Answer {
     }
     const late = matchInc(f, role).filter((r) => r[5]);
     const crit = late.filter((r) => r[3] === 4).length;
-    if (!late.length) return { kind: 'zero', kalimat: `Tidak ada insiden lewat tenggat${placeOf(f) ? ` di ${placeOf(f)}` : ''}.`, lastChip };
+    if (!late.length) return { kind: 'zero', kalimat: `Tidak ada insiden lewat tenggat${placeOf(f) ? ` di ${placeOf(f)}` : ''}${perZ}.`, lastChip };
     return {
       kind: 'ok', intent: 'tindakan', activeNote, apply: applyOf(f),
       kalimat: `${late.length} insiden lewat tenggat${placeOf(f) ? ` di ${placeOf(f)}` : ''}${crit ? `, ${crit} di antaranya Kritis` : ''}${suffix}.`,
@@ -158,7 +174,7 @@ export function answer(p: Parsed, role: Role, active: Filters = {}): Answer {
       });
     }
     const top = rows.filter((r) => r.v > 0).sort((a, b) => b.v - a.v).slice(0, 3);
-    if (!top.length) return { kind: 'zero', kalimat: 'Tidak ada insiden yang cocok dengan pertanyaan ini.', lastChip };
+    if (!top.length) return { kind: 'zero', kalimat: `Tidak ada insiden yang cocok dengan pertanyaan ini${perZ}.`, lastChip };
     const gName = { kkks: 'KKKS', wilayah: 'wilayah', kategori: 'jenis insiden', lokasi: 'lokasi' }[g];
     return {
       kind: 'ok', intent: 'peringkat', activeNote, monthNote,
@@ -195,7 +211,7 @@ export function answer(p: Parsed, role: Role, active: Filters = {}): Answer {
   const where = placeOf(f) ? ` di ${placeOf(f)}` : '';
   const when = f.months ? `, ${monthsOf(f.months)}` : '';
   if (n === 0) {
-    return { kind: 'zero', kalimat: `Tidak ada insiden yang cocok dengan ${p.chips.map((c) => c.label).join(' · ')}.`, lastChip };
+    return { kind: 'zero', kalimat: `Tidak ada insiden yang cocok dengan ${p.chips.map((c) => c.label).join(' · ')}${perZ}.`, lastChip };
   }
   return {
     kind: 'ok', intent: 'saring', activeNote, monthNote, apply: applyOf(f), link: linkOf(f),
