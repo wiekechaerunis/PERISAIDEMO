@@ -1,8 +1,11 @@
 // Popover filter lengkap (board Main-Filter): PIC, Status, Keparahan, Kategori (19), Wilayah kerja, Periode, Lainnya.
+// Periode kejadian berfungsi (PeriodField); Wilayah kerja dan "Cari nama PIC lain" masih isian statis dari board.
 import { Icon } from '@/components/ui/Icon';
 import { SEV_DOT, SEV_LABEL, SEVERITIES } from '@/lib/severity';
 import { STATUS_LABEL } from '@/services/types';
 import { KATEGORI_OPTIONS, STATUS_OPTIONS } from '../../logic/list';
+import type { PeriodDraft } from '../../logic/period';
+import { PeriodField } from './PeriodField';
 
 export type FilterKey = 'sev' | 'st' | 'pic' | 'flags' | 'kat';
 export interface Filters {
@@ -23,7 +26,14 @@ interface Props {
   rowCount: number;
   toggle: (k: FilterKey, v: string) => void;
   onClear: () => void;
-  onClose: () => void;
+  /** Tampilkan: terapkan periode (pilihan lain sudah langsung berlaku) lalu tutup panel */
+  onApply: () => void;
+  period: PeriodDraft;
+  onPeriodChange: (d: PeriodDraft) => void;
+  /** false bila rentang khusus belum lengkap atau tidak valid */
+  periodOk: boolean;
+  /** ISO WIB dari demoNow() */
+  now: string;
 }
 
 function Select({ text, muted }: { text: string; muted?: boolean }) {
@@ -46,7 +56,7 @@ function Check({ on, label, onClick }: { on: boolean; label: string; onClick: ()
   );
 }
 
-export function FilterPopover({ f, count, rowCount, toggle, onClear, onClose }: Props) {
+export function FilterPopover({ f, count, rowCount, toggle, onClear, onApply, period, onPeriodChange, periodOk, now }: Props) {
   return (
     <div className="p-pop ls-pop" role="dialog" aria-label="Filter insiden">
       <div style={{ padding: '14px 16px 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -105,10 +115,7 @@ export function FilterPopover({ f, count, rowCount, toggle, onClear, onClose }: 
             <Select text="Semua WK" muted />
           </div>
         </div>
-        <div className="ls-sec">
-          <span className="p-lbl">Periode kejadian</span>
-          <Select text="30 hari terakhir" />
-        </div>
+        <PeriodField draft={period} onChange={onPeriodChange} now={now} />
         <div className="ls-sec">
           <span className="p-lbl">Lainnya</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -122,8 +129,8 @@ export function FilterPopover({ f, count, rowCount, toggle, onClear, onClose }: 
         <button type="button" className="p-link" onClick={onClear}>
           Hapus filter
         </button>
-        <button type="button" className="p-btn p-btn-primary p-btn-sm" onClick={onClose}>
-          Tampilkan {rowCount} insiden
+        <button type="button" className="p-btn p-btn-primary p-btn-sm" onClick={onApply} disabled={!periodOk || rowCount === 0}>
+          {!periodOk ? 'Tampilkan insiden' : rowCount === 0 ? 'Tidak ada insiden' : `Tampilkan ${rowCount} insiden`}
         </button>
       </div>
     </div>

@@ -25,6 +25,8 @@ export function seedConfigHistory(): ConfigChange[] {
 /** Waktu "sekarang" untuk demo, supaya tenggat dan "Lewat 5 jam" stabil (VS5). */
 export const DEMO_NOW = '2026-10-28T13:00:00';
 export const ORG = 'PT Samudra Energi Nusantara';
+/** Insiden lama yang ditambahkan untuk filter Periode kejadian (store v8 menambahkannya ke state tersimpan). */
+export const PERIOD_ARCHIVE_NOS = ['INS-SEN-2026-0001', 'INS-SEN-2025-0098'];
 const WK = 'WK Andalas Darat';
 
 const STORY_ADR07 =
@@ -115,6 +117,22 @@ export function seedState(): DemoState {
         no: 'INS-SEN-2026-0003', title: 'Perusakan CCTV gerbang 2', category: 'Perusakan material',
         location: 'Gerbang 2', area: 'Musi Banyuasin · Gerbang 2', wk: WK, org: ORG,
         severity: 'sedang', occurredAt: '2026-09-20T20:20:00', status: 'ditutup', pic: 'Andi Pratama',
+        reporter: 'Rina Lestari',
+      },
+      // Insiden lama (sudah ditutup) agar preset Periode kejadian berbeda hasilnya: Tahun berjalan (0001, Jan 2026) dan Semua waktu
+      // (2025-0098). Bersama INS-0003 (20 Sep) yang membedakan 3 bulan terakhir dari 30 hari terakhir. Di luar 30 hari, jadi tidak
+      // memengaruhi Tugas saya, hitungan lonceng, atau daftar mobile (visibleIncidents). Nomor dan judul selaras dengan kasus serupa
+      // di SimilarPanel. Tidak memakai nomor 2026 > 0010 supaya nomor insiden berikutnya tetap 0011 (board KD4). Lihat DEVIATIONS D-P8.
+      {
+        no: 'INS-SEN-2026-0001', title: 'Akses tidak sah ke area sumur ADR-02', category: 'Lainnya',
+        location: 'Sumur ADR-02', area: 'Musi Banyuasin · Sumur ADR-02', wk: WK, org: ORG,
+        severity: 'rendah', occurredAt: '2026-01-14T21:15:00', status: 'ditutup', pic: 'Andi Pratama',
+        reporter: 'Budi Santoso',
+      },
+      {
+        no: 'INS-SEN-2025-0098', title: 'Orang tak dikenal memotret area sumur ADR-05', category: 'Lainnya',
+        location: 'Sumur ADR-05', area: 'Musi Banyuasin · Sumur ADR-05', wk: WK, org: ORG,
+        severity: 'rendah', occurredAt: '2025-08-12T16:40:00', status: 'ditutup', pic: 'Andi Pratama',
         reporter: 'Rina Lestari',
       },
       {

@@ -9,3 +9,15 @@
 .ls-pop{position:absolute;right:0;top:44px;width:420px;z-index:30;max-height:calc(100vh - 140px);overflow-y:auto}
 .ls-sec{display:flex;flex-direction:column;gap:8px}
 .ls-check{display:flex;align-items:center;gap:8px;min-height:28px;border:0;background:none;padding:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+
+/* Periode kejadian (panel Filter): isian dropdown + daftar pilihan, pola .p-pop seperti PeriodSelect dashboard */
+.ls-dd-btn{width:100%;height:36px;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;gap:8px}
+.ls-dd-btn .p-cap{white-space:nowrap}
+.ls-dd-btn:focus-visible{outline:2px solid var(--action-line);outline-offset:1px}
+/* daftar pilihan ikut alur panel (bukan melayang) supaya tidak terpotong area gulir panel Filter */
+.ls-dd{margin-top:6px;padding:4px;display:flex;flex-direction:column;box-shadow:var(--shadow-overlay),0 0 0 1px var(--border-subtle)}
+.ls-dd .row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;padding:6px 10px;border-radius:var(--radius-md,8px);cursor:pointer}
+.ls-dd .row.act{background:var(--surface-sunken)}
+.ls-dd .row[aria-selected="true"] .nm{font-weight:600}
+.ls-dd .tx{display:flex;flex-direction:column;min-width:0}
+.ls-dd .row .p-ic{color:var(--action-ink,var(--ink))}

@@ -7,7 +7,9 @@ import { useDemoStore } from '@/services/mock/store';
 import { DEMO_USERS } from '@/lib/rbac';
 import { SEV_LABEL } from '@/lib/severity';
 import { STATUS_LABEL, type Incident } from '@/services/types';
-import { defaultQuick, listLayout, quickFilters, taskCount, visibleIncidents } from '../logic/list';
+import { defaultQuick, listLayout, quickFilters, scopedIncidents, taskCount } from '../logic/list';
+import { ALL_TIME, draftToPeriod, inRange, isAllTime, periodLabel, periodToDraft, rangeOf, type PeriodDraft } from '../logic/period';
+import { usePeriod } from '../logic/usePeriod';
 import { useFollowUps } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { KerawananTable } from '../components/KerawananTable';
 import { IncidentTable } from '../components/list/IncidentTable';
@@ -47,12 +49,18 @@ function ListBody({ state }: { state: ListState | null }) {
   // S10: contoh pencarian "kebakaran" + Keparahan: Kritis + Status: Ditutup
   const [f, setF] = useState<Filters>(state === 'filter-kosong' ? { ...EMPTY_FILTERS, sev: ['kritis'], st: ['ditutup'] } : EMPTY_FILTERS);
   const [search, setSearch] = useState(state === 'filter-kosong' ? 'kebakaran' : '');
+  // Periode kejadian: yang diterapkan ada di URL; isian panel (draf) baru berlaku saat "Tampilkan n insiden".
+  const { period, now, today, setPeriod } = usePeriod();
+  const [draft, setDraft] = useState<PeriodDraft>(() => periodToDraft(period));
 
-  const base = useMemo(() => visibleIncidents(allIncidents, role), [allIncidents, role]);
+  // Semua insiden dalam cakupan peran (tanpa batas waktu); periode memotongnya.
+  const scoped = useMemo(() => scopedIncidents(allIncidents, role), [allIncidents, role]);
+  const range = rangeOf(period, now);
+  const base = scoped.filter((r) => inRange(r.occurredAt, range));
   const quicks = quickFilters(role);
   const q = qState && qState.role === role && quicks.some((d) => d.key === qState.key) ? qState.key : defaultQuick(role);
   const quick = quicks.find((d) => d.key === q) ?? quicks[0];
-  const layout = listLayout(role, base);
+  const layout = listLayout(role, scoped);
 
   const picMatch = (r: Incident) =>
     f.pic.length === 0 ||
@@ -60,16 +68,19 @@ function ListBody({ state }: { state: ListState | null }) {
   const flagMatch = (r: Incident) =>
     f.flags.every((x) => (x === 'Lewat tenggat' ? r.late : x === 'Dieskalasi' ? r.escalated : r.possibleDuplicate));
   const text = search.trim().toLowerCase();
-  const rows = base.filter(
-    (r) =>
+  const matches = (r: Incident) =>
       quick.test(r) &&
       (f.sev.length === 0 || (r.severity !== null && f.sev.includes(r.severity))) &&
       (f.st.length === 0 || f.st.includes(r.status)) &&
       (f.kat.length === 0 || f.kat.includes(r.category)) &&
       picMatch(r) &&
       flagMatch(r) &&
-      (!text || [r.no, r.title, r.category, r.location, r.area, r.org].some((x) => x.toLowerCase().includes(text))),
-  );
+      (!text || [r.no, r.title, r.category, r.location, r.area, r.org].some((x) => x.toLowerCase().includes(text)));
+  const rows = base.filter(matches);
+  // Angka tombol Tampilkan: dihitung langsung dengan periode di panel (draf)
+  const draftPeriod = draftToPeriod(draft, today);
+  const draftRange = draftPeriod ? rangeOf(draftPeriod, now) : range;
+  const previewCount = scoped.filter((r) => inRange(r.occurredAt, draftRange) && matches(r)).length;
 
   const toggle = (key: FilterKey, v: string) =>
     setF((p) => ({ ...p, [key]: p[key].includes(v) ? p[key].filter((x) => x !== v) : [...p[key], v] }));
@@ -80,10 +91,23 @@ function ListBody({ state }: { state: ListState | null }) {
     ...f.flags.map((l) => ({ label: l, key: 'flags' as FilterKey, v: l })),
     ...f.kat.map((l) => ({ label: 'Kategori: ' + l, key: 'kat' as FilterKey, v: l })),
   ];
+  const periodOn = !isAllTime(period);
+  const activeCount = applied.length + (periodOn ? 1 : 0);
+  const draftOn = draft.choice !== 'all';
+  const openFilter = () => {
+    if (!filterOpen) setDraft(periodToDraft(period));
+    setFilterOpen(!filterOpen);
+  };
+  const applyFilter = () => {
+    if (draftPeriod) setPeriod(draftPeriod);
+    setFilterOpen(false);
+  };
   const clearAll = () => {
     setF(EMPTY_FILTERS);
     setQState({ role, key: 'all' });
     setSearch('');
+    setDraft(periodToDraft(ALL_TIME));
+    if (periodOn) setPeriod(ALL_TIME);
     setFilterOpen(false);
   };
   const retry = () => setParams({}, { replace: true });
@@ -93,7 +117,8 @@ function ListBody({ state }: { state: ListState | null }) {
 
   const subtitle = isSkkRole ? SUBTITLE.skk : role === 'pelapor' ? SUBTITLE.insiden : SUBTITLE.kkks;
   const tabs = [
-    { to: '/insiden', label: 'Insiden', count: base.length, on: tab === 'insiden' },
+    // Hitungan tab halaman = total dalam cakupan; hitungan pintasan (segmen) di bawah mengikuti periode.
+    { to: '/insiden', label: 'Insiden', count: scoped.length, on: tab === 'insiden' },
     { to: '/insiden?tab=kerawanan', label: 'Kerawanan', count: kerawanan.length, on: tab === 'kerawanan' },
   ];
 
@@ -113,7 +138,7 @@ function ListBody({ state }: { state: ListState | null }) {
 
   const staticTitle = role === 'pejabat' || role === 'pic' || role === 'pic-tl';
   const listTitle = staticTitle ? 'Insiden' : q === 'all' ? 'Semua insiden' : quick.label;
-  const hasFilter = applied.length > 0 || text !== '';
+  const hasFilter = activeCount > 0 || text !== '';
   const emptyTxt =
     q === 'act'
       ? 'Tidak ada yang perlu Anda tindak lanjuti.'
@@ -121,7 +146,7 @@ function ListBody({ state }: { state: ListState | null }) {
         ? 'Tidak ada insiden yang Anda tangani.'
         : 'Tidak ada insiden yang cocok dengan filter.';
   const placeholder = isSkkRole ? 'Cari nomor, judul, atau KKKS' : 'Cari nomor, judul, atau patokan';
-  const nothingAtAll = base.length === 0;
+  const nothingAtAll = scoped.length === 0;
 
   return (
     <AppShell
@@ -156,24 +181,28 @@ function ListBody({ state }: { state: ListState | null }) {
                 type="button"
                 className="p-btn p-btn-secondary p-btn-sm"
                 aria-expanded={filterOpen}
-                onClick={() => setFilterOpen(!filterOpen)}
+                onClick={openFilter}
               >
                 <Icon name="filter" size={16} />
                 Filter
-                {applied.length > 0 && (
+                {activeCount > 0 && (
                   <span className="p-count" style={{ background: 'var(--action)', color: 'var(--on-action)' }}>
-                    {applied.length}
+                    {activeCount}
                   </span>
                 )}
               </button>
               {filterOpen && (
                 <FilterPopover
                   f={f}
-                  count={applied.length}
-                  rowCount={rows.length}
+                  count={applied.length + (draftOn ? 1 : 0)}
+                  rowCount={previewCount}
                   toggle={toggle}
                   onClear={clearAll}
-                  onClose={() => setFilterOpen(false)}
+                  onApply={applyFilter}
+                  period={draft}
+                  onPeriodChange={setDraft}
+                  periodOk={!!draftPeriod}
+                  now={now}
                 />
               )}
             </div>
@@ -191,8 +220,23 @@ function ListBody({ state }: { state: ListState | null }) {
               })}
             </div>
           </div>
-          {applied.length > 0 && (
+          {activeCount > 0 && (
             <div className="lk-applied">
+              {periodOn && (
+                <button
+                  type="button"
+                  className="p-chip"
+                  aria-pressed="true"
+                  aria-label={`Hapus filter Periode: ${periodLabel(period)}`}
+                  onClick={() => {
+                    setPeriod(ALL_TIME);
+                    setDraft(periodToDraft(ALL_TIME));
+                  }}
+                >
+                  Periode: {periodLabel(period)}
+                  <Icon name="close" size={14} />
+                </button>
+              )}
               {applied.map((a) => (
                 <button key={a.key + a.v} type="button" className="p-chip" aria-pressed="true" onClick={() => toggle(a.key, a.v)}>
                   {a.label}
@@ -216,7 +260,7 @@ function ListBody({ state }: { state: ListState | null }) {
                   }}
                 >
                   <span>
-                    {rows.length} dari {base.length} insiden
+                    {rows.length} dari {scoped.length} insiden
                   </span>
                   <span style={{ display: 'flex', gap: 4 }}>
                     <span className="p-pg on" aria-current="page">

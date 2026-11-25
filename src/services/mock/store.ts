@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import type { DemoState, Incident, Kerawanan, ModuleConfig, WaDraft } from '../types';
 import type { ConfigResult } from './workflow.config';
 import type { Role } from '@/lib/rbac';
-import { seedState } from './seed';
+import { PERIOD_ARCHIVE_NOS, seedState } from './seed';
 import { seedFollowUps } from './seedFollowUps';
 import { seedWaMessages } from './seedWa';
 import { seedWaGroups, seedWaNumbers, seedWaRules } from './seedWaMon';
@@ -68,13 +68,18 @@ export const useDemoStore = create<DemoStore>()(
       // v4: slice `waMessages` + `waDrafts` (INS-05, insiden dari WhatsApp). State lama diisi pesan seed dan tanpa draf.
       // v5: data tindak lanjut diperluas (artifact TLJ-01); state lama memakai seed baru.
       // v6: Pemantauan WhatsApp v2 (nomor, grup, aturan, ketentuan). State lama diisi seed baru; pesan lama dilengkapi id grup.
-      version: 7,
+      // v8: insiden lama untuk filter Periode kejadian (PERIOD_ARCHIVE_NOS) ditambahkan bila belum ada; data lain tidak diubah.
+      version: 8,
       migrate: (persisted, from) => {
         const p = (persisted ?? {}) as Partial<DemoState>;
         const base = seedState().config;
         const config = { ...base, ...(p.config ?? {}), history: p.config?.history ?? base.history ?? [] };
+        const seedInc = seedState().incidents;
+        const incidents = Array.isArray(p.incidents) && from < 8
+          ? [...p.incidents, ...seedInc.filter((i) => PERIOD_ARCHIVE_NOS.includes(i.no) && !p.incidents!.some((x) => x.no === i.no))]
+          : p.incidents;
         return {
-          ...p, config,
+          ...p, config, incidents,
           followUps: from >= 5 && Array.isArray(p.followUps) ? p.followUps : seedFollowUps(),
           waMessages: from >= 7 && Array.isArray(p.waMessages) ? p.waMessages : seedWaMessages(),
           waDrafts: Array.isArray(p.waDrafts) ? p.waDrafts : [],

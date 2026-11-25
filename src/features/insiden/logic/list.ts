@@ -13,20 +13,27 @@ const HOUR = 3_600_000;
 const DAY = 86_400_000;
 const now = () => new Date(demoNow()).getTime();
 
-/** Insiden yang tampil di daftar suatu peran. KKKS hanya melihat organisasinya; SKK melihat semua KKKS (tanpa draf dan perlu perbaikan). Periode 30 hari. */
-export function visibleIncidents(all: Incident[], role: Role): Incident[] {
+/**
+ * Insiden dalam cakupan suatu peran, tanpa batas waktu. KKKS hanya melihat organisasinya; SKK melihat semua KKKS (tanpa draf dan
+ * perlu perbaikan). Daftar Insiden desktop memotongnya dengan filter Periode kejadian (bawaan Semua waktu).
+ */
+export function scopedIncidents(all: Incident[], role: Role): Incident[] {
   const skk = isSkk(role);
-  const limit = now() - 30 * DAY;
   const pool = skk ? [...all, ...EXTRA_INCIDENTS.filter((x) => !all.some((a) => a.no === x.no))] : all;
   return pool.filter((i) => {
     if (i.hiddenFor?.includes(role)) return false;
     if (i.status === 'digabung' || i.status === 'dibatalkan') return false;
-    if (new Date(i.occurredAt).getTime() < limit) return false;
     if (skk) return i.status !== 'draf' && i.status !== 'perlu-perbaikan';
     // HAK-02: semua insiden di WK dalam cakupan pengguna, ditambah yang ia laporkan atau tangani di luar cakupan
     const u = DEMO_USERS[role];
     return i.org === ORG && (!u.scope || u.scope.includes(i.wk) || i.reporter === u.name || i.pic === u.name);
   });
+}
+
+/** Insiden dalam cakupan peran, 30 hari terakhir (dipakai Tugas saya, hitungan lonceng, dan daftar mobile). */
+export function visibleIncidents(all: Incident[], role: Role): Incident[] {
+  const limit = now() - 30 * DAY;
+  return scopedIncidents(all, role).filter((i) => new Date(i.occurredAt).getTime() >= limit);
 }
 
 export type TaskKind = 'draf' | 'perbaiki' | 'tangani' | 'periksa' | 'ganda' | 'tutup' | 'eskalasi' | 'tl-kerjakan' | 'tl-verifikasi';
