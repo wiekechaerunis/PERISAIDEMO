@@ -252,6 +252,8 @@ export interface Incident {
   late?: boolean;
   escalated?: boolean;
   possibleDuplicate?: boolean;
+  /** ADJ-11: nomor laporan mirip yang sudah diputus pelapor (Tandai dan lanjutkan); tidak ditanyakan lagi saat ajukan ulang */
+  duplicateDecided?: string[];
   /** nomor induk bila digabung */
   mergedInto?: string;
   /** nomor KRW asal bila dinaikkan dari kerawanan */

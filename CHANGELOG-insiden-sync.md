@@ -124,3 +124,13 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
 - B-21, PA-15: halaman `/insiden/:no/jejak-audit` (dibuka dari "Jejak audit lengkap" di tab Riwayat): crumb Insiden › {nomor} ›
   Jejak audit, "Periode: Sejak dibuat", pil "Objek: {nomor}" + Hapus filter (semua jejak dalam cakupan peran), kolom Waktu, Pelaku
   (+organisasi), Sebagai, Modul, Aksi, Objek, Hasil, tombol Filter dan Ekspor CSV, panel samping "Detail jejak audit".
+
+## 6. Pemeriksaan (Pejabat) dan ajukan ulang
+
+- ADJ-01 (V12s): bila pemeriksa = pengaju, banner peringatan di layar Pemeriksaan dan konfirmasi "Anda yang melaporkan insiden ini.
+  Tetap periksa?" sebelum Setujui atau Minta revisi; tidak diblokir; Riwayat mencatat "Diperiksa sendiri". Demo: `?pelapor=sendiri`.
+- ADJ-11 (PB2, PB3): Ringkasan laporan Perlu perbaikan memuat catatan pemeriksa, Waktu registrasi (tetap), Diperiksa ulang; tombol
+  "Ajukan ulang". Cek laporan mirip hanya bila lokasi, waktu kejadian, atau kategori berubah; dialog "Ada laporan mirip setelah Anda
+  mengubah …" dengan "Kembali ubah" / "Tandai dan lanjutkan"; kecocokan yang sudah ditandai disimpan dan tidak ditanyakan lagi.
+  Nomor dan waktu registrasi tidak berubah; Riwayat "Mengajukan ulang laporan".
+- Setujui, Minta revisi, Tolak (Batalkan insiden), dan laporan ganda (Gabung, Tautkan) memakai alur yang sudah ada.

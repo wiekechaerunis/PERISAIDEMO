@@ -9,6 +9,9 @@ import { Icon } from '@/components/ui/Icon';
 import { formatRupiah, formatWibFull } from '@/lib/format';
 import { DEMO_USERS, reviewerOptions } from '@/lib/rbac';
 import { AjukanModal } from '../components/AjukanModal';
+import { changedFields, similarOnResubmit } from '../logic/resubmit';
+import { registeredAt } from '../components/detail/detailLogic';
+import { SEV_LABEL as SEVL } from '@/lib/severity';
 import { SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type CasualtyKind } from '@/lib/severity';
 import { ORG } from '@/services/mock/seed';
 import { useDemoStore } from '@/services/mock/store';
@@ -124,12 +127,20 @@ export function ReportStep4Page() {
   // ADJ-01: pengaju yang juga pemeriksa tetap muncul. Demo: ?pemeriksa=sendiri menambahkan pengguna aktif ke daftar (board I14ma).
   const options = params.get('pemeriksa') === 'sendiri' ? [...reviewerOptions(me), me] : reviewerOptions(me);
   /** Ajukan (footer) membuka modal "Ajukan laporan?" (B-14) bila isian wajib lengkap. */
+  // ADJ-11 (PB2, PB3): ajukan ulang laporan Perlu perbaikan; nomor dan waktu registrasi tetap
+  const stored = draft.no ? incidents.find((x) => x.no === draft.no) : undefined;
+  const resubmit = stored?.status === 'perlu-perbaikan';
+  const changed = resubmit && stored ? changedFields(stored, draft) : [];
+  const twins = resubmit && changed.length ? similarOnResubmit(draft.no!, draft, incidents, stored?.duplicateDecided ?? []) : [];
+  const [twinOpen, setTwinOpen] = useState(false);
+  const [twinOk, setTwinOk] = useState(false);
   const submit = () => {
     if (conflict) return;
     if (missing.length > 0) {
       setTried(true);
       return;
     }
+    if (twins.length && !twinOk) return setTwinOpen(true);
     setConfirm(true);
   };
   const doSubmit = () => {
@@ -138,9 +149,16 @@ export function ReportStep4Page() {
     const prev = draft.no ? useDemoStore.getState().incidents.find((i) => i.no === draft.no) : undefined;
     const no = draft.no ?? nextNumber('INS-SEN', useDemoStore.getState().incidents.map((i) => i.no));
     const built = buildIncident(draft, no, prev?.reporter ?? DEMO_USERS[role].name, ORG, config);
-    addIncident({ ...built, reviewers: draft.reviewers, timeline: [...(prev?.timeline ?? []), ...(built.timeline ?? [])] });
+    const again = prev?.status === 'perlu-perbaikan';
+    const tl = again ? [{ at: demoNow(), by: DEMO_USERS[role].name, text: `Mengajukan ulang laporan.${changed.length ? ` Yang diubah: ${changed.join(', ')}.` : ''}` }] : (built.timeline ?? []);
+    addIncident({
+      ...built, reviewers: draft.reviewers, timeline: [...(prev?.timeline ?? []), ...tl],
+      // ADJ-11: kecocokan yang ditandai pelapor disimpan agar tidak ditanyakan lagi; laporan diperiksa ulang
+      possibleDuplicate: (twinOk && twins.length > 0) || !!prev?.possibleDuplicate,
+      duplicateDecided: [...(prev?.duplicateDecided ?? []), ...(twinOk ? twins.map((x) => x.no) : [])],
+    });
     navigate(`/insiden/${no}`, {
-      state: { toast: fast ? 'Insiden diajukan. SKK Migas sudah diberi tahu.' : 'Insiden diajukan.' },
+      state: { toast: again ? 'Laporan diajukan ulang. Waktu registrasi tetap.' : fast ? 'Insiden diajukan. SKK Migas sudah diberi tahu.' : 'Insiden diajukan.' },
     });
     resetDraft();
   };
@@ -153,6 +171,13 @@ export function ReportStep4Page() {
 
   const main = (
     <>
+      {resubmit && stored?.revisionReason && (
+        <section className="p-card in-sec" style={{ background: 'color-mix(in srgb, var(--caution-bg) 45%, var(--surface))' }}>
+          <h2 className="p-h2">Catatan pemeriksa</h2>
+          <span>“{stored.revisionReason}”</span>
+          {changed.length > 0 && <span className="p-cap">Yang sudah Anda ubah: {changed.join(', ')}</span>}
+        </section>
+      )}
       {conflict && (
         <div className="in-bn err" role="alert">
           <Icon name="warn" size={18} />
@@ -308,7 +333,13 @@ export function ReportStep4Page() {
         <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Pengajuan</h2></div>
         <dl className="lk-kv1">
           <dt>Nomor</dt><dd><span className="p-mono" style={{ fontSize: 12 }}>{nomor}</span></dd>
-          <dt>Status</dt><dd><span className="p-tag t-draft">Draf</span></dd>
+          <dt>Status</dt><dd>{resubmit ? <span className="p-tag t-caution">Perlu perbaikan</span> : <span className="p-tag t-draft">Draf</span>}</dd>
+          {resubmit && stored && (
+            <>
+              <dt>Waktu registrasi</dt><dd>{formatWibFull(registeredAt(stored))}<div className="p-cap">Tetap, tidak berubah saat diajukan ulang</div></dd>
+              <dt>Diperiksa ulang</dt><dd>Pejabat Berwenang sesuai alur<div className="p-cap">Laporan diperiksa lagi setelah diajukan ulang</div></dd>
+            </>
+          )}
           <dt>Terakhir disimpan</dt><dd>{draft.savedAt ? formatWibFull(draft.savedAt) : 'Belum disimpan'}</dd>
         </dl>
       </section>
@@ -373,9 +404,39 @@ export function ReportStep4Page() {
     <>
     {confirm && (
       <AjukanModal
-        no={nomor} title={draft.title} severity={sev} options={options} reviewers={draft.reviewers}
+        no={nomor} title={draft.title} severity={sev} options={options} reviewers={draft.reviewers} confirmLabel={resubmit ? 'Ajukan ulang' : undefined}
         onReviewers={(v) => patchDraft({ reviewers: v })} me={me} onCancel={() => setConfirm(false)} onConfirm={doSubmit}
       />
+    )}
+    {twinOpen && (
+      <>
+        <div className="in-scrim" onClick={() => setTwinOpen(false)}></div>
+        <div className="in-dlg" role="dialog" aria-modal="true" aria-labelledby="tw-t">
+          <div className="p-dialog" style={{ width: 600 }}>
+            <div className="dh"><h3 id="tw-t">Ada laporan mirip setelah Anda mengubah {changed.join(', ')}</h3></div>
+            <div className="db" style={{ gap: 12 }}>
+              <span className="p-cap">Yang Anda ubah: <b>{changed.join(', ')}</b> · lokasi, waktu kejadian, dan kategori dicek ulang karena salah satunya berubah</span>
+              {twins.map((x) => (
+                <div key={x.no} className="in-dup">
+                  <span className="t">
+                    <b>{x.title}</b>
+                    <span className="m"><span className="p-mono">{x.no}</span><span>· {x.category} · {formatWibFull(x.occurredAt)} · dilaporkan {x.reporter}</span></span>
+                  </span>
+                  {x.severity && <span className="p-tag">{SEVL[x.severity]}</span>}
+                </div>
+              ))}
+              {(stored?.duplicateDecided ?? []).length > 0 && (
+                <span className="p-cap">{stored!.duplicateDecided!.join(', ')} tidak ditampilkan lagi karena sudah Anda tandai kemungkinan sama saat pengajuan sebelumnya.</span>
+              )}
+              <span className="p-cap">Pemeriksa tetap melihat penanda kemungkinan sama dan bisa menggabungkan laporan. Waktu registrasi laporan Anda tetap {stored ? formatWibFull(registeredAt(stored)) : '—'}. Laporan belum terkirim sampai Anda menekan Ajukan ulang.</span>
+            </div>
+            <div className="df">
+              <button type="button" className="p-btn p-btn-secondary" onClick={() => setTwinOpen(false)}>Kembali ubah</button>
+              <button type="button" className="p-btn p-btn-primary" onClick={() => { setTwinOk(true); setTwinOpen(false); setConfirm(true); }}>Tandai dan lanjutkan</button>
+            </div>
+          </div>
+        </div>
+      </>
     )}
     <ReportFormShell
       step={4}
@@ -385,7 +446,7 @@ export function ReportStep4Page() {
       back={{ label: 'Sebelumnya', to: STEP_ROUTES.lampiran }}
       actions={[
         { label: 'Simpan draf', onClick: () => { saveDraftNow(); setSaved(true); } },
-        { label: failed ? 'Ajukan lagi' : 'Ajukan', onClick: submit, variant: 'primary', disabled: conflict },
+        { label: failed ? 'Ajukan lagi' : resubmit ? 'Ajukan ulang' : 'Ajukan', onClick: submit, variant: 'primary', disabled: conflict },
       ]}
     />
     </>
