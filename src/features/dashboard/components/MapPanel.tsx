@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link } from 'react-router-dom';
-import { routeHref } from '@/dc/route';
 import { AnimNum } from '../anim';
 
 // S9-S11 sebagai panel ringkasan melayang di kanan peta (Iterasi 2 C2, disetujui PM 25 Nov).
@@ -137,7 +135,12 @@ export function MapPanel({ v, hl, setHl, onHide }: { v: any; hl: Hl; setHl: (h: 
             {summary}
             <span className="pn-sub">Insiden di lokasi ini</span>
             {(v.incs ?? []).map((i: any) => (
-              <Link key={i.id} className="pn-inc" to={routeHref(i.href, i.id)}>
+              <button
+                key={i.id}
+                type="button"
+                className="pn-inc"
+                onClick={() => v.ui.openInc({ id: i.id, t: i.t, lv: i.sn, st: i.st, area: v.aTitle.split(' · ')[1], wk: v.aWk, kk: v.aKkks })}
+              >
                 <span className="db-id">{i.id}</span>
                 <b>{i.t}</b>
                 <span className="p-cap">{i.d}</span>
@@ -145,7 +148,7 @@ export function MapPanel({ v, hl, setHl, onHide }: { v: any; hl: Hl; setHl: (h: 
                   <Sev r={i} />
                   <span className="p-cap" style={{ fontWeight: 600 }}>{i.st}</span>
                 </span>
-              </Link>
+              </button>
             ))}
             <span className="p-cap">{v.incFoot}</span>
           </>

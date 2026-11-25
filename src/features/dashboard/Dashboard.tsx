@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDemoStore } from '@/services/mock/store';
 import { useDashboard, type DashboardProps } from './useDashboard';
 import { DashboardView } from './DashboardView';
 import { TipLayer } from './TipLayer';
+import { incidentFromDashboard, type IncInfo } from './openIncident';
 
 export type { DashboardProps };
 
@@ -22,6 +24,20 @@ export function Dashboard(props: DashboardProps) {
     setPanelOpen(v.lvl !== 'nat');
   }
   const navigate = useNavigate();
+
+  // Klik titik insiden atau baris insiden di panel: buka halaman Detail insiden aplikasi.
+  // Insiden yang belum ada di data aplikasi dibuat dulu dari data dashboard (lihat openIncident.ts).
+  const addIncident = useDemoStore((s) => s.addIncident);
+  const openInc = (info: IncInfo) => {
+    if (!info.id) return;
+    const all = useDemoStore.getState().incidents;
+    if (!all.some((i) => i.no === info.id)) {
+      const inc = incidentFromDashboard({ ...info, id: info.id }, all);
+      if (inc) addIncident(inc);
+    }
+    navigate(`/insiden/${info.id}`);
+  };
+
   const ui = {
     panelOpen,
     setPanelOpen,
@@ -29,6 +45,7 @@ export function Dashboard(props: DashboardProps) {
     setMapW: (w: number) => setMapW((o) => (Math.abs(o - w) > 1 ? w : o)),
     /** E1/E4: klik kartu angka atau bar tren membuka Daftar insiden dengan filter */
     go: (to: string) => navigate(to),
+    openInc,
   };
   return (
     <>

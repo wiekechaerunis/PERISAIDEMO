@@ -104,7 +104,7 @@ export class DashboardLogic extends DCLogic {
       const NM = { fas: 'Sumur ' + code + '-07', sta: 'Stasiun pengumpul ' + code, pipa: 'Jalur pipa ' + code + ' km 12', off: 'Anjungan lepas pantai ' + code };
       const SITE = SITES[loc.id].map((t) => [t[0] - loc.x, t[1] - loc.y, NM[t[2]], t[2]]);
       const order = []; loc.lv.forEach((v, i) => { for (let j = 0; j < v; j++) order.push(i); });
-      const pool = INC.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]] }; };
+      const pool = INC.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]], cat: CAT[r[2]] ? CAT[r[2]][0] : '', tgl: r[6], late: !!r[5], hari: r[8], area: loc.name, wk: loc.wk, kk: loc.kk }; };
       const shown = order.slice(-60).reverse();
       pts = shown.map((li, i) => { const si = i % 5 < 2 ? 0 : (i % 5 < 4 ? 1 : 2); const st = SITE[si]; const ang = i * 2.39996, rr = 0.18 + 0.32 * ((i * 7) % 5) / 5; return { x: sx(loc.x + st[0] + Math.cos(ang) * rr), y: sy(loc.y + st[1] + Math.sin(ang) * rr * 0.8), c: LV[li][1], tip: LV[li][0] + ' · ' + st[2], lvN: LV[li][0], site: st[2], inc: pickInc(li) }; });
       const ICS = { fas: 'M12 2v20M8 6h8M7 22h10M9 10h6', sta: 'M3 21V9l9-6 9 6v12H3zM9 21v-6h6v6', pipa: 'M3 12h18M7 8v8M17 8v8', off: 'M4 20h16M6 20l2-8h8l2 8M12 12V4M9 7h6' };

@@ -230,7 +230,7 @@ const LOGIC_PATCHES = [
   ['500 / k', '500 * fa / k'],
   [/const lbls = [^\n]*\n/, () => "const lblAll = lvl !== 'area' ? [] : A.filter((a) => inArea(a) && (!loc || a.id === loc.id)).sort((p, q) => q.n - p.n);\n    const lbls = []; const taken = [];\n    lblAll.forEach((a) => { const t = (skk ? a.name + ' · ' : '') + a.wk; const w = t.length * 6.6; const px = ((a.x - cx) * k + 500 * fa) * mw / 1000, py = ((a.y + 40 / k - cy) * k + 200) * mw / 1000; const r = [px - w / 2 - 4, py, px + w / 2 + 4, py + 16]; if (taken.some((o) => r[0] < o[2] && r[2] > o[0] && r[1] < o[3] && r[3] > o[1])) return; taken.push(r); lbls.push({ x: pc(a.x), y: pcy(a.y + 40 / k), fs: (12 / k).toFixed(3) + 'px', t }); });\n"],
   ["x: pc(a.x), y: pcy(a.y), s: (sz / 10).toFixed(2) + '%', c: C,", "hid: lvl === 'nat' ? a.w : a.id, area: a, mxL: LV[a.mx][0], rpS: rp(a.rp), x: pc(a.x), y: pcy(a.y), s: (sz / 10).toFixed(2) + '%', c: C,"],
-  ["const shown = order.slice(-60).reverse();", "const pool = INC.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]] }; };\n      const shown = order.slice(-60).reverse();"],
+  ["const shown = order.slice(-60).reverse();", "const pool = INC.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]], cat: CAT[r[2]] ? CAT[r[2]][0] : '', tgl: r[6], late: !!r[5], hari: r[8], area: loc.name, wk: loc.wk, kk: loc.kk }; };\n      const shown = order.slice(-60).reverse();"],
   ["c: LV[li][1], tip: LV[li][0] + ' · ' + st[2] };", "c: LV[li][1], tip: LV[li][0] + ' · ' + st[2], lvN: LV[li][0], site: st[2], inc: pickInc(li) };"],
   ["return { x: pc(W[w].pill[0]), y: pcy(W[w].pill[1]), n: W[w].n,", "return { hid: w, cnt: n, mxL: m < 0 ? 'Tidak ada' : LV[m][0], x: pc(W[w].pill[0]), y: pcy(W[w].pill[1]), n: W[w].n,"],
   ["return { n: W[r.w].n, go:", "return { hid: r.w, n: W[r.w].n, go:"],
@@ -313,6 +313,8 @@ const patches = {
     [/<tbody>/, '<tbody className="db-fade" key={v.fk}>'],
   ],
   AppBar: [
+    // Masukan PM 25 Nov: tombol periode bisa dibuka (PeriodSelect)
+    [/<button type="button" className="p-input" aria-label="Periode"[\s\S]*?<\/button>/, '<PeriodSelect />'],
     // Menu Unduh: Laporan PDF membuka /laporan di tab baru; Data Excel mengunduh contoh-unduhan.xlsx (PRD §10 I2, I3)
     [/(<button type="button" role="menuitem" className="it" onClick=\{v\.toggleDl\}>)(<span className="fi pdf")/, '<button type="button" role="menuitem" className="it" onClick={() => { v.toggleDl(); window.open("/laporan", "_blank"); }}>$2'],
     [/(<button type="button" role="menuitem" className="it" onClick=\{v\.toggleDl\}>)(<span className="fi xls")/, '<button type="button" role="menuitem" className="it" onClick={() => { v.toggleDl(); downloadExcel(); }}>$2'],
@@ -369,7 +371,7 @@ function main() {
       const nestedImports = nested.map((n) => `import { ${n} } from './${n}';\n`).join('');
       write(
         path.join(ROOT, `src/features/dashboard/components/${name}.tsx`),
-        `${HEADER}import { Fragment } from 'react';\nimport { routeHref } from '@/dc/route';\nimport { downloadExcel } from '@/dc/download';\nimport { AnimNum } from '../anim';\n${name === 'FilterBar' ? "import { FilterSelect } from './FilterSelect';\n" : ''}${nestedImports}\n// ${S_TAG[name] ?? ''}\nexport function ${name}({ v }: { v: any }) {\n  void routeHref; void downloadExcel; void Fragment; void AnimNum;\n  return (\n    <>${pretty(body)}</>\n  );\n}\n`,
+        `${HEADER}import { Fragment } from 'react';\nimport { routeHref } from '@/dc/route';\nimport { downloadExcel } from '@/dc/download';\nimport { AnimNum } from '../anim';\n${name === 'FilterBar' ? "import { FilterSelect } from './FilterSelect';\n" : ''}${name === 'AppBar' ? "import { PeriodSelect } from './PeriodSelect';\n" : ''}${nestedImports}\n// ${S_TAG[name] ?? ''}\nexport function ${name}({ v }: { v: any }) {\n  void routeHref; void downloadExcel; void Fragment; void AnimNum;\n  return (\n    <>${pretty(body)}</>\n  );\n}\n`,
       );
     }
     const topLevel = new Set(Object.values(SPLITS).filter((_, i) => Object.keys(SPLITS)[i].split('/').length <= 5));

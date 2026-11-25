@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import { routeHref } from '@/dc/route';
 import { downloadExcel } from '@/dc/download';
 import { AnimNum } from '../anim';
+import { PeriodSelect } from './PeriodSelect';
 
 // S1
 export function AppBar({ v }: { v: any }) {
@@ -21,13 +22,7 @@ export function AppBar({ v }: { v: any }) {
 <span className="sub">{v.subtitle}</span>
 </div>
 <div className="acts" style={{ display: "flex", gap: "8px", alignItems: "center", position: "relative" }}>
-<button type="button" className="p-input" aria-label="Periode" style={{ height: "36px", border: "0", font: "inherit", fontWeight: "600", cursor: "pointer" }}>
-<svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: "16px", height: "16px", color: "var(--ink-muted)" }}>
-<path d="M3 5h18v16H3zM16 3v4M8 3v4M3 10h18" />
-</svg>Semester I 2026<svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
-<path d="m6 9 6 6 6-6" />
-</svg>
-</button>
+<PeriodSelect />
 <button type="button" className="p-btn p-btn-secondary p-btn-sm" aria-haspopup="menu" aria-expanded={v.dlStr} onClick={v.toggleDl}>
 <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
 <path d="M12 3v12M7 10l5 5 5-5M4 21h16" />

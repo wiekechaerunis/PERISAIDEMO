@@ -4,6 +4,8 @@
 
 - Tampilan nasional kembali ke gaya lama: provinsi putih bergaris abu tipis di atas laut, tanpa bidang wilayah berwarna dan tanpa garis antarwilayah. Keterangan peta nasional ikut kembali ("Area panas di lokasi insiden. ..."). Hover provinsi menyorot tipis seluruh wilayah SKK-nya, chip wilayah tetap hanya saat hover.
 - Tingkat wilayah dan WK tetap memakai lapisan Iterasi 3 (cakupan WK, batas WK, fasilitas, tombol Lapisan).
+- Tombol periode ("Semester I 2026") bisa dibuka: Semester, Kuartal, Tahun. Data demo hanya Semester I 2026, jadi periode lain tampil tapi belum bisa dipilih ("Data demo hanya Semester I 2026").
+- Klik titik insiden di peta atau baris insiden di panel membuka halaman Detail insiden aplikasi (`/insiden/<ID>`). Insiden dashboard yang belum ada di data aplikasi dibuat sekali dari data dashboard (ID, judul, kategori, level, status, tanggal, lokasi, WK, KKKS) dengan isi detail lain dipinjam dari insiden contoh berstatus sama (`src/features/dashboard/openIncident.ts`). Pelapor, PIC, dan kondisi operasi pada insiden buatan ini adalah isi contoh.
 
 ## 25 Nov 2026 · Iterasi 3 · disetujui PM 25 Nov
 

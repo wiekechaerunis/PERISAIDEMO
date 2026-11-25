@@ -301,7 +301,20 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
             </span>
           ))}
           {(v.pts ?? []).map((p: any, i: number) => (
-            <span key={`${v.zKey}${i}`} className="db-pt" style={{ left: p.x, top: p.y, background: p.c }} onMouseEnter={showCard('pt', p)} onMouseMove={moveCard} onMouseLeave={hideCard} />
+            <button
+              key={`${v.zKey}${i}`}
+              type="button"
+              className="db-pt"
+              aria-label={p.inc ? `${p.inc.id} ${p.inc.t}` : `Insiden ${p.lvN}`}
+              style={{ left: p.x, top: p.y, background: p.c }}
+              onMouseEnter={showCard('pt', p)}
+              onMouseMove={moveCard}
+              onMouseLeave={hideCard}
+              onClick={() => {
+                hideCard();
+                ui.openInc({ ...(p.inc ?? { t: `Insiden ${p.lvN}` }), lv: p.lvN, site: p.site });
+              }}
+            />
           ))}
           {(v.pills ?? []).map((p: any, i: number) => (p.hid !== hovW ? null :
             <button
