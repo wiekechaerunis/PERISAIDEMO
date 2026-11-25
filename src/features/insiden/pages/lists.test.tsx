@@ -80,7 +80,8 @@ describe('daftar insiden dan Tugas saya per peran', () => {
   it('?state=kosong menampilkan empty state', () => {
     renderList('/insiden?state=kosong');
     expect(screen.getByText('Belum ada insiden yang dilaporkan.')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Buat laporan/ })).toBeInTheDocument();
+    // S09/B-17: tombol di header (primer) dan di isi kosong (sekunder)
+    expect(screen.getAllByRole('link', { name: /Buat laporan/ })).toHaveLength(2);
   });
 
   it('state daftar lain: memuat, filter-kosong, gagal, terbatas', () => {

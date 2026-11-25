@@ -143,7 +143,7 @@ function ListBody({ state }: { state: ListState | null }) {
         nav="insiden"
         title="Insiden"
         subtitle={isSkkRole ? SUBTITLE.skk : SUBTITLE.insiden}
-        action={state === 'kosong' ? undefined : { to: '/insiden/baru', label: 'Buat laporan' }}
+        action={{ to: '/insiden/baru', label: 'Buat laporan' }}
       >
         {state === 'memuat' ? <LoadingCard /> : state === 'kosong' ? <EmptyCard role={role} /> : <FailedCard onRetry={retry} />}
       </AppShell>

@@ -147,3 +147,10 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
   jenis KI02-01…, status, Dipakai di N insiden, Terakhir diubah Sistem, catatan FR-KIN-19) dan "Penyebab & faktor pendukung"
   (`/konfigurasi/penyebab-insiden`, PN01…, FP01…). Daftar yang sama dipakai form lapor dan Data penutupan.
 - ADJ-04, ADJ-05, ADJ-06: prototype tidak punya halaman Persetujuan; tidak dikerjakan (lihat DEVIATIONS S-28).
+
+## 15. State galat, kosong, dan memuat
+
+- B-17 (S09): daftar kosong kini di dalam kartu daftar (toolbar Daftar insiden, cari, Filter), ilustrasi dokumen, teks "Bila
+  terjadi, laporkan dari sini atau dari pesan WhatsApp.", tombol sekunder Buat laporan; header tetap punya Buat laporan.
+- S08 (Memuat), S10 (Filter kosong), S11 (Gagal dimuat), S12 (Terbatas), VS3/VS4 (review), PS2/PS3/PS8/PS9 (penanganan) dicek ulang
+  terhadap canvas; teks sudah sama dan tidak diubah.

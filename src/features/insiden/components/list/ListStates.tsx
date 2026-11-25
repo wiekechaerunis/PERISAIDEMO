@@ -66,21 +66,31 @@ export function LoadingCard() {
 
 const FILL_CARD = { padding: 0, flex: '1 1 auto', display: 'flex', flexDirection: 'column' } as const;
 
+/** S09 (B-17): daftar kosong di dalam kartu daftar (toolbar tetap), ilustrasi dokumen, tombol sekunder. */
 export function EmptyCard({ role }: { role: Role }) {
   return (
     <section className="p-card" style={FILL_CARD}>
+      <div className="p-toolbar" style={{ justifyContent: 'space-between' }}>
+        <b style={{ fontSize: 15 }}>Daftar insiden</b>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <label className="p-input" style={{ width: 300, height: 36 }}>
+            <Icon name="search" size={16} style={{ color: 'var(--ink-muted)' }} />
+            <input className="ph" aria-label="Cari nomor, judul, atau patokan" placeholder="Cari nomor, judul, atau patokan" disabled style={{ flex: 1, border: 0, outline: 0, background: 'none', font: 'inherit' }} />
+          </label>
+          <button type="button" className="p-btn p-btn-secondary p-btn-sm" disabled><Icon name="filter" size={16} />Filter</button>
+        </div>
+      </div>
       <div className="lk-es" style={{ flex: '1 1 auto', justifyContent: 'center' }}>
-        <svg className="il" viewBox="0 0 120 96" width="120" height="96" aria-hidden="true">
-          <path className="pa ln" d="M60 10l38 14v24c0 22-16 34-38 40C38 82 22 70 22 48V24z" />
-          <path className="ac ln" d="M46 50l10 10 20-22" />
+        <svg viewBox="0 0 140 112" width="140" height="112" aria-hidden="true">
+          <ellipse cx="70" cy="102" rx="46" ry="5" fill="var(--surface-sunken)" />
+          <rect x="50" y="8" width="52" height="68" rx="7" fill="var(--surface)" stroke="var(--ink)" strokeWidth="2.5" />
+          <rect x="40" y="16" width="52" height="78" rx="7" fill="var(--surface)" stroke="var(--ink)" strokeWidth="2.5" />
+          <circle cx="92" cy="86" r="12" fill="var(--action)" stroke="var(--ink)" strokeWidth="2.5" />
         </svg>
         <b>Belum ada insiden yang dilaporkan.</b>
-        <span style={{ color: 'var(--ink-muted)', maxWidth: 360 }}>
-          Semoga tetap begitu. Bila terjadi, laporkan dari sini atau dari pesan WhatsApp.
-        </span>
+        <span style={{ color: 'var(--ink-muted)', maxWidth: 360 }}>Bila terjadi, laporkan dari sini atau dari pesan WhatsApp.</span>
         {canCreateReport(role) && (
-          <Link to="/insiden/baru" className="p-btn p-btn-primary" style={{ marginTop: 8 }}>
-            <Icon name="plus" size={16} />
+          <Link to="/insiden/baru" className="p-btn p-btn-secondary" style={{ marginTop: 8 }}>
             Buat laporan
           </Link>
         )}
