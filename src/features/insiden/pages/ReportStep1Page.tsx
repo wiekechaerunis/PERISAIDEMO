@@ -1,14 +1,14 @@
-// Board: I12 (1.2 Form · langkah 1, Temuan) + S16 (jenis Kerawanan) + S03 (ganti jenis), S13 (lokasi di luar WK) — FR-LK-25, FR-INS-01
+// Board: I12 / I12s (langkah 1 Waktu & lokasi; I12s = draf tersimpan) + S16 (jenis Kerawanan) + S03 (ganti jenis), S13 (lokasi di luar WK).
+// B-3: section Jenis laporan · Kejadian (Judul → Waktu → Apa yang terjadi? → Sumber informasi) · Lokasi (peta + Patokan manual). B-4: tanpa kartu Pengajuan.
 import { LocationPicker } from '../components/LocationPicker';
 import { locate } from '../logic/geo';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReportFormShell } from '../components/ReportFormShell';
 import { CopilotPanel } from '../copilot/CopilotPanel';
 import { Icon } from '@/components/ui/Icon';
-import { useDraftStore } from '../logic/draft';
-import { useDemoStore } from '@/services/mock/store';
-import { nextNumber } from '../logic/submit';
+import { INFO_SOURCE_LABEL, useDraftStore, type InfoSource } from '../logic/draft';
+import { saveDraftNow } from '../logic/draftSave';
 import { STEP_ROUTES, stepsOf } from '../logic/steps';
 import { storyWarning, typeGuard, type HasImpactAnswer, type ReportKind } from '@/lib/reportType';
 import { useCopilotStore } from '../copilot/copilotStore';
@@ -35,9 +35,7 @@ const AiTag = ({ on, why = 'Diisi AI Copilot dari cerita Anda · bisa diubah', l
 
 export function ReportStep1Page() {
   const navigate = useNavigate();
-  const { draft, patch, resetDraft } = useDraftStore();
-  const incidents = useDemoStore((s) => s.incidents);
-  const kerawanan = useDemoStore((s) => s.kerawanan);
+  const { draft, patch } = useDraftStore();
   const cpStory = useCopilotStore((s) => s.story);
   const [tried, setTried] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -48,16 +46,14 @@ export function ReportStep1Page() {
   const isIns = kind === 'insiden';
   const ai = (f: string) => draft.aiFilled.includes(f);
   const hit = kind === 'kerawanan' ? storyWarning(cpStory) : null;
-  const nomor = useMemo(
-    () => (isIns ? nextNumber('INS-SEN', incidents.map((i) => i.no)) : nextNumber('KRW-SEN', kerawanan.map((k) => k.no))),
-    [isIns, incidents, kerawanan],
-  );
 
   const missing = {
     hasImpact: !draft.hasImpact,
     time: !draft.date || !draft.time,
     future: !!draft.date && !!draft.time && isFutureTime(draft.date, draft.time),
     title: !draft.title.trim(),
+    story: isIns && !draft.story.trim(),
+    infoSource: isIns && !draft.infoSource,
     location: !draft.locationName,
     patokan: !draft.patokan.trim(),
   };
@@ -83,6 +79,7 @@ export function ReportStep1Page() {
   };
   const save = () => {
     patch({ kind });
+    saveDraftNow();
     setToast(true);
     setTimeout(() => setToast(false), 2500);
   };
@@ -93,9 +90,10 @@ export function ReportStep1Page() {
   const loc = draft.lat !== null && draft.lng !== null ? locate(draft.lat, draft.lng) : null;
 
   const main = (
-    <section className="p-card">
-      <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Temuan</h2></div>
-      <div className="lk-f2">
+    <>
+      <section className="p-card">
+        <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Jenis laporan</h2></div>
+        <div className="lk-f2">
         <div className="p-field lk-span2">
           <span className="p-lbl" id="dmp-l" style={{ color: 'var(--ink)' }}>Ada kerugian, korban, atau operasi terganggu?<span className="p-req">*</span></span>
           <div className="p-qf" role="radiogroup" aria-labelledby="dmp-l" style={{ alignSelf: 'flex-start' }}>
@@ -124,12 +122,6 @@ export function ReportStep1Page() {
           </div>
         </div>
 
-        {draft.hasImpact !== 'tidak' && (
-          <span className="lk-span2 p-cap">
-            {draft.hasImpact === 'ya' ? 'Ada dampak, jadi dilaporkan sebagai insiden.' : 'Bila ragu, laporkan sebagai insiden. Pejabat Berwenang bisa menjadikannya kerawanan.'}
-          </span>
-        )}
-
         {hit && (
           <div className="lk-span2 in-bn caution" role="status" style={{ display: 'flex' }}>
             <Icon name="warn" size={18} />
@@ -142,17 +134,21 @@ export function ReportStep1Page() {
           </div>
         )}
 
-        <div className={'lk-span2 in-bn ' + (isIns ? 'info' : 'caution')}>
-          <Icon name="info" size={18} />
-          <div className="body">
-            <b>{isIns ? 'Insiden dipilih.' : 'Kerawanan dipilih. Laporan ini masuk ke tab Kerawanan di menu Insiden.'}</b>{' '}
-            {isIns
-              ? 'Langkah 2 menanyakan dampak, keparahan, dan siapa yang sudah menangani. Bila Tinggi atau Kritis, SKK Migas langsung diberi tahu saat diajukan.'
-              : 'Langkah 2 hanya menanyakan jenis kerawanan. Kerawanan langsung tercatat tanpa pemeriksaan, keparahan, atau PIC, dan tidak dihitung sebagai insiden.'}
-          </div>
+        </div>
+      </section>
+      <section className="p-card">
+        <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Kejadian</h2></div>
+        <div className="lk-f2">
+        <div className="p-field lk-span2">
+          <span className="p-lbl" style={{ color: 'var(--ink)' }}>Judul<span className="p-req">*</span><AiTag on={ai('title')} /></span>
+          <label className={'p-input' + (err(missing.title) ? ' err' : '')}>
+            <input aria-label="Judul" maxLength={120} value={draft.title} onChange={(e) => patch({ title: e.target.value })} placeholder="Ringkas apa yang terjadi" style={bare} />
+          </label>
+          <span className="p-help row"><span></span><span>{draft.title.length}/120</span></span>
+          {err(missing.title) && errMsg('Judul wajib diisi.')}
         </div>
 
-        <div className="p-field">
+        <div className="p-field lk-span2">
           <span className="p-lbl" style={{ color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 2 }}>
             {dateLbl}<span className="p-req">*</span><AiTag on={ai('time')} />
             <span className="in-tw">
@@ -168,17 +164,36 @@ export function ReportStep1Page() {
           {err(missing.time) && errMsg('Isi tanggal dan jam.')}
           {missing.future && errMsg(`${dateLbl} tidak boleh setelah waktu sekarang.`)}
         </div>
-        <div></div>
-
-        <div className="p-field lk-span2">
-          <span className="p-lbl" style={{ color: 'var(--ink)' }}>Judul<span className="p-req">*</span><AiTag on={ai('title')} /></span>
-          <label className={'p-input' + (err(missing.title) ? ' err' : '')}>
-            <input aria-label="Judul" maxLength={120} value={draft.title} onChange={(e) => patch({ title: e.target.value })} placeholder="Ringkas apa yang terjadi" style={bare} />
-          </label>
-          <span className="p-help row"><span></span><span>{draft.title.length}/120</span></span>
-          {err(missing.title) && errMsg('Judul wajib diisi.')}
+        {isIns && (
+          <div className="p-field lk-span2">
+            <span className="p-lbl" style={{ color: 'var(--ink)' }}>Apa yang terjadi?<span className="p-req">*</span><AiTag on={ai('story')} /></span>
+            <textarea
+              className={'p-input p-area' + (err(missing.story) ? ' err' : '')} aria-label="Apa yang terjadi?" maxLength={1000}
+              style={{ minHeight: 88, border: 0, font: 'inherit', resize: 'vertical', width: '100%', boxSizing: 'border-box' }}
+              value={draft.story} onChange={(e) => patch({ story: e.target.value })}
+            />
+            <span className="p-help row"><span>Kronologi singkat: siapa, apa, bagaimana. Boleh belum lengkap.</span><span>{draft.story.length}/1000</span></span>
+            {err(missing.story) && errMsg('Ceritakan apa yang terjadi.')}
+          </div>
+        )}
+        {isIns && (
+          <div className="p-field lk-span2">
+            <span className="p-lbl" id="src-l" style={{ color: 'var(--ink)' }}>Sumber informasi<span className="p-req">*</span></span>
+            <div className="in-chips" role="radiogroup" aria-labelledby="src-l">
+              {(Object.keys(INFO_SOURCE_LABEL) as InfoSource[]).map((k) => (
+                <button key={k} type="button" role="radio" className="p-chip" aria-pressed={draft.infoSource === k} aria-checked={draft.infoSource === k} onClick={() => patch({ infoSource: k })}>
+                  {INFO_SOURCE_LABEL[k]}
+                </button>
+              ))}
+            </div>
+            {err(missing.infoSource) && errMsg('Pilih sumber informasi.')}
+          </div>
+        )}
         </div>
-
+      </section>
+      <section className="p-card">
+        <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Lokasi</h2></div>
+        <div className="lk-f2">
         <div className="p-field lk-span2" style={{ position: 'relative' }}>
           <span className="p-lbl" style={{ color: 'var(--ink)' }}>Lokasi kejadian<span className="p-req">*</span></span>
           {draft.locationName ? (
@@ -204,7 +219,7 @@ export function ReportStep1Page() {
               initial={{ lat: draft.lat, lng: draft.lng, wk: draft.wk }}
               onClose={() => setPickerOpen(false)}
               onPick={(p) => {
-                patch({ locationName: p.name, lat: p.lat, lng: p.lng, wk: p.wk, patokan: draft.patokan || p.name });
+                patch({ locationName: p.name, lat: p.lat, lng: p.lng, wk: p.wk });
                 setPickerOpen(false);
               }}
             />
@@ -218,27 +233,15 @@ export function ReportStep1Page() {
           <label className={'p-input' + (err(missing.patokan) ? ' err' : '')}>
             <input aria-label="Patokan lokasi" maxLength={120} value={draft.patokan} onChange={(e) => patch({ patokan: e.target.value })} style={bare} />
           </label>
-          <span className="p-help row"><span>Patokan yang mudah dikenali. Terisi otomatis dari lokasi yang dipilih.</span><span>{draft.patokan.length}/120</span></span>
+          <span className="p-help row"><span>Keterangan yang memudahkan petugas menemukan titik.</span><span>{draft.patokan.length}/120</span></span>
           {err(missing.patokan) && errMsg('Patokan lokasi wajib diisi.')}
         </div>
-      </div>
-    </section>
-  );
-
-  const aside = (
-    <>
-      <section className="p-card">
-        <div className="lk-card-head" style={{ marginBottom: 12 }}><h2 className="p-h2">Pengajuan</h2></div>
-        <dl className="lk-kv1">
-          <dt>Nomor laporan</dt><dd><span className="p-mono" style={{ fontSize: 12 }}>{nomor}</span></dd>
-          <dt>Status</dt><dd><span className="p-tag t-draft">Draf</span></dd>
-          <dt>Tercatat di</dt><dd>{isIns ? 'Insiden' : 'Insiden › tab Kerawanan'}</dd>
-          <dt>{isIns ? 'Diperiksa oleh' : 'Pemeriksaan'}</dt><dd>{isIns ? 'Semua Pejabat Berwenang (3)' : 'Tidak perlu, langsung tercatat'}</dd>
-        </dl>
+        </div>
       </section>
-      <CopilotPanel step={1} />
     </>
   );
+
+  const aside = <CopilotPanel step={1} />;
 
   return (
     <>
@@ -247,7 +250,7 @@ export function ReportStep1Page() {
         steps={stepsOf(kind)}
         main={main}
         aside={aside}
-        back={{ label: 'Batal', onClick: () => { resetDraft(); useCopilotStore.getState().reset(false); navigate('/insiden'); } }}
+        back={{ label: 'Batal', onClick: () => navigate('/insiden') }}
         actions={[{ label: 'Simpan draf', onClick: save }, { label: 'Berikutnya', variant: 'primary', onClick: next }]}
       />
       {toast && (

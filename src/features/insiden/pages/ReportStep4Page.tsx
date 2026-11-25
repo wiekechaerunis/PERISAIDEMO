@@ -1,19 +1,21 @@
-// Board: I14 / I14s (Ringkasan & Ajukan), S05 (gagal kirim), S06 (draf bentrok), S01 (validasi).
+// Board: I14 / I14s / I14u (Ringkasan & Ajukan), S05 (gagal kirim), S06 (draf bentrok), S01 (validasi).
+// B-13: data lengkap; "Diperiksa oleh" dan "Yang terjadi saat Anda menekan Ajukan" tidak di halaman (pindah ke modal Ajukan).
+// B-4: kartu Pengajuan hanya di sini (Nomor, Status, Terakhir disimpan). B-11: dampak belum diketahui ditulis "Belum diketahui".
 // Simulasi state lewat query: ?state=gagal-kirim | ?state=bentrok.
 import { demoNow } from '@/services/mock/clock';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { formatRupiah, formatWibFull } from '@/lib/format';
-import { DEMO_USERS, reviewerOptions } from '@/lib/rbac';
-import { ReviewerSelect } from '@/components/ui/ReviewerSelect';
+import { DEMO_USERS } from '@/lib/rbac';
 import { SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type CasualtyKind } from '@/lib/severity';
 import { ORG } from '@/services/mock/seed';
 import { useDemoStore } from '@/services/mock/store';
 import { ReportFormShell } from '../components/ReportFormShell';
 import { AiMsg, CopilotFrame } from '../copilot/parts';
 import { extLabel, formatSize } from '../logic/attachments';
-import { useDraftStore, type Axis, type ReportDraft } from '../logic/draft';
+import { INFO_SOURCE_LABEL, UNKNOWN, useDraftStore, type Axis, type ReportDraft } from '../logic/draft';
+import { saveDraftNow } from '../logic/draftSave';
 import { stepsOf, STEP_ROUTES } from '../logic/steps';
 import { buildIncident, nextNumber, occurredIso, siteArea, suggestedSeverityOf } from '../logic/submit';
 
@@ -34,6 +36,10 @@ const CASUALTY_LABEL: Record<CasualtyKind, string> = {
   belum: 'Belum diketahui',
 };
 const HANDLED_LABEL = { belum: 'Belum ada', int: 'Security internal', bujp: 'BUJP', tni: 'TNI', polri: 'Polri' } as const;
+const handledText = (d: ReportDraft) =>
+  [...d.handledBy.map((h) => HANDLED_LABEL[h]), ...(d.handledOther ? [d.handledOther] : [])].join(', ') || '—';
+const lossText = (d: ReportDraft) =>
+  !d.axes.includes('prop') ? 'Tidak terdampak' : d.lossUnknown ? UNKNOWN : d.lossIdr ? formatRupiah(d.lossIdr) : 'Tidak diisi';
 const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 
 interface Missing {
@@ -47,12 +53,14 @@ interface Missing {
 function missingOf(d: ReportDraft): Missing[] {
   const m: Missing[] = [];
   if (!d.title.trim()) m.push({ label: 'Judul', to: STEP_ROUTES.temuan });
+  if (!d.story.trim()) m.push({ label: 'Apa yang terjadi', to: STEP_ROUTES.temuan });
+  if (!d.infoSource) m.push({ label: 'Sumber informasi', to: STEP_ROUTES.temuan });
   if (!d.date || !d.time) m.push({ label: 'Waktu kejadian', to: STEP_ROUTES.temuan });
   if (!d.locationName.trim()) m.push({ label: 'Lokasi kejadian', to: STEP_ROUTES.temuan });
-  if (!d.category) m.push({ label: 'Kategori', to: STEP_ROUTES.temuan });
+  if (!d.category) m.push({ label: 'Kategori', to: STEP_ROUTES.kejadian });
   if (!d.securityImpact.trim()) m.push({ label: 'Dampak keamanan', to: STEP_ROUTES.kejadian });
   if (d.axes.length === 0) m.push({ label: 'Apa saja yang terdampak', to: STEP_ROUTES.kejadian });
-  if (d.axes.includes('prop') && !d.ops) m.push({ label: 'Kondisi operasi', to: STEP_ROUTES.kejadian });
+  if (d.axes.includes('prop') && !d.ops && !d.opsUnknown) m.push({ label: 'Kondisi operasi', to: STEP_ROUTES.kejadian });
   if (d.axes.includes('prop') && d.ops === 'berhenti' && !d.opsHours && !d.ongoing) {
     m.push({ label: 'Lama operasi berhenti', to: STEP_ROUTES.kejadian, msg: 'Isi berapa jam operasi berhenti.' });
   }
@@ -60,7 +68,9 @@ function missingOf(d: ReportDraft): Missing[] {
 }
 
 function opsText(d: ReportDraft): string {
-  if (!d.axes.includes('prop') || !d.ops) return 'Tidak terdampak';
+  if (!d.axes.includes('prop')) return 'Tidak terdampak';
+  if (d.opsUnknown) return UNKNOWN;
+  if (!d.ops) return 'Tidak terdampak';
   const h = d.opsHours ? ` ${d.opsHours} jam` : d.ongoing ? ' (masih berlangsung)' : '';
   if (d.ops === 'berhenti') return `Berhenti${h}`;
   if (d.ops === 'sebagian') return `Terganggu${h}`;
@@ -77,7 +87,6 @@ export function ReportStep4Page() {
   const [params, setParams] = useSearchParams();
   const draft = useDraftStore((s) => s.draft);
   const resetDraft = useDraftStore((s) => s.resetDraft);
-  const patchDraft = useDraftStore((s) => s.patch);
   const incidents = useDemoStore((s) => s.incidents);
   const config = useDemoStore((s) => s.config);
   const role = useDemoStore((s) => s.role);
@@ -92,7 +101,7 @@ export function ReportStep4Page() {
   const fast = isHighOrCritical(sev);
   const sevLbl = sev ? SEV_LABEL[sev] : 'Belum ditentukan';
   const missing = missingOf(draft);
-  const nomor = nextNumber('INS-SEN', incidents.map((i) => i.no));
+  const nomor = draft.no ?? nextNumber('INS-SEN', incidents.map((i) => i.no));
   const category = draft.category === 'Lainnya' && draft.categoryOther ? draft.categoryOther : (draft.category ?? '—');
   const lokasi = draft.patokan || draft.locationName || '—';
   const unaffected = AXIS_ORDER.filter((a) => !draft.axes.includes(a)).map((a) => AXIS_LABEL[a]);
@@ -114,8 +123,11 @@ export function ReportStep4Page() {
       setTried(true);
       return;
     }
-    const no = nextNumber('INS-SEN', useDemoStore.getState().incidents.map((i) => i.no));
-    addIncident(buildIncident(draft, no, DEMO_USERS[role].name, ORG, config));
+    // Ajukan = simpan + ajukan (B-9): draf tersimpan memakai nomornya dan riwayatnya tetap
+    const prev = draft.no ? useDemoStore.getState().incidents.find((i) => i.no === draft.no) : undefined;
+    const no = draft.no ?? nextNumber('INS-SEN', useDemoStore.getState().incidents.map((i) => i.no));
+    const built = buildIncident(draft, no, prev?.reporter ?? DEMO_USERS[role].name, ORG, config);
+    addIncident({ ...built, timeline: [...(prev?.timeline ?? []), ...(built.timeline ?? [])] });
     navigate(`/insiden/${no}`, {
       state: { toast: fast ? 'Insiden diajukan. SKK Migas sudah diberi tahu.' : 'Insiden diajukan.' },
     });
@@ -176,14 +188,20 @@ export function ReportStep4Page() {
             {lokasi}
             <span className="p-cap" style={{ display: 'block' }}>{[siteArea(draft.locationName) || draft.locationName, draft.wk].filter(Boolean).join(' · ')}</span>
           </dd>
-          <dt>Kategori</dt><dd>{category}</dd>
+          <dt>Kategori</dt>
+          <dd>
+            {category}
+            {draft.jenis && <span className="p-cap" style={{ display: 'block' }}>Jenis: {draft.jenis === 'Lainnya' && draft.jenisOther ? draft.jenisOther : draft.jenis}</span>}
+          </dd>
+          <dt>Apa yang terjadi?</dt><dd>{draft.story || '—'}</dd>
+          <dt>Sumber informasi</dt><dd>{draft.infoSource ? INFO_SOURCE_LABEL[draft.infoSource] : '—'}</dd>
         </dl>
         <div className="stats">
           <div><span className="k">Operasi</span><b>{opsText(draft)}</b></div>
           <div><span className="k">Korban</span><b>{casualtyText(draft)}</b></div>
           <div>
             <span className="k">Perkiraan kerugian</span>
-            <b>{draft.axes.includes('prop') && draft.lossIdr ? formatRupiah(draft.lossIdr) : 'Tidak diisi'}</b>
+            <b>{lossText(draft)}</b>
           </div>
         </div>
       </section>
@@ -206,9 +224,10 @@ export function ReportStep4Page() {
           <dt>Dampak keamanan</dt><dd>{draft.securityImpact || '—'}</dd>
           <dt>Lokasi lengkap</dt>
           <dd>
-            {lokasi}
+            {draft.locationName || lokasi}
             <span className="p-cap" style={{ display: 'block' }}>
-              {draft.wk}
+              {draft.patokan && draft.patokan !== lokasi ? `Patokan: ${draft.patokan} · ` : ''}
+              {[siteArea(draft.locationName), draft.wk].filter(Boolean).join(' · ')}
               {draft.lat !== null && draft.lng !== null && (
                 <>
                   {draft.wk ? ' · ' : ''}
@@ -222,8 +241,13 @@ export function ReportStep4Page() {
             {sevLbl}{draft.severityManual ? '' : ' · sesuai saran sistem'}
             <span className="p-cap" style={{ display: 'block' }}>{sevWhy}</span>
           </dd>
-          <dt>Sudah menangani</dt>
-          <dd>{draft.handledBy.length ? draft.handledBy.map((h) => HANDLED_LABEL[h]).join(', ') : '—'}</dd>
+          {draft.axes.includes('ling') && (<><dt>Sebaran dampak</dt><dd>{draft.envNote || '—'}</dd></>)}
+          {draft.axes.includes('data') && (<><dt>Data dan informasi</dt><dd>{draft.dataNote || '—'}</dd></>)}
+          <dt>Penanganan di lokasi</dt>
+          <dd>
+            {handledText(draft)}
+            {draft.initialAction.trim() && <span className="p-cap" style={{ display: 'block' }}>Tindakan awal: {draft.initialAction}</span>}
+          </dd>
         </dl>
       </section>
 
@@ -254,35 +278,6 @@ export function ReportStep4Page() {
         )}
       </section>
 
-      <section className="in-pre" aria-label="Yang terjadi saat Anda menekan Ajukan">
-        <h3>Yang terjadi saat Anda menekan Ajukan</h3>
-        <div className="rows">
-          <div className="r">
-            <span className="ic"><Icon name="lock" size={15} /></span>
-            <span>
-              <b>Laporan terkunci</b>Isi dan lampiran tidak bisa diubah sampai Pejabat Berwenang memeriksa. Perlu mengubah? Tarik
-              kembali selama belum diperiksa.
-            </span>
-          </div>
-          {fast ? (
-            <div className="r">
-              <span className="ic"><Icon name="bell" size={15} /></span>
-              <span>
-                <b>SKK Migas langsung diberi tahu</b>Keparahan <b style={{ display: 'inline', margin: 0 }}>{sevLbl}</b> langsung dikirim ke
-                semua Pengawas SKK, sebelum diperiksa. Pastikan keparahannya sudah sesuai.
-              </span>
-            </div>
-          ) : (
-            <div className="r">
-              <span className="ic"><Icon name="user" size={15} /></span>
-              <span>
-                <b>Pejabat Berwenang diberi tahu</b>Laporan masuk ke Pejabat Berwenang untuk diperiksa. Keparahan{' '}
-                <b style={{ display: 'inline', margin: 0 }}>{sevLbl}</b> tidak langsung dikirim ke SKK Migas.
-              </span>
-            </div>
-          )}
-        </div>
-      </section>
     </>
   );
 
@@ -303,9 +298,8 @@ export function ReportStep4Page() {
         <dl className="lk-kv1">
           <dt>Nomor</dt><dd><span className="p-mono" style={{ fontSize: 12 }}>{nomor}</span></dd>
           <dt>Status</dt><dd><span className="p-tag t-draft">Draf</span></dd>
-          <dt>Terakhir disimpan</dt><dd>{formatWibFull(demoNow())}</dd>
+          <dt>Terakhir disimpan</dt><dd>{draft.savedAt ? formatWibFull(draft.savedAt) : 'Belum disimpan'}</dd>
         </dl>
-        <div style={{ marginTop: 12 }}><ReviewerSelect options={reviewerOptions(DEMO_USERS[role].name)} value={draft.reviewers} onChange={(v) => patchDraft({ reviewers: v })} /></div>
       </section>
       <CopilotFrame status="Memeriksa sebelum diajukan">
         <div className="cp-th" role="log" aria-live="polite">
@@ -372,7 +366,7 @@ export function ReportStep4Page() {
       aside={aside}
       back={{ label: 'Sebelumnya', to: STEP_ROUTES.lampiran }}
       actions={[
-        { label: 'Simpan draf', onClick: () => setSaved(true) },
+        { label: 'Simpan draf', onClick: () => { saveDraftNow(); setSaved(true); } },
         { label: failed ? 'Ajukan lagi' : 'Ajukan', onClick: submit, variant: 'primary', disabled: conflict },
       ]}
     />

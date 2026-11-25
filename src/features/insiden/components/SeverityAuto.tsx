@@ -1,44 +1,75 @@
-// Kartu "Seberapa parah?" (board I13): saran otomatis, pemilih 5 level, alasan bila beda, banner SKK.
+// Kartu "Seberapa parah?" (board I13, I13u, I13ue): saran otomatis, pemilih 5 level, alasan bila beda, banner SKK.
+// B-10: tanpa label "setara …". B-11 (ADJ-07): sebagian dampak belum diketahui → saran sementara; tidak ada yang diketahui →
+// "Belum bisa disarankan", pelapor wajib memilih sendiri.
 import { useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
-import { SEVERITIES, SEV_DOT, SEV_EQUIV, SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
+import { SEVERITIES, SEV_DOT, SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
 import { FieldError } from './AiTag';
 import { MAX_ALASAN } from './step2Data';
 
 interface Props {
-  /** saran sistem (sudah di-fallback ke 'sangat-rendah' bila belum ada dampak) */
-  suggested: Severity;
-  /** level yang berlaku; sama dengan saran bila tidak diubah */
-  level: Severity;
+  /** saran sistem dari dampak yang diketahui; null = belum ada dasar saran */
+  suggested: Severity | null;
+  /** level yang berlaku; sama dengan saran bila tidak diubah; null bila belum dipilih */
+  level: Severity | null;
   /** rincian untuk kalimat "Dari dampak: …" */
   parts: string[];
+  /** ada dampak terpilih yang ditandai Belum diketahui */
+  unknown?: boolean;
   reason: string;
   reasonError?: string;
+  /** Berikutnya ditekan tanpa level saat belum bisa disarankan (I13ue) */
+  levelError?: boolean;
   onPick: (level: Severity) => void;
   onReason: (text: string) => void;
 }
 
-export function SeverityAuto({ suggested, level, parts, reason, reasonError, onPick, onReason }: Props) {
+/** Belum bisa disarankan: tidak ada saran dan ada dampak yang belum diketahui (B-11). */
+export const cannotSuggest = (suggested: Severity | null, unknown: boolean) => suggested === null && unknown;
+
+export function SeverityAuto({ suggested, level, parts, unknown = false, reason, reasonError, levelError, onPick, onReason }: Props) {
+  const noSug = cannotSuggest(suggested, unknown);
   const [editing, setEditing] = useState(false);
-  const differs = level !== suggested;
-  const why = parts.length ? `Dari dampak: ${parts.join(', ')}.` : 'Pilih apa saja yang terdampak dulu.';
+  const open = editing || noSug;
+  const differs = !noSug && level !== null && level !== suggested;
+  const why = noSug
+    ? 'Dampak belum diketahui, jadi sistem belum bisa menyarankan level. Pilih level sesuai perkiraan Anda; Pejabat Berwenang menetapkan level resmi saat memeriksa.'
+    : (parts.length ? `Dari dampak: ${parts.join(', ')}.` : 'Pilih apa saja yang terdampak dulu.') +
+      (unknown ? ' Saran sementara: bisa naik setelah dampak yang belum diketahui diperbarui selama penanganan.' : '');
+  const tag = noSug
+    ? level
+      ? { cls: 'p-tag t-info', t: 'Dipilih pelapor' }
+      : { cls: 'p-tag t-caution', t: 'Wajib dipilih' }
+    : differs
+      ? { cls: 'p-tag t-caution', t: 'Diubah pelapor' }
+      : { cls: 'p-tag t-info', t: unknown ? 'Otomatis · sementara' : 'Otomatis' };
+  const showErr = !!levelError && !level;
   return (
     <>
-      <div className="in-sevauto">
+      <div className="in-sevauto" style={showErr ? { boxShadow: 'inset 0 0 0 1.5px var(--error-ink)' } : undefined}>
         <div className="r1">
-          <span className={'p-tag ' + SEV_TAG_CLS[level]}><span className="dot"></span>{SEV_LABEL[level]}</span>
-          <span className="p-cap">setara {SEV_EQUIV[level]}</span>
-          <span className={differs ? 'p-tag t-caution' : 'p-tag t-info'} style={{ height: 20, fontSize: 11 }}>
-            {differs ? 'Diubah pelapor' : 'Otomatis'}
-          </span>
+          {level ? (
+            <span className={'p-tag ' + SEV_TAG_CLS[level]}><span className="dot"></span>{SEV_LABEL[level]}</span>
+          ) : (
+            <b style={{ fontSize: 14 }}>Belum bisa disarankan</b>
+          )}
+          <span className={tag.cls} style={{ height: 20, fontSize: 11 }}>{tag.t}</span>
           <span style={{ flex: 1 }}></span>
-          <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={() => setEditing(!editing)}>
-            {editing ? 'Selesai' : 'Ubah'}
-          </button>
+          {!noSug && (
+            <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={() => setEditing(!editing)}>
+              {editing ? 'Selesai' : 'Ubah'}
+            </button>
+          )}
         </div>
         <span className="p-cap">{why}</span>
       </div>
-      {editing && (
+      {showErr && (
+        <span className="p-help err" role="alert" style={{ marginTop: 6 }}>
+          <Icon name="warn" size={14} />
+          Pilih tingkat keparahan dulu sebelum lanjut.
+        </span>
+      )}
+      {open && (
         <div className="in-seg5" role="radiogroup" aria-label="Keparahan awal" style={{ marginTop: 10 }}>
           {SEVERITIES.map((k) => (
             <button key={k} type="button" role="radio" aria-checked={level === k} onClick={() => onPick(k)}>

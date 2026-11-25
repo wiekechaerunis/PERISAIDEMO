@@ -1,19 +1,19 @@
-// Board: I13 (1.2 Form · langkah 2, Kejadian & dampak) + S14, S15, S17, S18 (pemilih), S01 (validasi) — FR-INS-02..06
-import { formatWibFull } from '@/lib/format';
-import { demoNow } from '@/services/mock/clock';
-import { useEffect, useMemo, useRef, useState } from 'react';
+// Board: I13 (langkah 2 Dampak), I13u/I13ue (dampak belum diketahui, keparahan wajib) + S14, S15, S17, S18 (pemilih), S01 (validasi).
+// B-6: tanpa kartu catatan keparahan. B-4: tanpa kartu Pengajuan. B-11: Belum diketahui. B-12: Lainnya + Tindakan awal.
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReportFormShell } from '../components/ReportFormShell';
 import { CopilotPanel } from '../copilot/CopilotPanel';
 import { CategoryFields } from '../components/CategoryFields';
 import { ImpactAxes } from '../components/ImpactAxes';
-import { SeverityAuto } from '../components/SeverityAuto';
+import { SeverityAuto, cannotSuggest } from '../components/SeverityAuto';
 import { AiTag, FieldError } from '../components/AiTag';
-import { MAX_DAMPAK, TIMS, severityParts, toggleExclusive, validateStep2 } from '../components/step2Data';
+import { MAX_DAMPAK, MAX_LAIN_TIM, MAX_TINDAKAN, TIMS, bareInput, severityParts, toggleExclusive, validateStep2 } from '../components/step2Data';
 import { Icon } from '@/components/ui/Icon';
-import { useDraftStore } from '../logic/draft';
+import { unknownImpacts, useDraftStore } from '../logic/draft';
+import { saveDraftNow } from '../logic/draftSave';
 import { useDemoStore } from '@/services/mock/store';
-import { nextNumber, suggestedSeverityOf } from '../logic/submit';
+import { suggestedSeverityOf } from '../logic/submit';
 import { STEP_ROUTES, stepsOf } from '../logic/steps';
 import type { Severity } from '@/lib/severity';
 
@@ -21,30 +21,33 @@ export function ReportStep2Page() {
   const navigate = useNavigate();
   const { draft, patch } = useDraftStore();
   const config = useDemoStore((s) => s.config);
-  const incidents = useDemoStore((s) => s.incidents);
   const [tried, setTried] = useState(false);
   const [toast, setToast] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  const nomor = useMemo(() => nextNumber('INS-SEN', incidents.map((i) => i.no)), [incidents]);
-  const suggested: Severity = suggestedSeverityOf(draft, config) ?? 'sangat-rendah';
-  const level: Severity = draft.severityManual && draft.severity ? draft.severity : suggested;
-  const differs = level !== suggested;
-  const all = validateStep2(draft, differs);
+  const unknown = unknownImpacts(draft).length > 0;
+  const raw = suggestedSeverityOf(draft, config);
+  // tanpa dampak sama sekali (belum memilih sumbu) tetap memakai saran terendah seperti sebelumnya
+  const suggested: Severity | null = raw ?? (unknown ? null : 'sangat-rendah');
+  const noSug = cannotSuggest(suggested, unknown);
+  const level: Severity | null = draft.severityManual && draft.severity ? draft.severity : suggested;
+  const differs = !noSug && level !== null && level !== suggested;
+  const all = validateStep2(draft, differs, noSug && !level);
   const errors = tried ? all : {};
   const nErr = Object.keys(all).length;
   const ai = (f: string) => draft.aiFilled.includes(f);
 
   const pickLevel = (k: Severity) =>
-    patch(k === suggested ? { severity: null, severityManual: false } : { severity: k, severityManual: true });
+    patch(!noSug && k === suggested ? { severity: null, severityManual: false } : { severity: k, severityManual: true });
   const next = () => {
     setTried(true);
     if (nErr > 0) return;
-    patch({ severity: level });
+    if (level) patch({ severity: level });
     navigate(STEP_ROUTES.lampiran);
   };
   const save = () => {
+    saveDraftNow();
     setToast(true);
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setToast(false), 2500);
@@ -81,13 +84,13 @@ export function ReportStep2Page() {
       <section className="p-card in-sec">
         <h2 className="in-h">Seberapa parah?</h2>
         <SeverityAuto
-          suggested={suggested} level={level} parts={severityParts(draft)} reason={draft.severityReason}
-          reasonError={errors.severityReason} onPick={pickLevel} onReason={(t) => patch({ severityReason: t })}
+          suggested={suggested} level={level} parts={severityParts(draft)} unknown={unknown} reason={draft.severityReason}
+          reasonError={errors.severityReason} levelError={!!errors.severity} onPick={pickLevel} onReason={(t) => patch({ severityReason: t })}
         />
       </section>
 
       <section className="p-card in-sec">
-        <h2 className="in-h">Penanganan di lokasi</h2>
+        <h2 className="in-h">Penanganan</h2>
         <div className="p-field">
           <span className="p-lbl" style={{ color: 'var(--ink)' }}>
             Sudah ada yang menangani? <span style={{ fontWeight: 500, color: 'var(--ink-muted)' }}>· opsional</span><AiTag on={ai('handledBy')} />
@@ -99,31 +102,43 @@ export function ReportStep2Page() {
                 onClick={() => patch({ handledBy: toggleExclusive(draft.handledBy, k, 'belum') })}
               >{l}</button>
             ))}
+            <button
+              type="button" className="p-chip" aria-pressed={draft.handledOther !== null}
+              onClick={() => patch(draft.handledOther !== null ? { handledOther: null } : { handledOther: '', handledBy: draft.handledBy.filter((x) => x !== 'belum') })}
+            >Lainnya</button>
           </div>
           <span className="p-help">Boleh lebih dari satu. Pilih Belum ada kalau belum ada yang datang. Nama mitra dan kontraknya dicatat PIC saat penanganan.</span>
+          {draft.handledOther !== null && (
+            <div className="p-field" style={{ marginTop: 8 }}>
+              <span className="p-lbl" style={{ color: 'var(--ink)' }}>Sebutkan<span className="p-req">*</span></span>
+              <label className={'p-input' + (errors.handledOther ? ' err' : '')}>
+                <input
+                  aria-label="Sebutkan yang menangani" maxLength={MAX_LAIN_TIM} placeholder="mis. Warga, perangkat desa, Damkar" style={bareInput}
+                  value={draft.handledOther} onChange={(e) => patch({ handledOther: e.target.value })}
+                />
+              </label>
+              <span className="p-help row"><span></span><span>{draft.handledOther.length}/{MAX_LAIN_TIM}</span></span>
+              <FieldError text={errors.handledOther} />
+            </div>
+          )}
+        </div>
+        <div className="p-field">
+          <span className="p-lbl" style={{ color: 'var(--ink)' }}>
+            Tindakan awal <span style={{ fontWeight: 500, color: 'var(--ink-muted)' }}>· opsional</span>
+          </span>
+          <textarea
+            className="p-input p-area" aria-label="Tindakan awal" maxLength={MAX_TINDAKAN}
+            style={{ minHeight: 64, border: 0, font: 'inherit', resize: 'vertical', width: '100%', boxSizing: 'border-box' }}
+            placeholder="mis. Area diamankan, panel ditutup sementara, Polsek dihubungi." value={draft.initialAction}
+            onChange={(e) => patch({ initialAction: e.target.value })}
+          />
+          <span className="p-help row"><span>Yang sudah dilakukan di lokasi.</span><span>{draft.initialAction.length}/{MAX_TINDAKAN}</span></span>
         </div>
       </section>
     </>
   );
 
-  const aside = (
-    <>
-      <section className="p-card">
-        <h2 className="in-h" style={{ marginBottom: 12 }}>Pengajuan</h2>
-        <dl className="lk-kv1">
-          <dt>Nomor</dt><dd><span className="p-mono" style={{ fontSize: 12 }}>{nomor}</span></dd>
-          <dt>Status</dt><dd><span className="p-tag t-draft">Draf</span></dd>
-          <dt>Terakhir disimpan</dt><dd>{formatWibFull(demoNow())}</dd>
-          <dt>Dikirim ke</dt><dd>Semua Pejabat Berwenang KKKS</dd>
-        </dl>
-      </section>
-      <CopilotPanel step={2} />
-      <div className="p-note" style={{ alignItems: 'flex-start' }}>
-        <Icon name="info" size={16} style={{ flex: 'none', marginTop: 1 }} />
-        <span>Keparahan disarankan dari dampak yang Anda isi. Pejabat Berwenang menetapkan level resmi.</span>
-      </div>
-    </>
-  );
+  const aside = <CopilotPanel step={2} />;
 
   return (
     <>

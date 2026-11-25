@@ -25,7 +25,7 @@ import { ReportStep3Page } from '@/features/insiden/pages/ReportStep3Page';
 import { ReportStep4Page } from '@/features/insiden/pages/ReportStep4Page';
 import { ReportKerawananDetailPage } from '@/features/insiden/pages/ReportKerawananDetailPage';
 import { ReportStep2Page } from '@/features/insiden/pages/ReportStep2Page';
-import { DraftEditRoute } from '@/features/insiden/pages/DraftEditRoute';
+import { DraftEditRoute, NewReportRoute } from '@/features/insiden/pages/DraftEditRoute';
 import { KonfigurasiDaftarPage } from '@/features/konfigurasi/pages/KonfigurasiDaftarPage';
 import { MatriksKeparahanPage } from '@/features/konfigurasi/pages/MatriksKeparahanPage';
 import { TenggatPage } from '@/features/konfigurasi/pages/TenggatPage';
@@ -72,7 +72,7 @@ function IncidentRoute() {
 const router = createBrowserRouter([
   { path: '/', element: <Navigate to="/insiden" replace /> },
   { path: '/insiden', element: <Responsive routeKey="/insiden" desktop={<IncidentListPage />} /> },
-  { path: '/insiden/baru', element: <Navigate to="/insiden/baru/temuan" replace /> },
+  { path: '/insiden/baru', element: <NewReportRoute /> },
   { path: '/insiden/baru/temuan', element: <Responsive routeKey="/insiden/baru/temuan" desktop={<ReportStep1Page />} /> },
   { path: '/insiden/baru/kejadian', element: <Responsive routeKey="/insiden/baru/kejadian" desktop={<ReportStep2Page />} /> },
   { path: '/insiden/baru/lampiran', element: <Responsive routeKey="/insiden/baru/lampiran" desktop={<ReportStep3Page />} /> },

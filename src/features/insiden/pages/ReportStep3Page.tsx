@@ -2,15 +2,13 @@
 import { demoNow } from '@/services/mock/clock';
 import { useMemo, useRef, useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
-import { formatWibFull } from '@/lib/format';
 
-import { useDemoStore } from '@/services/mock/store';
 import { ReportFormShell } from '../components/ReportFormShell';
 import { AiMsg, CopilotFrame, MeMsg, QuickReplies } from '../copilot/parts';
 import { extLabel, formatSize, isImage, useAttachmentUpload } from '../logic/attachments';
 import { useDraftStore } from '../logic/draft';
 import { stepsOf, STEP_ROUTES } from '../logic/steps';
-import { nextNumber } from '../logic/submit';
+import { saveDraftNow } from '../logic/draftSave';
 
 const CAP_SUGGESTION = 'Jalur kabel yang terpotong di sisi panel';
 const hhmm = () => demoNow().slice(11, 16);
@@ -18,7 +16,6 @@ const hhmm = () => demoNow().slice(11, 16);
 const BTN_ICO = { width: 36, height: 36 } as const;
 
 export function ReportStep3Page() {
-  const incidents = useDemoStore((s) => s.incidents);
   const markAi = useDraftStore((s) => s.markAi);
   const aiFilled = useDraftStore((s) => s.draft.aiFilled);
   const { attachments, rejected, add, remove, removeRejected, setCaption, preview, canPreview } = useAttachmentUpload({
@@ -32,7 +29,6 @@ export function ReportStep3Page() {
   const [q3, setQ3] = useState<'a' | 'b' | null>(null);
   const time = useMemo(hhmm, []);
 
-  const nomor = nextNumber('INS-SEN', incidents.map((i) => i.no));
   const pick = () => inputRef.current?.click();
   const total = attachments.length + rejected.length;
   const photos = attachments.filter((a) => isImage(a.name));
@@ -156,15 +152,6 @@ export function ReportStep3Page() {
 
   const aside = (
     <>
-      <section className="p-card">
-        <h2 className="in-h" style={{ marginBottom: 12 }}>Pengajuan</h2>
-        <dl className="lk-kv1">
-          <dt>Nomor</dt><dd><span className="p-mono" style={{ fontSize: 12 }}>{nomor}</span></dd>
-          <dt>Status</dt><dd><span className="p-tag t-draft">Draf</span></dd>
-          <dt>Terakhir disimpan</dt><dd>{formatWibFull(demoNow())}</dd>
-          <dt>Dikirim ke</dt><dd>Semua Pejabat Berwenang KKKS</dd>
-        </dl>
-      </section>
       <CopilotFrame status="Memeriksa lampiran" showRestart onRestart={restart}>
         <div className="cp-th" role="log" aria-live="polite">
           <AiMsg time={time}>
@@ -243,10 +230,6 @@ export function ReportStep3Page() {
           <button type="button" className="ib send" aria-label="Kirim"><Icon name="send" size={16} /></button>
         </div>
       </CopilotFrame>
-      <div className="p-note" style={{ alignItems: 'flex-start' }}>
-        <Icon name="lock" size={16} />
-        <span>Setelah diajukan, isi dan lampiran terkunci sampai diperiksa.</span>
-      </div>
       {saved && (
         <div className="in-toastpos rb-toast">
           <div className="p-toast" role="status">
@@ -269,7 +252,7 @@ export function ReportStep3Page() {
       aside={aside}
       back={{ label: 'Sebelumnya', to: STEP_ROUTES.kejadian }}
       actions={[
-        { label: 'Simpan draf', onClick: () => setSaved(true) },
+        { label: 'Simpan draf', onClick: () => { saveDraftNow(); setSaved(true); } },
         { label: 'Berikutnya', to: STEP_ROUTES.ringkasan, variant: 'primary' },
       ]}
     />

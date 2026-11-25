@@ -67,7 +67,7 @@ function EmptyReview({ kind, no }: { kind: 'kosong' | 'peran' | 'tidak-ada' | 'd
     diputus: ['Insiden ini tidak lagi menunggu pemeriksaan.', 'Keputusan sudah dicatat. Buka detail insiden untuk melihat hasilnya.'],
   }[kind];
   return (
-    <AppShell nav="insiden" title="Insiden" subtitle="Laporan insiden organisasi Anda" action={{ to: '/insiden/baru/temuan', label: 'Buat laporan' }}>
+    <AppShell nav="insiden" title="Insiden" subtitle="Laporan insiden organisasi Anda" action={{ to: '/insiden/baru', label: 'Buat laporan' }}>
       <section className="p-card" style={{ padding: 0, overflow: 'hidden', flex: 1 }}>
         <div className="p-toolbar"><h2 className="p-h2">Insiden</h2></div>
         {kind === 'kosong' && (

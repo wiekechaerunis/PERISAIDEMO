@@ -143,7 +143,7 @@ function ListBody({ state }: { state: ListState | null }) {
         nav="insiden"
         title="Insiden"
         subtitle={isSkkRole ? SUBTITLE.skk : SUBTITLE.insiden}
-        action={state === 'kosong' ? undefined : { to: '/insiden/baru/temuan', label: 'Buat laporan' }}
+        action={state === 'kosong' ? undefined : { to: '/insiden/baru', label: 'Buat laporan' }}
       >
         {state === 'memuat' ? <LoadingCard /> : state === 'kosong' ? <EmptyCard role={role} /> : <FailedCard onRetry={retry} />}
       </AppShell>
@@ -169,7 +169,7 @@ function ListBody({ state }: { state: ListState | null }) {
       subtitle={tab === 'kerawanan' ? SUBTITLE.kerawanan : subtitle}
       tabs={tabs}
       tabsLabel="Insiden dan kerawanan"
-      action={tab === 'kerawanan' ? { to: '/insiden/baru/temuan', label: 'Catat kerawanan' } : { to: '/insiden/baru/temuan', label: 'Buat laporan' }}
+      action={tab === 'kerawanan' ? { to: '/insiden/baru?jenis=kerawanan', label: 'Catat kerawanan' } : { to: '/insiden/baru', label: 'Buat laporan' }}
     >
       {tab === 'kerawanan' ? (
         <KerawananTable />

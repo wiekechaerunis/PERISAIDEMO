@@ -156,12 +156,14 @@ export function draftFromIncident(i: Incident): ReportDraft {
   return {
     ...emptyDraft(),
     no: i.no, createdBy: i.reporter, savedAt: i.timeline?.[i.timeline.length - 1]?.at ?? i.occurredAt,
-    hasImpact: 'ya', kind: 'insiden', date: i.occurredAt.slice(0, 10), time: i.occurredAt.slice(11, 16), title: i.title,
-    locationName: i.location, lat: d.lat, lng: d.lng, wk: i.wk, patokan: d.patokan, story: d.story, category: i.category,
+    hasImpact: i.status === 'draf' && !d.axes.length ? null : 'ya', kind: 'insiden', date: i.occurredAt.slice(0, 10), time: i.occurredAt.slice(11, 16), title: i.title,
+    lat: d.lat, lng: d.lng, wk: i.wk, patokan: d.patokan, story: d.story, category: i.category || null,
     jenis: d.jenis, securityImpact: d.securityImpact, axes: d.axes, lossIdr: d.lossIdr, ops: d.ops, opsHours: d.opsHours,
     ongoing: d.ongoing, casualties: d.casualties, severity: d.reporterSeverity ?? i.severity,
     severityManual: !!d.reporterSeverity && d.reporterSeverity !== d.suggestedSeverity, severityReason: d.severityReason,
-    handledBy: d.handledBy,
+    handledBy: d.handledBy, handledOther: d.handledOther ?? null, initialAction: d.initialAction ?? '',
+    infoSource: d.infoSource ?? null, lossUnknown: !!d.lossUnknown, opsUnknown: !!d.opsUnknown, envNote: d.envNote ?? '', dataNote: d.dataNote ?? '',
+    locationName: d.locationName ?? i.location,
     attachments: d.attachments.map((a, n) => ({ id: `att-${i.no}-${n}`, name: a.name, sizeKb: a.sizeKb, caption: a.caption })),
   };
 }

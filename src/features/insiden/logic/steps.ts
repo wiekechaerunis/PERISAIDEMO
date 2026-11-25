@@ -1,6 +1,7 @@
 import type { ReportKind } from '@/lib/reportType';
 
-export const STEPS_INSIDEN = ['Temuan', 'Kejadian & dampak', 'Lampiran', 'Ringkasan'];
+// B-2: stepper Waktu & lokasi / Dampak / Lampiran / Ringkasan
+export const STEPS_INSIDEN = ['Waktu & lokasi', 'Dampak', 'Lampiran', 'Ringkasan'];
 export const STEPS_KERAWANAN = ['Temuan', 'Detail & lampiran'];
 export const stepsOf = (kind: ReportKind) => (kind === 'insiden' ? STEPS_INSIDEN : STEPS_KERAWANAN);
 

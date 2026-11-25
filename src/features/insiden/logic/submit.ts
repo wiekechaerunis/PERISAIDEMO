@@ -1,4 +1,4 @@
-import type { ReportDraft } from './draft';
+import { UNKNOWN, type ReportDraft } from './draft';
 import { demoNow } from '@/services/mock/clock';
 import type { Incident, Kerawanan, ModuleConfig } from '@/services/types';
 import { suggestSeverity, type ImpactInput } from '@/lib/severity';
@@ -21,11 +21,12 @@ export function nextNumber(prefix: 'INS-SEN' | 'KRW-SEN' | 'TL-SEN', existing: s
 
 export function impactInputOf(d: ReportDraft, cfg: ModuleConfig): ImpactInput {
   return {
-    ops: d.axes.includes('prop') ? d.ops : null,
+    // B-11: isian "Belum diketahui" tidak dihitung; saran memakai dampak yang sudah diketahui saja
+    ops: d.axes.includes('prop') && !d.opsUnknown ? d.ops : null,
     casualties: d.axes.includes('man') ? d.casualties : {},
-    environment: d.axes.includes('ling'),
-    data: d.axes.includes('data'),
-    lossIdr: d.axes.includes('prop') ? (d.lossIdr ?? 0) : 0,
+    environment: d.axes.includes('ling') && d.envNote !== UNKNOWN,
+    data: d.axes.includes('data') && d.dataNote !== UNKNOWN,
+    lossIdr: d.axes.includes('prop') && !d.lossUnknown ? (d.lossIdr ?? 0) : 0,
     kursIdrPerUsd: cfg.kursIdrPerUsd,
   };
 }
@@ -48,11 +49,26 @@ export function buildIncident(d: ReportDraft, no: string, reporter: string, org:
     source: 'form',
     detail: {
       story: d.story, securityImpact: d.securityImpact, axes: d.axes, ops: d.ops, opsHours: d.opsHours, ongoing: d.ongoing,
-      lossIdr: d.lossIdr, casualties: d.casualties, handledBy: d.handledBy, initialAction: d.initialAction, patokan: d.patokan, lat: d.lat, lng: d.lng,
+      lossIdr: d.lossUnknown ? null : d.lossIdr, casualties: d.casualties, handledBy: d.handledBy, initialAction: d.initialAction, patokan: d.patokan, lat: d.lat, lng: d.lng,
+      infoSource: d.infoSource ?? undefined, lossUnknown: d.lossUnknown, opsUnknown: d.opsUnknown, envNote: d.envNote, dataNote: d.dataNote,
+      handledOther: d.handledOther ?? undefined, locationName: d.locationName,
       attachments: d.attachments.map((a) => ({ name: a.name, sizeKb: a.sizeKb, caption: a.caption })),
       reporterSeverity: severity, severityReason: d.severityReason, suggestedSeverity: suggestedSeverityOf(d, cfg), jenis: d.jenis,
     },
     timeline: [{ at: demoNow(), by: reporter, text: 'Mengajukan laporan.' }],
+  };
+}
+
+/** Draf tersimpan sebagai insiden berstatus Draf (B-1, B-9): bernomor, terlihat rekan organisasi (ADJ-18). */
+export function buildDraftIncident(d: ReportDraft, no: string, reporter: string, org: string, cfg: ModuleConfig, prev?: Incident): Incident {
+  const i = buildIncident(d, no, reporter, org, cfg);
+  // laporan Perlu perbaikan tetap berstatus itu saat disimpan (catatan pemeriksa dipertahankan)
+  const keep = prev && prev.status !== 'draf' ? { ...prev, status: prev.status } : {};
+  return {
+    ...keep,
+    ...i, title: d.title.trim() || 'Draf tanpa judul', category: d.category ? i.category : '', status: prev && prev.status !== 'draf' ? prev.status : 'draf', verifyDueAt: undefined,
+    severity: d.severity ?? suggestedSeverityOf(d, cfg),
+    timeline: [...(prev?.timeline ?? []), { at: demoNow(), by: reporter, text: prev ? 'Menyimpan draf.' : 'Draf dibuat' }],
   };
 }
 

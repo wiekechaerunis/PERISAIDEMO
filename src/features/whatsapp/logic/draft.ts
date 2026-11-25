@@ -8,7 +8,8 @@ import type { WaAiField, WaDraft, WaMessage } from '@/services/types';
 export const TOAST_DELETED = 'Draf dihapus. Pesan WhatsApp sumbernya tetap ada di Pemantauan WhatsApp.';
 export const TOAST_UNLINKED = 'Tautan pesan dilepas. Pesan kembali ke kotak masuk.';
 
-export const WA_STEPS = ['Temuan', 'Kejadian & dampak', 'Lampiran', 'Ringkasan'];
+// B-2: stepper sama dengan form Lapor
+export const WA_STEPS = ['Waktu & lokasi', 'Dampak', 'Lampiran', 'Ringkasan'];
 export const WA_ROUTES = {
   inbox: '/pemantauan-whatsapp',
   temuan: '/insiden/wa/temuan',

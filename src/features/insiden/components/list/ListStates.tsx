@@ -79,7 +79,7 @@ export function EmptyCard({ role }: { role: Role }) {
           Semoga tetap begitu. Bila terjadi, laporkan dari sini atau dari pesan WhatsApp.
         </span>
         {canCreateReport(role) && (
-          <Link to="/insiden/baru/temuan" className="p-btn p-btn-primary" style={{ marginTop: 8 }}>
+          <Link to="/insiden/baru" className="p-btn p-btn-primary" style={{ marginTop: 8 }}>
             <Icon name="plus" size={16} />
             Buat laporan
           </Link>

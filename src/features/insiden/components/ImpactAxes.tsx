@@ -61,25 +61,41 @@ export function ImpactAxes({ draft, onPatch, aiFilled, errors, hideAxisPicker }:
             <span className="p-input" style={{ maxWidth: 320 }}>
               <span className="affix">Rp</span>
               <input
-                className="num" style={{ ...bareInput, textAlign: 'right' }} inputMode="numeric" aria-label="Perkiraan kerugian"
-                value={draft.lossIdr ? draft.lossIdr.toLocaleString('id-ID') : ''} placeholder="0"
+                className={draft.lossUnknown ? 'ph' : 'num'} style={{ ...bareInput, textAlign: 'right' }} inputMode="numeric" aria-label="Perkiraan kerugian"
+                value={draft.lossUnknown ? 'Belum diketahui' : draft.lossIdr ? draft.lossIdr.toLocaleString('id-ID') : ''} placeholder="0"
+                disabled={draft.lossUnknown}
                 onChange={(e) => { const d = digits(e.target.value).slice(0, 15); onPatch({ lossIdr: d ? Number(d) : null }); }}
               />
             </span>
+            <button
+              type="button" className="in-checked" role="checkbox" aria-checked={draft.lossUnknown}
+              onClick={() => onPatch(draft.lossUnknown ? { lossUnknown: false } : { lossUnknown: true, lossIdr: null })}
+              style={{ fontSize: 13, color: 'var(--ink)', alignSelf: 'flex-start' }}
+            >
+              <span className={draft.lossUnknown ? 'p-check on' : 'p-check'}><Icon name="check" size={11} /></span>
+              Belum diketahui, masih dihitung
+            </button>
             <span className="p-help">Isi dalam Rupiah. Sistem mengonversi ke USD dengan kurs tanggal kejadian untuk menghitung saran keparahan.</span>
           </div>
           <div className="p-field">
             <span className="p-lbl" style={{ color: 'var(--ink)' }}>Kondisi operasi<span className="p-req">*</span><AiTag on={ai('ops')} /></span>
             <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
               <div className="in-chips" role="radiogroup" aria-label="Dampak operasional">
-                {OPS.map(([k, l]) => (
-                  <button
-                    key={k} type="button" role="radio" className="p-chip" aria-pressed={draft.ops === k} aria-checked={draft.ops === k}
-                    onClick={() => onPatch(k === 'tidak' ? { ops: k, opsHours: null, ongoing: false } : { ops: k })}
-                  >{l}</button>
-                ))}
+                {OPS.map(([k, l]) => {
+                  const on = !draft.opsUnknown && draft.ops === k;
+                  return (
+                    <button
+                      key={k} type="button" role="radio" className="p-chip" aria-pressed={on} aria-checked={on}
+                      onClick={() => onPatch(k === 'tidak' ? { ops: k, opsUnknown: false, opsHours: null, ongoing: false } : { ops: k, opsUnknown: false })}
+                    >{l}</button>
+                  );
+                })}
+                <button
+                  type="button" role="radio" className="p-chip" aria-pressed={draft.opsUnknown} aria-checked={draft.opsUnknown}
+                  onClick={() => onPatch({ opsUnknown: true, ops: null, opsHours: null, ongoing: false })}
+                >Belum diketahui</button>
               </div>
-              {draft.ops && draft.ops !== 'tidak' && (
+              {!draft.opsUnknown && draft.ops && draft.ops !== 'tidak' && (
                 <div style={{ flexBasis: '100%', display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--surface-subtle)' }}>
                   <span className="p-lbl" style={{ color: 'var(--ink)' }}>{hoursLabel}<span className="p-req">*</span></span>
                   <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>

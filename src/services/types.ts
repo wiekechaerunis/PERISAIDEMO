@@ -65,6 +65,18 @@ export interface IncidentDetail {
   severityReason: string;
   suggestedSeverity: Severity | null;
   jenis: string | null;
+  /** B-3: Temuan langsung / Laporan pihak lain */
+  infoSource?: 'langsung' | 'pihak-lain';
+  /** B-11: dampak yang ditandai Belum diketahui saat melapor */
+  lossUnknown?: boolean;
+  opsUnknown?: boolean;
+  /** sebaran dampak dan besar data bocor (teks chip, termasuk "Belum diketahui") */
+  envNote?: string;
+  dataNote?: string;
+  /** B-12: penangan lain (chip Lainnya) */
+  handledOther?: string;
+  /** nama lokasi dari peta (judul kartu Lokasi) */
+  locationName?: string;
 }
 
 /** Hasil pengamanan (F2, wajib) dan status proses hukum (F3, opsional) pada Data penutupan. */
