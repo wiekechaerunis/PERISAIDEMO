@@ -12,7 +12,7 @@ export class DashboardLogic extends DCLogic {
     if (z === 'loc') { z = kk ? 'own' : 'sbs'; loc = 'mub'; }
     else if (kk) z = 'own';
     if (p.statusTerbuka === '' ) p.statusTerbuka = null;
-    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
+    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka), ask: p.tanya === true ? 'kkks' : (p.tanya || null), askAll: false };
   }
   renderVals() {
     const skk = (this.props.peran ?? 'skk') !== 'kkks';
@@ -302,6 +302,39 @@ export class DashboardLogic extends DCLogic {
     const stBar = st.slice(0, 3);
     // ===== temuan AI (pola, bukan tindakan) =====
     const nop = () => {};
+    // ===== Tanya data: jawaban menggantikan isi kartu Temuan AI (4 pertanyaan demo) =====
+    const ak = s.ask || '';
+    const askOn = !!ak;
+    const QS = [['kritis', skk ? 'insiden Kritis di Sumbagsel bulan Juni' : 'insiden Kritis bulan Juni', 'daftar'], ['kkks', skk ? 'KKKS dengan kerugian terbesar' : 'WK dengan kerugian terbesar', 'peringkat'], ['banding', 'pencurian Maret vs Juni', 'perbandingan'], ['telat', 'insiden lewat tenggat', 'daftar']];
+    const qOf = (k) => (QS.find((q) => q[0] === k) || [k, 'kebakaran kilang bulan depan'])[1];
+    const pick = (k) => () => this.setState({ ask: k, askAll: false });
+    const sugs = QS.map(([k, l, kind]) => ({ l, k: kind, go: pick(k) }));
+    const res = ['kkks', 'kritis', 'banding', 'telat'].includes(ak);
+    const askScopeL = loc ? loc.name : (skk ? (lvl === 'nat' ? 'Seluruh wilayah' : W[z].n) : 'Wilayah kerja Anda');
+    const mine = (r) => skk || AREA[r[1]][7] === SEN;
+    // peringkat KKKS/WK
+    const askBase = loc ? A.filter((a) => a.id === loc.id) : (skk && lvl !== 'nat' ? A.filter((a) => a.w === z) : A);
+    const agg = {}, top = {};
+    askBase.forEach((a) => { const k = skk ? a.kk : a.wk; agg[k] = (agg[k] || 0) + a.rp; if (!top[k] || a.rp > top[k].rp) top[k] = a; });
+    const aRows = Object.entries(agg).filter((r) => r[1] > 0).sort((a, b) => b[1] - a[1]);
+    const aTot = sum(aRows.map((r) => r[1])) || 1, aMax = aRows.length ? aRows[0][1] : 1;
+    const ansRows = aRows.slice(0, s.askAll ? 99 : 4).map(([k, v], i) => ({ no: String(i + 1), name: k.replace(/^PT /, ''), v: rp(v), p: Math.round(v / aTot * 100) + '% dari total', w: (v / aMax * 100).toFixed(1) + '%', go: skk ? go(top[k].w, top[k].id) : go(z, top[k].id) }));
+    // daftar insiden
+    const stName = (r) => r[5] ? 'Lewat tenggat' : stDef[r[4]][0];
+    const kritL = INC.filter((r) => mine(r) && r[3] === 4 && r[9] === 5 && (!skk || AREA[r[1]][1] === 'sbs'));
+    const kritMei = INC.filter((r) => mine(r) && r[3] === 4 && r[9] === 4 && (!skk || AREA[r[1]][1] === 'sbs')).length;
+    const lateA = lateList;
+    const lSrc = ak === 'kritis' ? kritL : lateA;
+    const lRows = lSrc.slice(0, s.askAll ? 99 : 4).map((r) => ({ ...incRow(r), x: stName(r), xc: r[5] ? 'late' : '' }));
+    const lateBy = {}; lateA.forEach((r) => { const w = skk ? W[AREA[r[1]][1]].n : AREA[r[1]][8]; lateBy[w] = (lateBy[w] || 0) + 1; });
+    // perbandingan pencurian per bulan
+    const pcI = INC.filter((r) => mine(r) && r[2] === 0);
+    const perM = [0, 1, 2, 3, 4, 5].map((m) => pcI.filter((r) => r[9] === m).length);
+    const cMax = Math.max(1, ...perM);
+    const dlt = (a, b) => b === a ? { t: 'tetap', cls: 'eq' } : { t: (b > a ? '▲ ' : '▼ ') + Math.abs(Math.round((b - a) / (a || 1) * 100)) + '%', cls: b > a ? 'up' : 'dn' };
+    const cRows = (skk ? WO.map((w) => [W[w].n, (r) => AREA[r[1]][1] === w]) : A0.filter((a) => a[7] === SEN).map((a) => [a[8], (r) => r[1] === a[0]])).map(([n, f]) => { const x = pcI.filter((r) => r[9] === 2 && f(r)).length, y = pcI.filter((r) => r[9] === 5 && f(r)).length; return { n, a: String(x), b: String(y), ...(() => { const d = y - x; return { d: d === 0 ? '0' : (d > 0 ? '+' : '−') + Math.abs(d), cls: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq') }; })(), s: Math.abs(y - x) }; }).filter((r) => r.a !== '0' || r.b !== '0').sort((p, q) => q.s - p.s).slice(0, 3);
+    const CHIPS = { kkks: [skk ? 'Per KKKS' : 'Per WK', 'Kerugian terbesar', askScopeL, 'Semester I 2026'], kritis: ['Level Kritis', skk ? 'Wilayah Sumbagsel' : 'Wilayah kerja Anda', 'Juni 2026'], banding: ['Pencurian/Perampokan', 'Maret vs Juni 2026', skk ? 'Seluruh wilayah' : 'Wilayah kerja Anda'], telat: ['Lewat tenggat', 'Belum ditutup', askScopeL] };
+    const nAll = ak === 'kkks' ? aRows.length : (ak === 'kritis' || ak === 'telat' ? lSrc.length : 0);
     const c0 = cats[0];
     const pctN = NAT.n ? Math.round(ALL.n / NAT.n * 100) : 0, pctR = NAT.r ? Math.round(ALL.r / NAT.r * 100) : 0;
     const mI = [0, 1, 2, 3, 4, 5].filter((i) => moCov[i] > 0); const MOL = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']; const k0 = KR[mI[0]] || 0, k1 = KR[mI[mI.length - 1]] || 0;
@@ -353,7 +386,14 @@ export class DashboardLogic extends DCLogic {
       dtt: dttOn, dttStr: dttOn ? 'true' : 'false', dttCls: dttOn ? 'on' : '', toggleDtt: () => this.setState({ dtt: !s.dtt, kat: null }),
       hasAf: af.length > 0, af,
       dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · ' + PL,
-      ins, aiCap, aiSeg, askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
+      ins, aiCap, aiSeg, aiHd: !askOn ? 'Temuan AI' : (res ? 'Jawaban AI' : 'Tanya data'), askOn, askOff: !askOn, askCls: askOn ? 'on' : '', askTxt: (askOn && ak !== 'saran') ? qOf(ak) : (skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"'), askGo: () => this.setState({ ask: ak && ak !== 'saran' ? ak : 'saran', askAll: false }), askClr: () => this.setState({ ask: null, askAll: false }),
+      askK: ak, aSaran: ak === 'saran', aBlank: ak === 'tidakpaham', aRes: res, aRank: ak === 'kkks', aList: ak === 'kritis' || ak === 'telat', aCmp: ak === 'banding', sugs,
+      askChips: (CHIPS[ak] || []).map((l) => ({ l })), ansRows, lRows,
+      lN: lSrc.length + ' insiden', lS: ak === 'kritis' ? (lSrc.length ? (kritMei ? kritMei + ' insiden Kritis lain pada Mei' : 'tidak ada insiden Kritis lain pada Mei') : 'tidak ada insiden Kritis pada Juni') : Object.entries(lateBy).map(([w, n]) => w + ' ' + n).join(' · '),
+      cA: { l: 'Maret', v: String(perM[2]) }, cB: { l: 'Juni', v: String(perM[5]) }, cD: dlt(perM[2], perM[5]), cMon: MO.map((l, i) => ({ l, v: String(perM[i]), h: Math.max(4, perM[i] / cMax * 40) + 'px', cls: i === 2 || i === 5 ? 'on' : '' })), cAria: 'Pencurian per bulan: ' + MO.map((l, i) => l + ' ' + perM[i]).join(', '), cRows,
+      ansMore: (ak === 'kkks' || ak === 'kritis' || ak === 'telat') && nAll > 4 && !s.askAll, ansMoreL: 'Lihat semua (' + nAll + ')', ansAll: () => this.setState({ askAll: true }),
+      ansFoot: ak === 'kkks' ? (aRows.length ? 'Dibuat AI dari data pada filter ini · klik baris untuk lihat di peta' : 'Tidak ada kerugian tercatat pada filter ini.') : ak === 'banding' ? 'Dibuat AI dari data insiden terverifikasi · per tanggal kejadian' : (lSrc.length ? 'Dibuat AI dari data pada filter ini · klik baris untuk buka insiden' : 'Tidak ada insiden yang cocok.'),
+      actOn: ak === 'kritis' || ak === 'telat' || ak === 'banding', actL: ak === 'kritis' ? 'Terapkan sebagai filter' : ak === 'telat' ? 'Lihat di Status penanganan' : 'Lihat tren', actGo: ak === 'kritis' ? () => this.setState({ ask: null, z: skk ? 'sbs' : z, loc: null, lv: [0, 0, 0, 0, 1] }) : ak === 'telat' ? () => this.setState({ ask: null, stOpen: 3 }) : () => this.setState({ ask: null, kat: 0, m: 'n' }), askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
       kpis,
       crumb, mapT, sites, lvl, locId: loc ? loc.id : null, zKey: lvl + '|' + z + '|' + (loc ? loc.id : ''), goTo: (zz, ll) => this.setState({ z: zz, loc: ll || null }), goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length, per: pFull ? null : { from: PD.from, to: PD.to, label: PD.label } }, askApply: (patch) => this.setState(patch), areaN: Object.fromEntries(A.map((a) => [a.id, a.n])), fOpts: (() => {
       const allA = A0.filter((a) => skk || a[7] === SEN);

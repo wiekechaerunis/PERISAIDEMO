@@ -17,7 +17,7 @@ export function ActionList({ v }: { v: any }) {
 </div>
 <span className="p-tag t-caution">{v.attnCount}</span>
 </div>
-<div className="db-ins">{(v.attn ?? []).map((a: any, k6: number) => (<Fragment key={k6}>
+<div className="db-ins">{(v.attn ?? []).map((a: any, k13: number) => (<Fragment key={k13}>
 <button type="button" className="row" onClick={a.go}>
 <span className={`ic ${a.k}`} aria-hidden="true">
 <svg className="p-ic" viewBox="0 0 24 24" style={{ width: "15px", height: "15px" }}>

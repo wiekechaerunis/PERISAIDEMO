@@ -71,12 +71,13 @@ r.cu = { url: search(), btn: (await perBtn().innerText()).trim(), kpi: await kpi
 await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(150);
 await page.screenshot({ path: `${OUT}/04-rentang-khusus-diterapkan.png` });
 
-// 6. Tanya data ikut periode
+// 6. Tanya data: jawaban tampil di dalam kartu Temuan AI (board Dashboard-TanyaKritis), tanpa dropdown
 const input = () => page.getByRole('textbox', { name: 'Tanya data' });
 await page.evaluate(() => { const el = document.querySelector('.db-ai'); window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 80); });
 await input().fill('insiden Kritis'); await page.waitForTimeout(300); await input().press('Enter'); await page.waitForTimeout(900);
-r.ask = (await page.locator('.db-askpop .kal').innerText().catch(() => '')).trim();
-await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+r.ask = { hd: (await page.locator('.db-ai .hd b').innerText()).trim(), und: (await page.locator('.db-ans .und').innerText().catch(() => '')).replace(/\s+/g, ' '), pop: await page.locator('.db-askpop').count() };
+await page.locator('.db-ai .hd .back').click(); await page.waitForTimeout(200);
+r.ask.back = (await page.locator('.db-ai .hd b').innerText()).trim();
 
 // 7. nilai URL tidak valid diabaikan; Semua waktu kembali ke angka semester
 await page.goto(BASE + '/analitik?periode=99h'); await page.waitForTimeout(800);
@@ -110,7 +111,10 @@ assert.equal(r.cuErr2, 0);
 assert.equal(r.cu.url, '?dari=2026-05-01&sampai=2026-05-15');
 assert.equal(r.cu.btn, '1–15 Mei 2026');
 assert.match(r.cu.sub, /^1–15 Mei 2026 · /);
-assert.match(r.ask, /periode 1–15 Mei 2026/, 'jawaban Tanya data menyebut periode aktif');
+assert.equal(r.ask.hd, 'Jawaban AI');
+assert.match(r.ask.und, /Level Kritis/);
+assert.equal(r.ask.pop, 0, 'tidak ada dropdown jawaban');
+assert.equal(r.ask.back, 'Temuan AI');
 assert.deepEqual(r.invalid, { btn: 'Semua waktu', kpi: '106' });
 assert.equal(r.all.url, '');
 assert.equal(r.all.kpi, '106');

@@ -189,6 +189,76 @@
 .db-ins .tx span{font-size:12px;line-height:16px;color:var(--ink-muted)}
 .db-ins .ch{color:var(--ink-muted)}
 .db-ai .ask{margin-top:auto}
+.db-ai .ask.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.db-ai .ask.on .ph{color:var(--ink)}
+.db-ai .ask.on .go{background:var(--ink);color:var(--surface)}
+.db-ai .ask .clr{width:24px;height:24px;border:0;background:none;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);cursor:pointer}
+.db-ai .ask .clr:hover{background:var(--surface-sunken)}
+.db-ans{display:flex;flex-direction:column;gap:10px;min-height:0}
+.db-ans .und{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.db-ans .und .chip{height:24px;padding:0 10px;border-radius:999px;background:var(--surface-sunken);font-size:12px;font-weight:600;display:inline-flex;align-items:center}
+.db-ans .lst{display:flex;flex-direction:column}
+.db-ans .ar{display:grid;grid-template-columns:20px minmax(0,1fr) auto 16px;gap:12px;align-items:center;border:0;border-top:1px solid var(--border-subtle);background:none;padding:9px 8px;margin:0 -8px;border-radius:var(--radius-md);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.db-ans .ar:first-child{border-top-color:transparent}
+.db-ans .ar:hover{background:var(--surface-subtle)}
+.db-ans .ar .no{font-size:12px;font-weight:700;color:var(--ink-muted);text-align:center}
+.db-ans .ar .nm{display:flex;flex-direction:column;gap:5px;min-width:0}
+.db-ans .ar .nm b{font-size:13px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-ans .ar .bar{height:4px;border-radius:2px;background:var(--surface-sunken);overflow:hidden}
+.db-ans .ar .bar i{display:block;height:100%;background:var(--action-line)}
+.db-ans .ar .v{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.db-ans .ar .v b{font-size:14px;line-height:18px;font-variant-numeric:tabular-nums}
+.db-ans .ar .v span{font-size:11px;line-height:14px;color:var(--ink-muted)}
+.db-ans .ar .ch{color:var(--ink-muted)}
+.db-ans .ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:2px}
+.db-ans .ft .p-cap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.db-ans .ft .more{flex:none;border:0;background:none;padding:2px 4px;margin-right:-4px;font:inherit;font-size:12px;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:2px;cursor:pointer;border-radius:var(--radius-sm)}
+.db-ans .ft .more:hover{background:var(--surface-subtle)}
+.db-ai .hd .back{margin-left:auto;border:0;background:none;padding:2px 6px;font:inherit;font-size:12px;font-weight:500;color:var(--ink-muted);display:inline-flex;align-items:center;gap:4px;cursor:pointer;border-radius:var(--radius-sm)}
+.db-ai .hd .back:hover{color:var(--ink);background:var(--surface-subtle)}
+.db-ans .sug{display:flex;flex-direction:column}
+.db-ans .sq{display:flex;align-items:center;gap:10px;border:0;border-top:1px solid var(--border-subtle);background:none;padding:10px 8px;margin:0 -8px;border-radius:var(--radius-md);font:inherit;font-size:13px;color:var(--ink);text-align:left;cursor:pointer}
+.db-ans .sq:first-child{border-top-color:transparent}
+.db-ans .sq:hover{background:var(--surface-subtle)}
+.db-ans .sq span:not(.k){flex:1}
+.db-ans .sq .k{font-size:11px;color:var(--ink-muted)}
+.db-ans .nope{display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:19px}
+.db-ans .nope span{color:var(--ink-muted)}
+.db-ans .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.db-ans .chips .chip,.db-ans .und .chip{border:0;font:inherit}
+.db-ans .chips .chip{height:28px;padding:0 12px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);font-size:12px;cursor:pointer}
+.db-ans .chips .chip:hover{box-shadow:inset 0 0 0 1px var(--border-control)}
+.db-ans .sum{display:flex;align-items:baseline;gap:8px}
+.db-ans .sum b{font-size:20px;line-height:26px}
+.db-ans .sum span{font-size:12px;color:var(--ink-muted)}
+.db-ans .ir{display:grid;grid-template-columns:8px minmax(0,1fr) auto 16px;gap:12px;align-items:center;border-top:1px solid var(--border-subtle);padding:9px 8px;margin:0 -8px;border-radius:var(--radius-md);color:inherit;text-decoration:none}
+.db-ans .ir:first-child{border-top-color:transparent}
+.db-ans .ir:hover{background:var(--surface-subtle)}
+.db-ans .ir .dot{width:8px;height:8px;border-radius:4px}
+.db-ans .ir .nm{display:flex;flex-direction:column;gap:1px;min-width:0}
+.db-ans .ir .nm b{font-size:13px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-ans .ir .nm>span{font-size:12px;line-height:16px;color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-ans .ir .nm .p-mono{font-size:11px}
+.db-ans .ir .st{font-size:12px;color:var(--ink-muted);white-space:nowrap}
+.db-ans .ir .st.late{color:var(--sev-critical-ink);font-weight:600}
+.db-ans .ir .ch{color:var(--ink-muted)}
+.db-ans .cmp{display:flex;flex-direction:column;gap:12px}
+.db-ans .pair{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+.db-ans .pair>div{display:flex;flex-direction:column;gap:0;padding:10px 12px;border-radius:var(--radius-lg);background:var(--surface-subtle)}
+.db-ans .pair b{font-size:22px;line-height:28px}
+.db-ans .dl{font-size:12px;font-weight:700;white-space:nowrap}
+.db-ans .dl.dn{color:var(--status-success-ink)}.db-ans .dl.up{color:var(--sev-critical-ink)}.db-ans .dl.eq{color:var(--ink-muted)}
+.db-ans .mbar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;height:64px;align-items:end}
+.db-ans .mc{display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end}
+.db-ans .mc i{display:block;width:100%;max-width:28px;border-radius:3px 3px 0 0;background:var(--surface-sunken)}
+.db-ans .mc.on i{background:var(--action-line)}
+.db-ans .mc em{font-style:normal;font-size:11px;line-height:12px;color:var(--ink-muted);order:-1}
+.db-ans .mc.on em{color:var(--ink);font-weight:700}
+.db-ans .mc span{font-size:11px;line-height:14px;color:var(--ink-muted)}
+.db-ans .cr{display:grid;grid-template-columns:minmax(0,1fr) auto 56px;gap:12px;align-items:center;font-size:13px;line-height:18px;padding:6px 0;border-top:1px solid var(--border-subtle)}
+.db-ans .cr:first-child{border-top-color:transparent}
+.db-ans .cr .p-mono{font-size:12px;color:var(--ink-muted)}
+.db-ans .cr .dl{text-align:right}
 /* Temuan AI: kartu terang, garis tepi bergradasi tipis (usulan, warna di luar token DS v2) */
 .db-ai{border:1px solid transparent;color:var(--ink);box-shadow:0 4px 16px rgba(28,29,33,.05);background:radial-gradient(70% 90% at 100% 0%,color-mix(in srgb,var(--action) 16%,transparent) 0%,transparent 70%) padding-box,radial-gradient(60% 80% at 0% 100%,rgba(42,120,214,.06) 0%,transparent 70%) padding-box,linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,var(--action) 0%,color-mix(in srgb,var(--action) 40%,#8DB8EE) 55%,#8DB8EE 100%) border-box}
 .db-ai .hd .ic{background:linear-gradient(135deg,var(--action),color-mix(in srgb,var(--action) 55%,#8DB8EE));color:var(--on-action)}
@@ -268,14 +338,23 @@
         </div></sc-for></div>
 
 
-        <section class="db-ai c7" aria-label="Temuan AI" style="align-self: stretch">
-          <div class="hd"><span class="ic" aria-hidden="true"><svg class="p-ic" viewBox="0 0 24 24" style="width: 16px; height: 16px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg></span><b>Temuan AI</b><span class="p-cap">{{aiCap}}</span></div>
-          <div class="db-ins"><sc-for list="{{ins}}" as="g" hint-placeholder-count="4"><button type="button" class="row" onClick="{{g.go}}">
+        <section class="db-ai c7" aria-label="{{aiHd}}" style="align-self: stretch">
+          <div class="hd"><span class="ic" aria-hidden="true"><svg class="p-ic" viewBox="0 0 24 24" style="width: 16px; height: 16px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg></span><b>{{aiHd}}</b><span class="p-cap">{{aiCap}}</span><sc-if value="{{askOn}}" hint-placeholder-val="{{false}}"><button type="button" class="back" onClick="{{askClr}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 13px; height: 13px"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>Temuan AI</button></sc-if></div>
+          <sc-if value="{{askOff}}" hint-placeholder-val="{{true}}"><div class="db-ins"><sc-for list="{{ins}}" as="g" hint-placeholder-count="4"><button type="button" class="row" onClick="{{g.go}}">
             <span class="m {{g.tone}}">{{g.m}}</span>
             <span class="tx"><b>{{g.t}}</b><span>{{g.d}}</span></span>
             <svg class="p-ic ch" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m9 6 6 6-6 6"></path></svg>
-          </button></sc-for></div>
-          <label class="ask"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"></path></svg><span class="ph">{{askPh}}</span><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></label>
+          </button></sc-for></div></sc-if>
+          <sc-if value="{{askOn}}" hint-placeholder-val="{{false}}"><div class="db-ans" role="region" aria-label="{{aiHd}}">
+            <sc-if value="{{aSaran}}" hint-placeholder-val="{{false}}"><span class="p-cap">Coba tanyakan</span><div class="sug"><sc-for list="{{sugs}}" as="q" hint-placeholder-count="4"><button type="button" class="sq" onClick="{{q.go}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; color: var(--ink-muted); flex: none"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"></path></svg><span>{{q.l}}</span><span class="k">{{q.k}}</span></button></sc-for></div></sc-if>
+            <sc-if value="{{aBlank}}" hint-placeholder-val="{{false}}"><div class="nope"><b>Belum bisa menjawab pertanyaan ini.</b><span>Saya baru mengerti pertanyaan tentang jumlah, kerugian, level, wilayah, KKKS, kategori, bulan, dan tenggat insiden. Coba salah satu:</span><div class="chips"><sc-for list="{{sugs}}" as="q" hint-placeholder-count="4"><button type="button" class="chip" onClick="{{q.go}}">{{q.l}}</button></sc-for></div></div></sc-if>
+            <sc-if value="{{aRes}}" hint-placeholder-val="{{false}}"><div class="und"><span class="p-cap">Dipahami sebagai</span><sc-for list="{{askChips}}" as="c" hint-placeholder-count="3"><span class="chip">{{c.l}}</span></sc-for></div></sc-if>
+            <sc-if value="{{aRank}}" hint-placeholder-val="{{false}}"><div class="lst"><sc-for list="{{ansRows}}" as="r" hint-placeholder-count="4"><button type="button" class="ar" onClick="{{r.go}}" title="Lihat di peta"><span class="no">{{r.no}}</span><span class="nm"><b>{{r.name}}</b><span class="bar" aria-hidden="true"><i style="width: {{r.w}}"></i></span></span><span class="v"><b>{{r.v}}</b><span>{{r.p}}</span></span><svg class="p-ic ch" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m9 6 6 6-6 6"></path></svg></button></sc-for></div></sc-if>
+            <sc-if value="{{aList}}" hint-placeholder-val="{{false}}"><div class="sum"><b>{{lN}}</b><span>{{lS}}</span></div><div class="lst"><sc-for list="{{lRows}}" as="r" hint-placeholder-count="3"><a class="ir" href="{{r.href}}"><span class="dot" style="background: {{r.sc}}" title="{{r.sn}}"></span><span class="nm"><b>{{r.t}}</b><span><span class="p-mono">{{r.id}}</span> · {{r.d}}</span></span><span class="st {{r.xc}}">{{r.x}}</span><svg class="p-ic ch" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m9 6 6 6-6 6"></path></svg></a></sc-for></div></sc-if>
+            <sc-if value="{{aCmp}}" hint-placeholder-val="{{false}}"><div class="cmp"><div class="pair"><div><span class="p-cap">{{cA.l}}</span><b>{{cA.v}}</b><span class="p-cap">insiden</span></div><span class="dl {{cD.cls}}">{{cD.t}}</span><div><span class="p-cap">{{cB.l}}</span><b>{{cB.v}}</b><span class="p-cap">insiden</span></div></div><div class="mbar" aria-label="{{cAria}}"><sc-for list="{{cMon}}" as="m" hint-placeholder-count="6"><span class="mc {{m.cls}}"><i style="height: {{m.h}}"></i><em>{{m.v}}</em><span>{{m.l}}</span></span></sc-for></div><div class="lst"><sc-for list="{{cRows}}" as="r" hint-placeholder-count="3"><div class="cr"><span>{{r.n}}</span><span class="p-mono">{{r.a}} → {{r.b}}</span><span class="dl {{r.cls}}">{{r.d}}</span></div></sc-for></div></div></sc-if>
+            <sc-if value="{{aRes}}" hint-placeholder-val="{{false}}"><div class="ft"><span class="p-cap">{{ansFoot}}</span><span style="display: flex; gap: 2px; align-items: center; flex: none"><sc-if value="{{ansMore}}" hint-placeholder-val="{{false}}"><button type="button" class="more" onClick="{{ansAll}}">{{ansMoreL}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 13px; height: 13px"><path d="m6 9 6 6 6-6"></path></svg></button></sc-if><sc-if value="{{actOn}}" hint-placeholder-val="{{false}}"><button type="button" class="more" onClick="{{actGo}}">{{actL}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 13px; height: 13px"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button></sc-if></span></div></sc-if>
+          </div></sc-if>
+          <label class="ask {{askCls}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"></path></svg><span class="ph" onClick="{{askGo}}">{{askTxt}}</span><sc-if value="{{askOn}}" hint-placeholder-val="{{false}}"><button type="button" class="clr" onClick="{{askClr}}" aria-label="Hapus pertanyaan"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-if><span class="go" aria-hidden="true" onClick="{{askGo}}"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></label>
         </section>
 
         <section class="p-card c5 db-attc" style="align-self: stretch">
@@ -432,7 +511,7 @@
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"peran":{"editor":"enum","options":["skk","kkks"],"default":"skk"},"zoom":{"editor":"enum","options":["nat","sbs","sbu","pst","jbn","loc"],"default":"nat"},"dtt":{"editor":"bool","default":false},"menuUnduh":{"editor":"bool","default":false},"statusTerbuka":{"editor":"enum","options":["","0","1","2","3"],"default":""},"$preview":{"width":1366,"height":2900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"peran":{"editor":"enum","options":["skk","kkks"],"default":"skk"},"zoom":{"editor":"enum","options":["nat","sbs","sbu","pst","jbn","loc"],"default":"nat"},"dtt":{"editor":"bool","default":false},"menuUnduh":{"editor":"bool","default":false},"statusTerbuka":{"editor":"enum","options":["","0","1","2","3"],"default":""},"tanya":{"editor":"enum","options":["","saran","kkks","kritis","banding","telat","tidakpaham"],"default":""},"$preview":{"width":1366,"height":2900}}'>
 class Component extends DCLogic {
   constructor(p) {
     super(p); p = p || {};
@@ -441,7 +520,7 @@ class Component extends DCLogic {
     if (z === 'loc') { z = kk ? 'own' : 'sbs'; loc = 'mub'; }
     else if (kk) z = 'own';
     if (p.statusTerbuka === '' ) p.statusTerbuka = null;
-    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
+    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka), ask: p.tanya === true ? 'kkks' : (p.tanya || null), askAll: false };
   }
   renderVals() {
     const skk = (this.props.peran ?? 'skk') !== 'kkks';
@@ -747,6 +826,39 @@ class Component extends DCLogic {
     const stBar = st.slice(0, 3);
     // ===== temuan AI (pola, bukan tindakan) =====
     const nop = () => {};
+    // ===== Tanya data: jawaban menggantikan isi kartu Temuan AI (4 pertanyaan demo) =====
+    const ak = s.ask || '';
+    const askOn = !!ak;
+    const QS = [['kritis', skk ? 'insiden Kritis di Sumbagsel bulan Juni' : 'insiden Kritis bulan Juni', 'daftar'], ['kkks', skk ? 'KKKS dengan kerugian terbesar' : 'WK dengan kerugian terbesar', 'peringkat'], ['banding', 'pencurian Maret vs Juni', 'perbandingan'], ['telat', 'insiden lewat tenggat', 'daftar']];
+    const qOf = (k) => (QS.find((q) => q[0] === k) || [k, 'kebakaran kilang bulan depan'])[1];
+    const pick = (k) => () => this.setState({ ask: k, askAll: false });
+    const sugs = QS.map(([k, l, kind]) => ({ l, k: kind, go: pick(k) }));
+    const res = ['kkks', 'kritis', 'banding', 'telat'].includes(ak);
+    const askScopeL = loc ? loc.name : (skk ? (lvl === 'nat' ? 'Seluruh wilayah' : W[z].n) : 'Wilayah kerja Anda');
+    const mine = (r) => skk || AREA[r[1]][7] === SEN;
+    // peringkat KKKS/WK
+    const askBase = loc ? A.filter((a) => a.id === loc.id) : (skk && lvl !== 'nat' ? A.filter((a) => a.w === z) : A);
+    const agg = {}, top = {};
+    askBase.forEach((a) => { const k = skk ? a.kk : a.wk; agg[k] = (agg[k] || 0) + a.rp; if (!top[k] || a.rp > top[k].rp) top[k] = a; });
+    const aRows = Object.entries(agg).filter((r) => r[1] > 0).sort((a, b) => b[1] - a[1]);
+    const aTot = sum(aRows.map((r) => r[1])) || 1, aMax = aRows.length ? aRows[0][1] : 1;
+    const ansRows = aRows.slice(0, s.askAll ? 99 : 4).map(([k, v], i) => ({ no: String(i + 1), name: k.replace(/^PT /, ''), v: rp(v), p: Math.round(v / aTot * 100) + '% dari total', w: (v / aMax * 100).toFixed(1) + '%', go: skk ? go(top[k].w, top[k].id) : go(z, top[k].id) }));
+    // daftar insiden
+    const stName = (r) => r[5] ? 'Lewat tenggat' : stDef[r[4]][0];
+    const kritL = INC.filter((r) => mine(r) && r[3] === 4 && r[9] === 5 && (!skk || AREA[r[1]][1] === 'sbs'));
+    const kritMei = INC.filter((r) => mine(r) && r[3] === 4 && r[9] === 4 && (!skk || AREA[r[1]][1] === 'sbs')).length;
+    const lateA = lateList;
+    const lSrc = ak === 'kritis' ? kritL : lateA;
+    const lRows = lSrc.slice(0, s.askAll ? 99 : 4).map((r) => ({ ...incRow(r), x: stName(r), xc: r[5] ? 'late' : '' }));
+    const lateBy = {}; lateA.forEach((r) => { const w = skk ? W[AREA[r[1]][1]].n : AREA[r[1]][8]; lateBy[w] = (lateBy[w] || 0) + 1; });
+    // perbandingan pencurian per bulan
+    const pcI = INC.filter((r) => mine(r) && r[2] === 0);
+    const perM = [0, 1, 2, 3, 4, 5].map((m) => pcI.filter((r) => r[9] === m).length);
+    const cMax = Math.max(1, ...perM);
+    const dlt = (a, b) => b === a ? { t: 'tetap', cls: 'eq' } : { t: (b > a ? '▲ ' : '▼ ') + Math.abs(Math.round((b - a) / (a || 1) * 100)) + '%', cls: b > a ? 'up' : 'dn' };
+    const cRows = (skk ? WO.map((w) => [W[w].n, (r) => AREA[r[1]][1] === w]) : A0.filter((a) => a[7] === SEN).map((a) => [a[8], (r) => r[1] === a[0]])).map(([n, f]) => { const x = pcI.filter((r) => r[9] === 2 && f(r)).length, y = pcI.filter((r) => r[9] === 5 && f(r)).length; return { n, a: String(x), b: String(y), ...(() => { const d = y - x; return { d: d === 0 ? '0' : (d > 0 ? '+' : '−') + Math.abs(d), cls: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq') }; })(), s: Math.abs(y - x) }; }).filter((r) => r.a !== '0' || r.b !== '0').sort((p, q) => q.s - p.s).slice(0, 3);
+    const CHIPS = { kkks: [skk ? 'Per KKKS' : 'Per WK', 'Kerugian terbesar', askScopeL, 'Semester I 2026'], kritis: ['Level Kritis', skk ? 'Wilayah Sumbagsel' : 'Wilayah kerja Anda', 'Juni 2026'], banding: ['Pencurian/Perampokan', 'Maret vs Juni 2026', skk ? 'Seluruh wilayah' : 'Wilayah kerja Anda'], telat: ['Lewat tenggat', 'Belum ditutup', askScopeL] };
+    const nAll = ak === 'kkks' ? aRows.length : (ak === 'kritis' || ak === 'telat' ? lSrc.length : 0);
     const c0 = cats[0];
     const pctN = NAT.n ? Math.round(ALL.n / NAT.n * 100) : 0, pctR = NAT.r ? Math.round(ALL.r / NAT.r * 100) : 0;
     const krUp = KR[0] ? Math.round((KR[5] - KR[0]) / KR[0] * 100) : 0;
@@ -795,7 +907,14 @@ class Component extends DCLogic {
       dtt: dttOn, dttStr: dttOn ? 'true' : 'false', dttCls: dttOn ? 'on' : '', toggleDtt: () => this.setState({ dtt: !s.dtt, kat: null }),
       hasAf: af.length > 0, af,
       dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · Semester I 2026',
-      ins, aiCap, aiSeg, askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
+      ins, aiCap, aiSeg, aiHd: !askOn ? 'Temuan AI' : (res ? 'Jawaban AI' : 'Tanya data'), askOn, askOff: !askOn, askCls: askOn ? 'on' : '', askTxt: (askOn && ak !== 'saran') ? qOf(ak) : (skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"'), askGo: () => this.setState({ ask: ak && ak !== 'saran' ? ak : 'saran', askAll: false }), askClr: () => this.setState({ ask: null, askAll: false }),
+      aSaran: ak === 'saran', aBlank: ak === 'tidakpaham', aRes: res, aRank: ak === 'kkks', aList: ak === 'kritis' || ak === 'telat', aCmp: ak === 'banding', sugs,
+      askChips: (CHIPS[ak] || []).map((l) => ({ l })), ansRows, lRows,
+      lN: lSrc.length + ' insiden', lS: ak === 'kritis' ? (lSrc.length ? (kritMei ? kritMei + ' insiden Kritis lain pada Mei' : 'tidak ada insiden Kritis lain pada Mei') : 'tidak ada insiden Kritis pada Juni') : Object.entries(lateBy).map(([w, n]) => w + ' ' + n).join(' · '),
+      cA: { l: 'Maret', v: String(perM[2]) }, cB: { l: 'Juni', v: String(perM[5]) }, cD: dlt(perM[2], perM[5]), cMon: MO.map((l, i) => ({ l, v: String(perM[i]), h: Math.max(4, perM[i] / cMax * 40) + 'px', cls: i === 2 || i === 5 ? 'on' : '' })), cAria: 'Pencurian per bulan: ' + MO.map((l, i) => l + ' ' + perM[i]).join(', '), cRows,
+      ansMore: (ak === 'kkks' || ak === 'kritis' || ak === 'telat') && nAll > 4 && !s.askAll, ansMoreL: 'Lihat semua (' + nAll + ')', ansAll: () => this.setState({ askAll: true }),
+      ansFoot: ak === 'kkks' ? (aRows.length ? 'Dibuat AI dari data pada filter ini · klik baris untuk lihat di peta' : 'Tidak ada kerugian tercatat pada filter ini.') : ak === 'banding' ? 'Dibuat AI dari data insiden terverifikasi · per tanggal kejadian' : (lSrc.length ? 'Dibuat AI dari data pada filter ini · klik baris untuk buka insiden' : 'Tidak ada insiden yang cocok.'),
+      actOn: ak === 'kritis' || ak === 'telat' || ak === 'banding', actL: ak === 'kritis' ? 'Terapkan sebagai filter' : ak === 'telat' ? 'Lihat di Status penanganan' : 'Lihat tren', actGo: ak === 'kritis' ? () => this.setState({ ask: null, z: skk ? 'sbs' : z, loc: null, lv: [0, 0, 0, 0, 1] }) : ak === 'telat' ? () => this.setState({ ask: null, stOpen: 3 }) : () => this.setState({ ask: null, kat: 0, m: 'n' }), askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
       kpis,
       crumb, mapT, sites, regs, wkm, showRegLines: lvl === 'nat', admOp: s.lay.adm ? '1' : '0', showWkLine: !!loc && s.lay.wk, wkLineSrc: loc ? 'peta/wkl-' + loc.id + '.svg' : '', showAreas: !!loc && s.lay.fas, areasSrc: loc ? 'peta/wka-' + loc.id + '.svg' : '',
       layOpen: s.layOpen, layOpenStr: s.layOpen ? 'true' : 'false', toggleLay: () => this.setState({ layOpen: !s.layOpen }),

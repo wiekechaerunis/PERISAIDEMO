@@ -174,6 +174,76 @@
 .db-ins .tx span{font-size:12px;line-height:16px;color:var(--ink-muted)}
 .db-ins .ch{color:var(--ink-muted)}
 .db-ai .ask{margin-top:auto}
+.db-ai .ask.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.db-ai .ask.on .ph{color:var(--ink)}
+.db-ai .ask.on .go{background:var(--ink);color:var(--surface)}
+.db-ai .ask .clr{width:24px;height:24px;border:0;background:none;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);cursor:pointer}
+.db-ai .ask .clr:hover{background:var(--surface-sunken)}
+.db-ans{display:flex;flex-direction:column;gap:10px;min-height:0}
+.db-ans .und{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.db-ans .und .chip{height:24px;padding:0 10px;border-radius:999px;background:var(--surface-sunken);font-size:12px;font-weight:600;display:inline-flex;align-items:center}
+.db-ans .lst{display:flex;flex-direction:column}
+.db-ans .ar{display:grid;grid-template-columns:20px minmax(0,1fr) auto 16px;gap:12px;align-items:center;border:0;border-top:1px solid var(--border-subtle);background:none;padding:9px 8px;margin:0 -8px;border-radius:var(--radius-md);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.db-ans .ar:first-child{border-top-color:transparent}
+.db-ans .ar:hover{background:var(--surface-subtle)}
+.db-ans .ar .no{font-size:12px;font-weight:700;color:var(--ink-muted);text-align:center}
+.db-ans .ar .nm{display:flex;flex-direction:column;gap:5px;min-width:0}
+.db-ans .ar .nm b{font-size:13px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-ans .ar .bar{height:4px;border-radius:2px;background:var(--surface-sunken);overflow:hidden}
+.db-ans .ar .bar i{display:block;height:100%;background:var(--action-line)}
+.db-ans .ar .v{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.db-ans .ar .v b{font-size:14px;line-height:18px;font-variant-numeric:tabular-nums}
+.db-ans .ar .v span{font-size:11px;line-height:14px;color:var(--ink-muted)}
+.db-ans .ar .ch{color:var(--ink-muted)}
+.db-ans .ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:2px}
+.db-ans .ft .p-cap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.db-ans .ft .more{flex:none;border:0;background:none;padding:2px 4px;margin-right:-4px;font:inherit;font-size:12px;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:2px;cursor:pointer;border-radius:var(--radius-sm)}
+.db-ans .ft .more:hover{background:var(--surface-subtle)}
+.db-ai .hd .back{margin-left:auto;border:0;background:none;padding:2px 6px;font:inherit;font-size:12px;font-weight:500;color:var(--ink-muted);display:inline-flex;align-items:center;gap:4px;cursor:pointer;border-radius:var(--radius-sm)}
+.db-ai .hd .back:hover{color:var(--ink);background:var(--surface-subtle)}
+.db-ans .sug{display:flex;flex-direction:column}
+.db-ans .sq{display:flex;align-items:center;gap:10px;border:0;border-top:1px solid var(--border-subtle);background:none;padding:10px 8px;margin:0 -8px;border-radius:var(--radius-md);font:inherit;font-size:13px;color:var(--ink);text-align:left;cursor:pointer}
+.db-ans .sq:first-child{border-top-color:transparent}
+.db-ans .sq:hover{background:var(--surface-subtle)}
+.db-ans .sq span:not(.k){flex:1}
+.db-ans .sq .k{font-size:11px;color:var(--ink-muted)}
+.db-ans .nope{display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:19px}
+.db-ans .nope span{color:var(--ink-muted)}
+.db-ans .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.db-ans .chips .chip,.db-ans .und .chip{border:0;font:inherit}
+.db-ans .chips .chip{height:28px;padding:0 12px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);font-size:12px;cursor:pointer}
+.db-ans .chips .chip:hover{box-shadow:inset 0 0 0 1px var(--border-control)}
+.db-ans .sum{display:flex;align-items:baseline;gap:8px}
+.db-ans .sum b{font-size:20px;line-height:26px}
+.db-ans .sum span{font-size:12px;color:var(--ink-muted)}
+.db-ans .ir{display:grid;grid-template-columns:8px minmax(0,1fr) auto 16px;gap:12px;align-items:center;border-top:1px solid var(--border-subtle);padding:9px 8px;margin:0 -8px;border-radius:var(--radius-md);color:inherit;text-decoration:none}
+.db-ans .ir:first-child{border-top-color:transparent}
+.db-ans .ir:hover{background:var(--surface-subtle)}
+.db-ans .ir .dot{width:8px;height:8px;border-radius:4px}
+.db-ans .ir .nm{display:flex;flex-direction:column;gap:1px;min-width:0}
+.db-ans .ir .nm b{font-size:13px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-ans .ir .nm>span{font-size:12px;line-height:16px;color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-ans .ir .nm .p-mono{font-size:11px}
+.db-ans .ir .st{font-size:12px;color:var(--ink-muted);white-space:nowrap}
+.db-ans .ir .st.late{color:var(--sev-critical-ink);font-weight:600}
+.db-ans .ir .ch{color:var(--ink-muted)}
+.db-ans .cmp{display:flex;flex-direction:column;gap:12px}
+.db-ans .pair{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+.db-ans .pair>div{display:flex;flex-direction:column;gap:0;padding:10px 12px;border-radius:var(--radius-lg);background:var(--surface-subtle)}
+.db-ans .pair b{font-size:22px;line-height:28px}
+.db-ans .dl{font-size:12px;font-weight:700;white-space:nowrap}
+.db-ans .dl.dn{color:var(--status-success-ink)}.db-ans .dl.up{color:var(--sev-critical-ink)}.db-ans .dl.eq{color:var(--ink-muted)}
+.db-ans .mbar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;height:64px;align-items:end}
+.db-ans .mc{display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end}
+.db-ans .mc i{display:block;width:100%;max-width:28px;border-radius:3px 3px 0 0;background:var(--surface-sunken)}
+.db-ans .mc.on i{background:var(--action-line)}
+.db-ans .mc em{font-style:normal;font-size:11px;line-height:12px;color:var(--ink-muted);order:-1}
+.db-ans .mc.on em{color:var(--ink);font-weight:700}
+.db-ans .mc span{font-size:11px;line-height:14px;color:var(--ink-muted)}
+.db-ans .cr{display:grid;grid-template-columns:minmax(0,1fr) auto 56px;gap:12px;align-items:center;font-size:13px;line-height:18px;padding:6px 0;border-top:1px solid var(--border-subtle)}
+.db-ans .cr:first-child{border-top-color:transparent}
+.db-ans .cr .p-mono{font-size:12px;color:var(--ink-muted)}
+.db-ans .cr .dl{text-align:right}
 /* Temuan AI: kartu terang, garis tepi bergradasi tipis (usulan, warna di luar token DS v2) */
 .db-ai{border:1px solid transparent;color:var(--ink);box-shadow:0 4px 16px rgba(28,29,33,.05);background:radial-gradient(70% 90% at 100% 0%,color-mix(in srgb,var(--action) 16%,transparent) 0%,transparent 70%) padding-box,radial-gradient(60% 80% at 0% 100%,rgba(42,120,214,.06) 0%,transparent 70%) padding-box,linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,var(--action) 0%,color-mix(in srgb,var(--action) 40%,#8DB8EE) 55%,#8DB8EE 100%) border-box}
 .db-ai .hd .ic{background:linear-gradient(135deg,var(--action),color-mix(in srgb,var(--action) 55%,#8DB8EE));color:var(--on-action)}

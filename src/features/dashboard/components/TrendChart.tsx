@@ -15,11 +15,11 @@ export function TrendChart({ v }: { v: any }) {
 <h2 className="p-h2">Tren per bulan</h2>
 <span className="p-cap">{v.trCap}</span>
 </div>
-<div className="p-qf" role="radiogroup" aria-label="Ukuran grafik">{(v.measures ?? []).map((q: any, k25: number) => (<Fragment key={k25}>
+<div className="p-qf" role="radiogroup" aria-label="Ukuran grafik">{(v.measures ?? []).map((q: any, k32: number) => (<Fragment key={k32}>
 <button type="button" role="radio" aria-checked={q.on} onClick={q.pick}>{q.label}</button>
 </Fragment>))}</div>
 </div>
-<div className="db-bars" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))", marginTop: "24px" }} role="img" aria-label={v.trAria}>{(v.trend ?? []).map((b: any, k26: number) => (<Fragment key={k26}>
+<div className="db-bars" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))", marginTop: "24px" }} role="img" aria-label={v.trAria}>{(v.trend ?? []).map((b: any, k33: number) => (<Fragment key={k33}>
 <div className="db-col" data-tip={b.tip} role="link" tabIndex={0} onClick={() => v.ui?.go?.("/insiden?bulan=" + b.bulan)} onKeyDown={(e) => { if (e.key === "Enter") v.ui?.go?.("/insiden?bulan=" + b.bulan); }}>{(b.hasMk) && (<>
 <span className="mk" aria-hidden="true">1</span>
 </>)}<span className="v">{b.lbl}</span>
@@ -29,7 +29,7 @@ export function TrendChart({ v }: { v: any }) {
 </span>
 </div>
 </Fragment>))}</div>
-<div className="db-x" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }} aria-hidden="true">{(v.trend ?? []).map((b: any, k27: number) => (<Fragment key={k27}>
+<div className="db-x" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }} aria-hidden="true">{(v.trend ?? []).map((b: any, k34: number) => (<Fragment key={k34}>
 <span>{b.m}</span>
 </Fragment>))}</div>
 <div className="db-trn db-push">

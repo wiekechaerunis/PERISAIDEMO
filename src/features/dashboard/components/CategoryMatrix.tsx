@@ -20,15 +20,15 @@ export function CategoryMatrix({ v }: { v: any }) {
 <table className="db-mx">
 <thead>
 <tr>
-<th className="rh" style={{ width: "210px" }}>Kategori</th>{(v.mxCols ?? []).map((h: any, k31: number) => (<Fragment key={k31}>
+<th className="rh" style={{ width: "210px" }}>Kategori</th>{(v.mxCols ?? []).map((h: any, k38: number) => (<Fragment key={k38}>
 <th>{h.n}<span className="s">{h.s}</span>
 </th>
 </Fragment>))}<th>Total</th>
 </tr>
 </thead>
-<tbody className="db-fade" key={v.fk}>{(v.mxRows ?? []).map((r: any, k32: number) => (<Fragment key={k32}>
+<tbody className="db-fade" key={v.fk}>{(v.mxRows ?? []).map((r: any, k39: number) => (<Fragment key={k39}>
 <tr className={r.cls}>
-<th className="rh" scope="row">{r.n}</th>{(r.cells ?? []).map((c: any, k33: number) => (<Fragment key={k33}>
+<th className="rh" scope="row">{r.n}</th>{(r.cells ?? []).map((c: any, k40: number) => (<Fragment key={k40}>
 <td>
 <button type="button" className={c.cls} style={{ background: c.bg }} onClick={c.go} aria-label={c.aria}>{c.v}</button>
 </td>

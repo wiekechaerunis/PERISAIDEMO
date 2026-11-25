@@ -209,3 +209,10 @@ button.pn-inc { border: 0; border-top: 1px solid var(--border-subtle); backgroun
 .db-per2 .dts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .db-per2 .dt { display: flex; flex-direction: column; gap: 4px; }
 .db-per2 .ft { margin-top: 0; padding: 8px 0 0; align-items: center; }
+
+/* ---------- Tanya data (board Dashboard-Tanya*): kolom bisa diketik ---------- */
+.db-ai .ask input.ph { border: 0; background: none; outline: none; font: inherit; font-size: 13px; color: var(--ink); min-width: 0; padding: 0; height: 100%; }
+.db-ai .ask input.ph::placeholder { color: var(--ink-muted); }
+.db-ai .ask:focus-within { border-color: var(--ink); }
+.db-ai .ask .go { border: 0; cursor: pointer; flex: none; }
+.db-ai .db-ans { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 8px; margin: 0 -8px; }
