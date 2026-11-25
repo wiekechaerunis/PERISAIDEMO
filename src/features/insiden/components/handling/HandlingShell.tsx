@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { DetailTabs } from '../detail/DetailShell';
 import { RoleSwitcher } from '@/components/layout/RoleSwitcher';
 import { useDemoStore } from '@/services/mock/store';
 import { useTaskCount } from '@/features/tindak-lanjut/logic/useFollowUps';
@@ -13,6 +14,8 @@ export interface Crumb { label: string; to?: string }
 
 interface Props {
   title: string;
+  /** jumlah entri Riwayat; diisi = tab Detail | Riwayat (n) (B-18) */
+  riwayatCount?: number;
   tags?: ReactNode;
   backTo?: string;
   crumbs?: Crumb[];
@@ -24,7 +27,7 @@ interface Props {
   children: ReactNode;
 }
 
-export function HandlingShell({ title, tags, backTo = '/insiden', crumbs, acts, toast, onToastClose, overlay, busy, children }: Props) {
+export function HandlingShell({ title, tags, backTo = '/insiden', crumbs, acts, toast, onToastClose, overlay, busy, riwayatCount, children }: Props) {
   const role = useDemoStore((s) => s.role);
   const tasks = useTaskCount();
   const routeToast = (useLocation().state as { toast?: string } | null)?.toast ?? null;
@@ -66,6 +69,7 @@ export function HandlingShell({ title, tags, backTo = '/insiden', crumbs, acts, 
               </button>
             </div>
           </div>
+          {riwayatCount !== undefined && <DetailTabs count={riwayatCount} />}
         </header>
         <main className="lk-content" aria-busy={busy || undefined}>{children}</main>
       </div>

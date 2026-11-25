@@ -1,4 +1,5 @@
 // Blok bersama layar Pejabat insiden berjalan: Data penutupan, Tindak lanjut, Riwayat, Ringkasan, Tenggat, Eskalasi, Kondisi sekitar, Jejak audit.
+import { Link } from 'react-router-dom';
 import { useState, type ReactNode } from 'react';
 import { ClosureExtraRows, UpdateLegalButton } from './ClosureExtraRows';
 import { handleDaysOf } from '@/lib/deadline';
@@ -88,10 +89,11 @@ function RwNode({ x }: { x: RwItem }) {
 }
 
 /** Kartu Riwayat dengan saringan Semua/Catatan/Perubahan. `onAudit` membuka panel Jejak audit lengkap (P34). */
-export function RiwayatCard({ i, onAudit, bare }: { i: Incident; onAudit: () => void; bare?: boolean }) {
+/** `all` = tab Riwayat (B-18): semua entri tampil. "Jejak audit lengkap" = tautan ke halaman Jejak audit (B-21). */
+export function RiwayatCard({ i, bare, all: showAll }: { i: Incident; onAudit?: () => void; bare?: boolean; all?: boolean }) {
   const all = riwayat(i);
   const [f, setF] = useState<'Semua' | 'Catatan' | 'Perubahan'>('Semua');
-  const [more, setMore] = useState(false);
+  const [more, setMore] = useState(!!showAll);
   const list = all.filter((x) => (f === 'Semua' ? true : f === 'Catatan' ? ['catatan', 'wa', 'arahan'].includes(x.kind) : !['catatan', 'wa', 'arahan'].includes(x.kind)));
   const shown = more ? list : list.slice(0, 3);
   const hidden = list.length - shown.length;
@@ -99,7 +101,7 @@ export function RiwayatCard({ i, onAudit, bare }: { i: Incident; onAudit: () => 
     <section className="p-card in-sec" aria-label={bare ? undefined : 'Riwayat'}>
       <div className="lk-card-head" style={{ marginBottom: 0 }}>
         <h2 className="in-h" style={{ gap: 2 }}>Riwayat · {all.length}<InfoTip label="riwayat" text={TIP_RIWAYAT} /></h2>
-        <a href="#audit" className="lk-alink" onClick={(e) => { e.preventDefault(); onAudit(); }}>Jejak audit lengkap</a>
+        <Link to={`/insiden/${i.no}/jejak-audit`} className="lk-alink">Jejak audit lengkap</Link>
       </div>
       <div className="in-rf" role="radiogroup" aria-label="Saring riwayat">
         {(['Semua', 'Catatan', 'Perubahan'] as const).map((k) => (

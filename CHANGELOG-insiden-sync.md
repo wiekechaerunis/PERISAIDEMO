@@ -48,3 +48,22 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
 - "Diperiksa oleh" yang dipilih disimpan di insiden (`reviewers`).
 - Tes: `reviewerSelect.test.tsx` ditulis ulang (perilaku ADJ-01 menggantikan aturan lama "pengaju tidak muncul"); `step34.test.tsx`
   menambah kasus modal.
+
+## 4. Detail + tab Riwayat (`/insiden/:no`, semua peran)
+
+- B-18, PA-10: tab Detail | Riwayat (n) di bawah app bar (badge lime saat aktif, `?tab=riwayat`) di Detail Pelapor, Pemeriksaan,
+  Penanganan PIC, Pejabat (Dalam penanganan / Menunggu penutupan / Ditutup), dan SKK. Crumb "Insiden › {nomor}"; header hanya status.
+- B-19, PA-12: Ringkasan berisi Keparahan + keterangan + alasan, Waktu kejadian, Waktu registrasi, Batas pemeriksaan, Diperiksa oleh
+  (nama + menunggu sejak), PIC. "Sudah menangani" dan "Pelapor" hanya di kartu utama.
+- B-20: kartu utama memuat Apa yang terjadi?, Yang terdampak, Tindakan awal, Sumber informasi; kartu Lokasi terpisah di kolom kanan
+  (InsLokasi). PA-13: "Terkunci sampai diverifikasi" (desktop, review, mobile). Kartu "Pemeriksa meminta perbaikan" di kanan (I15 rev).
+- PA-11, B-10: label "setara Insignificant…Catastrophic" dihapus dari semua layar Insiden (kartu isi, review, keputusan, kerawanan,
+  mobile). Halaman Konfigurasi › Matriks keparahan tidak diubah.
+- PA-15, B-21: "Jejak audit lengkap" kini tautan ke `/insiden/:no/jejak-audit` (halamannya di alur 13).
+
+## 5. Batalkan pengajuan
+
+- PA-14, ADJ-17 (S07, MS07): tombol header dan menu ⋯ "Batalkan pengajuan"; dialog "Batalkan pengajuan?" dengan alasan wajib
+  (maks. 500); toast "Pengajuan dibatalkan. Insiden kembali menjadi draf."; toast gagal "Laporan sudah diproses Pejabat Berwenang
+  dan pengajuannya tidak bisa dibatalkan."; Riwayat "Pengajuan dibatalkan" + alasan. Teks di Ringkasan WA, mobile, dan email EI.10
+  ikut diganti. `?aksi=batalkan` membuka dialog langsung (dari menu ⋯ daftar).

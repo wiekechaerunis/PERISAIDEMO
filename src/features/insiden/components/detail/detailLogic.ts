@@ -81,6 +81,7 @@ export function areaLine(i: Incident): string {
 }
 
 export function opsText(d: IncidentDetail): string {
+  if (d.opsUnknown) return 'Belum diketahui';
   const label = OPS.find(([k]) => k === d.ops)?.[1] ?? 'Tidak terganggu';
   return d.ops && d.ops !== 'tidak' && d.opsHours ? `${label} · ${d.opsHours} jam` : label;
 }
@@ -90,9 +91,9 @@ export function casualtyText(d: IncidentDetail): string {
   );
   return parts.length ? parts.join(', ') : 'Tidak terdampak';
 }
-export const lossText = (d: IncidentDetail) => (d.lossIdr ? formatRupiah(d.lossIdr) : 'Belum diisi');
+export const lossText = (d: IncidentDetail) => (d.lossUnknown ? 'Belum diketahui' : d.lossIdr ? formatRupiah(d.lossIdr) : 'Belum diisi');
 export const handledText = (d: IncidentDetail) =>
-  d.handledBy.length ? d.handledBy.map((h) => TIMS.find(([k]) => k === h)?.[1] ?? h).join(', ') : 'Belum diisi';
+  [...d.handledBy.map((h) => TIMS.find(([k]) => k === h)?.[1] ?? h), ...(d.handledOther ? [d.handledOther] : [])].join(', ') || 'Belum diisi';
 
 export interface TlItem {
   cls: '' | 'now' | 'next';
@@ -112,8 +113,11 @@ function entryItem(e: TimelineEntry, i: Incident, dup?: Incident): TlItem {
       dt: i.possibleDuplicate && dup ? 'Tetap diajukan meski ada kemungkinan ganda' : undefined,
     };
   if (e.text.startsWith('Draf dibuat')) return { cls: '', icon: 'plus', bold: e.text, rest: ` oleh ${e.by}`, tm: wib(e.at) };
-  if (e.text.startsWith('Menarik kembali'))
-    return { cls: '', icon: 'undo', bold: 'Menarik kembali laporan', rest: ` oleh ${e.by}`, tm: wib(e.at) };
+  // ADJ-17: Riwayat menulis "Pengajuan dibatalkan" (entri lama "Menarik kembali" ditampilkan dengan nama baru)
+  if (e.text.startsWith('Pengajuan dibatalkan') || e.text.startsWith('Menarik kembali')) {
+    const why = e.text.split(': ').slice(1).join(': ');
+    return { cls: '', icon: 'undo', bold: 'Pengajuan dibatalkan', rest: ` oleh ${e.by}`, dt: why ? `Alasan: ${why}` : undefined, tm: wib(e.at) };
+  }
   if (e.text.startsWith('SKK Migas diberi tahu'))
     return { cls: '', icon: 'send', bold: 'SKK Migas diberi tahu', rest: ' · jalur cepat', tm: wib(e.at) };
   return { cls: '', icon: 'check', bold: e.text, rest: ` · ${e.by}`, tm: wib(e.at) };
@@ -150,7 +154,7 @@ export function buildTimeline(i: Incident, dup?: Incident): TlItem[] {
   return out;
 }
 
-/** Isi draf Pelapor dari insiden (Perbaiki laporan / Lanjutkan draf setelah Tarik kembali). */
+/** Isi draf Pelapor dari insiden (Perbaiki laporan / Lanjutkan draf setelah Batalkan pengajuan). */
 export function draftFromIncident(i: Incident): ReportDraft {
   const d = detailOf(i);
   return {

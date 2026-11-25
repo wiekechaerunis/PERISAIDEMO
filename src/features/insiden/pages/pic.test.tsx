@@ -75,7 +75,9 @@ describe('Halaman kerja PIC', () => {
     fireEvent.click(screen.getByRole('button', { name: /Ajukan penutupan/ }));
     expect(inc().status).toBe('minta-ditutup');
     expect(screen.getByText('Penutupan diajukan ke 3 Pejabat Berwenang')).toBeInTheDocument();
-    expect(screen.getByText(/Menunggu ditutup oleh Pejabat Berwenang [(]3[)]/)).toBeInTheDocument();
+    // B-22: status penutupan jadi kartu "Menunggu ditutup" di kolom kanan
+    expect(screen.getByRole('heading', { name: 'Menunggu ditutup' })).toBeInTheDocument();
+    expect(screen.getByText(/menunggu Pejabat Berwenang [(]3[)]/)).toBeInTheDocument();
   });
 
   it('Eskalasi butuh alasan; dengan alasan insiden ditandai dieskalasi', () => {
@@ -115,7 +117,8 @@ describe('Halaman kerja PIC', () => {
     unmount();
     useDemoStore.getState().setRole('pelapor');
     renderAt('/insiden/INS-SEN-2026-0002?state=lewat-tenggat');
+    // B-18: entri Riwayat ada di tab Riwayat
+    fireEvent.click(screen.getByRole('tab', { name: /Riwayat/ }));
     expect(screen.getByText('Eskalasi otomatis ke Sari Wulandari')).toBeInTheDocument();
-    expect(screen.getAllByText(/lewat 2 hari/).length).toBeGreaterThan(0);
   });
 });

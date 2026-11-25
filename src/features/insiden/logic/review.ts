@@ -60,8 +60,8 @@ export function reviewErrors(f: ReviewForm, i: Incident): ReviewErrors {
   return e;
 }
 
-/** Penjelasan di bawah "Keparahan resmi": "Menurut pelapor: Tinggi · saran sistem: Tinggi (setara Significant), karena …". */
-export function severityHelp(i: Incident, equiv: (s: Severity) => string): string {
+/** Penjelasan di bawah "Keparahan resmi": "Menurut pelapor: Tinggi · saran sistem: Tinggi, karena …" (B-10: tanpa "setara"). */
+export function severityHelp(i: Incident): string {
   const d = i.detail;
   const rep = d?.reporterSeverity ?? i.severity;
   let t = `Menurut pelapor: ${rep ? SEV_LABEL[rep] : 'belum ada'}`;
@@ -74,7 +74,7 @@ export function severityHelp(i: Incident, equiv: (s: Severity) => string): strin
       if (kb && n > 0) why.push(kb[3]);
     }
     if (d.lossIdr) why.push(`kerugian ${formatRupiah(d.lossIdr)}`);
-    t += ` · saran sistem: ${SEV_LABEL[d.suggestedSeverity]} (setara ${equiv(d.suggestedSeverity)})${why.length ? `, karena ${why.join(', ')}` : ''}`;
+    t += ` · saran sistem: ${SEV_LABEL[d.suggestedSeverity]}${why.length ? `, karena ${why.join(', ')}` : ''}`;
   }
   return t;
 }

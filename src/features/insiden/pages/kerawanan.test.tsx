@@ -176,7 +176,7 @@ describe('Kerawanan · sudah dinaikkan (KD4)', () => {
     expect(screen.getByText('PIC Andi Pratama ditetapkan')).toBeInTheDocument();
     expect(screen.getByText('Dinaikkan jadi insiden dan disetujui')).toBeInTheDocument();
     expect(screen.getByText(/Tenggat 8 Des 2026 \(Rendah · 14 hari kerja\)/)).toBeInTheDocument();
-    expect(screen.getByText(/Keparahan: Rendah · setara Minor/)).toBeInTheDocument();
+    expect(screen.getByText(/Keparahan: Rendah$/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Naikkan jadi insiden' })).toBeNull();
   });
 

@@ -1,16 +1,16 @@
 // Board: I15 (Pelapor, setelah diajukan), I23 (dari WhatsApp), I32 (SKK, belum diperiksa), V14 (disetujui),
-// S07 (Tarik kembali), S12 (Terbatas). ?state=memuat|gagal menampilkan state Memuat / Gagal dimuat (bentuk detail dari S08/S11).
+// S07 (Batalkan pengajuan, ADJ-17), S12 (Terbatas). B-18: tab Detail | Riwayat (n). B-19/B-20: Ringkasan + kartu Lokasi terpisah.
+// ?state=memuat|gagal menampilkan state Memuat / Gagal dimuat (bentuk detail dari S08/S11).
 import { TlCard } from '@/features/tindak-lanjut/components/TlCard';
 import { useState } from 'react';
+import { LocationCard } from '../components/detail/LocationCard';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { withdraw } from '@/services/mock/workflow';
 import { DEMO_USERS, isSkk } from '@/lib/rbac';
-import { SEV_LABEL, SEV_TAG_CLS } from '@/lib/severity';
 import { formatWibFull } from '@/lib/format';
 import { STATUS_LABEL, STATUS_TAG, type Incident } from '@/services/types';
-import { useDraftStore } from '../logic/draft';
-import { DetailShell, type ToastMsg } from '../components/detail/DetailShell';
+import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
 import { Ic } from '../components/detail/Ic';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
@@ -20,10 +20,11 @@ import { WithdrawDialog } from '../components/detail/WithdrawDialog';
 import { useWaSource } from '@/features/whatsapp/logic/source';
 import { LoadFailedView, LoadingView, RestrictedView } from '../components/detail/StateViews';
 import {
-  accessOf, buildTimeline, detailOf, draftFromIncident, isOwner, similarTo,
+  accessOf, buildTimeline, detailOf, isOwner, similarTo,
 } from '../components/detail/detailLogic';
 
-const TOAST_WITHDRAWN = 'Laporan ditarik kembali. Anda bisa mengubah isinya lagi, lalu mengajukan ulang.';
+/** ADJ-17: toast berhasil Batalkan pengajuan */
+const TOAST_WITHDRAWN = 'Pengajuan dibatalkan. Insiden kembali menjadi draf.';
 
 export function IncidentDetailPage() {
   const { no = '' } = useParams();
@@ -32,7 +33,8 @@ export function IncidentDetailPage() {
   const routeToast = (useLocation().state as { toast?: string } | null)?.toast;
   const role = useDemoStore((s) => s.role);
   const all = useDemoStore((s) => s.incidents);
-  const [confirm, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState(params.get('aksi') === 'batalkan');
+  const tab = useDetailTab();
   const [toast, setToast] = useState<ToastMsg | null>(null);
 
   const incident = all.find((i) => i.no === no);
@@ -79,16 +81,12 @@ export function IncidentDetailPage() {
   const variant = variantOf(i, skkRole);
   const showDialog = confirm && owner && inReview;
 
-  const loadDraft = () => useDraftStore.getState().patch(draftFromIncident(i));
-  const continueDraft = () => {
-    loadDraft();
-    navigate('/insiden/baru/kejadian');
-  };
-  const doWithdraw = () => {
-    const r = useDemoStore.getState().decide((s) => withdraw(s, i.no, me));
+  // PA-03: draf dan Perlu perbaikan dibuka di form langkah 1 mode "Ubah insiden"
+  const continueDraft = () => navigate(`/insiden/${i.no}/ubah`);
+  const doWithdraw = (reason: string) => {
+    const r = useDemoStore.getState().decide((s) => withdraw(s, i.no, me, reason));
     setConfirm(false);
     if (r.ok) {
-      loadDraft();
       setToast({ text: TOAST_WITHDRAWN });
     } else {
       setToast({ text: r.reason, tone: 'err' });
@@ -101,26 +99,19 @@ export function IncidentDetailPage() {
     ) : (
       <span className={`p-tag ${STATUS_TAG[i.status]}`}>{STATUS_LABEL[i.status]}</span>
     );
-  const tags = (
-    <>
-      {statusTag}
-      {isWa && i.severity && (
-        <span className={`p-tag ${SEV_TAG_CLS[i.severity]}`}>
-          <span className="dot"></span>
-          {SEV_LABEL[i.severity]}
-        </span>
-      )}
-    </>
-  );
+  // B-18: header hanya menampilkan status
+  const tags = statusTag;
 
   let acts = null;
   if (owner && inReview) {
     acts = (
       <button type="button" className="p-btn p-btn-secondary" onClick={() => setConfirm(true)}>
-        {!isWa && <Ic d="undo" size={16} />}
-        Tarik kembali
+        <Ic d="undo" size={16} />
+        Batalkan pengajuan
       </button>
     );
+  } else if (owner && i.status === 'perlu-perbaikan') {
+    acts = <button type="button" className="p-btn p-btn-primary" onClick={continueDraft}>Perbaiki laporan</button>;
   } else if (owner && i.status === 'draf') {
     acts = <button type="button" className="p-btn p-btn-primary" onClick={continueDraft}>Lanjutkan draf</button>;
   } else if (role === 'pejabat' && i.status === 'dalam-penanganan') {
@@ -132,7 +123,7 @@ export function IncidentDetailPage() {
     );
   }
 
-  const showHistory = !skkRole && role !== 'pejabat';
+  const history = buildTimeline(i, dup);
   const files = d.attachments;
 
   return (
@@ -140,27 +131,16 @@ export function IncidentDetailPage() {
       title="Detail insiden"
       tags={tags}
       acts={acts}
+      no={i.no}
+      riwayatCount={history.length}
       toast={toast}
       onToastClose={() => setToast(null)}
-      overlay={showDialog ? <WithdrawDialog skkNotified={!!i.skkNotified || i.severity === 'tinggi' || i.severity === 'kritis'} onCancel={() => setConfirm(false)} onConfirm={doWithdraw} /> : null}
+      overlay={showDialog ? <WithdrawDialog no={i.no} skkNotified={!!i.skkNotified || i.severity === 'tinggi' || i.severity === 'kritis'} onCancel={() => setConfirm(false)} onConfirm={doWithdraw} /> : null}
     >
       {skkRole && inReview && (
         <div className="in-bn info sm" style={{ alignSelf: 'flex-start' }}>
           <Ic d="info" size={16} />
           <div className="body"><b>Belum diperiksa Pejabat Berwenang KKKS.</b> Isi masih bisa berubah.</div>
-        </div>
-      )}
-      {i.status === 'perlu-perbaikan' && (
-        <div className="in-bn caution" role="status">
-          <Ic d="warn" size={18} />
-          <div className="body">
-            <b>Perlu perbaikan.</b> {i.revisionReason}
-            {owner && (
-              <div className="acts">
-                <button type="button" className="p-btn p-btn-primary" onClick={continueDraft}>Perbaiki laporan</button>
-              </div>
-            )}
-          </div>
         </div>
       )}
       {i.status === 'dibatalkan' && (
@@ -183,6 +163,11 @@ export function IncidentDetailPage() {
           </div>
         </div>
       )}
+      {tab === 'riwayat' ? (
+        <div className="lk-stack" style={{ maxWidth: 880 }}>
+          <HistoryCard items={history} />
+        </div>
+      ) : (
       <div className="lk-grid">
         <div className="c8 lk-stack">
           <IncidentSummaryCard incident={i} />
@@ -225,12 +210,23 @@ export function IncidentDetailPage() {
             </section>
           )}
           {official && <TlCard i={i} hideWhenEmpty />}
-          {showHistory && <HistoryCard items={buildTimeline(i, dup)} />}
         </div>
         <aside className="c4 lk-stack">
+          {i.status === 'perlu-perbaikan' && (
+            <section className="p-card in-sec" style={{ gap: 12, background: 'color-mix(in srgb, var(--caution-bg) 45%, var(--surface))' }}>
+              <h2 className="p-h2" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Ic d="warn" size={18} />Pemeriksa meminta perbaikan</h2>
+              <div style={{ padding: '10px 12px', borderRadius: 'var(--radius-lg)', background: 'var(--surface)' }}>
+                <span style={{ fontSize: 14, lineHeight: '21px' }}>“{i.revisionReason}”</span>
+              </div>
+              <span className="p-cap">Waktu registrasi tetap. Laporan mirip hanya dicek ulang bila lokasi, waktu kejadian, atau kategori berubah.</span>
+              {owner && <button type="button" className="p-btn p-btn-primary" style={{ justifyContent: 'center' }} onClick={continueDraft}>Perbaiki laporan</button>}
+            </section>
+          )}
           <SummaryAside incident={i} variant={variant} openTip={owner && inReview && !!routeToast} />
+          <LocationCard incident={i} />
         </aside>
       </div>
+      )}
     </DetailShell>
   );
 }

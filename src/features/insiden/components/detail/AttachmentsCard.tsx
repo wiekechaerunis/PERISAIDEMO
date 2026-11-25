@@ -2,7 +2,7 @@ import type { IncidentDetail } from '@/services/types';
 import { extLabel, formatSize } from '../../logic/attachments';
 import { Ic } from './Ic';
 
-/** Kartu Lampiran (I15, I32, V14). `locked` = teks "Terkunci sampai diperiksa" (hanya Pelapor, sebelum pemeriksaan). */
+/** Kartu Lampiran (I15, I32, V14). `locked` = teks "Terkunci sampai diverifikasi" (PA-13, B-20) (hanya Pelapor, sebelum pemeriksaan). */
 export function AttachmentsCard({ files, locked }: { files: IncidentDetail['attachments']; locked?: boolean }) {
   return (
     <section className="p-card">
@@ -11,7 +11,7 @@ export function AttachmentsCard({ files, locked }: { files: IncidentDetail['atta
         {locked && (
           <span className="lk-lock" style={{ fontSize: 12 }}>
             <Ic d="lock" size={14} />
-            Terkunci sampai diperiksa
+            Terkunci sampai diverifikasi
           </span>
         )}
       </div>

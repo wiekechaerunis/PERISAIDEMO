@@ -5,7 +5,7 @@ import { reviewerOptions } from '@/lib/rbac';
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { formatNumber, formatWib } from '@/lib/format';
-import { SEVERITIES, SEV_DOT, SEV_EQUIV, SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
+import { SEVERITIES, SEV_DOT, SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
 import { initials } from '@/lib/rbac';
 import { PIC_GROUPS, PIC_PEOPLE } from '@/services/mock/workflow';
 import { MAX_RAISE_REASON, raiseErrors } from '@/services/mock/workflow.kerawanan';
@@ -305,7 +305,6 @@ export function RaiseFormView({ k, mode, cfg, initial, nextNo, onCancel, onSubmi
             <div className="in-sevauto">
               <div className="r1">
                 <span className={'p-tag ' + SEV_TAG_CLS[level]}><span className="dot"></span>{SEV_LABEL[level]}</span>
-                <span className="p-cap">setara {SEV_EQUIV[level]}</span>
                 <span className={differs ? 'p-tag t-caution' : 'p-tag t-info'} style={{ height: 20, fontSize: 11 }}>{differs ? c.diffBy : 'Otomatis'}</span>
                 <span style={{ flex: 1 }}></span>
                 <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={() => setSevEdit(!sevEdit)}>{sevEdit ? 'Selesai' : 'Ubah'}</button>

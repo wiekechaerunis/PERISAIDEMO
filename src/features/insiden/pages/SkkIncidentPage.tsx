@@ -8,9 +8,10 @@ import { useDemoStore } from '@/services/mock/store';
 import { approveClosureBySkk, giveDirective, rejectClosureBySkk, TOAST_DIRECTIVE } from '@/services/mock/workflow.skk';
 import { DEMO_USERS } from '@/lib/rbac';
 import { SEV_LABEL } from '@/lib/severity';
-import { formatDateShort } from '@/lib/format';
 import { STATUS_LABEL, STATUS_TAG } from '@/services/types';
-import { DetailShell, type ToastMsg } from '../components/detail/DetailShell';
+import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
+import { LocationCard } from '../components/detail/LocationCard';
+import { ClosureStatusCard, DurationRows } from '../components/closure/SyncParts';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
 import { RestrictedView } from '../components/detail/StateViews';
@@ -37,6 +38,7 @@ export function SkkIncidentPage() {
   const [dialog, setDialog] = useState<'arahan' | 'kembali' | null>(null);
   const [toast, setToast] = useState<ToastMsg | null>(null);
   const [focus, setFocus] = useState<Focus>(null);
+  const tab = useDetailTab();
 
   const i = all.find((x) => x.no === no);
   const me = DEMO_USERS[role].name;
@@ -79,7 +81,6 @@ export function SkkIncidentPage() {
     <>
       <span className={`p-tag ${approval ? 't-info' : STATUS_TAG[i.status]}`}>{approval ? 'Dalam penanganan' : STATUS_LABEL[i.status]}</span>
       {approval && <span className="p-tag t-caution">Menunggu persetujuan SKK</span>}
-      {!approval && !closed && i.escalated && <span className="p-tag t-caution">Dieskalasi</span>}
     </>
   );
 
@@ -101,66 +102,74 @@ export function SkkIncidentPage() {
     </Fold>
   );
 
-  // P36: persetujuan penutupan SKK
+  // B-18: tab Riwayat menampilkan Riwayat penuh
+  const shell = (body: React.ReactNode) => (
+    <DetailShell title="Detail insiden" tags={tags} toast={toast} onToastClose={() => setToast(null)} overlay={overlay} no={i.no} riwayatCount={log.length}>
+      {tab === 'riwayat' ? <div className="lk-stack" style={{ maxWidth: 880 }}><RiwayatCard incident={i} /></div> : body}
+    </DetailShell>
+  );
+  void reportFold;
+  void historyFold;
+  const report = (
+    <>
+      <IncidentSummaryCard incident={i} />
+      {d.attachments.length > 0 && <AttachmentsCard files={d.attachments} />}
+    </>
+  );
+
+  // P36: persetujuan penutupan SKK (hanya bila dikonfigurasi; ADJ-05: bawaan SKK cukup notifikasi)
   if (approval) {
     return (
-      <DetailShell title="Detail insiden" tags={tags} toast={toast} onToastClose={() => setToast(null)} overlay={overlay}>
+      shell(
         <div className="lk-grid">
           <div className="c7 lk-stack">
             <ClosureDataCard incident={i} hl={focus === 'dp'} hlFiles={focus === 'bk'} />
             <FollowUpsCard incident={i} hl={focus === 'tl'} />
-            {reportFold}
-            {historyFold}
+            {report}
           </div>
           <aside className="c5 lk-stack">
             <ClosureDecision incident={i} focus={focus} onFocus={setFocus} onApprove={approve} onReturn={() => setDialog('kembali')} />
             <SkkSummaryCard incident={i} kerawanan={kerawanan} />
+            <LocationCard incident={i} />
           </aside>
-        </div>
-      </DetailShell>
+        </div>,
+      )
     );
   }
 
   // P35: insiden ditutup, hanya baca
   if (closed) {
     return (
-      <DetailShell title="Detail insiden" tags={tags} toast={toast} onToastClose={() => setToast(null)} overlay={overlay}>
+      shell(
         <div className="lk-grid">
           <div className="c8 lk-stack">
-            {ci && (
-              <div className="in-bn info sm" style={{ alignSelf: 'stretch' }}>
-                <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 16, height: 16 }}><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM12 11v6M12 7.5v.5" /></svg>
-                <div className="body">
-                  <b>Ditutup {formatDateShort(ci.at)}, {ci.at.slice(11, 16)} oleh {ci.by}.</b> Lama penanganan {ci.dur}
-                  {i.handleDueAt ? ` · ${ci.inTime ? 'dalam tenggat' : 'melewati tenggat'}` : ''}
-                  {ci.open > 0 ? ` · ${ci.open} tindak lanjut masih berjalan` : ''}.
-                </div>
-              </div>
-            )}
             <ClosureDataCard incident={i} />
             <FollowUpsCard incident={i} closed />
-            {reportFold}
-            {historyFold}
+            {report}
           </div>
           <aside className="c4 lk-stack">
+            {/* B-22: status jadi kartu di atas kolom kanan; ADJ-10: dua ukuran waktu */}
+            <ClosureStatusCard i={i}>
+              <div className="in-times"><DurationRows i={i} to={ci?.at ?? i.handling?.closure?.closedAt ?? i.occurredAt} /></div>
+            </ClosureStatusCard>
             <SkkSummaryCard incident={i} closed kerawanan={kerawanan} />
             <PenutupanCard incident={i} />
+            <LocationCard incident={i} />
           </aside>
-        </div>
-      </DetailShell>
+        </div>,
+      )
     );
   }
 
   // P31 (dieskalasi) dan PS1 (lewat tenggat), insiden berjalan
   return (
-    <DetailShell title="Detail insiden" tags={tags} toast={toast} onToastClose={() => setToast(null)} overlay={overlay}>
+    shell(
       <div className="lk-grid">
         <div className="c8 lk-stack">
           {esc && <EscalationBanner e={esc} />}
           <IncidentSummaryCard incident={i} />
           {d.attachments.length > 0 && <AttachmentsCard files={d.attachments} />}
           <NextStep meta={nextStepMeta(esc)} onGive={() => setDialog('arahan')} />
-          <RiwayatCard incident={i} />
         </div>
         <aside className="c4 lk-stack">
           <DueCard incident={i} />
@@ -168,8 +177,9 @@ export function SkkIncidentPage() {
           {esc && <EscalationCard e={esc} />}
           <FollowUpsCard incident={i} />
           <RelatedCard incident={i} kerawanan={kerawanan} />
+          <LocationCard incident={i} />
         </aside>
-      </div>
-    </DetailShell>
+      </div>,
+    )
   );
 }

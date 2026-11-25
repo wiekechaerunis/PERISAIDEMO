@@ -161,7 +161,7 @@ export function LampiranSec({ i }: { i: Incident }) {
   if (!files.length) return null;
   return (
     <div className="sec">
-      <div className="hd"><h2>Lampiran · {files.length} file</h2><span className="lk-lock" style={{ fontSize: 12 }}><Ic d={P.lock} size={14} />Terkunci</span></div>
+      <div className="hd"><h2>Lampiran · {files.length} file</h2><span className="lk-lock" style={{ fontSize: 12 }}><Ic d={P.lock} size={14} />Terkunci sampai diverifikasi</span></div>
       <div className="p-files">
         {files.map((f) => (
           <div className="p-file" key={f.name}>

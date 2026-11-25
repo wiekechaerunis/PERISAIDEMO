@@ -96,23 +96,26 @@ describe('Mobile langkah 4 · Ringkasan', () => {
 });
 
 describe('Mobile detail insiden', () => {
-  it('Pelapor: Tarik kembali mengubah status jadi Draf', () => {
+  // ADJ-17: "Batalkan pengajuan" dengan alasan wajib
+  it('Pelapor: Batalkan pengajuan mengubah status jadi Draf', () => {
     renderAt('/insiden/INS-SEN-2026-0007');
     expect(screen.getByRole('heading', { name: 'Pencurian kabel listrik sumur ADR-07' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Aksi lain: Tarik kembali' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Aksi lain: Batalkan pengajuan' }));
     const dlg = screen.getByRole('dialog');
-    expect(within(dlg).getByText('Tarik kembali jadi draf?')).toBeInTheDocument();
-    fireEvent.click(within(dlg).getByRole('button', { name: 'Tarik kembali' }));
+    expect(within(dlg).getByText('Batalkan pengajuan?')).toBeInTheDocument();
+    expect(within(dlg).getByRole('button', { name: 'Batalkan pengajuan' })).toBeDisabled();
+    fireEvent.change(within(dlg).getByLabelText('Alasan membatalkan pengajuan'), { target: { value: 'Lokasi salah titik.' } });
+    fireEvent.click(within(dlg).getByRole('button', { name: 'Batalkan pengajuan' }));
     expect(useDemoStore.getState().incidents.find((i) => i.no === 'INS-SEN-2026-0007')?.status).toBe('draf');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getByRole('button', { name: 'Lanjutkan draf' })).toBeInTheDocument();
   });
 
-  it('SKK: belum diperiksa, tanpa Tarik kembali', () => {
+  it('SKK: belum diperiksa, tanpa Batalkan pengajuan', () => {
     useDemoStore.getState().setRole('pengawas');
     renderAt('/insiden/INS-SEN-2026-0007');
     expect(screen.getByText('Belum diperiksa Pejabat Berwenang KKKS.')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Tarik kembali/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Batalkan pengajuan/ })).toBeNull();
   });
 
   it('insiden restricted menampilkan Terbatas', () => {

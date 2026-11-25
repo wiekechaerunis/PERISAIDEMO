@@ -51,13 +51,16 @@ describe('workflow insiden', () => {
     expect(r.state.incidents.some((i) => i.no === 'INS-SEN-2026-0007')).toBe(false);
     expect(r.state.kerawanan[0].no).toBe('KRW-SEN-2026-0048');
   });
-  it('Tarik kembali: Menunggu pemeriksaan jadi Draf dan tercatat; tidak bisa bila sudah diproses', () => {
-    const r = withdraw(seedState(), 'INS-SEN-2026-0007', 'Budi Santoso');
+  // ADJ-17: nama aksi "Batalkan pengajuan", alasan dicatat di Riwayat
+  it('Batalkan pengajuan: Menunggu pemeriksaan jadi Draf dan tercatat dengan alasan; tidak bisa bila sudah diproses', () => {
+    const r = withdraw(seedState(), 'INS-SEN-2026-0007', 'Budi Santoso', 'Lokasi salah titik.');
     if (!r.ok) throw new Error(r.reason);
     const i = r.state.incidents.find((x) => x.no === 'INS-SEN-2026-0007')!;
     expect(i.status).toBe('draf');
     expect(i.verifyDueAt).toBeUndefined();
-    expect(i.timeline?.at(-1)?.text).toBe('Menarik kembali laporan');
-    expect(withdraw(r.state, 'INS-SEN-2026-0007', 'Budi Santoso').ok).toBe(false);
+    expect(i.timeline?.at(-1)?.text).toBe('Pengajuan dibatalkan: Lokasi salah titik.');
+    const late = withdraw(r.state, 'INS-SEN-2026-0007', 'Budi Santoso');
+    expect(late.ok).toBe(false);
+    expect(!late.ok && late.reason).toBe('Laporan sudah diproses Pejabat Berwenang dan pengajuannya tidak bisa dibatalkan.');
   });
 });

@@ -90,7 +90,7 @@ export const CATALOG: CatalogRow[] = [
  {
   "kode": "EI.10",
   "id": "ei10",
-  "judul": "Insiden INS-SEN-2026-0007 ditarik kembali oleh pelapor",
+  "judul": "Insiden INS-SEN-2026-0007 pengajuannya dibatalkan oleh pelapor",
   "penerima": "Penerima kiriman langsung",
   "kategori": "Info [USULAN]",
   "dasar": "INS-01 U-1 #17 · INS-03 FR-INS-42"
@@ -217,9 +217,9 @@ export const EMAILS: Record<string, EmailData> = {
  "ei10": {
   "id": "ei10",
   "kode": "EI.10",
-  "judul": "Insiden INS-SEN-2026-0007 ditarik kembali oleh pelapor",
+  "judul": "Insiden INS-SEN-2026-0007 pengajuannya dibatalkan oleh pelapor",
   "nama": "Hendra Wijaya",
-  "konteks": "Budi Santoso menarik kembali insiden yang Anda terima lewat jalur cepat untuk diperbaiki.",
+  "konteks": "Budi Santoso membatalkan pengajuan insiden yang Anda terima lewat jalur cepat untuk diperbaiki.",
   "rows": [
    {
     "k": "Insiden",

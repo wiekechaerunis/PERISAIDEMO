@@ -16,7 +16,9 @@ import { STATUS_LABEL, STATUS_TAG, type Closure, type Incident } from '@/service
 import {
   closureDone, emptyClosure, escalate, handlingOf, requestClosure, respondStep, saveClosure, saveNote, takeOver, MAX_NOTE, CLOSURE_REQUIRED,
 } from '@/services/mock/workflow.handling';
-import { DetailShell, type ToastMsg } from '../components/detail/DetailShell';
+import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
+import { LocationCard } from '../components/detail/LocationCard';
+import { ClosureStatusCard } from '../components/closure/SyncParts';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
 import { RestrictedView } from '../components/detail/StateViews';
@@ -170,53 +172,46 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
     <HistoryCard
       entries={entries} shown={shown} hidden={hidden} expanded={expanded} onToggle={() => setExpanded((v) => !v)} filter={filter}
       onFilter={(f) => { setFilter(f); setExpanded(false); }} onAudit={() => setAudit(true)} failed={st === 'kronologi-gagal'} onRetry={clearState}
-      empty={noteCount === 0 && st !== 'kronologi-gagal'}
+      empty={noteCount === 0 && st !== 'kronologi-gagal'} incidentNo={i.no}
     />
   );
   const files = d.attachments;
+  const tab = useDetailTab();
+  const riwayatTab = <div className="lk-stack" style={{ maxWidth: 880 }}>{history}</div>;
 
   /* P17: menunggu penutupan */
   if (i.status === 'minta-ditutup' && stored) {
-    const last = entries.find((e) => e.kind === 'note');
     const req = stored.requestedAt ?? demoNow();
     return (
-      <HandlingShell title="Detail insiden" tags={statusTags(i, escalated)} acts={acts} toast={toast} onToastClose={() => setToast(null)}
+      <HandlingShell title="Detail insiden" tags={statusTags(i, escalated)} acts={acts} toast={toast} onToastClose={() => setToast(null)} riwayatCount={entries.length}
         overlay={<>{dlg && <EscalateDialog onClose={() => setDlg(false)} onConfirm={doEscalate} />}{audit && <AuditPanel incident={i} due={due} onClose={() => setAudit(false)} />}</>}>
+        {tab === 'riwayat' ? riwayatTab : (
         <div className="lk-grid">
           <div className="c8 lk-stack">
-            <div className="in-bn info sm" style={{ alignSelf: 'stretch' }}>
-              <P d={D.info} size={16} />
-              <div className="body"><b>Menunggu ditutup oleh {reviewerBy(stored.reviewers)}.</b> Diajukan {formatDateShort(req)}, {req.slice(11, 16)} · batas tinjau 2 hari kerja.</div>
-            </div>
+            {/* B-23 (P17): Data penutupan → Isi laporan → Lampiran; tidak dilipat (B-22) */}
             <ClosureReadonly c={stored} reported={d.lossIdr} />
-            <details className="in-fold">
-              <summary>
-                <span className="t"><b>Isi laporan &amp; lampiran</b><span className="p-cap">{i.title} · {i.severity ? SEV_LABEL[i.severity] : '-'} · {files.length} file</span></span>
-                <span className="chev"><P d={D.chev} size={16} /></span>
-              </summary>
-              <div className="fb"><IncidentSummaryCard incident={i} />{files.length > 0 && <AttachmentsCard files={files} />}</div>
-            </details>
-            <details className="in-fold">
-              <summary>
-                <span className="t"><b>Riwayat · {entries.length}</b><span className="p-cap">{last ? `Terakhir: ${last.bold} ${last.rest?.replace(' · ', '')}, ${last.tm}` : 'Belum ada catatan'}</span></span>
-                <span className="chev"><P d={D.chev} size={16} /></span>
-              </summary>
-              <div className="fb">{history}</div>
-            </details>
+            <IncidentSummaryCard incident={i} />
+            {files.length > 0 && <AttachmentsCard files={files} />}
           </div>
           <aside className="c4 lk-stack">
+            <ClosureStatusCard i={i} by={reviewerBy(stored.reviewers)}>
+              <span className="p-cap">Batas tinjau 2 hari kerja sejak diajukan {formatDateShort(req)}, {req.slice(11, 16)}. Tenggat dinilai saat Anda mengajukan penutupan.</span>
+            </ClosureStatusCard>
             <DueCard i={i} due={due} />
             <TlCard i={i} canAdd={(i.status as string) === 'dalam-penanganan' || (i.status as string) === 'minta-ditutup'} />
             <PicSummaryCard i={i} mode={mode} closureNames={stored.partnerNames} />
+            <LocationCard incident={i} />
           </aside>
         </div>
+        )}
       </HandlingShell>
     );
   }
 
   return (
-    <HandlingShell title="Detail insiden" tags={statusTags(i, escalated)} acts={acts} toast={toast} onToastClose={() => setToast(null)}
+    <HandlingShell title="Detail insiden" tags={statusTags(i, escalated)} acts={acts} toast={toast} onToastClose={() => setToast(null)} riwayatCount={entries.length}
       overlay={<>{dlg && <EscalateDialog onClose={() => setDlg(false)} onConfirm={doEscalate} />}{audit && <AuditPanel incident={i} due={due} onClose={() => setAudit(false)} />}</>}>
+      {tab === 'riwayat' ? riwayatTab : (
       <div className="lk-grid">
         <div className="c8 lk-stack">
           {mode === 'grup-lain' && (
@@ -227,7 +222,6 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
           )}
           <IncidentSummaryCard incident={i} />
           {files.length > 0 && <AttachmentsCard files={files} />}
-          {history}
           {closure && returnedReason && <ClosureReadonly c={closure} reported={d.lossIdr} />}
         </div>
         <aside className="c4 lk-stack">
@@ -254,8 +248,10 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
               </a>
             </section>
           )}
+          <LocationCard incident={i} />
         </aside>
       </div>
+      )}
     </HandlingShell>
   );
 }

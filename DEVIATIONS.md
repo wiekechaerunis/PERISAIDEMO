@@ -64,3 +64,8 @@ bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
 | S-16 | I14m: catatan "Isi dan lampiran terkunci sampai diperiksa." | "…sampai diverifikasi." | B-14 menulis "terkunci sampai diverifikasi" |
 | S-17 | I14m: 6 Pejabat Berwenang dengan jabatan; varian I14mg (grup) dan I14mi (individu) | Tiga Pejabat dari data mock (jabatan ditambah). Varian grup/individu tidak dibuat karena prototype belum punya halaman Persetujuan untuk mengatur pemeriksa | Mengikuti data mock yang ada |
 | S-18 | I14ma: pelapor sekaligus pemeriksa | Persona Pelapor demo bukan Pejabat; state ini ditampilkan lewat `?pemeriksa=sendiri` | Satu persona per peran (S-04) |
+| S-19 | Board S07: alasan maks. 300 karakter; toast gagal "Laporan sudah diputus pemeriksa…" | Maks. 500; toast "Laporan sudah diproses Pejabat Berwenang dan pengajuannya tidak bisa dibatalkan." | **Konflik, INS-ADJ menang** (ADJ-17) |
+| S-20 | Board I15: kolom kanan Pelapor berisi kartu "Menunggu pemeriksaan" (Batas, Diperiksa oleh, PIC) | Kartu "Ringkasan" sesuai B-19 (memuat Batas pemeriksaan dan Diperiksa oleh) + kartu Lokasi | B-19 menyebut panel Ringkasan secara eksplisit |
+| S-21 | Board P22: menu "Aksi lain" (Ganti PIC, Ubah tenggat, Eskalasi, Tandai terbatas) saat Minta ditutup | Tidak ada menu Aksi lain saat Menunggu penutupan | **Konflik, INS-ADJ menang** (ADJ-09) |
+| S-22 | Riwayat penuh di tab Riwayat | Pada layar PIC entri Riwayat (termasuk eskalasi otomatis) hanya terlihat di tab Riwayat, tidak lagi di kolom Detail | B-18 |
+| S-23 | Mobile (M8r, M11r, MP2, MV2) | Tab Detail \| Riwayat belum diterapkan di layar mobile | Fokus desktop |

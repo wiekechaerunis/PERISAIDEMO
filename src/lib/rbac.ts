@@ -49,7 +49,7 @@ export const reviewerTitle = (name: string): string => REVIEWER_TITLES[name] ?? 
  * Pilihan "Diperiksa oleh". ADJ-01: pengaju yang juga Pejabat Berwenang tetap muncul (ditandai "(Anda)" dan diberi peringatan, tidak
  * diblokir). Parameter dipertahankan agar pemanggil lama tetap jalan.
  */
-export const reviewerOptions = (_submitter?: string): string[] => [...PEJABAT_NAMES];
+export const reviewerOptions = (submitter?: string): string[] => (void submitter, [...PEJABAT_NAMES]);
 
 /** Tujuan pengajuan ke "Diperiksa oleh": semua terpilih (null) → jumlah Pejabat; subset → nama. */
 export const reviewerTarget = (rev: string[] | null | undefined, options: string[] = PEJABAT_NAMES): string =>

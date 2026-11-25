@@ -147,6 +147,31 @@ export interface Closure {
   result?: SecurityOutcome;
   /** F3 (opsional): proses hukum; bisa diperbarui setelah insiden Ditutup */
   legal?: LegalProcess;
+  /** ADJ-12: Produksi hilang (LPO), opsional; terpisah dari kerugian dan level */
+  lpo?: LpoData;
+}
+
+/** ADJ-12: bahan hitung Produksi hilang (LPO). Isian AI ditandai di `aiFields` ("AI · Perlu dicek"). */
+export interface LpoData {
+  choice: 'tidak' | 'ada' | 'belum';
+  kind?: 'minyak' | 'gas';
+  /** minyak: produksi normal bbl/hari */
+  normalBblPerDay?: number | null;
+  /** lama berhenti (jam), otomatis dari dampak */
+  stopHours?: number | null;
+  /** persentase turun bila operasi terganggu sebagian */
+  dropPct?: number | null;
+  /** harga per barel (USD), otomatis dari konfigurasi bulan kejadian */
+  priceUsd?: number | null;
+  /** volume hilang (bbl minyak / MMSCF gas) dan nilai (USD), dihitung atau diisi sendiri */
+  volumeBbl?: number | null;
+  valueUsd?: number | null;
+  /** sumber angka (wajib bila Ada) */
+  source?: string;
+  /** lampiran dasar angka (min. 1 bila Ada); dokumen untuk AI otomatis jadi lampiran */
+  files?: { name: string; sizeKb: number }[];
+  /** isian yang diisi AI */
+  aiFields?: string[];
 }
 
 export interface FollowUpItem {

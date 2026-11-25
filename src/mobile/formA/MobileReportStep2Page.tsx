@@ -14,7 +14,7 @@ import {
   jenisOf, severityParts, toggleCasualty, toggleExclusive, validateStep2,
 } from '@/features/insiden/components/step2Data';
 import { useDemoStore } from '@/services/mock/store';
-import { SEVERITIES, SEV_DOT, SEV_EQUIV, SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
+import { SEVERITIES, SEV_DOT, SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
 import { AiTagM, StepBar, StepFoot, bare, useDraftActions } from './parts';
 import { AiSheet } from './AiSheet';
 import { PickerSheet } from './sheets';
@@ -275,7 +275,6 @@ export function MobileReportStep2Page() {
         <div className="in-sevauto">
           <div className="r1" style={{ flexWrap: 'wrap' }}>
             <span className={'p-tag ' + SEV_TAG_CLS[level]}><span className="dot"></span>{SEV_LABEL[level]}</span>
-            <span className="p-cap">setara {SEV_EQUIV[level]}</span>
             <span className={differs ? 'p-tag t-caution' : 'p-tag t-info'} style={{ height: 20, fontSize: 11 }}>{differs ? 'Diubah pelapor' : 'Otomatis'}</span>
             <span style={{ flex: 1 }}></span>
             <button type="button" className="p-btn p-btn-secondary p-btn-sm" style={MIN44} onClick={() => setEditing(!editing)}>{editing ? 'Selesai' : 'Ubah'}</button>

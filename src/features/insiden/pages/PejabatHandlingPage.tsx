@@ -6,6 +6,7 @@ import { demoNow } from '@/services/mock/clock';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { markRestricted } from '@/services/mock/workflow';
+import { riwayat } from '../logic/closure';
 import {
   canReopen, changeDueDate, closeIncident, closedAtOf, followUpDirective, openFollowUps, reassignPic, reopen, returnToPic, reopenLimit,
   type CloseInput,
@@ -15,22 +16,25 @@ import { useFollowUps } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { DEMO_USERS } from '@/lib/rbac';
 import { formatDate, formatDateShort } from '@/lib/format';
 import { STATUS_LABEL, STATUS_TAG, type Incident } from '@/services/types';
-import { DetailShell, type ToastMsg } from '../components/detail/DetailShell';
+import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
+import { LocationCard } from '../components/detail/LocationCard';
+import { ClosureStatusCard, DecisionSummary, DurationRows, SelfCloseDialog, selfCloseNote, selfCloseReasons } from '../components/closure/SyncParts';
+import { addNote } from '@/services/mock/workflow';
 import { RestrictedView } from '../components/detail/StateViews';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
-import { accessOf, detailOf, registeredAt } from '../components/detail/detailLogic';
+import { accessOf, detailOf } from '../components/detail/detailLogic';
 import { Ic } from '../components/review/parts';
 import { RestrictedDialog } from '../components/review/ReviewDialogs';
 import {
-  AuditPanel, ClosedDataCard, ClosureDataCard, ContentFold, DueCard, EscalationCard, FollowUpsCard, NextStep, P, RiwayatCard, RiwayatFold,
+  AuditPanel, ClosedDataCard, ClosureDataCard, DueCard, EscalationCard, FollowUpsCard, NextStep, P, RiwayatCard,
   SummaryCard, SurroundCard,
 } from '../components/closure/ClosureBlocks';
-import { BriefCard, DecisionPanel } from '../components/closure/ReviewParts';
+import { DecisionPanel } from '../components/closure/ReviewParts';
 import { CloseDialog, DueDialog, NoReopenDialog, ReassignDialog, ReopenDialog, ReturnDialog, type CloseResult } from '../components/closure/ClosureDialogs';
-import { dueRemaining, durFull, timeShort, withDemoState } from '../logic/closure';
+import { dueRemaining, timeShort, withDemoState } from '../logic/closure';
 
-type Dialog = null | 'tutup' | 'kembalikan' | 'ganti-pic' | 'tenggat' | 'buka' | 'nobuka' | 'terbatas';
+type Dialog = null | 'tutup' | 'kembalikan' | 'ganti-pic' | 'tenggat' | 'buka' | 'nobuka' | 'terbatas' | 'sendiri';
 type Hl = 'dp' | 'bk' | 'rg' | 'tl' | null;
 const DIALOGS = ['tutup', 'kembalikan', 'ganti-pic', 'tenggat', 'buka'];
 const GRUP_FROM = 'Tim Pengamanan ADR Area 2';
@@ -65,6 +69,8 @@ function Body({ stored }: { stored: Incident }) {
   const [hl, setHl] = useState<Hl>(null);
   const [note, setNote] = useState('');
   const [closeError, setCloseError] = useState<string>();
+  const [selfOk, setSelfOk] = useState(false);
+  const tab = useDetailTab();
 
   let i = stored;
   if (demo && !['aksi', 'riwayat', 'riwayat-kosong', 'tenggat-error'].includes(demo)) i = withDemoState(stored, demo, demoNow());
@@ -91,6 +97,9 @@ function Body({ stored }: { stored: Incident }) {
       confirmedContracts: contracts.every((k) => !!k.ref), contracts, note: r.note, followUp: r.followUp, cancelReason: r.cancelReason, at: demoNow(),
     };
     const res = decide((s) => closeIncident(s, i.no, by, input));
+    // ADJ-02/03: penutupan oleh PIC atau pemeriksa yang sama tetap sah dan tercatat
+    const self = selfCloseReasons(i, by);
+    if (res.ok && selfOk && (self.pic || self.reviewer)) decide((s) => addNote(s, i.no, by, `Penutupan: ${selfCloseNote(self)}`));
     if (res.ok) {
       setDemo(null);
       setDialog(null);
@@ -117,15 +126,13 @@ function Body({ stored }: { stored: Incident }) {
 
   const open = openFollowUps(i, fus);
   const st = i.status;
-  const tags = (
-    <>
-      {st === 'ditutup' ? <span className="p-tag t-ok">Ditutup</span> : <span className="p-tag t-info">Dalam penanganan</span>}
-      {st === 'minta-ditutup' && <span className="p-tag t-caution">{STATUS_LABEL[st]}</span>}
-      {st === 'dalam-penanganan' && i.escalated && <span className="p-tag t-caution">Dieskalasi</span>}
-      {st === 'ditutup' && open.length > 0 && <span className="p-tag t-info">Tindak lanjut berjalan</span>}
-    </>
-  );
-  void STATUS_TAG;
+  // B-18: header hanya menampilkan status
+  const tags = <span className={`p-tag ${st === 'minta-ditutup' ? 't-caution' : STATUS_TAG[st]}`}>{STATUS_LABEL[st]}</span>;
+  /** Tutup insiden: ADJ-02/03 memberi peringatan bila penyetuju juga PIC atau pemeriksa, tidak memblokir. */
+  const askClose = () => {
+    const r = selfCloseReasons(i, by);
+    setDialog(r.pic || r.reviewer ? 'sendiri' : 'tutup');
+  };
 
   const menu: MenuItem[] =
     st === 'ditutup'
@@ -137,11 +144,15 @@ function Body({ stored }: { stored: Incident }) {
           { sep: true },
           { label: 'Tandai terbatas', icon: P.lock, onClick: () => setDialog('terbatas') },
         ];
-  const acts = st === 'dalam-penanganan' || st === 'minta-ditutup' || st === 'ditutup' ? <ActionMenu items={menu} initialOpen={demo === 'aksi'} /> : null;
+  // ADJ-09: selama Menunggu penutupan hanya Setujui, Kembalikan ke PIC, Tambah tindak lanjut (Ganti PIC, Ubah tenggat, Eskalasi disembunyikan)
+  const acts = st === 'dalam-penanganan' || st === 'ditutup' ? <ActionMenu items={menu} initialOpen={demo === 'aksi'} /> : null;
 
   const overlay = (
     <div className="cl-over">
       {dialog === 'tutup' && <CloseDialog incident={i} now={demoNow()} contracts={contracts} note={note} error={closeError} onClose={() => { setDialog(null); setCloseError(undefined); }} onConfirm={doClose} />}
+      {dialog === 'sendiri' && (
+        <SelfCloseDialog reasons={selfCloseReasons(i, by)} onCancel={() => setDialog(null)} onContinue={() => { setSelfOk(true); setDialog('tutup'); }} />
+      )}
       {dialog === 'kembalikan' && <ReturnDialog incident={i} onClose={() => setDialog(null)} onConfirm={doReturn} />}
       {dialog === 'ganti-pic' && <ReassignDialog incident={i} onClose={() => setDialog(null)} onConfirm={doReassign} />}
       {dialog === 'tenggat' && <DueDialog incident={i} today={demoNow()} preset={demo === 'tenggat-error' ? { date: '2026-10-27', reason: 'Polsek' } : undefined} onClose={() => setDialog(null)} onConfirm={doDue} />}
@@ -158,18 +169,28 @@ function Body({ stored }: { stored: Incident }) {
     body = (
       <div className="lk-grid">
         <div className="c7 lk-stack">
-          <BriefCard i={i} hl={hl} setHl={setHl} onAudit={audit} />
+          {/* B-23 (P22): Ringkasan untuk keputusan → Data penutupan → Tindak lanjut → Isi laporan (tidak dilipat, B-22) */}
+          <DecisionSummary i={i} onLook={(w) => setHl(w === 'tl' ? 'tl' : w === 'dp' ? 'dp' : null)} />
           <ClosureDataCard i={i} hl={hl} grupFrom={grupFrom} />
           <FollowUpsCard i={i} hl={hl === 'tl'} />
-          <ContentFold i={i} />
-          <RiwayatFold i={i} onAudit={audit} />
+          <IncidentSummaryCard incident={i} />
+          <AttachmentsCard files={detailOf(i).attachments} />
         </div>
         <aside className="c5 lk-stack">
+          <ClosureStatusCard i={i} by="keputusan Anda">
+            <div className="in-times"><DurationRows i={i} to={demoNow()} pending /></div>
+            {(selfCloseReasons(i, by).pic || selfCloseReasons(i, by).reviewer) && (
+              <span className="p-cap" style={{ color: 'var(--caution-ink)' }}>
+                <b>Perhatian:</b> {selfCloseReasons(i, by).pic ? 'Anda PIC insiden ini.' : 'Anda juga memeriksa laporan ini.'} Penutupan tetap bisa dilanjutkan dan tercatat di Riwayat.
+              </span>
+            )}
+          </ClosureStatusCard>
           <DecisionPanel
             i={i} now={demoNow()} hl={hl} setHl={setHl} contracts={contracts} onContracts={setContracts} note={note} onNote={setNote}
-            onReturn={() => setDialog('kembalikan')} onClose={() => setDialog('tutup')} grupFrom={grupFrom}
+            onReturn={() => setDialog('kembalikan')} onClose={askClose} grupFrom={grupFrom}
           />
           <SummaryCard i={i} title="Info insiden" picExtra={<> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={() => setDialog('ganti-pic')}>Ganti PIC</button></>} />
+          <LocationCard incident={i} />
           <SurroundCard i={i} minim={variant === 'data-minim'} />
         </aside>
       </div>
@@ -177,35 +198,30 @@ function Body({ stored }: { stored: Incident }) {
   } else if (st === 'ditutup') {
     const c = i.handling?.closure;
     const closedAt = closedAtOf(i);
-    const reg = durFull(registeredAt(i), closedAt ?? demoNow());
     const due = i.handleDueAt;
     body = (
       <div className="lk-grid">
         <div className="c8 lk-stack">
-          <div className="in-bn info sm" style={{ alignSelf: 'stretch' }}>
-            <Ic d={P.info} size={16} />
-            <div className="body">
-              <b>Ditutup {closedAt ? timeShort(closedAt) : '—'}{c?.closedBy ? ` oleh ${c.closedBy}` : ''}.</b>
-              {open.length > 0 ? ` ${open.length} tindak lanjut masih berjalan · ` : ' '}bisa dibuka kembali{closedAt ? ` s.d. ${formatDateShort(reopenLimit(closedAt))}` : ''}.
-            </div>
-          </div>
+          {/* B-23 (P24): Data penutupan → Tindak lanjut → Isi laporan; banner status dihapus (B-22) */}
           <ClosedDataCard i={i} />
           <FollowUpsCard i={i} note="Tetap berjalan setelah insiden ditutup, sampai diperiksa PIC insiden." />
-          <ContentFold i={i} />
-          <RiwayatFold i={i} onAudit={audit} />
+          <IncidentSummaryCard incident={i} />
+          <AttachmentsCard files={detailOf(i).attachments} />
         </div>
         <aside className="c4 lk-stack">
-          <SummaryCard i={i} title="Ringkasan" />
-          <section className="p-card in-sec">
-            <h2 className="in-h">Penutupan</h2>
+          <ClosureStatusCard i={i}>
             <div className="in-times">
               <div className="row"><span className="k">Ditutup</span><span className="v">{closedAt ? formatWibFullLocal(closedAt) : '—'}</span><span className="c">{c?.closedBy}</span></div>
-              <div className="row"><span className="k">Lama penanganan</span><span className="v">{reg}</span>
-                <span className="c">{due && closedAt && closedAt > due ? <b style={{ color: 'var(--err-ink)' }}>Lewat tenggat</b> : <b style={{ color: 'var(--status-success-ink)' }}>Dalam tenggat</b>}{due ? ` · tenggat ${formatWibFullLocal(due)}` : ''}</span></div>
-              <div className="row"><span className="k">Eskalasi</span><span className="v">{i.escalated ? 'Dieskalasi' : 'Tidak dieskalasi'}</span></div>
+              <DurationRows i={i} to={closedAt ?? demoNow()} />
+              <div className="row"><span className="k">Tenggat PIC</span>
+                <span className="v">{due && c?.requestedAt && c.requestedAt > due ? 'Melewati tenggat' : 'Dalam tenggat'}</span>
+                <span className="c">Dinilai saat Ajukan penutupan{due ? ` · tenggat ${formatWibFullLocal(due)}` : ''}</span></div>
+              {open.length > 0 && <div className="row"><span className="k">Tindak lanjut</span><span className="v">{open.length} masih berjalan</span></div>}
               {closedAt && <div className="row"><span className="k">Buka kembali</span><span className="v">Sampai {formatDate(reopenLimit(closedAt))}</span><span className="c">30 hari sejak ditutup</span></div>}
             </div>
-          </section>
+          </ClosureStatusCard>
+          <SummaryCard i={i} title="Ringkasan" />
+          <LocationCard incident={i} />
         </aside>
       </div>
     );
@@ -239,13 +255,13 @@ function Body({ stored }: { stored: Incident }) {
             <NextStep icon={P.flag} title="Jadikan arahan ini tindak lanjut?" meta={timeShort(dir.at)}
               action={<button type="button" className="p-btn p-btn-primary" onClick={() => doDirective(dIdx)}><Ic d={P.plus} size={16} />Jadikan tindak lanjut</button>} />
           )}
-          <RiwayatCard i={i} onAudit={audit} />
         </div>
         <aside className="c4 lk-stack">
           <DueCard i={i} now={demoNow()} withEsc={!i.escalated} />
           <FollowUpsCard i={i} />
           <SummaryCard i={i} title="Ringkasan" picExtra={i.pic ? <> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={() => setDialog('ganti-pic')}>Ganti PIC</button></> : undefined} />
           <EscalationCard i={i} />
+          <LocationCard incident={i} />
         </aside>
       </div>
     );
@@ -260,8 +276,11 @@ function Body({ stored }: { stored: Incident }) {
   }
 
   return (
-    <DetailShell title="Detail insiden" tags={tags} acts={acts} toast={toast} onToastClose={() => setToast(null)} overlay={overlay}>
-      {body}
+    <DetailShell
+      title="Detail insiden" tags={tags} acts={acts} toast={toast} onToastClose={() => setToast(null)} overlay={overlay}
+      no={i.no} riwayatCount={riwayat(i).length}
+    >
+      {tab === 'riwayat' ? <div className="lk-stack" style={{ maxWidth: 880 }}><RiwayatCard i={i} onAudit={audit} all /></div> : body}
     </DetailShell>
   );
 }

@@ -2,7 +2,7 @@
 import type { Incident, Priority } from '@/services/types';
 import { PIC_GROUPS, PIC_PEOPLE } from '@/services/mock/workflow';
 import { formatWibFull } from '@/lib/format';
-import { SEVERITIES, SEV_DOT, SEV_EQUIV, SEV_LABEL, type Severity } from '@/lib/severity';
+import { SEVERITIES, SEV_DOT, SEV_LABEL, type Severity } from '@/lib/severity';
 import { initials } from '@/lib/rbac';
 import { Icon } from '@/components/ui/Icon';
 import { KAT, KAT_LAIN, MAX_LAIN, jenisOf } from '../step2Data';
@@ -95,10 +95,10 @@ export function DecisionCard({ incident: i, form: f, onChange, dueIso, deadline,
         <SelectField
           label={<span className="p-lbl" style={{ color: 'var(--ink)' }}>Keparahan resmi<span className="p-req">*</span></span>}
           ariaLabel="Keparahan resmi" lead={<SevDot dot={SEV_DOT[f.severity]} />}
-          display={<><b style={{ fontWeight: 600 }}>{SEV_LABEL[f.severity]}</b> <span className="p-cap">· setara {SEV_EQUIV[f.severity]}</span></>}
+          display={<b style={{ fontWeight: 600 }}>{SEV_LABEL[f.severity]}</b>}
           selected={f.severity} onPick={(k) => onChange({ severity: k as Severity })}
-          options={SEVERITIES.map((s) => ({ key: s, label: SEV_LABEL[s], caption: `Setara ${SEV_EQUIV[s]}`, lead: <SevDot dot={SEV_DOT[s]} /> }))}
-          help={<span className="p-help">{severityHelp(i, (s) => SEV_EQUIV[s])}</span>}
+          options={SEVERITIES.map((s) => ({ key: s, label: SEV_LABEL[s], lead: <SevDot dot={SEV_DOT[s]} /> }))}
+          help={<span className="p-help">{severityHelp(i)}</span>}
         />
         {changed && (
           <div className="p-field">

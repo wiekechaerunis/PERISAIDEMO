@@ -41,10 +41,12 @@ describe('Detail SKK insiden disetujui', () => {
     const i = useDemoStore.getState().incidents.find((x) => x.no === 'INS-SEN-2026-0005')!;
     expect(i.handling?.directives).toHaveLength(1);
     expect(i.status).toBe('dalam-penanganan');
+    expect(screen.getByRole('status')).toHaveTextContent('Arahan terkirim');
+    // B-18: Riwayat di tab tersendiri
+    fireEvent.click(screen.getByRole('tab', { name: /Riwayat/ }));
     const tl = screen.getByRole('list', { name: 'Riwayat insiden' });
     expect(within(tl).getByText('Koordinasikan patroli gabungan dengan Polres.')).toBeInTheDocument();
     expect(within(tl).getAllByText('Arahan SKK').length).toBeGreaterThan(0);
-    expect(screen.getByRole('status')).toHaveTextContent('Arahan terkirim');
   });
 
   it('arahan kosong ditolak dan tidak tersimpan', () => {

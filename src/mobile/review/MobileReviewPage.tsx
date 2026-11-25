@@ -16,7 +16,7 @@ import { cancelForMerge } from '@/services/mock/workflow.followup';
 import { handlingDeadline } from '@/lib/deadline';
 import { DEMO_USERS } from '@/lib/rbac';
 import { STATUS_LABEL, type Incident, type Priority } from '@/services/types';
-import { SEVERITIES, SEV_DOT, SEV_EQUIV, SEV_LABEL, type Severity } from '@/lib/severity';
+import { SEVERITIES, SEV_DOT, SEV_LABEL, type Severity } from '@/lib/severity';
 import { formatNumber, formatWib, formatWibFull } from '@/lib/format';
 import { findSimilar, type PatternKey, type SimilarMode } from '@/features/insiden/logic/similar';
 import {
@@ -382,10 +382,10 @@ function ReviewBody({ incident, onNote, note, onCloseNote }: { incident: Inciden
         <SelectField
           label={<span className="p-lbl" style={{ color: 'var(--ink)' }}>Keparahan resmi<span className="p-req">*</span></span>}
           ariaLabel="Keparahan resmi" lead={<SevDot dot={SEV_DOT[form.severity]} />}
-          display={<><b style={{ fontWeight: 600 }}>{SEV_LABEL[form.severity]}</b> <span className="p-cap">· setara {SEV_EQUIV[form.severity]}</span></>}
+          display={<b style={{ fontWeight: 600 }}>{SEV_LABEL[form.severity]}</b>}
           selected={form.severity} onPick={(k) => patch({ severity: k as Severity })}
-          options={SEVERITIES.map((s) => ({ key: s, label: SEV_LABEL[s], caption: `Setara ${SEV_EQUIV[s]}`, lead: <SevDot dot={SEV_DOT[s]} /> }))}
-          help={<span className="p-help">{severityHelp(incident, (s) => SEV_EQUIV[s])}</span>}
+          options={SEVERITIES.map((s) => ({ key: s, label: SEV_LABEL[s], lead: <SevDot dot={SEV_DOT[s]} /> }))}
+          help={<span className="p-help">{severityHelp(incident)}</span>}
         />
         {changed && (
           <div className="p-field">

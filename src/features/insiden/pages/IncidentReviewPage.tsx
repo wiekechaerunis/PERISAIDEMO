@@ -21,7 +21,12 @@ import {
   approveToast, deadlineInfo, duplicateCandidates, initialForm, lateDemoDue, officialCategory, picName, reviewErrors,
   severityChanged, type ReviewForm,
 } from '../logic/review';
-import { AttachmentsCard, IncidentContentCard, RvToast } from '../components/review/parts';
+import { AttachmentsCard, Ic, IncidentContentCard, RvToast } from '../components/review/parts';
+import { addNote } from '@/services/mock/workflow';
+import { buildTimeline } from '../components/detail/detailLogic';
+import { HistoryCard } from '../components/detail/HistoryCard';
+import { LocationCard } from '../components/detail/LocationCard';
+import { useDetailTab } from '../components/detail/DetailShell';
 import { ReviewShell, ReviewSkeleton } from '../components/review/ReviewShell';
 import { DecisionCard } from '../components/review/DecisionCard';
 import { DuplicateBanner } from '../components/review/DuplicateBanner';
@@ -94,6 +99,7 @@ function EmptyReview({ kind, no }: { kind: 'kosong' | 'peran' | 'tidak-ada' | 'd
 }
 
 function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note | null) => void }) {
+  const tab = useDetailTab();
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const demo = sp.get('state');
@@ -140,12 +146,18 @@ function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note
   };
   const toggleStep = (t: string) => patch({ steps: form.steps.includes(t) ? form.steps.filter((x) => x !== t) : [...form.steps, t] });
 
+  // ADJ-01: pengaju boleh memeriksa laporannya sendiri; konfirmasi, tidak diblokir. Demo: ?pelapor=sendiri (board V12s).
+  const selfRep = incident.reporter === by || sp.get('pelapor') === 'sendiri';
+  const [selfNext, setSelfNext] = useState<null | (() => void)>(null);
+  const [selfOk, setSelfOk] = useState(false);
+  const guardSelf = (next: () => void) => (selfRep && !selfOk ? setSelfNext(() => next) : next());
+  const noteSelf = () => { if (selfRep) decide((s) => addNote(s, incident.no, by, 'Diperiksa sendiri: pemeriksa sama dengan pengaju (ADJ-01).')); };
   const onApprove = () => {
     if (Object.keys(errors).length > 0) {
       setShowErrors(true);
       return;
     }
-    setDialog('approve');
+    guardSelf(() => setDialog('approve'));
   };
   const confirmApprove = (due: { days: number; reason: string }) => {
     const changed = severityChanged(form, incident);
@@ -156,6 +168,7 @@ function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note
       }),
     );
     if (!r.ok) return fail(r);
+    noteSelf();
     if ((form.jenis ?? null) !== (incident.detail?.jenis ?? null)) decide((s) => setJenis(s, incident.no, form.jenis));
     navigate(`/insiden/${incident.no}`, { state: { toast: approveToast(incident.no, form.steps.length, picName(form)) } });
   };
@@ -182,6 +195,7 @@ function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note
   const revisi = (reason: string) => {
     const r = decide((s) => requestRevision(s, incident.no, by, reason));
     if (!r.ok) return fail(r);
+    noteSelf();
     navigate('/insiden', { state: { toast: `Revisi diminta. ${incident.no} dikembalikan ke pelapor.` } });
   };
   const batal = (reason: string) => {
@@ -205,8 +219,8 @@ function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note
   const mergeParent = allIncidents.find((x) => x.no === mergeNo);
   return (
     <ReviewShell
-      late={deadline.late}
-      actions={{ onRevision: () => setDialog('revisi'), onKerawanan: () => setDialog('krw'), onRestricted: () => setDialog('terbatas'), onCancel: () => setDialog('batal') }}
+      late={deadline.late} no={incident.no} riwayatCount={buildTimeline(incident).length}
+      actions={{ onRevision: () => guardSelf(() => setDialog('revisi')), onKerawanan: () => setDialog('krw'), onRestricted: () => setDialog('terbatas'), onCancel: () => setDialog('batal') }}
     >
       {blocked && (
         <DuplicateBanner
@@ -214,6 +228,15 @@ function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note
           onMerge={(n) => { setMergeNo(n); setDialog('merge'); }} onLink={link} onSeparate={separate}
         />
       )}
+      {selfRep && (
+        <div className="in-bn caution sm" role="note" style={{ alignSelf: 'stretch' }}>
+          <Ic d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" size={16} />
+          <div className="body"><b>Anda yang melaporkan insiden ini.</b> Sebaiknya diperiksa Pejabat Berwenang lain. Bila Anda tetap memeriksa, tindakan itu tercatat di Riwayat dan Jejak audit.</div>
+        </div>
+      )}
+      {tab === 'riwayat' ? (
+        <div className="lk-stack" style={{ maxWidth: 880 }}><HistoryCard items={buildTimeline(incident)} /></div>
+      ) : (
       <div className="lk-grid">
         <div className="c7 lk-stack">
           <IncidentContentCard incident={incident} />
@@ -228,8 +251,25 @@ function ReviewBody({ incident, onNote }: { incident: Incident; onNote: (n: Note
             incident={incident} form={form} onChange={patch} dueIso={dueIso} deadline={deadline} showErrors={showErrors}
             errors={errors} serverError={serverError} blocked={blocked} onApprove={onApprove}
           />
+          <LocationCard incident={incident} />
         </aside>
       </div>
+      )}
+      {selfNext && (
+        <div>
+          <div className="in-scrim" onClick={() => setSelfNext(null)}></div>
+          <div className="in-dlg" role="alertdialog" aria-modal="true" aria-labelledby="ss-t">
+            <div className="p-dialog">
+              <div className="dh"><h3 id="ss-t">Anda yang melaporkan insiden ini. Tetap periksa?</h3></div>
+              <div className="db"><span>Pemeriksa sebaiknya orang yang berbeda. Sistem tidak memblokir; bila dilanjutkan, keputusan sah dan Riwayat serta Jejak audit mencatat “diperiksa sendiri”.</span></div>
+              <div className="df">
+                <button type="button" className="p-btn p-btn-secondary" onClick={() => setSelfNext(null)}>Batal</button>
+                <button type="button" className="p-btn p-btn-primary" onClick={() => { const n = selfNext; setSelfOk(true); setSelfNext(null); n(); }}>Tetap periksa</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {dialog === 'approve' && <ApproveDialog form={form} defaultDays={deadlines[form.severity]} startIso={demoNow()} onClose={() => setDialog(null)} onConfirm={confirmApprove} />}
       {dialog === 'merge' && mergeParent && <MergeDialog incident={incident} parent={mergeParent} onClose={() => setDialog(null)} onConfirm={confirmMerge} onOther={() => setDialog(null)} />}
       {dialog === 'revisi' && <RevisionDialog incident={incident} onClose={() => setDialog(null)} onConfirm={revisi} />}

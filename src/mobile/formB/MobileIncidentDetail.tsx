@@ -1,6 +1,6 @@
-// Board mobile: M8 (Pelapor, setelah diajukan + toast), M6 (SKK belum diperiksa), M11 (dari WhatsApp), MS07 (Tarik kembali), MS12 (Terbatas).
+// Board mobile: M8 (Pelapor, setelah diajukan + toast), M6 (SKK belum diperiksa), M11 (dari WhatsApp), MS07 (Batalkan pengajuan, ADJ-17), MS12 (Terbatas).
 // Dipakai dispatcher `/insiden/:no` untuk status Menunggu pemeriksaan, Perlu perbaikan, Dibatalkan, Digabung, Terbatas.
-// Perilaku sama dengan IncidentDetailPage: Tarik kembali lewat decide(withdraw), ?state=memuat|gagal.
+// Perilaku sama dengan IncidentDetailPage: Batalkan pengajuan lewat decide(withdraw), ?state=memuat|gagal.
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
@@ -10,18 +10,17 @@ import { DEMO_USERS, isSkk } from '@/lib/rbac';
 import { SEV_LABEL, SEV_TAG_CLS, isHighOrCritical } from '@/lib/severity';
 import { formatWibFull } from '@/lib/format';
 import { STATUS_LABEL, STATUS_TAG, type Incident } from '@/services/types';
-import { useDraftStore } from '@/features/insiden/logic/draft';
 import { extLabel, formatSize } from '@/features/insiden/logic/attachments';
 import { OPS } from '@/features/insiden/components/step2Data';
 import {
-  accessOf, addMinutes, buildTimeline, casualtyText, detailOf, draftFromIncident, formatDuration, handledText,
+  accessOf, addMinutes, buildTimeline, casualtyText, detailOf, formatDuration, handledText,
   isOwner, registeredAt, similarTo, submittedEntry,
 } from '@/features/insiden/components/detail/detailLogic';
 import { MobileShell } from '../ui/MobileShell';
 import { D, Pi, Sheet, Toast } from './parts';
 import { AXIS_LABEL, rupiahShort } from './step4Logic';
 
-const TOAST_WITHDRAWN = 'Laporan ditarik kembali. Anda bisa mengubah isinya lagi, lalu mengajukan ulang.';
+const TOAST_WITHDRAWN = 'Pengajuan dibatalkan. Insiden kembali menjadi draf.';
 const BANNER = { padding: '10px 12px', fontSize: 12, lineHeight: '17px' } as const;
 const TIP = {
   kejadian: 'Kapan kejadian terjadi menurut pelapor.',
@@ -80,6 +79,7 @@ export function MobileIncidentDetail() {
   const role = useDemoStore((s) => s.role);
   const all = useDemoStore((s) => s.incidents);
   const [confirm, setConfirm] = useState(false);
+  const [reason, setReason] = useState('');
   const [toast, setToast] = useState<ToastState | null>(null);
   const [routeOpen, setRouteOpen] = useState(!!routeToast);
   useEffect(() => setRouteOpen(!!routeToast), [routeToast]);
@@ -153,16 +153,12 @@ export function MobileIncidentDetail() {
   const showDialog = confirm && owner && inReview;
   const files = d.attachments;
 
-  const loadDraft = () => useDraftStore.getState().patch(draftFromIncident(i));
-  const continueDraft = () => {
-    loadDraft();
-    navigate('/insiden/baru/kejadian');
-  };
+  const continueDraft = () => navigate(`/insiden/${i.no}/ubah`);
   const doWithdraw = () => {
-    const r = useDemoStore.getState().decide((s) => withdraw(s, i.no, me));
+    if (!reason.trim()) return;
+    const r = useDemoStore.getState().decide((s) => withdraw(s, i.no, me, reason));
     setConfirm(false);
     if (r.ok) {
-      loadDraft();
       setToast({ text: TOAST_WITHDRAWN });
     } else {
       setToast({ text: r.reason, tone: 'err' });
@@ -182,7 +178,7 @@ export function MobileIncidentDetail() {
   const hhmm = (t?: string) => t?.match(/\d\d:\d\d/)?.[0];
 
   const actions = owner && inReview ? (
-    <button type="button" className="ib44" aria-label="Aksi lain: Tarik kembali" aria-haspopup="dialog" onClick={() => setConfirm(true)}>
+    <button type="button" className="ib44" aria-label="Aksi lain: Batalkan pengajuan" aria-haspopup="dialog" onClick={() => setConfirm(true)}>
       <Pi d={D.more} size={20} />
     </button>
   ) : skkRole ? (
@@ -207,17 +203,26 @@ export function MobileIncidentDetail() {
             <Sheet labelledBy="sh-t" onClose={() => setConfirm(false)}>
               <div className="sb">
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <b id="sh-t" style={{ fontSize: 17, lineHeight: '24px' }}>Tarik kembali jadi draf?</b>
+                  <b id="sh-t" style={{ fontSize: 17, lineHeight: '24px' }}>Batalkan pengajuan?</b>
                 </div>
-                <span style={{ color: 'var(--ink-subtle)' }}>Anda bisa mengubah isinya lagi, lalu mengajukan ulang.</span>
+                <span style={{ color: 'var(--ink-subtle)' }}>Laporan kembali menjadi draf. Anda bisa mengubah isinya lalu mengajukan ulang.</span>
                 <dl className="kv">
                   <dt>Status</dt><dd>Menunggu pemeriksaan → Draf</dd>
-                  <dt>Pemeriksaan</dt><dd>Dibatalkan</dd>
-                  {(!!i.skkNotified || isHighOrCritical(sev)) && (<><dt>SKK Migas</dt><dd>Diberi tahu bahwa laporan ditarik</dd></>)}
+                  <dt>Pemeriksa</dt><dd>Tugas pemeriksaan dibatalkan dan pemeriksa diberi tahu</dd>
+                  {(!!i.skkNotified || isHighOrCritical(sev)) && (<><dt>SKK Migas</dt><dd>Diberi tahu bahwa pengajuan dibatalkan</dd></>)}
                 </dl>
+                <label className="p-field" style={{ gap: 6 }}>
+                  <span className="p-lbl" style={{ color: 'var(--ink)' }}>Alasan membatalkan pengajuan<span className="p-req">*</span></span>
+                  <textarea
+                    className="p-input p-area" aria-label="Alasan membatalkan pengajuan" maxLength={500} value={reason}
+                    style={{ minHeight: 76, border: 0, font: 'inherit', width: '100%', boxSizing: 'border-box' }}
+                    onChange={(e) => setReason(e.target.value)}
+                  />
+                  <span className="p-help" style={{ display: 'flex', justifyContent: 'space-between' }}><span>Tercatat di Riwayat dan terlihat oleh pemeriksa.</span><span>{reason.length}/500</span></span>
+                </label>
               </div>
               <div className="sf">
-                <button type="button" className="p-btn p-btn-primary" onClick={doWithdraw}>Tarik kembali</button>
+                <button type="button" className="p-btn p-btn-primary" disabled={!reason.trim()} onClick={doWithdraw}>Batalkan pengajuan</button>
                 <button type="button" className="p-btn p-btn-secondary" onClick={() => setConfirm(false)}>Batal</button>
               </div>
             </Sheet>
@@ -343,7 +348,7 @@ export function MobileIncidentDetail() {
           <div className="hd">
             <h2>Lampiran · {files.length} file</h2>
             {inReview && !skkRole && role !== 'pejabat' && (
-              <span className="lk-lock" style={{ fontSize: 12 }}><Pi d={D.lock} size={14} />Terkunci</span>
+              <span className="lk-lock" style={{ fontSize: 12 }}><Pi d={D.lock} size={14} />Terkunci sampai diverifikasi</span>
             )}
           </div>
           <div className="p-files">

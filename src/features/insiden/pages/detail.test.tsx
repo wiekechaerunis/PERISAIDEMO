@@ -27,15 +27,25 @@ describe('Detail insiden', () => {
     expect(screen.getAllByText('Menunggu pemeriksaan').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Tinggi').length).toBeGreaterThan(0);
     expect(screen.getByText('Lampiran · 2 file')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Tarik kembali/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Batalkan pengajuan/ })).toBeInTheDocument();
+    // B-18: tab Detail | Riwayat (n), crumb nomor; B-20: kartu Lokasi terpisah, lampiran terkunci sampai diverifikasi
+    expect(screen.getByRole('tab', { name: /Riwayat/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Lokasi' })).toBeInTheDocument();
+    expect(screen.getByText('Terkunci sampai diverifikasi')).toBeInTheDocument();
+    expect(screen.queryByText(/setara/)).toBeNull();
   });
 
-  it('Tarik kembali: dialog konfirmasi lalu status jadi Draf', () => {
+  it('Batalkan pengajuan (ADJ-17): alasan wajib, lalu status jadi Draf dengan toast baru', () => {
     renderDetail('INS-SEN-2026-0007');
-    fireEvent.click(screen.getByRole('button', { name: /Tarik kembali/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Batalkan pengajuan/ }));
     const dlg = screen.getByRole('dialog');
-    expect(within(dlg).getByText('Tarik kembali jadi draf?')).toBeInTheDocument();
-    fireEvent.click(within(dlg).getByRole('button', { name: 'Tarik kembali' }));
+    expect(within(dlg).getByText('Batalkan pengajuan?')).toBeInTheDocument();
+    fireEvent.click(within(dlg).getByRole('button', { name: 'Batalkan pengajuan' }));
+    expect(within(dlg).getByText('Tulis alasan membatalkan pengajuan.')).toBeInTheDocument();
+    expect(useDemoStore.getState().incidents.find((i) => i.no === 'INS-SEN-2026-0007')?.status).toBe('review-internal');
+    fireEvent.change(within(dlg).getByLabelText('Alasan membatalkan pengajuan'), { target: { value: 'Lokasi salah titik.' } });
+    fireEvent.click(within(dlg).getByRole('button', { name: 'Batalkan pengajuan' }));
+    expect(screen.getByText('Pengajuan dibatalkan. Insiden kembali menjadi draf.')).toBeInTheDocument();
     expect(useDemoStore.getState().incidents.find((i) => i.no === 'INS-SEN-2026-0007')?.status).toBe('draf');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getAllByText('Draf').length).toBeGreaterThan(0);
@@ -49,11 +59,11 @@ describe('Detail insiden', () => {
     expect(screen.queryByText('Pencurian kabel listrik sumur ADR-07')).toBeNull();
   });
 
-  it('SKK melihat banner belum diperiksa tanpa tombol Tarik kembali', () => {
+  it('SKK melihat banner belum diperiksa tanpa tombol Batalkan pengajuan', () => {
     useDemoStore.getState().setRole('pengawas');
     renderDetail('INS-SEN-2026-0007');
     expect(screen.getByText('Belum diperiksa Pejabat Berwenang KKKS.')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Tarik kembali/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Batalkan pengajuan/ })).toBeNull();
   });
 
   it('?state=gagal dan ?state=memuat', () => {

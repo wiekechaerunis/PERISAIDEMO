@@ -187,7 +187,7 @@ export function WaStep4Page() {
         <div className="rows">
           <div className="r">
             <span className="ic"><Icon name="lock" size={15} /></span>
-            <span><b>Laporan terkunci</b>Isi dan lampiran tidak bisa diubah sampai Pejabat Berwenang memeriksa. Perlu mengubah? Tarik kembali selama belum diperiksa.</span>
+            <span><b>Laporan terkunci</b>Isi dan lampiran tidak bisa diubah sampai Pejabat Berwenang memeriksa. Perlu mengubah? Batalkan pengajuan selama belum diperiksa.</span>
           </div>
           {fast ? (
             <div className="r">

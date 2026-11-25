@@ -1,7 +1,8 @@
 // Kerangka halaman detail: Sidebar + AppBar "child" (kembali, judul, tag, crumb, aksi) + isi + toast.
 // Board: I15, I23, I32, V14, S12. Toast dari location.state.toast (sama seperti AppShell).
+// B-18: tab Detail | Riwayat (n) di bawah app bar (badge lime saat aktif), crumb "Insiden › {nomor}". Tab aktif dibaca dari `?tab=riwayat`.
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { RoleSwitcher } from '@/components/layout/RoleSwitcher';
 import { useDemoStore } from '@/services/mock/store';
@@ -31,10 +32,48 @@ interface Props {
   /** isi main memakai flex (state penuh layar) */
   centered?: boolean;
   busy?: boolean;
+  /** nomor insiden untuk crumb "Insiden › {nomor}" (B-18) */
+  no?: string;
+  /** jumlah entri Riwayat; diisi = tab Detail | Riwayat (n) tampil */
+  riwayatCount?: number;
   children: ReactNode;
 }
 
-export function DetailShell({ title, tags, crumb = true, acts, bell = true, toast, onToastClose, overlay, centered, busy, children }: Props) {
+export type DetailTab = 'detail' | 'riwayat';
+/** Tab aktif layar detail (B-18), dari `?tab=riwayat`. */
+export function useDetailTab(): DetailTab {
+  return useSearchParams()[0].get('tab') === 'riwayat' ? 'riwayat' : 'detail';
+}
+
+export function DetailTabs({ count }: { count: number }) {
+  const [params] = useSearchParams();
+  const on = params.get('tab') === 'riwayat' ? 'riwayat' : 'detail';
+  const to = (t: DetailTab) => {
+    const p = new URLSearchParams(params);
+    if (t === 'riwayat') p.set('tab', 'riwayat');
+    else p.delete('tab');
+    const q = p.toString();
+    return q ? `?${q}` : '?';
+  };
+  return (
+    <nav className="p-tabs" role="tablist" aria-label="Detail dan riwayat insiden">
+      <Link to={to('detail')} role="tab" aria-selected={on === 'detail'} aria-current={on === 'detail' ? 'page' : undefined} replace>
+        Detail
+      </Link>
+      <Link to={to('riwayat')} role="tab" aria-selected={on === 'riwayat'} aria-current={on === 'riwayat' ? 'page' : undefined} replace>
+        Riwayat
+        <span
+          className="p-count"
+          style={on === 'riwayat' ? { background: 'var(--action)', color: 'var(--on-action)' } : { background: 'var(--surface-sunken)', color: 'var(--ink-muted)' }}
+        >
+          {count}
+        </span>
+      </Link>
+    </nav>
+  );
+}
+
+export function DetailShell({ title, tags, crumb = true, acts, bell = true, toast, onToastClose, overlay, centered, busy, no, riwayatCount, children }: Props) {
   const role = useDemoStore((s) => s.role);
   const tasks = useTaskCount();
   const routeToast = (useLocation().state as { toast?: string } | null)?.toast ?? null;
@@ -70,7 +109,7 @@ export function DetailShell({ title, tags, crumb = true, acts, bell = true, toas
                 <ol className="p-crumb">
                   <li><Link to="/insiden">Insiden</Link></li>
                   <li aria-hidden="true">›</li>
-                  <li aria-current="page">Detail insiden</li>
+                  <li aria-current="page">{no ? <span className="p-mono">{no}</span> : 'Detail insiden'}</li>
                 </ol>
               )}
             </div>
@@ -89,6 +128,7 @@ export function DetailShell({ title, tags, crumb = true, acts, bell = true, toas
               )}
             </div>
           </div>
+          {riwayatCount !== undefined && <DetailTabs count={riwayatCount} />}
         </header>
         <main className="lk-content" style={centered ? { display: 'flex' } : undefined} aria-busy={busy || undefined}>
           {children}

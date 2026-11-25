@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { formatDate, formatRupiah, formatWib, formatWibFull } from '@/lib/format';
 import { initials } from '@/lib/rbac';
-import { SEV_EQUIV, SEV_LABEL, SEV_TAG_CLS } from '@/lib/severity';
+import { SEV_LABEL, SEV_TAG_CLS } from '@/lib/severity';
 import type { Incident, Kerawanan, ModuleConfig } from '@/services/types';
 import { STATUS_LABEL, STATUS_TAG } from '@/services/types';
 import { KB } from '../step2Data';
@@ -108,7 +108,7 @@ export function RaisedView({ k, incident: i, cfg, canReview, toast, onToastClose
                   <MetaChip d={P.hat}>Jenis: Insiden</MetaChip>
                   <MetaChip d={P.tag}>{i.category}</MetaChip>
                   <MetaChip d={P.cal}>Kejadian {formatWibFull(i.occurredAt)}</MetaChip>
-                  {sev && <MetaChip d={P.warn}>Keparahan: {SEV_LABEL[sev]} · setara {SEV_EQUIV[sev]}</MetaChip>}
+                  {sev && <MetaChip d={P.warn}>Keparahan: {SEV_LABEL[sev]}</MetaChip>}
                 </div>
               </header>
               {d?.story && (

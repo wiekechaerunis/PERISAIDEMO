@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/Icon';
 import { useDemoStore } from '@/services/mock/store';
 import { useTaskCount } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { Ic } from './parts';
+import { DetailTabs } from '../detail/DetailShell';
 
 interface Props {
   children: ReactNode;
@@ -17,9 +18,13 @@ interface Props {
   statusTag?: boolean;
   /** tombol aksi; null saat memuat */
   actions?: { onRevision: () => void; onKerawanan: () => void; onRestricted: () => void; onCancel: () => void } | null;
+  /** nomor insiden (crumb "Insiden › {nomor}", B-18) */
+  no?: string;
+  /** jumlah entri Riwayat → tab Detail | Riwayat (n) */
+  riwayatCount?: number;
 }
 
-export function ReviewShell({ children, late, statusTag = true, actions }: Props) {
+export function ReviewShell({ children, late, statusTag = true, actions, no, riwayatCount }: Props) {
   const role = useDemoStore((s) => s.role);
   const tasks = useTaskCount();
   return (
@@ -41,7 +46,7 @@ export function ReviewShell({ children, late, statusTag = true, actions }: Props
               <ol className="p-crumb">
                 <li><Link to="/insiden">Insiden</Link></li>
                 <li aria-hidden="true">›</li>
-                <li aria-current="page">Review insiden</li>
+                <li aria-current="page">{no ? <span className="p-mono">{no}</span> : 'Review insiden'}</li>
               </ol>
             </div>
             <div className="acts" style={actions ? { display: 'flex', gap: 8 } : undefined}>
@@ -60,6 +65,7 @@ export function ReviewShell({ children, late, statusTag = true, actions }: Props
               <button type="button" className="p-ibtn ghost p-bell" aria-label="Notifikasi"><Icon name="bell" size={20} /></button>
             </div>
           </div>
+          {riwayatCount !== undefined && <DetailTabs count={riwayatCount} />}
         </header>
         <main className="lk-content">{children}</main>
       </div>

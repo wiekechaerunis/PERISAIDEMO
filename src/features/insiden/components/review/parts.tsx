@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import type { Incident } from '@/services/types';
-import { SEV_EQUIV, SEV_LABEL } from '@/lib/severity';
+import { SEV_LABEL } from '@/lib/severity';
 import { formatNumber, formatRupiah, formatWibFull } from '@/lib/format';
 import { KB } from '../step2Data';
 
@@ -130,7 +130,7 @@ export function IncidentContentCard({ incident: i }: { incident: Incident }) {
           {sev && (
             <span className={urg ? 'lk-meta urg' : 'lk-meta'}>
               {meta('M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z')}
-              Keparahan awal: {SEV_LABEL[sev]} · setara {SEV_EQUIV[sev]}
+              Keparahan awal: {SEV_LABEL[sev]}
             </span>
           )}
         </div>
@@ -194,7 +194,7 @@ export function AttachmentsCard({ files }: { files: NonNullable<Incident['detail
     <section className="p-card">
       <div className="lk-card-head" style={{ marginBottom: 12 }}>
         <h2 className="p-h2">Lampiran · {files.length} file</h2>
-        <span className="lk-lock" style={{ fontSize: 12 }}><Ic d="M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z" size={14} />Terkunci</span>
+        <span className="lk-lock" style={{ fontSize: 12 }}><Ic d="M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z" size={14} />Terkunci sampai diverifikasi</span>
       </div>
       {files.length === 0 ? (
         <span className="p-cap">Tidak ada lampiran.</span>

@@ -1,11 +1,14 @@
 // Kartu "Ringkasan" kolom kanan. Varian: Pelapor (I15), WhatsApp (I23), SKK (I32), resmi setelah pemeriksaan (V14).
+// B-19: Keparahan + keterangan + alasan, Waktu kejadian, Waktu registrasi, Batas pemeriksaan, Diperiksa oleh (nama + menunggu sejak), PIC.
+// "Sudah menangani" dan "Pelapor" hanya di kartu utama.
 import type { ReactNode } from 'react';
 import type { Incident } from '@/services/types';
 import { SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type Severity } from '@/lib/severity';
 import { formatWibFull } from '@/lib/format';
 import { InfoTip } from './InfoTip';
-import { detailOf, formatDuration, handledText, registeredAt, submittedEntry, verifiedEntry, addMinutes, wkShort } from './detailLogic';
+import { detailOf, formatDuration, registeredAt, submittedEntry, verifiedEntry, addMinutes, wkShort } from './detailLogic';
 import { useWaSource } from '@/features/whatsapp/logic/source';
+import { PEJABAT_NAMES } from '@/lib/rbac';
 
 export type SummaryVariant = 'pelapor' | 'wa' | 'skk' | 'resmi';
 const SEV_LABEL_PRIORITY = { tinggi: 'Tinggi', normal: 'Normal', rendah: 'Rendah' } as const;
@@ -49,7 +52,6 @@ export function SummaryAside({ incident: i, variant, openTip }: { incident: Inci
   const sev = i.severity;
   const reg = registeredAt(i);
   const submitted = !!submittedEntry(i) && i.status !== 'draf';
-  const handledLine = `${handledText(d)}${d.handledBy.length ? ' (menurut pelapor)' : ''}`;
   const kejadian = (
     <Row k="Waktu kejadian" tip={<InfoTip label="waktu kejadian" text={TIP.kejadian} />}>
       <span className="v">{formatWibFull(i.occurredAt)}</span>
@@ -97,7 +99,6 @@ export function SummaryAside({ incident: i, variant, openTip }: { incident: Inci
     dl = (
       <>
         <dt>PIC</dt><dd>{i.pic ?? <span style={{ color: 'var(--ink-muted)' }}>Belum ditunjuk</span>}</dd>
-        <dt>Sudah menangani</dt><dd>{handledLine}</dd>
       </>
     );
   } else if (variant === 'wa') {
@@ -113,8 +114,6 @@ export function SummaryAside({ incident: i, variant, openTip }: { incident: Inci
     dl = (
       <>
         <dt>Keparahan</dt><dd>{sev ? <SevTag sev={sev} /> : 'Belum ditentukan'}</dd>
-        <dt>Sudah menangani</dt><dd>{handledLine}</dd>
-        <dt>Pelapor</dt><dd>{i.reporter}</dd>
       </>
     );
   } else if (variant === 'skk') {
@@ -142,7 +141,6 @@ export function SummaryAside({ incident: i, variant, openTip }: { incident: Inci
     );
     dl = (
       <>
-        <dt>Sudah menangani</dt><dd>{handledLine}</dd>
         <dt>WK</dt><dd>{wkShort(i.wk)}</dd>
       </>
     );
@@ -174,12 +172,16 @@ export function SummaryAside({ incident: i, variant, openTip }: { incident: Inci
             <span className="v">{formatWibFull(i.verifyDueAt)}</span>
           </Row>
         )}
+        {i.status === 'review-internal' && submitted && (
+          <Row k="Diperiksa oleh">
+            <span className="v">{(i.reviewers && i.reviewers.length ? i.reviewers : PEJABAT_NAMES).join(', ')}</span>
+            <span className="c">menunggu sejak {formatWibFull(reg)}</span>
+          </Row>
+        )}
       </>
     );
     dl = (
       <>
-        <dt>Sudah menangani</dt><dd>{handledLine}</dd>
-        <dt>Pelapor</dt><dd>{i.reporter}</dd>
         <dt>PIC</dt><dd style={i.pic ? undefined : { color: 'var(--ink-muted)' }}>{i.pic ?? 'Ditunjuk saat pemeriksaan'}</dd>
       </>
     );

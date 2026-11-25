@@ -1,4 +1,5 @@
 // Bagian halaman kerja PIC (board P12, P14, P15, P17, PS*): kartu Langkah berikutnya, Riwayat, Ringkasan, Tindak lanjut, dialog Eskalasi.
+import { Link } from 'react-router-dom';
 import { demoNow } from '@/services/mock/clock';
 import { useState, type ReactNode } from 'react';
 import type { Closure, Incident } from '@/services/types';
@@ -64,10 +65,10 @@ const TIP_TENGGAT = 'Batas waktu menyelesaikan insiden, dihitung dari waktu regi
 export type HFilter = 'semua' | 'catatan' | 'perubahan';
 
 export function HistoryCard({
-  entries, shown, hidden, expanded, onToggle, filter, onFilter, onAudit, failed, onRetry, empty,
+  entries, shown, hidden, expanded, onToggle, filter, onFilter, onAudit, failed, onRetry, empty, incidentNo,
 }: {
   entries: HEntry[]; shown: HEntry[]; hidden: number; expanded: boolean; onToggle: () => void; filter: HFilter; onFilter: (f: HFilter) => void;
-  onAudit: () => void; failed?: boolean; onRetry: () => void; empty: boolean;
+  onAudit: () => void; failed?: boolean; onRetry: () => void; empty: boolean; incidentNo: string;
 }) {
   if (failed) {
     return (
@@ -87,7 +88,8 @@ export function HistoryCard({
     <section className="p-card in-sec">
       <div className="lk-card-head" style={{ marginBottom: 0 }}>
         <h2 className="in-h" style={{ gap: 2 }}>Riwayat · {entries.length}<TipW label="riwayat" text={TIP_RIWAYAT} width={260} /></h2>
-        <button type="button" className="lk-alink" style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', font: 'inherit', fontSize: 12, fontWeight: 600 }} onClick={onAudit}>Jejak audit lengkap</button>
+        {/* B-21: tautan ke halaman Jejak audit tersaring nomor insiden */}
+        <Link to={`/insiden/${incidentNo}/jejak-audit`} className="lk-alink" style={{ fontSize: 12, fontWeight: 600 }} onClick={() => void onAudit}>Jejak audit lengkap</Link>
       </div>
       <div className="in-rf" role="radiogroup" aria-label="Saring riwayat">
         {FILTERS.map(([k, l]) => (

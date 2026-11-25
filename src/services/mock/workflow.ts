@@ -112,16 +112,17 @@ export function makeKerawanan(s: Slice, no: string, _by: string, reason: string)
   };
 }
 
-export const MSG_WITHDRAW_LATE = 'Laporan sudah diproses Pejabat Berwenang dan tidak bisa ditarik kembali.';
+/** ADJ-17: toast gagal Batalkan pengajuan */
+export const MSG_WITHDRAW_LATE = 'Laporan sudah diproses Pejabat Berwenang dan pengajuannya tidak bisa dibatalkan.';
 
-/** Tarik kembali (Pelapor): Menunggu pemeriksaan → Draf. Pemeriksaan dibatalkan; draf bisa dilanjutkan dan diajukan ulang. */
-export function withdraw(s: Slice, no: string, by: string): DecisionResult {
+/** Batalkan pengajuan (Pelapor, ADJ-17; dulu "Tarik kembali"): Menunggu pemeriksaan → Draf. Alasan wajib (maks. 500). */
+export function withdraw(s: Slice, no: string, by: string, reason = ''): DecisionResult {
   const i = find(s, no);
   if (!i) return { ok: false, reason: 'Insiden tidak ditemukan.' };
   if (i.status !== 'review-internal') return { ok: false, reason: MSG_WITHDRAW_LATE };
   return {
     ok: true,
-    state: put(s, { ...i, status: 'draf', verifyDueAt: undefined, late: false, possibleDuplicate: false, timeline: [...(i.timeline ?? []), stamp(by, 'Menarik kembali laporan')] }),
+    state: put(s, { ...i, status: 'draf', verifyDueAt: undefined, late: false, possibleDuplicate: false, timeline: [...(i.timeline ?? []), stamp(by, reason.trim() ? `Pengajuan dibatalkan: ${reason.trim().slice(0, 500)}` : 'Pengajuan dibatalkan')] }),
   };
 }
 
@@ -148,4 +149,11 @@ export function deleteDraft(s: Slice, no: string, by: string): DecisionResult {
   if (i.status !== 'draf') return { ok: false, reason: 'Hanya draf yang bisa dihapus.' };
   if (i.reporter !== by) return { ok: false, reason: 'Hanya pembuat draf yang bisa menghapusnya.' };
   return { ok: true, state: { ...s, incidents: s.incidents.filter((x) => x.no !== no) } };
+}
+
+/** Tambah entri Riwayat tanpa mengubah status (catatan sistem, mis. penutupan oleh orang yang sama, ADJ-02/03). */
+export function addNote(s: Slice, no: string, by: string, text: string): DecisionResult {
+  const i = find(s, no);
+  if (!i) return { ok: false, reason: 'Insiden tidak ditemukan.' };
+  return { ok: true, state: put(s, { ...i, timeline: [...(i.timeline ?? []), stamp(by, text)] }) };
 }

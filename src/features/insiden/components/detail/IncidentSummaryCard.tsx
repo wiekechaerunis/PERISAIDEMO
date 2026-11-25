@@ -1,6 +1,9 @@
-// Kartu isi insiden (board InsIsi.dc.html), dirender dari data store.
+// Kartu isi insiden (board InsIsi.dc.html, lokasi="pisah"), dirender dari data store.
+// B-20: Apa yang terjadi?, Yang terdampak, Tindakan awal; Lokasi di kartu terpisah (LocationCard). B-10: tanpa "setara".
+// B-19: "Sudah menangani" dan "Pelapor" hanya di kartu ini, tidak di Ringkasan.
 import type { Incident } from '@/services/types';
-import { SEV_EQUIV, SEV_LABEL, isHighOrCritical } from '@/lib/severity';
+import { SEV_LABEL, isHighOrCritical } from '@/lib/severity';
+import { INFO_SOURCE_LABEL } from '../../logic/draft';
 import { formatWibFull } from '@/lib/format';
 import { Ic } from './Ic';
 import { areaLine, casualtyText, detailOf, handledText, lossText, opsText, registeredAt, submittedEntry } from './detailLogic';
@@ -11,7 +14,10 @@ const icn = { width: 18, height: 18, color: 'var(--ink-muted)', marginTop: 1 } a
 const field = { display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 } as const;
 const dd = { margin: 0, display: 'flex', flexDirection: 'column', gap: 2 } as const;
 
-export function IncidentSummaryCard({ incident: i }: { incident: Incident }) {
+const AXIS_LABEL = { prop: 'Properti atau operasi', man: 'Manusia', ling: 'Lingkungan pengamanan', data: 'Data dan informasi' } as const;
+const AXIS_ORDER = ['prop', 'man', 'ling', 'data'] as const;
+
+export function IncidentSummaryCard({ incident: i, withLocation = false }: { incident: Incident; withLocation?: boolean }) {
   const WA_SOURCE = useWaSource(i);
   const d = detailOf(i);
   const sev = i.severity;
@@ -27,16 +33,22 @@ export function IncidentSummaryCard({ incident: i }: { incident: Incident }) {
           <span className="lk-meta"><Ic d="calendar" />Kejadian {formatWibFull(i.occurredAt)}</span>
           <span className={sevCls}>
             <Ic d="warn" />
-            {sev ? `Keparahan awal: ${SEV_LABEL[sev]} · setara ${SEV_EQUIV[sev]}` : 'Keparahan awal: belum ditentukan'}
+            {sev ? `Keparahan awal: ${SEV_LABEL[sev]}` : 'Keparahan awal: belum ditentukan'}
           </span>
         </div>
       </header>
+      {d.story && (
+        <div style={{ padding: '20px 24px 0 24px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <h3 className="p-lbl" style={{ margin: 0 }}>Apa yang terjadi?</h3>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: '22px' }}>{d.story}</p>
+        </div>
+      )}
       <div style={{ padding: '20px 24px 4px 24px', display: 'flex', flexDirection: 'column', gap: 6 }}>
         <h3 className="p-lbl" style={{ margin: 0 }}>Dampak keamanan</h3>
         <p style={{ margin: 0, fontSize: 14, lineHeight: '22px' }}>{d.securityImpact || i.title}</p>
       </div>
       <dl style={{ margin: '16px 24px 20px 24px', paddingTop: 16, borderTop: '1px solid var(--border-subtle)', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '16px 28px' }}>
-        <div style={field}>
+        {withLocation && <div style={field}>
           <dt className="p-lbl">Lokasi</dt>
           <dd style={dd}>
             <span>{d.patokan || i.location}</span>
@@ -47,12 +59,23 @@ export function IncidentSummaryCard({ incident: i }: { incident: Incident }) {
               </a>
             )}
           </dd>
-        </div>
+        </div>}
         <div style={field}>
           <dt className="p-lbl">Sudah menangani (menurut pelapor)</dt>
           <dd style={dd}>
             <span>{handledText(d)}</span>
-            <span className="p-cap" style={{ color: 'var(--ink-subtle)' }}>Mitra dan kontraknya dicatat PIC saat penanganan</span>
+            {d.initialAction ? (
+              <span className="p-cap" style={{ color: 'var(--ink-subtle)' }}>Tindakan awal: {d.initialAction}</span>
+            ) : (
+              <span className="p-cap" style={{ color: 'var(--ink-subtle)' }}>Mitra dan kontraknya dicatat PIC saat penanganan</span>
+            )}
+          </dd>
+        </div>
+        <div style={field}>
+          <dt className="p-lbl">Yang terdampak</dt>
+          <dd style={dd}>
+            <span>{AXIS_ORDER.filter((a) => d.axes.includes(a)).map((a) => AXIS_LABEL[a]).join(', ') || '—'}</span>
+            {d.axes.length > 0 && d.axes.length < 4 && <span className="p-cap" style={{ color: 'var(--ink-subtle)' }}>Sumbu lain: tidak terdampak</span>}
           </dd>
         </div>
         <div style={field}>
@@ -65,7 +88,7 @@ export function IncidentSummaryCard({ incident: i }: { incident: Incident }) {
         <div style={field}>
           <dt className="p-lbl">Sumber informasi</dt>
           <dd style={dd}>
-            <span>{i.source === 'wa' ? `WhatsApp · ${WA_SOURCE.group} · ${WA_SOURCE.sender}` : 'Temuan langsung'}</span>
+            <span>{i.source === 'wa' ? `WhatsApp · ${WA_SOURCE.group} · ${WA_SOURCE.sender}` : d.infoSource ? INFO_SOURCE_LABEL[d.infoSource] : 'Temuan langsung'}</span>
           </dd>
         </div>
       </dl>
@@ -80,7 +103,7 @@ export function IncidentSummaryCard({ incident: i }: { incident: Incident }) {
         </div>
         <div style={box}>
           <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={icn}><path d="M2 7h20v12H2zM16 13h.01M2 11h20" /></svg>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}><h3 className="p-lbl" style={{ margin: 0 }}>Perkiraan kerugian</h3><p style={{ margin: 0, lineHeight: '20px', fontWeight: 600 }}>{lossText(d)}</p></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}><h3 className="p-lbl" style={{ margin: 0 }}>Kerugian langsung (perkiraan)</h3><p style={{ margin: 0, lineHeight: '20px', fontWeight: 600 }}>{lossText(d)}</p></div>
         </div>
       </div>
     </article>
