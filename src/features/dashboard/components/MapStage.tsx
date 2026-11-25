@@ -19,6 +19,11 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
   const mapRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  // Zoom lanjutan di tingkat WK (permintaan 25 Nov 2026): + dan scroll memperbesar sampai 4x, − mengecilkan dulu.
+  const [ez, setEz] = useState(1);
+  const EZ_MAX = 4;
+  const ezIn = () => setEz((z) => Math.min(EZ_MAX, +(z * 1.6).toFixed(2)));
+  const ezOut = () => setEz((z) => (z / 1.6 < 1.05 ? 1 : +(z / 1.6).toFixed(2)));
   const [dragging, setDragging] = useState(false);
   const [legOpen, setLegOpen] = useState(false);
   const [card, setCard] = useState<Card>(null);
@@ -47,6 +52,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
   if (lastKey !== resetKey) {
     setLastKey(resetKey);
     setPan({ x: 0, y: 0 });
+    setEz(1);
     setCard(null);
   }
   // kartu yang dijadwalkan sebelum zoom tidak boleh muncul setelah tingkat berganti
@@ -111,6 +117,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     cv.goTo(w);
   };
   const zoomIn = (cx: number, cy: number) => {
+    if (vRef.current.lvl === 'loc') return ezIn();
     const pe = document.elementFromPoint(cx, cy)?.closest<SVGElement>('[data-prov]');
     if (pe && vRef.current.lvl === 'nat') {
       goProv(Number(pe.dataset.prov));
@@ -127,7 +134,10 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     });
     (best as { go: () => void } | null)?.go();
   };
+  const ezRef = useRef(ez);
+  ezRef.current = ez;
   const zoomBest = () => {
+    if (v.lvl === 'loc') return ezIn();
     const h = [...(v.heat ?? [])].sort((a: any, b: any) => b.area.n - a.area.n)[0];
     h?.go();
   };
@@ -143,6 +153,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       if (now - lastWheel.current < 250) return;
       lastWheel.current = now;
       if (e.deltaY < 0) zoomIn(e.clientX, e.clientY);
+      else if (ezRef.current > 1) ezOut();
       else vRef.current.goUp();
     };
     el.addEventListener('wheel', onWheel, { passive: false });
@@ -233,7 +244,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       }}
     >
       <div className="db-wrap" ref={wrapRef}>
-        <div className="db-pan" style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, transition: dragging ? 'none' : undefined }}>
+        <div className="db-pan" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${ez})`, transformOrigin: 'center', transition: dragging ? 'none' : 'transform .25s ease' }}>
           <div className="db-stage" style={{ transform: v.mapT }}>
             {/* Daratan polos untuk tingkat wilayah tanpa peta detail (Kalsul, Pamalu). */}
             <img src="/peta/id-land.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%', opacity: v.lvl === 'nat' ? 0 : v.baseOp, transition: 'opacity .3s ease' }} />
@@ -340,7 +351,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       </div>
 
       <div className="db-ctl">
-        <button type="button" aria-label="Perkecil satu tingkat" onClick={v.goUp} disabled={!!v.outDis}>
+        <button type="button" aria-label="Perkecil satu tingkat" onClick={ez > 1 ? ezOut : v.goUp} disabled={ez === 1 && !!v.outDis}>
           <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 18, height: 18 }}><path d="M5 12h14" /></svg>
         </button>
         {v.isSkk && (
@@ -348,7 +359,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
             <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 18, height: 18 }}><path d="M3 11l9-8 9 8M5 10v10h14V10" /></svg>
           </button>
         )}
-        <button type="button" aria-label="Perbesar ke area dengan insiden terbanyak" onClick={zoomBest} disabled={!(v.heat ?? []).length}>
+        <button type="button" aria-label={v.lvl === 'loc' ? 'Perbesar peta' : 'Perbesar ke area dengan insiden terbanyak'} onClick={zoomBest} disabled={v.lvl === 'loc' ? ez >= EZ_MAX : !(v.heat ?? []).length}>
           <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 18, height: 18 }}><path d="M12 5v14M5 12h14" /></svg>
         </button>
         {/* Iterasi 3: tombol Lapisan */}
