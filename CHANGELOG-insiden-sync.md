@@ -154,3 +154,37 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
   terjadi, laporkan dari sini atau dari pesan WhatsApp.", tombol sekunder Buat laporan; header tetap punya Buat laporan.
 - S08 (Memuat), S10 (Filter kosong), S11 (Gagal dimuat), S12 (Terbatas), VS3/VS4 (review), PS2/PS3/PS8/PS9 (penanganan) dicek ulang
   terhadap canvas; teks sudah sama dan tidak diubah.
+
+## Checklist penerimaan
+
+Bukti: route + peran demo (Menu akun). Diverifikasi dengan tes otomatis (nama berkas) dan pengecekan di browser 1366 px.
+
+- [x] PA-01..PA-18 selesai untuk desktop: PA-01..04 (alur 1, `/insiden`, Pelapor/Pejabat), PA-05..09 (alur 2, `/insiden/baru/*`,
+  Pelapor), PA-10..13, PA-15 (alur 4, `/insiden/:no`, semua peran), PA-14 (alur 5), PA-16..17 (alur 8, `/insiden/:no/tangani`, PIC),
+  PA-18 (alur 7, `/insiden/INS-SEN-2026-0010`, PIC). Mobile belum (DEVIATIONS S-08, S-13, S-23).
+- [x] Tidak ada teks "Tarik kembali", "setara", atau "PLT-06" di kode `/insiden/**` (grep; sisa hanya di komentar riwayat dan
+  `src/dev/canvas.json` salinan indeks board) dan di layar yang dicek. `detail.test.tsx`, `formSync.test.tsx` memeriksa "setara".
+- [x] Stepper Waktu & lokasi / Dampak / Lampiran / Ringkasan; "Buat laporan" sebelum tersimpan, "Ubah insiden" + Draf sesudahnya
+  (`/insiden/baru`, Pelapor; `formSync.test.tsx`).
+- [x] Kartu Pengajuan hanya di Ringkasan (`/insiden/baru/ringkasan`).
+- [x] Footer form sesuai B-7 dan sticky (dicek di browser).
+- [x] Modal "Tinggalkan halaman ini?" saat keluar dengan perubahan belum disimpan (dicek di browser: ketik Judul → klik menu Insiden).
+- [x] "Belum diketahui" di keempat isian dampak, saran sementara, dan "Belum bisa disarankan" (`formSync.test.tsx`).
+- [x] Modal Ajukan: combobox pilih-banyak, validasi kosong, peringatan "(Anda)" (`step34.test.tsx`, `?pemeriksa=sendiri`).
+- [x] Menu ⋯ per baris sesuai B-15 per peran; SKK tanpa ⋯ (`rowMenu.test.ts`, `/insiden` Pelapor/Pejabat/PIC/Pengawas).
+- [x] Tab Detail | Riwayat (n) di semua layar detail; kartu Lokasi terpisah; Ringkasan B-19 (`detail.test.tsx`, `pic.test.tsx`,
+  `skk.test.tsx`).
+- [x] "Jejak audit lengkap" membuka halaman Jejak audit tersaring nomor insiden (`jejakAudit.test.tsx`).
+- [x] Batalkan pengajuan: alasan wajib (maks. 500), status kembali Draf, toast dan Riwayat ADJ-17 (`detail.test.tsx`,
+  `workflow.test.ts`, `formB.test.tsx`).
+- [x] Perbarui dampak: naik langsung berlaku, turun menunggu konfirmasi Pejabat, tercatat di Riwayat (`workflow.impact.test.ts`).
+- [x] Data penutupan: Penyebab utama tunggal, Faktor pendukung opsional, 5 isian wajib, Produksi hilang opsional dengan saran AI
+  (`closureSync.test.ts`, `pic.test.tsx`).
+- [x] Menunggu penutupan: Pejabat hanya Setujui (Tutup insiden) / Kembalikan ke PIC / Tambah tindak lanjut; Kembalikan nonaktif
+  sampai Alasan terisi (`closure.test.tsx`).
+- [x] Periksa penutupan: peringatan ADJ-02/03 dan tombol "Ringkasan untuk keputusan" tanpa panel AI terpisah (`closure.test.tsx`).
+- [x] Lama penanganan dan Total waktu tampil di Periksa penutupan dan Ditutup (`closure.test.tsx`; P35 SKK).
+- [x] Status penutupan jadi kartu di kolom kanan; urutan kolom utama sesuai B-23 (Pejabat, PIC, SKK).
+- [x] Draf: rekan satu organisasi bisa melihat; hanya maker bisa Lanjutkan; Hapus hanya pembuat; non-maker tanpa Buat laporan; SKK
+  tidak melihat draf (`rowMenu.test.ts`, `detailLogic.accessOf`).
+- [x] Tidak ada error di console di layar yang dicek di browser (daftar, form, detail Pelapor, detail PIC + Perbarui dampak).

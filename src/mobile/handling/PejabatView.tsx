@@ -153,7 +153,7 @@ function CloseSheet({ i, error, onClose, onConfirm }: { i: Incident; error?: str
       <dl className="kv">
         <dt>Lama penanganan</dt>
         <dd>{formatDuration(registeredAt(i), c?.requestedAt ?? demoNow())} · <b style={{ color: inTime ? 'var(--status-success-ink)' : 'var(--err-ink)' }}>{inTime ? 'Dalam tenggat' : 'Lewat tenggat'}</b></dd>
-        <dt>Penyebab</dt><dd>{c?.cause || '—'}</dd>
+        <dt>Penyebab utama</dt><dd>{c?.cause || '—'}</dd>
         <dt>Bukti</dt><dd>{c?.evidence?.length ?? 0} file</dd>
       </dl>
       {contracts.length > 0 && (

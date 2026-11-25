@@ -138,8 +138,8 @@ export function PicWork({ i }: { i: Incident }) {
             <PickSheet title="Tim terlibat" multi options={PARTNER_OPTS.map((p) => p.name)} value={names} onClose={() => setPick(null)}
               onChange={(v) => update({ partnerNames: v, partners: typesOf(v) })} />
           )}
-          {pick === 'sebab' && <PickSheet title="Penyebab" options={CAUSE_OPTS} value={form.cause ? [form.cause] : []} onClose={() => setPick(null)} onChange={(v) => update({ cause: v[0] })} />}
-          {pick === 'faktor' && <PickSheet title="Faktor penyebab" multi options={FACTOR_OPTS} value={factors} onClose={() => setPick(null)} onChange={(v) => update({ factors: v })} />}
+          {pick === 'sebab' && <PickSheet title="Penyebab utama" options={CAUSE_OPTS} value={form.cause ? [form.cause] : []} onClose={() => setPick(null)} onChange={(v) => update({ cause: v[0] })} />}
+          {pick === 'faktor' && <PickSheet title="Faktor pendukung" multi options={FACTOR_OPTS} value={factors} onClose={() => setPick(null)} onChange={(v) => update({ factors: v })} />}
           <ToastLine toast={toast} onClose={() => setToast(null)} />
         </>
       }
@@ -182,18 +182,18 @@ export function PicWork({ i }: { i: Incident }) {
           <PickInput label="Tim terlibat" text={names.join(', ')} error={!!miss('partners')} onClick={() => setPick('tim')} />
         </Field>
 
-        <Field label="Penyebab" error={miss('cause')} help="Dari taksonomi PLT-06 (K-05).">
-          <PickInput label="Penyebab" text={form.cause} error={!!miss('cause')} onClick={() => setPick('sebab')} />
+        <Field label="Penyebab utama" error={miss('cause')} help="Pilih satu yang paling menentukan terjadinya insiden. Daftar dari Konfigurasi Insiden (KIN-01).">
+          <PickInput label="Penyebab utama" text={form.cause} error={!!miss('cause')} onClick={() => setPick('sebab')} />
         </Field>
 
-        <Field label="Penjelasan" optional>
+        <Field label="Penjelasan penyebab" optional>
           <textarea className="p-input p-area" aria-label="Penjelasan penyebab" style={{ minHeight: 72, alignItems: 'flex-start' }} maxLength={500}
             placeholder="Jelaskan penyebabnya" value={form.causeDetail ?? ''} onChange={(e) => update({ causeDetail: e.target.value })} />
-          <TidyBar label="Penjelasan" value={form.causeDetail ?? ''} counter={`${(form.causeDetail ?? '').length}/500`} onApply={(t) => update({ causeDetail: t })} />
+          <TidyBar label="Penjelasan penyebab" value={form.causeDetail ?? ''} counter={`${(form.causeDetail ?? '').length}/500`} onApply={(t) => update({ causeDetail: t })} />
         </Field>
 
-        <Field label="Faktor penyebab" error={miss('factors')}>
-          <PickInput label="Faktor penyebab" text={factors.length ? `${factors.length} dipilih` : ''} error={!!miss('factors')} onClick={() => setPick('faktor')} />
+        <Field label="Faktor pendukung" optional>
+          <PickInput label="Faktor pendukung" text={factors.length ? `${factors.length} dipilih` : ''} onClick={() => setPick('faktor')} />
         </Field>
 
         <Field label="Bukti penyelesaian" error={miss('evidence')}>
