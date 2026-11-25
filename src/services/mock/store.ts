@@ -5,6 +5,7 @@ import type { DemoState, Incident, Kerawanan, ModuleConfig, WaDraft } from '../t
 import type { ConfigResult } from './workflow.config';
 import type { Role } from '@/lib/rbac';
 import { PERIOD_ARCHIVE_NOS, seedState } from './seed';
+import { withDemoDetail } from './seedDemoDetail';
 import { seedFollowUps } from './seedFollowUps';
 import { seedWaMessages } from './seedWa';
 import { seedWaGroups, seedWaNumbers, seedWaRules } from './seedWaMon';
@@ -69,7 +70,8 @@ export const useDemoStore = create<DemoStore>()(
       // v5: data tindak lanjut diperluas (artifact TLJ-01); state lama memakai seed baru.
       // v6: Pemantauan WhatsApp v2 (nomor, grup, aturan, ketentuan). State lama diisi seed baru; pesan lama dilengkapi id grup.
       // v8: insiden lama untuk filter Periode kejadian (PERIOD_ARCHIVE_NOS) ditambahkan bila belum ada; data lain tidak diubah.
-      version: 8,
+      // v9: lampiran laporan awal dan data penutupan demo untuk insiden berjalan/ditutup yang belum punya (withDemoDetail).
+      version: 9,
       migrate: (persisted, from) => {
         const p = (persisted ?? {}) as Partial<DemoState>;
         const base = seedState().config;
@@ -78,8 +80,9 @@ export const useDemoStore = create<DemoStore>()(
         const incidents = Array.isArray(p.incidents) && from < 8
           ? [...p.incidents, ...seedInc.filter((i) => PERIOD_ARCHIVE_NOS.includes(i.no) && !p.incidents!.some((x) => x.no === i.no))]
           : p.incidents;
+        const incidents9 = Array.isArray(incidents) && from < 9 ? incidents.map(withDemoDetail) : incidents;
         return {
-          ...p, config, incidents,
+          ...p, config, incidents: incidents9,
           followUps: from >= 5 && Array.isArray(p.followUps) ? p.followUps : seedFollowUps(),
           waMessages: from >= 7 && Array.isArray(p.waMessages) ? p.waMessages : seedWaMessages(),
           waDrafts: Array.isArray(p.waDrafts) ? p.waDrafts : [],

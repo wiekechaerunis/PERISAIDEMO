@@ -56,4 +56,16 @@ describe('Arahan SKK', () => {
     expect(i.handling?.directives.at(-1)?.followUp).toBe(true);
     expect(screen.queryByRole('region', { name: 'Arahan baru dari SKK' })).toBeNull();
   });
+
+  it('P35/P31: data seed lengkap, SKK melihat Lampiran laporan awal dan Hasil penanganan pada insiden Ditutup', () => {
+    useDemoStore.getState().setRole('pengawas');
+    render(
+      <MemoryRouter initialEntries={['/insiden/INS-SEN-2026-0004']}>
+        <Routes><Route path="/insiden/:no" element={<SkkIncidentPage />} /></Routes>
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('region', { name: 'Lampiran laporan awal' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Hasil penanganan' })).toBeInTheDocument();
+    expect(screen.getByText('Penyebab utama')).toBeInTheDocument();
+  });
 });

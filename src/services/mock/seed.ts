@@ -1,4 +1,5 @@
 import { withHandlingSeed } from './seedHandling';
+import { withDemoDetail } from './seedDemoDetail';
 import { seedFollowUps } from './seedFollowUps';
 import { seedWaMessages } from './seedWa';
 import { seedWaGroups, seedWaNumbers, seedWaRules } from './seedWaMon';
@@ -147,7 +148,7 @@ export function seedState(): DemoState {
           { at: '2026-10-27T09:10:00', by: 'Sari Wulandari', text: 'Menyetujui insiden. PIC penanganan: Andi Pratama.' },
         ],
       },
-    ] as Incident[]).map(enrich).map((i) => withHandlingSeed([i])[0]),
+    ] as Incident[]).map(enrich).map((i) => withDemoDetail(withHandlingSeed([i])[0])),
     kerawanan: [
       ['0040', 'Pagar perimeter berlubang di sisi timur', 'Perusakan material', 'Terminal Arunika'],
       ['0041', 'Orang tak dikenal sering mengamati gerbang 2', 'Lainnya', 'Gerbang 2'],

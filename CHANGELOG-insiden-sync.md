@@ -210,3 +210,4 @@ Bukti: route + peran demo (Menu akun). Diverifikasi dengan tes otomatis (nama be
 - P31 (SKK, PIC mengeskalasi ke SKK): kartu kanan "Diminta arahan dari Anda" (alasan PIC, Tenggat, Penanganan Tetap di KKKS,
   tombol Beri arahan), Lokasi, Info laporan; kolom utama Isi laporan, Lampiran, Tindak lanjut.
 - Sidebar bisa diciutkan dan dilebarkan dari tombol di bar atas semua layar (termasuk Dashboard dan Tindak lanjut lewat delegasi klik).
+- Data demo: insiden berjalan/ditutup diberi lampiran laporan awal, insiden Ditutup diberi data penutupan (store v9, hanya mengisi yang kosong), supaya Detail SKK (P31/P35) dan Pejabat (P24) lengkap.
