@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 Nov 2026 · Iterasi 2b (masukan PM)
+
+- Peta nasional: 38 provinsi bisa di-hover dan diklik (path dari `id-prov.svg`, data di `src/data/provinsi.ts`, dibuat oleh `scripts/build-provinsi.mjs`). Hover menyorot provinsi dan wilayah SKK-nya, kartu menampilkan nama provinsi, wilayah, dan jumlah insiden di provinsi itu. Klik atau scroll naik = zoom ke wilayah SKK provinsi tersebut, termasuk Kalsul dan Pamalu (memakai peta dasar karena belum ada peta detail).
+- Chip wilayah ("Jabanusa 3 insiden") hanya muncul saat wilayahnya di-hover (provinsi, area panas, atau baris panel).
+- Dropdown filter Wilayah, KKKS, dan Kategori (KKKS: Wilayah kerja, Kategori) bisa dibuka; memilih opsi mengubah seluruh halaman. Filter KKKS baru: menyaring area dan insiden ke KKKS itu, muncul di Filter aktif, ikut terhapus di "Hapus semua". Tutup dengan klik di luar atau Esc.
+- Hint peta lebih halus (latar terang, teks abu-abu), teks: "Klik provinsi atau area panas untuk zoom".
+- Catatan kaki dipersingkat.
+- ASUMSI: Sumatera Barat dan Kepulauan Riau masuk wilayah Sumbagut (konfirmasi PM).
+
 ## 25 Nov 2026 · Analitik diganti Dashboard insiden
 
 - Halaman `/analitik` sekarang memakai Dashboard insiden dari `design/dashboard/Dashboard.dc.html` (PRD di `docs/dashboard/`). Halaman lain (Insiden, Tindak lanjut, WhatsApp, Konfigurasi) tidak berubah.

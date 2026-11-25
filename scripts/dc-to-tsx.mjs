@@ -246,10 +246,24 @@ const LOGIC_PATCHES = [
   ['    // ===== AI ringkasan =====', "    { const wq = skk && lvl !== 'nat' ? '&wilayah=' + z : ''; const TO = ['/insiden?status=terverifikasi' + wq, '/insiden?urut=kerugian' + wq, '/insiden?level=tinggi,kritis&status=terbuka' + wq, skk ? '/insiden?kkks=belum-melapor' + wq : '/insiden?status=lewat-tenggat']; kpis.forEach((kp, i) => { kp.to = TO[i]; }); }\n    // ===== AI ringkasan ====="],
 
   ["crumb, mapT, sites,", "crumb, mapT, sites, lvl, locId: loc ? loc.id : null, zKey: lvl + '|' + z + '|' + (loc ? loc.id : ''), goTo: (zz, ll) => this.setState({ z: zz, loc: ll || null }), goUp: zoomOut, fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m].join('|'), mapK: k, mapFa: fa, mapMw: mw,"],
+  // Iterasi 2b (25 Nov): semua provinsi bisa diklik -> wilayah tanpa peta detail (Kalsul, Pamalu) memakai peta dasar
+  ["(lvl === 'area' ? '/peta/z-' + z + '.svg' : '')", "(lvl === 'area' && ['sbu', 'sbs', 'pst', 'jbn', 'own'].includes(z) ? '/peta/z-' + z + '.svg' : '')"],
+  ["baseOp: lvl === 'nat' ? '1' : '0'", "baseOp: (lvl === 'nat' || !detSrc) ? '1' : '0'"],
+  // Iterasi 2b: filter KKKS (dropdown)
+  ['const A = A0.filter((a) => skk || a[7] === SEN)', 'const A = A0.filter((a) => (skk || a[7] === SEN) && (!s.kk || a[7] === s.kk))'],
+  ["{ k: 'KKKS', v: 'Semua' }", "{ k: 'KKKS', v: s.kk ? s.kk.replace('PT ', '') : 'Semua' }"],
+  ["    if (skk && lvl !== 'nat') af.push(", "    if (s.kk) af.push({ l: 'KKKS: ' + s.kk, clear: () => this.setState({ kk: null }) });\n    if (skk && lvl !== 'nat') af.push("],
+  ['clearAll: () => this.setState({ kat: null,', 'clearAll: () => this.setState({ kk: null, kat: null,'],
+  // Iterasi 2b: isi dropdown filter + jumlah insiden per area (kartu provinsi)
+  ['goUp: zoomOut,', "goUp: zoomOut, areaN: Object.fromEntries(A.map((a) => [a.id, a.n])), fOpts: (() => {\n      const allA = A0.filter((a) => skk || a[7] === SEN);\n      const cnt = (f) => sum(A.filter(f).map((a) => a.n));\n      const katO = [{ n: 'Semua kategori', on: s.kat == null, go: () => this.setState({ kat: null }) }, ...CAT.map((c, i) => ({ n: c[0], on: s.kat === i, go: () => this.setState({ kat: i }) }))];\n      if (skk) {\n        const wO = [{ n: 'Semua wilayah', on: lvl === 'nat', go: () => this.setState({ z: 'nat', loc: null }) }, ...WO.map((w) => ({ n: W[w].n, sub: W[w].nr ? 'belum ada laporan' : cnt((a) => a.w === w) + ' insiden', on: lvl !== 'nat' && z === w, go: () => this.setState({ z: w, loc: null }) }))];\n        const kks = [...new Set(allA.map((a) => a[7]))].sort();\n        const kO = [{ n: 'Semua KKKS', on: !s.kk, go: () => this.setState({ kk: null }) }, ...kks.map((kn) => ({ n: kn, sub: allA.filter((a) => a[7] === kn).map((a) => a[8]).join(', '), on: s.kk === kn, go: () => this.setState({ kk: kn }) }))];\n        return [wO, kO, katO];\n      }\n      const wkO = [{ n: 'Semua wilayah kerja', on: !loc, go: () => this.setState({ z: 'own', loc: null }) }, ...A.map((a) => ({ n: a.wk, sub: a.name + ' · ' + a.n + ' insiden', on: !!loc && loc.id === a.id, go: () => this.setState({ z: 'own', loc: a.id }) }))];\n      return [wkO, katO];\n    })(),"],
+  // Iterasi 2b: chip wilayah hanya muncul saat hover, jadi hint menyebut provinsi
+  ["'Klik area panas atau nama wilayah untuk zoom'", "'Klik provinsi atau area panas untuk zoom'"],
+  // Iterasi 2b: catatan kaki lebih pendek
+  [/foot: 'Angka hanya mencakup.*?Jan–Jun 2026\.'/, () => "foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila \"Hitung DTT\" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'"],
 ];
 
 // Peta komponen ke ID bagian PRD §6a (S1..S19)
-const HAND = new Set(['IncidentMap', 'MapStage', 'MapStrip']);
+const HAND = new Set(['IncidentMap', 'MapStage', 'MapStrip']); // + MapPanel, FilterSelect (bukan hasil split)
 const S_TAG = {
   AppBar: 'S1', KkksBanner: 'S2', FilterBar: 'S3', ActiveFilters: 'S4', KpiRow: 'S5', AiFindings: 'S6', ActionList: 'S7',
   IncidentMap: 'S8', MapStage: 'S8 (peta, zoom, lapisan)', MapStrip: 'S9-S11 (legenda, tabel wilayah)', TopCategories: 'S12',
@@ -257,6 +271,11 @@ const S_TAG = {
 };
 
 const patches = {
+  // Iterasi 2b: dropdown filter bisa dibuka
+  FilterBar: [
+    [/<button type="button" className="db-sel">[\s\S]*?<\/button>\s*<\/Fragment>\)\)\}/, '<FilterSelect f={f} opts={v.fOpts?.[k0] ?? []} /></Fragment>))}'],
+  ],
+  Footnote: [],
   // Iterasi 2 (disetujui PM 25 Nov)
   KpiRow: [
     [/<div className="p-kpi">/, '<div className="p-kpi db-kpi-link" data-flash="" role="link" tabIndex={0} onClick={(e) => { if (!(e.target as HTMLElement).closest("a")) v.ui?.go?.(k.to); }} onKeyDown={(e) => { if (e.key === "Enter") v.ui?.go?.(k.to); }}>'],
@@ -344,7 +363,7 @@ function main() {
       const nestedImports = nested.map((n) => `import { ${n} } from './${n}';\n`).join('');
       write(
         path.join(ROOT, `src/features/dashboard/components/${name}.tsx`),
-        `${HEADER}import { Fragment } from 'react';\nimport { routeHref } from '@/dc/route';\nimport { downloadExcel } from '@/dc/download';\nimport { AnimNum } from '../anim';\n${nestedImports}\n// ${S_TAG[name] ?? ''}\nexport function ${name}({ v }: { v: any }) {\n  void routeHref; void downloadExcel; void Fragment; void AnimNum;\n  return (\n    <>${pretty(body)}</>\n  );\n}\n`,
+        `${HEADER}import { Fragment } from 'react';\nimport { routeHref } from '@/dc/route';\nimport { downloadExcel } from '@/dc/download';\nimport { AnimNum } from '../anim';\n${name === 'FilterBar' ? "import { FilterSelect } from './FilterSelect';\n" : ''}${nestedImports}\n// ${S_TAG[name] ?? ''}\nexport function ${name}({ v }: { v: any }) {\n  void routeHref; void downloadExcel; void Fragment; void AnimNum;\n  return (\n    <>${pretty(body)}</>\n  );\n}\n`,
       );
     }
     const topLevel = new Set(Object.values(SPLITS).filter((_, i) => Object.keys(SPLITS)[i].split('/').length <= 5));

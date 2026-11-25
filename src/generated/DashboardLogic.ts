@@ -37,7 +37,7 @@ export class DashboardLogic extends DCLogic {
       if (skk) WO.forEach((w) => { const bl = A0.filter((a) => a[1] === w); const al = alloc(c[1][w] || 0, bl.map((a) => sum(a[5]))); bl.forEach((a, i) => { catN[a[0]] = al[i]; }); });
       else A0.forEach((a) => { catN[a[0]] = c[2][a[0]] || 0; });
     }
-    const A = A0.filter((a) => skk || a[7] === SEN).map((a) => {
+    const A = A0.filter((a) => (skk || a[7] === SEN) && (!s.kk || a[7] === s.kk)).map((a) => {
       let lv = a[5].slice();
       if (catIdx >= 0 && catIdx < CAT.length) lv = alloc(Math.min(catN[a[0]] || 0, sum(a[5])), lv);
       if (catIdx === CAT.length) lv = [0, 0, 0, 0, 0];
@@ -67,7 +67,7 @@ export class DashboardLogic extends DCLogic {
     const cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
     const tx = 500 * fa / k - cx, ty = 200 / k - cy;
     const mapT = 'scale(' + k.toFixed(3) + ') translate(' + (tx / 10).toFixed(3) + '%, ' + (ty / 4).toFixed(3) + '%)';
-    const detSrc = loc ? '/peta/l-' + loc.id + '.svg' : (lvl === 'area' ? '/peta/z-' + z + '.svg' : '');
+    const detSrc = loc ? '/peta/l-' + loc.id + '.svg' : (lvl === 'area' && ['sbu', 'sbs', 'pst', 'jbn', 'own'].includes(z) ? '/peta/z-' + z + '.svg' : '');
     const det = { l: ((cx - 500 * fa / k) / 10).toFixed(3) + '%', t: ((cy - 200 / k) / 4).toFixed(3) + '%', w: (100 / k).toFixed(3) + '%', h: (100 / k).toFixed(3) + '%' };
     const go = (zz, ll) => () => this.setState({ z: zz, loc: ll || null });
 
@@ -119,7 +119,7 @@ export class DashboardLogic extends DCLogic {
     if (loc) crumb.push({ t: (skk ? loc.name + ' · ' : '') + loc.wk, go: () => {}, link: false, cur: true });
     const zoomOut = () => { if (loc) this.setState({ loc: null }); else if (skk && z !== 'nat') this.setState({ z: 'nat' }); };
     const outDis = (!loc && (!skk || z === 'nat')) ? 'true' : null;
-    const hint = lvl === 'nat' ? 'Klik area panas atau nama wilayah untuk zoom' : (lvl === 'area' ? 'Klik area untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
+    const hint = lvl === 'nat' ? 'Klik provinsi atau area panas untuk zoom' : (lvl === 'area' ? 'Klik area untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
 
     // ===== strip =====
     const tot = (list) => ({ n: sum(list.map((a) => a.n)), r: sum(list.map((a) => a.rp)), lv: addLv(list) });
@@ -298,23 +298,36 @@ export class DashboardLogic extends DCLogic {
     const af = [];
     if (s.kat != null) af.push({ l: 'Kategori: ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]), clear: () => this.setState({ kat: null }) });
     if (s.lv.some((v) => !v)) af.push({ l: 'Level: ' + LV.filter((l, i) => s.lv[i]).map((l) => l[0]).join(', '), clear: () => this.setState({ lv: [1, 1, 1, 1, 1] }) });
+    if (s.kk) af.push({ l: 'KKKS: ' + s.kk, clear: () => this.setState({ kk: null }) });
     if (skk && lvl !== 'nat') af.push({ l: 'Wilayah: ' + W[z].n + (loc ? ' · ' + loc.name : ''), clear: () => this.setState({ z: 'nat', loc: null }) });
 
     return {
       isSkk: skk, isKkks: !skk,
       user: skk ? 'Hendra Wijaya' : 'Sari Wulandari', role: skk ? 'Pengawas SKK' : 'Pejabat Berwenang KKKS', tasks: skk ? '2' : '4',
       subtitle: 'Semester I 2026 · data per 25 Nov 2026, 08.00 WIB · hanya insiden terverifikasi',
-      filters: skk ? [{ k: 'Wilayah', v: lvl === 'nat' ? 'Semua' : W[z].n }, { k: 'KKKS', v: 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) }] : [{ k: 'Wilayah kerja', v: loc ? loc.wk : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : CAT[s.kat][0] }],
+      filters: skk ? [{ k: 'Wilayah', v: lvl === 'nat' ? 'Semua' : W[z].n }, { k: 'KKKS', v: s.kk ? s.kk.replace('PT ', '') : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) }] : [{ k: 'Wilayah kerja', v: loc ? loc.wk : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : CAT[s.kat][0] }],
       lvOpen: s.lvOpen, lvOpenStr: s.lvOpen ? 'true' : 'false', toggleLv: () => this.setState({ lvOpen: !s.lvOpen }), lvAll: () => this.setState({ lv: [1, 1, 1, 1, 1] }),
       lvSum: s.lv.every(Boolean) ? 'Semua' : (s.lv.filter(Boolean).length + ' dari 5'), lvDots: LV.filter((l, i) => s.lv[i]).map((l) => ({ c: l[1] })),
-      clearAll: () => this.setState({ kat: null, lv: [1, 1, 1, 1, 1], z: skk ? 'nat' : 'own', loc: null }),
+      clearAll: () => this.setState({ kk: null, kat: null, lv: [1, 1, 1, 1, 1], z: skk ? 'nat' : 'own', loc: null }),
       lvChips: LV.map((l, i) => ({ n: l[0], c: l[1], cnt: String(lvAllCnt[i]), on: s.lv[i] ? 'true' : 'false', pick: () => { const nl = s.lv.slice(); nl[i] = nl[i] ? 0 : 1; if (nl.some(Boolean)) this.setState({ lv: nl }); } })),
       dtt: dttOn, dttStr: dttOn ? 'true' : 'false', dttCls: dttOn ? 'on' : '', toggleDtt: () => this.setState({ dtt: !s.dtt, kat: null }),
       hasAf: af.length > 0, af,
       dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · Semester I 2026',
       ins, aiCap, aiSeg, askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
       kpis,
-      crumb, mapT, sites, lvl, locId: loc ? loc.id : null, zKey: lvl + '|' + z + '|' + (loc ? loc.id : ''), goTo: (zz, ll) => this.setState({ z: zz, loc: ll || null }), goUp: zoomOut, fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m].join('|'), mapK: k, mapFa: fa, mapMw: mw, baseOp: lvl === 'nat' ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
+      crumb, mapT, sites, lvl, locId: loc ? loc.id : null, zKey: lvl + '|' + z + '|' + (loc ? loc.id : ''), goTo: (zz, ll) => this.setState({ z: zz, loc: ll || null }), goUp: zoomOut, areaN: Object.fromEntries(A.map((a) => [a.id, a.n])), fOpts: (() => {
+      const allA = A0.filter((a) => skk || a[7] === SEN);
+      const cnt = (f) => sum(A.filter(f).map((a) => a.n));
+      const katO = [{ n: 'Semua kategori', on: s.kat == null, go: () => this.setState({ kat: null }) }, ...CAT.map((c, i) => ({ n: c[0], on: s.kat === i, go: () => this.setState({ kat: i }) }))];
+      if (skk) {
+        const wO = [{ n: 'Semua wilayah', on: lvl === 'nat', go: () => this.setState({ z: 'nat', loc: null }) }, ...WO.map((w) => ({ n: W[w].n, sub: W[w].nr ? 'belum ada laporan' : cnt((a) => a.w === w) + ' insiden', on: lvl !== 'nat' && z === w, go: () => this.setState({ z: w, loc: null }) }))];
+        const kks = [...new Set(allA.map((a) => a[7]))].sort();
+        const kO = [{ n: 'Semua KKKS', on: !s.kk, go: () => this.setState({ kk: null }) }, ...kks.map((kn) => ({ n: kn, sub: allA.filter((a) => a[7] === kn).map((a) => a[8]).join(', '), on: s.kk === kn, go: () => this.setState({ kk: kn }) }))];
+        return [wO, kO, katO];
+      }
+      const wkO = [{ n: 'Semua wilayah kerja', on: !loc, go: () => this.setState({ z: 'own', loc: null }) }, ...A.map((a) => ({ n: a.wk, sub: a.name + ' · ' + a.n + ' insiden', on: !!loc && loc.id === a.id, go: () => this.setState({ z: 'own', loc: a.id }) }))];
+      return [wkO, katO];
+    })(), fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m].join('|'), mapK: k, mapFa: fa, mapMw: mw, baseOp: (lvl === 'nat' || !detSrc) ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
       showHint: true, hint,
       mapCap: lvl === 'nat' ? 'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.' : (lvl === 'area' ? 'Garis = batas provinsi dan kabupaten/kota. Batas WK menunggu data resmi (Q-272).' : 'Satu titik satu insiden. Lokasi rahasia tidak digambar.'),
       mapAria: 'Peta insiden ' + (lvl === 'nat' ? 'Indonesia' : aTitle) + ': ' + vis.length + ' area dengan insiden',
@@ -334,7 +347,7 @@ export class DashboardLogic extends DCLogic {
       mxTitle: skk ? 'Kategori × wilayah' : 'Kategori × wilayah kerja',
       mxCap: 'Klik sel untuk menyaring seluruh halaman dan zoom ke ' + (skk ? 'wilayah' : 'wilayah kerja') + ' itu.' + (skk ? ' 11 kategori tanpa insiden disembunyikan.' : ''),
       mxCols, mxRows,
-      foot: 'Angka hanya mencakup insiden yang sudah diverifikasi; draf dan laporan yang belum diperiksa tidak dihitung. Semua angka di halaman ini dan di PDF dihitung dari sumber data yang sama. ' + (skk ? 'DTT tidak dihitung kecuali sakelar "Hitung DTT" dinyalakan (keputusan terbuka). "Belum ada laporan" berbeda dengan "0 insiden": wilayah tanpa laporan insiden maupun nihil ditandai arsir. ' : '') + 'Batas wilayah: Kemendagri 2025 via cahyadsn/wilayah_boundaries (MIT). Angka demo, pola mengikuti rekap SKK Jan–Jun 2026.'
+      foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila "Hitung DTT" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'
     };
   }
 }

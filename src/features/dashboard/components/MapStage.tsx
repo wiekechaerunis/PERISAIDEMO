@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MapPanel, type Hl } from './MapPanel';
+import { AREA_PROV, PROVINSI } from '@/data/provinsi';
+import { W } from '@/data/dashboard';
 
 // S8 (peta, zoom, lapisan) + S9-S11 (panel ringkasan melayang). Ditulis tangan sejak Iterasi 2 (disetujui PM 25 Nov).
 // Tambahan Iterasi 2: panel melayang, kartu hover, zoom scroll/geser/double-click, tombol Legenda, pill tidak terpotong.
@@ -8,7 +10,8 @@ import { MapPanel, type Hl } from './MapPanel';
 const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const SKIP = '.db-panel, .db-ctl, .db-leg, .db-legbtn, .db-sumbtn';
 
-type Card = { x: number; y: number; kind: 'area' | 'pill' | 'pt'; d: any } | null;
+type Card = { x: number; y: number; kind: 'area' | 'pill' | 'pt' | 'prov'; d: any } | null;
+const WN = W as Record<string, { n: string; nr?: boolean }>;
 
 export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => void }) {
   const ui = v.ui;
@@ -18,6 +21,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
   const [dragging, setDragging] = useState(false);
   const [legOpen, setLegOpen] = useState(false);
   const [card, setCard] = useState<Card>(null);
+  const [hovP, setHovP] = useState<number | null>(null);
   const timer = useRef<number>(0);
   const drag = useRef({ on: false, moved: false, sx: 0, sy: 0, px: 0, py: 0 });
   const lastWheel = useRef(0);
@@ -81,7 +85,20 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
   }, [legOpen]);
 
   // C4: sasaran di bawah kursor (wilayah di nasional, area di tingkat wilayah), toleransi 90px.
+  const curZ = () => String(vRef.current.zKey).split('|')[1];
+  // Klik provinsi: zoom ke wilayah SKK provinsi itu (KKKS hanya melihat wilayah kerjanya sendiri).
+  const goProv = (i: number) => {
+    const cv = vRef.current;
+    const w = PROVINSI[i].w;
+    if (!cv.isSkk || (cv.lvl === 'area' && curZ() === w)) return;
+    cv.goTo(w);
+  };
   const zoomIn = (cx: number, cy: number) => {
+    const pe = document.elementFromPoint(cx, cy)?.closest<SVGElement>('[data-prov]');
+    if (pe && vRef.current.lvl === 'nat') {
+      goProv(Number(pe.dataset.prov));
+      return;
+    }
     const els = mapRef.current?.querySelectorAll<HTMLElement>('[data-gi]') ?? [];
     let best: { d: number; go: () => void } | null = null;
     els.forEach((el) => {
@@ -113,6 +130,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // C4: klik-tahan lalu geser; dibatasi 20% dari kotak peta.
@@ -145,7 +163,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     const m = mapRef.current!.getBoundingClientRect();
     return { x: e.clientX - m.left, y: e.clientY - m.top };
   };
-  const showCard = (kind: 'area' | 'pill' | 'pt', d: any, hid?: string) => (e: React.MouseEvent) => {
+  const showCard = (kind: 'area' | 'pill' | 'pt' | 'prov', d: any, hid?: string) => (e: React.MouseEvent) => {
     const p = rel(e);
     if (hid) setHl({ id: hid, from: 'map' });
     window.clearTimeout(timer.current);
@@ -160,7 +178,13 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     window.clearTimeout(timer.current);
     setCard(null);
     setHl(null);
+    setHovP(null);
   };
+
+  // Chip wilayah hanya tampil saat wilayahnya di-hover (provinsi, area panas, atau baris panel).
+  const hovW = hovP != null ? PROVINSI[hovP].w : hl?.id && WN[hl.id] ? hl.id : null;
+  const provCount = (i: number) =>
+    (v.heat ?? []).filter((h: any) => AREA_PROV[h.area.id] === i).reduce((s: number, h: any) => s + h.area.n, 0);
 
   const boxW = mapRef.current?.clientWidth ?? 1078;
   const boxH = mapRef.current?.clientHeight ?? 560;
@@ -194,7 +218,23 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       <div className="db-wrap" ref={wrapRef}>
         <div className="db-pan" style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, transition: dragging ? 'none' : undefined }}>
           <div className="db-stage" style={{ transform: v.mapT }}>
-            <img src="/peta/id-prov.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%', opacity: v.baseOp, transition: 'opacity .3s ease' }} />
+            <svg className={`db-prov${v.baseOp === '0' ? ' off' : ''}`} viewBox="0 0 1000 400" aria-hidden="true">
+              {PROVINSI.map((p, i) => (
+                <path
+                  key={i}
+                  d={p.d}
+                  data-prov={i}
+                  className={`${hovW === p.w && v.lvl === 'nat' ? 'w' : ''}${hovP === i ? ' on' : ''}`}
+                  onMouseEnter={(e) => {
+                    setHovP(i);
+                    showCard('prov', { i }, v.isSkk && v.lvl === 'nat' ? p.w : undefined)(e);
+                  }}
+                  onMouseMove={moveCard}
+                  onMouseLeave={hideCard}
+                  onClick={() => goProv(i)}
+                />
+              ))}
+            </svg>
             {v.hasDet && <img src={v.detSrc} alt="" aria-hidden="true" draggable={false} style={{ left: v.det.l, top: v.det.t, width: v.det.w, height: v.det.h }} />}
             <Fragment key={v.zKey}>
               {(v.heat ?? []).map((h: any, i: number) => (
@@ -230,13 +270,14 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
           {(v.pts ?? []).map((p: any, i: number) => (
             <span key={`${v.zKey}${i}`} className="db-pt" style={{ left: p.x, top: p.y, background: p.c }} onMouseEnter={showCard('pt', p)} onMouseMove={moveCard} onMouseLeave={hideCard} />
           ))}
-          {(v.pills ?? []).map((p: any, i: number) => (
+          {(v.pills ?? []).map((p: any, i: number) => (p.hid !== hovW ? null :
             <button
               key={p.hid}
               type="button"
               data-gi={i}
               data-gk="p"
-              className={`db-pill ${p.cls}${hlId === p.hid ? ' on' : ''}`}
+              className={`db-pill peek ${p.cls}`}
+              tabIndex={-1}
               style={{ left: p.x, top: p.y }}
               onClick={p.go}
               aria-label={p.aria}
@@ -305,7 +346,16 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       )}
 
       {card && (
-        <div className="db-card" role="tooltip" style={{ left: Math.max(8, Math.min(card.x + 16, boxW - 288)), top: Math.max(8, Math.min(card.y + 16, boxH - 150)) }}>
+        <div
+          className="db-card"
+          role="tooltip"
+          style={
+            // kartu provinsi di atas kursor supaya chip wilayah (biasanya di bawah pulau) tetap terlihat
+            card.kind === 'prov' && card.y > 130
+              ? { left: Math.max(8, Math.min(card.x + 16, boxW - 288)), top: card.y - 12, transform: 'translateY(-100%)' }
+              : { left: Math.max(8, Math.min(card.x + 16, boxW - 288)), top: Math.max(8, Math.min(card.y + 16, boxH - 150)) }
+          }
+        >
           {card.kind === 'area' && (
             <>
               <b>{(v.isSkk ? `${card.d.area.name} · ` : '') + card.d.area.wk}</b>
@@ -323,6 +373,20 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
               {card.d.cnt > 0 && <span className="s">Klik untuk zoom</span>}
             </>
           )}
+          {card.kind === 'prov' && (() => {
+            const p = PROVINSI[card.d.i];
+            const w = WN[p.w];
+            const n = provCount(card.d.i);
+            const canZoom = v.isSkk && !(v.lvl === 'area' && curZ() === p.w);
+            return (
+              <>
+                <b>{p.n}</b>
+                {v.isSkk && <span className="s">Wilayah SKK {w.n}</span>}
+                <span className="r">{w.nr ? 'Belum ada laporan' : <><b>{n}</b> insiden di provinsi ini</>}</span>
+                {canZoom && <span className="s">Klik untuk zoom ke {w.n}</span>}
+              </>
+            );
+          })()}
           {card.kind === 'pt' && (
             <>
               {card.d.inc && <span className="db-id">{card.d.inc.id}</span>}

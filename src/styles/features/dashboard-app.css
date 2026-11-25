@@ -98,3 +98,24 @@
 @media (prefers-reduced-motion: reduce) {
   .lk-app *, .db-tip { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Iterasi 2b: provinsi bisa di-hover dan diklik, chip wilayah hanya saat hover ---------- */
+.db-prov { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.db-prov path { fill: #fff; stroke: #B9BCC5; stroke-width: .6px; vector-effect: non-scaling-stroke; stroke-linejoin: round; cursor: pointer; transition: fill .15s ease, stroke .3s ease; }
+.db-prov path.w { fill: color-mix(in srgb, var(--ink) 3%, #fff); }
+.db-prov path.on { fill: color-mix(in srgb, var(--ink) 7%, #fff); stroke: var(--ink-muted); }
+.db-prov.off path { fill: transparent; stroke: transparent; }
+.db-prov.off path.on { fill: color-mix(in srgb, var(--ink) 6%, transparent); stroke: var(--ink-subtle); }
+.db-stage img { pointer-events: none; }
+.db-pill.peek { pointer-events: none; animation: db-fade-in .12s ease-out both; }
+
+/* ---------- Iterasi 2b: dropdown filter ---------- */
+.db-fsel { width: 300px; max-height: 360px; overflow-y: auto; }
+.db-fsel .row { height: auto; min-height: 36px; padding: 6px 8px; justify-content: space-between; text-align: left; }
+.db-fsel .row[aria-selected="true"] { background: var(--surface-sunken); }
+.db-fsel .tx { display: flex; flex-direction: column; min-width: 0; }
+.db-fsel .nm { font-weight: 600; }
+.db-fsel .p-cap { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+
+/* ---------- Iterasi 2b: hint peta lebih halus ---------- */
+.db-map .db-hint { background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink-muted); font-weight: 500; box-shadow: 0 0 0 1px var(--border-subtle); backdrop-filter: blur(4px); pointer-events: none; }
