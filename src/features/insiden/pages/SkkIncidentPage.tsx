@@ -7,10 +7,13 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { approveClosureBySkk, giveDirective, rejectClosureBySkk, TOAST_DIRECTIVE } from '@/services/mock/workflow.skk';
 import { DEMO_USERS } from '@/lib/rbac';
+import { formatWib } from '@/lib/format';
+import { demoNow } from '@/services/mock/clock';
 import { SEV_LABEL } from '@/lib/severity';
 import { STATUS_LABEL, STATUS_TAG } from '@/services/types';
 import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
 import { LocationCard } from '../components/detail/LocationCard';
+import { RequestCard, dueRow } from '../components/closure/RequestCard';
 import { ClosedCard, DecisionSummaryCard, HandlingResultCard, InitialFilesCard, ReportInfoCard, SkkFollowUpsCard, type P22Hl } from '../components/closure/P22Parts';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
@@ -159,7 +162,30 @@ export function SkkIncidentPage() {
     );
   }
 
-  // P31 (dieskalasi) dan PS1 (lewat tenggat), insiden berjalan
+  // P31: PIC mengeskalasi ke SKK. Board: Isi laporan → Lampiran → Tindak lanjut; kanan: "Diminta arahan dari Anda" (memuat Tenggat)
+  // → Lokasi (S-35, di bawah Tenggat) → Info laporan.
+  if (esc?.toSkk) {
+    return shell(
+      <div className="lk-grid">
+        <div className="c8 lk-stack">
+          <IncidentSummaryCard incident={i} />
+          {d.attachments.length > 0 && <AttachmentsCard files={d.attachments} />}
+          <FollowUpsCard incident={i} />
+        </div>
+        <aside className="c4 lk-stack">
+          <RequestCard
+            tone="caution" title="Diminta arahan dari Anda" quote={esc.reason || 'Tanpa keterangan.'} cite={`${esc.by} (PIC) · ${formatWib(esc.at)} WIB`}
+            rows={[dueRow(i.handleDueAt, demoNow()), { k: 'Penanganan', v: 'Tetap di KKKS' }]}
+            action="Beri arahan" actionIcon="M4 22V4a1 1 0 0 1 1-1h12l-2 4 2 4H5" onAction={() => setDialog('arahan')}
+          />
+          <LocationCard incident={i} />
+          <ReportInfoCard i={i} full me={me} krwTitle={kerawanan.find((k) => k.no === i.fromKrw)?.title} />
+        </aside>
+      </div>,
+    );
+  }
+
+  // PS1 (lewat tenggat, eskalasi otomatis ke Pejabat), insiden berjalan
   return (
     shell(
       <div className="lk-grid">

@@ -82,3 +82,7 @@ bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
 | S-34 | P22 "Perlu dicek": TL diperiksa PIC-nya sendiri | Hanya muncul bila data modul TL mencatat pemeriksa = PIC tindak lanjut; insiden demo P22 tidak punya kasus itu | Isi dari data mock, teks board hanya contoh |
 | S-35 | Detail Dalam penanganan (Pejabat, SKK) | Kartu Lokasi dipindah tepat di bawah Tenggat penanganan | Permintaan pengguna 25 Nov |
 | S-36 | P35: Hasil penanganan selalu tampil | Tidak tampil untuk insiden Ditutup yang data mock-nya tidak punya data penutupan (mis. INS-SEN-2026-0004) | Data seed lama; P24/P35 lengkap pada insiden yang ditutup lewat alur penutupan |
+| S-37 | P31/P33: Riwayat tampil di kolom utama Detail | Riwayat tetap di tab Riwayat (B-18); kolom utama: Isi laporan, Lampiran, Tindak lanjut | Konsisten dengan B-18 di semua layar Detail |
+| S-38 | P31/P33: kanan = kartu arahan, Info laporan, lalu Lokasi | Lokasi tepat di bawah kartu arahan (yang memuat Tenggat), lalu Info laporan | Permintaan pengguna: Lokasi di bawah Tenggat (S-35) |
+| S-39 | P31 untuk eskalasi otomatis karena lewat tenggat (PS1) | Kartu "Diminta arahan dari Anda" hanya saat PIC mengeskalasi ke SKK; PS1 tetap banner + Langkah berikutnya | P31 hanya menggambarkan eskalasi manual ke SKK |
+| S-40 | Sidebar ciut tidak digambar di board Sidebar | Mode ciut memakai kelas DS `.p-sb.mini` (72 px, ikon, tip saat hover), wordmark jadi "P", kaki hak cipta disembunyikan | Permintaan pengguna (expand/collapse); status disimpan per peramban |

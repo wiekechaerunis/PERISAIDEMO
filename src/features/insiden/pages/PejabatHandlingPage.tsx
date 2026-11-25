@@ -14,7 +14,9 @@ import {
 import type { DecisionResult } from '@/services/mock/workflow';
 import { useFollowUps } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { DEMO_USERS } from '@/lib/rbac';
-import { formatDate, formatDateShort } from '@/lib/format';
+import { formatDate, formatDateShort, formatWib } from '@/lib/format';
+import { RequestCard, dueRow } from '../components/closure/RequestCard';
+import { escalationOf } from '../components/skk/skkLogic';
 import { STATUS_LABEL, STATUS_TAG, type Incident } from '@/services/types';
 import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
 import { LocationCard } from '../components/detail/LocationCard';
@@ -34,7 +36,7 @@ import {
 } from '../components/closure/ClosureBlocks';
 import { ApprovalCard, ClosedCard, DecisionSummaryCard, HandlingResultCard, InitialFilesCard, ReportInfoCard, SurroundFold, type P22Hl } from '../components/closure/P22Parts';
 import { CloseDialog, DueDialog, NoReopenDialog, ReassignDialog, ReopenDialog, ReturnDialog, type CloseResult } from '../components/closure/ClosureDialogs';
-import { dueRemaining, timeShort, withDemoState } from '../logic/closure';
+import { dueRemaining, withDemoState } from '../logic/closure';
 
 type Dialog = null | 'tutup' | 'kembalikan' | 'ganti-pic' | 'tenggat' | 'buka' | 'nobuka' | 'terbatas' | 'sendiri' | 'dampak' | 'koreksi';
 type Hl = P22Hl;
@@ -148,6 +150,7 @@ function Body({ stored }: { stored: Incident }) {
     <>
       <span className={`p-tag ${st === 'minta-ditutup' ? 't-caution' : STATUS_TAG[st]}`}>{STATUS_LABEL[st]}</span>
       {st === 'ditutup' && open.length > 0 && <span className="p-tag t-info">Tindak lanjut berjalan</span>}
+      {st === 'dalam-penanganan' && i.escalated && <span className="p-tag t-caution">Dieskalasi</span>}
     </>
   );
   /** Tutup insiden: ADJ-02/03 memberi peringatan bila penyetuju juga PIC atau pemeriksa, tidak memblokir. */
@@ -238,6 +241,7 @@ function Body({ stored }: { stored: Incident }) {
     const dirs = i.handling?.directives ?? [];
     const dIdx = dirs.map((d, n) => (d.followUp ? -1 : n)).filter((n) => n >= 0).at(-1) ?? -1;
     const dir = dIdx >= 0 ? dirs[dIdx] : null;
+    const esc = escalationOf(i);
     const rem = i.handleDueAt ? dueRemaining(i.handleDueAt, demoNow()) : null;
     body = (
       <div className="lk-grid">
@@ -248,23 +252,30 @@ function Body({ stored }: { stored: Incident }) {
               <div className="body">{i.handling?.picPrev ? <><b>PIC tidak aktif.</b> {i.handling.picPrev} nonaktif sejak {formatDateShort(i.handling.picInactiveSince ?? demoNow())}.</> : <b>Insiden belum punya PIC.</b>}</div>
             </div>
           )}
-          {dir && (
-            <div className="in-bn info sm" style={{ alignSelf: 'stretch' }}>
-              <Ic d={P.info} size={16} />
-              <div className="body"><b>Arahan baru dari {dir.by} (SKK).</b> “{dir.text.split('. ')[0].replace(/\.$/, '')}.”</div>
-            </div>
-          )}
           <IncidentSummaryCard incident={i} onUpdateImpact={() => setDialog('dampak')} />
           <AttachmentsCard files={detailOf(i).attachments} />
           {!i.pic && (
             <NextStep icon={P.person} title="Tunjuk PIC baru" meta={`Tenggat ${i.handleDueAt ? formatDateShort(i.handleDueAt) : '—'}${rem ? ` · ${rem.text}` : ''}`}
               action={<button type="button" className="p-btn p-btn-primary" onClick={() => setDialog('ganti-pic')}><Ic d={P.person} size={16} />Tunjuk PIC</button>} />
           )}
-          {dir && (
-            <NextStep icon={P.flag} title="Jadikan arahan ini tindak lanjut?" meta={timeShort(dir.at)}
-              action={<button type="button" className="p-btn p-btn-primary" onClick={() => doDirective(dIdx)}><Ic d={P.plus} size={16} />Jadikan tindak lanjut</button>} />
-          )}
+          {dir && <FollowUpsCard i={i} />}
         </div>
+        {dir ? (
+          // Board P33: kartu "Arahan baru dari SKK" (memuat Tenggat) → Lokasi (S-35) → Info laporan; Tindak lanjut di kolom utama.
+          <aside className="c4 lk-stack">
+            {i.levelChange && <LevelChangeCard incident={i} onResolve={doLevel} />}
+            <RequestCard
+              tone="info" title="Arahan baru dari SKK" quote={dir.text} cite={`${dir.by}, Pengawas SKK · ${formatWib(dir.at)} WIB`}
+              rows={[
+                ...(esc ? [{ k: 'Atas eskalasi', v: esc.auto ? 'Otomatis' : `${esc.by} (PIC)`, sub: `${formatWib(esc.at)} WIB` }] : []),
+                dueRow(i.handleDueAt, demoNow()),
+              ]}
+              action="Jadikan tindak lanjut" actionIcon={P.plus} onAction={() => doDirective(dIdx)}
+            />
+            <LocationCard incident={i} />
+            <ReportInfoCard i={i} full me={by} onReassign={() => setDialog('ganti-pic')} krwTitle={kerawanan.find((k) => k.no === i.fromKrw)?.title} />
+          </aside>
+        ) : (
         <aside className="c4 lk-stack">
           {i.levelChange && <LevelChangeCard incident={i} onResolve={doLevel} />}
           <DueCard i={i} now={demoNow()} withEsc={!i.escalated} />
@@ -273,6 +284,7 @@ function Body({ stored }: { stored: Incident }) {
           <SummaryCard i={i} title="Ringkasan" picExtra={i.pic ? <> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={() => setDialog('ganti-pic')}>Ganti PIC</button></> : undefined} />
           <EscalationCard i={i} />
         </aside>
+        )}
       </div>
     );
   } else {

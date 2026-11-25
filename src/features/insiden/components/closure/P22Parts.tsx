@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import type { FollowUp, Incident } from '@/services/types';
 import { FOLLOWUP_LABEL, LEGAL_STATUS_LABEL, SECURITY_OUTCOME_LABEL } from '@/services/types';
 import { formatWib } from '@/lib/format';
+import { initials } from '@/lib/rbac';
+import { SEV_LABEL } from '@/lib/severity';
 import { useFollowUps } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { closureSummary } from '@/services/mock/workflow.handling';
 import { detailOf, registeredAt } from '../detail/detailLogic';
@@ -471,10 +473,32 @@ export function ApprovalCard({ i, now, hl, setHl, contracts, onContracts, note, 
 }
 
 /** "Info laporan" (P22): Diperiksa, PIC (+ Ganti PIC), Terkait. */
-/** `skk`: tampilan SKK (P35) dengan baris KKKS dan tanpa Terkait. */
-export function ReportInfoCard({ i, onReassign, krwTitle, skk }: { i: Incident; onReassign?: () => void; krwTitle?: string; skk?: boolean }) {
+/** `skk`: tampilan SKK (P35) dengan baris KKKS dan tanpa Terkait. `full`: bentuk P31/P33 (keparahan resmi, avatar PIC,
+ *  "(Anda)" bila pemeriksa = `me`, Terkait dengan keterangan Kerawanan). */
+export function ReportInfoCard({ i, onReassign, krwTitle, skk, full, me }: { i: Incident; onReassign?: () => void; krwTitle?: string; skk?: boolean; full?: boolean; me?: string }) {
   const by = approvedBy(i);
   const at = approvedAt(i);
+  if (full) {
+    const sub = [at && timeShort(at), i.severity && `keparahan resmi ${SEV_LABEL[i.severity]}`].filter(Boolean).join(' · ');
+    return (
+      <section className="p-card in-sec">
+        <h2 className="in-h">Info laporan</h2>
+        <dl className="lk-kv1" style={{ gridTemplateColumns: '96px minmax(0, 1fr)' }}>
+          <dt>Diperiksa</dt><dd>{by ? `${by}${by === me ? ' (Anda)' : ''}` : '—'}{sub && <div className="sub">{sub}</div>}</dd>
+          <dt>PIC</dt>
+          <dd>
+            {i.pic ? (
+              <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+                <span className="lk-av" style={{ width: 22, height: 22, fontSize: 10 }}>{initials(i.pic)}</span>{i.pic}
+              </span>
+            ) : '—'}
+            {onReassign && <> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={onReassign}>Ganti PIC</button></>}
+          </dd>
+          {i.fromKrw && (<><dt>Terkait</dt><dd><Link to={`/kerawanan/${i.fromKrw}`}>{krwTitle ?? i.fromKrw}</Link><div className="sub p-mono">{i.fromKrw} · Kerawanan</div></dd></>)}
+        </dl>
+      </section>
+    );
+  }
   return (
     <section className="p-card s2-card" style={{ padding: 20 }}>
       <h2 className="in-h" style={{ margin: 0 }}>Info laporan</h2>

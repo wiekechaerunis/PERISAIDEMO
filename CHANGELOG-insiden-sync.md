@@ -204,3 +204,9 @@ Bukti: route + peran demo (Menu akun). Diverifikasi dengan tes otomatis (nama be
 - P35 (SKK, Ditutup, hanya baca): susunan sama dengan P24, tanpa Koreksi data; kartu Tindak lanjut SKK hanya menampilkan yang
   selesai + "N masih berjalan. Rinciannya tampil setelah selesai diperiksa PIC insiden."; kartu Ditutup tanpa Buka kembali; Info laporan
   dengan baris KKKS (organisasi + WK) dan tanpa Terkait; Lampiran laporan awal terlipat.
+- P33 (Pejabat, Dalam penanganan, ada arahan SKK): kartu kanan "Arahan baru dari SKK" (kutipan, Pengawas SKK + waktu, Atas eskalasi,
+  Tenggat + sisa, tombol Jadikan tindak lanjut), Lokasi, Info laporan (keparahan resmi, avatar PIC, "(Anda)", Terkait · Kerawanan);
+  Tindak lanjut pindah ke kolom utama; header menambah tag Dieskalasi.
+- P31 (SKK, PIC mengeskalasi ke SKK): kartu kanan "Diminta arahan dari Anda" (alasan PIC, Tenggat, Penanganan Tetap di KKKS,
+  tombol Beri arahan), Lokasi, Info laporan; kolom utama Isi laporan, Lampiran, Tindak lanjut.
+- Sidebar bisa diciutkan dan dilebarkan dari tombol di bar atas semua layar (termasuk Dashboard dan Tindak lanjut lewat delegasi klik).
