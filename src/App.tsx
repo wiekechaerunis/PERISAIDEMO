@@ -30,6 +30,7 @@ import { JejakAuditPage } from '@/features/insiden/pages/JejakAuditPage';
 import { KonfigurasiDaftarPage } from '@/features/konfigurasi/pages/KonfigurasiDaftarPage';
 import { MatriksKeparahanPage } from '@/features/konfigurasi/pages/MatriksKeparahanPage';
 import { TenggatPage } from '@/features/konfigurasi/pages/TenggatPage';
+import { DaftarInsidenPage } from '@/features/konfigurasi/pages/DaftarInsidenPage';
 import { WaSimPanel } from '@/features/whatsapp/sim/WaSimPanel';
 import { WaInboxPage } from '@/features/whatsapp/pages/WaInboxPage';
 import { WaStep1Page } from '@/features/whatsapp/pages/WaStep1Page';
@@ -105,6 +106,8 @@ const router = createBrowserRouter([
   { path: '/konfigurasi', element: <KonfigurasiDaftarPage /> },
   { path: '/konfigurasi/matriks-keparahan', element: <MatriksKeparahanPage /> },
   { path: '/konfigurasi/tenggat', element: <TenggatPage /> },
+  { path: '/konfigurasi/kategori-insiden', element: <DaftarInsidenPage kind="kategori" /> },
+  { path: '/konfigurasi/penyebab-insiden', element: <DaftarInsidenPage kind="penyebab" /> },
   { path: '/dev/boards', element: <BoardIndex /> },
   { path: '/dev/email', element: <EmailCatalogPage /> },
   { path: '/dev/email/:id', element: <EmailPreviewPage /> },

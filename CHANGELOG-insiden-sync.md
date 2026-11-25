@@ -134,3 +134,16 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
   mengubah …" dengan "Kembali ubah" / "Tandai dan lanjutkan"; kecocokan yang sudah ditandai disimpan dan tidak ditanyakan lagi.
   Nomor dan waktu registrasi tidak berubah; Riwayat "Mengajukan ulang laporan".
 - Setujui, Minta revisi, Tolak (Batalkan insiden), dan laporan ganda (Gabung, Tautkan) memakai alur yang sudah ada.
+
+## 12. SKK
+
+- Tanpa menu ⋯ di daftar (B-15), tidak melihat draf (ADJ-18: daftar dan akses langsung), tab Detail | Riwayat di layar SKK (P31,
+  P35, P36), status penutupan jadi kartu dan urutan B-23 di P35. Persetujuan penutupan SKK (P36) hanya muncul bila dikonfigurasi
+  (`?persetujuan=skk`); bawaannya SKK cukup diberi tahu (ADJ-05). Beri arahan dan notifikasi memakai alur yang ada.
+
+## 14. Konfigurasi Insiden (KIN-01)
+
+- ADJ-16: dua baris baru di Konfigurasi Modul › Insiden: "Kategori & jenis insiden" (`/konfigurasi/kategori-insiden`, kode KI01…,
+  jenis KI02-01…, status, Dipakai di N insiden, Terakhir diubah Sistem, catatan FR-KIN-19) dan "Penyebab & faktor pendukung"
+  (`/konfigurasi/penyebab-insiden`, PN01…, FP01…). Daftar yang sama dipakai form lapor dan Data penutupan.
+- ADJ-04, ADJ-05, ADJ-06: prototype tidak punya halaman Persetujuan; tidak dikerjakan (lihat DEVIATIONS S-28).

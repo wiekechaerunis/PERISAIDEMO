@@ -39,6 +39,9 @@ function DaftarBody() {
     { k: 'ins', t: 'Insiden', rows: [
       R('Matriks keparahan', 'Ambang dampak per level untuk saran keparahan.', `5 level · versi ${matrixVersion(config)}`, '/konfigurasi/matriks-keparahan', mx ? formatDate(mx.at) : '—', mx?.by ?? 'Sistem', '', true),
       R('Tenggat penanganan', 'Batas waktu menyelesaikan insiden per keparahan, sejak registrasi.', `${Math.min(...days)}–${Math.max(...days)} hari`, '/konfigurasi/tenggat', tg ? formatDate(tg.at) : '—', tg?.by ?? 'Sistem', '', true),
+      // ADJ-16: KIN-01 pemilik daftar kategori, jenis, dan penyebab (FR-KIN-19, FR-KIN-25)
+      R('Kategori & jenis insiden', 'Daftar kategori dan jenis untuk form lapor, pemeriksaan, filter, dan Analitik.', '19 kategori', '/konfigurasi/kategori-insiden', '18 Nov 2026', 'Sistem', 'Baru', true),
+      R('Penyebab & faktor pendukung', 'Daftar Penyebab utama dan Faktor pendukung di Data penutupan.', '12 nilai', '/konfigurasi/penyebab-insiden', '18 Nov 2026', 'Sistem', 'Baru', true),
     ] },
     { k: 'wpb', t: 'Anggaran WP&B', rows: [
       R('Kategori anggaran', 'Kategori pengamanan untuk Pre-WP&B, Pleno, dan Revisi WP&B, beserta kode CSV (KAT-01 FR-KAT-01–07).', '11 aktif', '#', '20 Okt 2026', 'Sistem'),
