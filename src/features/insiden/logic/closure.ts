@@ -154,9 +154,9 @@ export function auditRows(i: Incident): AuditRow[] {
     else if (t.startsWith('Mengubah tenggat')) rows.push({ group: 'Tenggat', icon: 'clock', title: t.split('. Alasan')[0].replace('Mengubah tenggat', 'Tenggat'), who: w(), at: e.at, note: t.split('. Alasan: ')[1] ? `Alasan: ${t.split('. Alasan: ')[1]}` : undefined });
     else if (t.startsWith('Eskalasi')) rows.push({ group: 'PIC dan eskalasi', icon: 'up', title: split(t)[0], who: w(), at: e.at });
     else if (t.startsWith('Menandai insiden sebagai terbatas')) rows.push({ group: 'Akses', icon: 'lock', title: 'Akses: ditandai terbatas', who: w(), at: e.at });
-    else if (t.startsWith('Penutupan diajukan')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Dalam penanganan → Minta ditutup', who: w(), at: e.at });
-    else if (t.startsWith('Ditutup')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Minta ditutup → Ditutup', who: w(), at: e.at });
-    else if (t.startsWith('Dikembalikan ke PIC')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Minta ditutup → Dalam penanganan', who: w(), at: e.at, note: `Alasan: ${split(t)[1]}` });
+    else if (t.startsWith('Penutupan diajukan')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Dalam penanganan → Menunggu penutupan', who: w(), at: e.at });
+    else if (t.startsWith('Ditutup')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Menunggu penutupan → Ditutup', who: w(), at: e.at });
+    else if (t.startsWith('Dikembalikan ke PIC')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Menunggu penutupan → Dalam penanganan', who: w(), at: e.at, note: `Alasan: ${split(t)[1]}` });
     else if (t.startsWith('Dibuka kembali')) rows.push({ group: 'Status', icon: 'check', title: 'Status: Ditutup → Dalam penanganan', who: w(), at: e.at, note: `Alasan: ${split(t)[1]}` });
   }
   return rows.sort((a, b) => (a.at < b.at ? 1 : -1));

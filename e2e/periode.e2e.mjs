@@ -14,7 +14,10 @@ page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('404'
 const role = async (name) => { await page.getByRole('button', { name: /Menu akun/ }).click(); await page.getByText(name, { exact: true }).first().click(); await page.waitForTimeout(500); };
 const pop = () => page.locator('.ls-pop');
 const filterBtn = () => page.getByRole('button', { name: /^Filter/ });
-const periodBtn = () => pop().getByRole('button', { name: /^Periode kejadian/ });
+// Periode kejadian = chip (board Main-Filter): 7/30/90 hari terakhir, Tahun ini, Rentang tanggal; tanpa chip aktif = Semua waktu
+const pgroup = () => pop().getByRole('group', { name: 'Periode kejadian' });
+const pchip = (name) => pgroup().getByRole('button', { name, exact: true });
+const pressed = () => pgroup().locator('[aria-pressed=true]').allInnerTexts();
 const applyBtn = () => pop().locator('.p-foot .p-btn-primary');
 const footer = async () => (await page.locator('section.p-card > div').last().locator('span').first().innerText()).trim();
 const chip = () => page.locator('.lk-applied .p-chip', { hasText: 'Periode:' });
@@ -36,25 +39,14 @@ r.start = await footer();
 // 1. panel: bawaan Semua waktu, Belum ada filter, angka tombol = semua
 await filterBtn().click(); await page.waitForTimeout(200);
 r.h0 = await header();
-r.val0 = await periodBtn().innerText();
-r.mutedAll = await periodBtn().locator('span').first().evaluate((el) => getComputedStyle(el).color);
+r.val0 = await pressed();
+r.chips = await pgroup().getByRole('button').allInnerTexts();
 r.btn0 = await applyBtn().innerText();
 
-// 2. keyboard: Enter membuka, ↓ memilih, Esc menutup dropdown tanpa menutup panel
-await periodBtn().focus(); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
-r.expanded = await periodBtn().getAttribute('aria-expanded');
-r.options = await pop().getByRole('option').allInnerTexts();
-r.selected0 = await pop().locator('[role=option][aria-selected=true]').innerText();
-await page.keyboard.press('ArrowDown'); await page.waitForTimeout(100);
-// daftar pilihan digulir ke tampilan saat dibuka (scrollIntoView)
-await page.waitForTimeout(150);
-await page.screenshot({ path: `${OUT}/01-dropdown-terbuka.png` });
-await page.keyboard.press('Escape'); await page.waitForTimeout(150);
-r.escDropdownClosed = (await pop().getByRole('listbox').count()) === 0;
-r.escPanelOpen = (await pop().count()) === 1;
-await page.keyboard.press(' '); await page.waitForTimeout(100);
-await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter'); await page.waitForTimeout(200);
-r.val7 = (await periodBtn().innerText()).replace(/\n/g, ' ');
+// 2. chip 7 hari terakhir: caption rentang tampil, belum diterapkan sebelum Tampilkan
+await pchip('7 hari terakhir').click(); await page.waitForTimeout(200);
+r.val7 = (await pressed()).join(',') + ' ' + (await pop().locator('.ls-sec > .p-cap').first().innerText());
+await page.screenshot({ path: `${OUT}/01-chip-periode.png` });
 r.h7 = await header();
 r.btn7 = await applyBtn().innerText();
 r.notYetApplied = await footer();
@@ -82,7 +74,7 @@ r.afterX = { url: new URL(page.url()).search, rows: await footer(), chip: await 
 
 // 6. rentang khusus terbalik → galat + tombol nonaktif; lalu rentang benar diterapkan
 await filterBtn().click(); await page.waitForTimeout(200);
-await periodBtn().click(); await pop().getByRole('option', { name: /Rentang khusus/ }).click(); await page.waitForTimeout(150);
+await pchip('Rentang tanggal').click(); await page.waitForTimeout(150);
 r.incompleteDisabled = await applyBtn().isDisabled();
 await pickDate('Dari', '15 Okt 2026');
 await pickDate('Sampai', '1 Okt 2026');
@@ -124,7 +116,7 @@ await pop().getByRole('button', { name: 'Hapus filter' }).click(); await page.wa
 r.cleared = { url: new URL(page.url()).search, chip: await chip().count(), rows: await footer() };
 await filterBtn().click(); await page.waitForTimeout(200);
 r.hCleared = await header();
-r.valCleared = await periodBtn().innerText();
+r.valCleared = await pressed();
 await filterBtn().click();
 
 // 10. nilai URL tidak valid diabaikan; tab Kerawanan ikut periode
@@ -138,12 +130,9 @@ await page.screenshot({ path: `${OUT}/04-kerawanan-periode.png` });
 console.log(JSON.stringify(r, null, 1));
 assert.equal(r.start, '11 insiden');
 assert.equal(r.h0, 'Belum ada filter');
-assert.match(r.val0, /^Semua waktu$/);
+assert.deepEqual(r.val0, [], 'bawaan Semua waktu: tidak ada chip aktif');
+assert.deepEqual(r.chips, ['7 hari terakhir', '30 hari terakhir', '90 hari terakhir', 'Tahun ini', 'Rentang tanggal']);
 assert.equal(r.btn0, 'Tampilkan 11 insiden');
-assert.equal(r.expanded, 'true');
-assert.equal(r.options.length, 7);
-assert.match(r.selected0, /Semua waktu/);
-assert.ok(r.escDropdownClosed && r.escPanelOpen, 'Esc menutup dropdown, panel tetap');
 assert.equal(r.val7, '7 hari terakhir 21–28 Okt 2026');
 assert.equal(r.h7, '1 filter aktif');
 assert.equal(r.btn7, 'Tampilkan 6 insiden');
@@ -170,6 +159,7 @@ assert.equal(r.rowsCustom, '2 insiden');
 assert.equal(r.reload.chip, 'Periode: 30 hari terakhir');
 assert.equal(r.reload.rows, '8 insiden');
 assert.equal(r.h30, '1 filter aktif');
+assert.deepEqual(r.valCleared, []);
 assert.deepEqual(r.cleared, { url: '', chip: 0, rows: '11 insiden' });
 assert.equal(r.hCleared, 'Belum ada filter');
 assert.deepEqual(r.invalid, { chip: 0, rows: '11 insiden' });

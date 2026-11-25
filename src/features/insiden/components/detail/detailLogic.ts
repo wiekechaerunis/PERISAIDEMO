@@ -29,14 +29,15 @@ export type Access = 'ok' | 'terbatas';
 export function accessOf(i: Incident | undefined, role: Role): Access {
   if (!i || i.restricted) return 'terbatas';
   if (!isSkk(role) && i.org !== ORG) return 'terbatas';
-  if (i.status === 'draf' && (isSkk(role) || i.reporter !== DEMO_USERS[role].name)) return 'terbatas';
+  // ADJ-18: draf terlihat semua pengguna KKKS organisasi yang sama; SKK tidak melihat draf
+  if (i.status === 'draf' && isSkk(role)) return 'terbatas';
   return 'ok';
 }
 
 /** Pelapor laporan ini. ASSUMPTION: insiden dari WhatsApp (pelapor 'Pesan WhatsApp') dianggap diajukan Pelapor demo (board I23). */
 export function isOwner(i: Incident, role: Role): boolean {
   return (
-    canCreateReport(role) && role !== 'pejabat' && (i.reporter === DEMO_USERS[role].name || (i.source === 'wa' && role === 'pelapor'))
+    canCreateReport(role) && (i.reporter === DEMO_USERS[role].name || (i.source === 'wa' && role === 'pelapor'))
   );
 }
 
@@ -154,6 +155,7 @@ export function draftFromIncident(i: Incident): ReportDraft {
   const d = detailOf(i);
   return {
     ...emptyDraft(),
+    no: i.no, createdBy: i.reporter, savedAt: i.timeline?.[i.timeline.length - 1]?.at ?? i.occurredAt,
     hasImpact: 'ya', kind: 'insiden', date: i.occurredAt.slice(0, 10), time: i.occurredAt.slice(11, 16), title: i.title,
     locationName: i.location, lat: d.lat, lng: d.lng, wk: i.wk, patokan: d.patokan, story: d.story, category: i.category,
     jenis: d.jenis, securityImpact: d.securityImpact, axes: d.axes, lossIdr: d.lossIdr, ops: d.ops, opsHours: d.opsHours,

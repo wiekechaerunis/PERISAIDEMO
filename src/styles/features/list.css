@@ -21,3 +21,9 @@
 .ls-dd .row[aria-selected="true"] .nm{font-weight:600}
 .ls-dd .tx{display:flex;flex-direction:column;min-width:0}
 .ls-dd .row .p-ic{color:var(--action-ink,var(--ink))}
+
+/* Menu ⋯ per baris (Main-Aksi*, V11-Aksi*, P11-AksiAmbil): .in-menu yang sudah ada, ukuran board 200px */
+.ls-rm{width:200px;top:calc(100% + 4px);text-align:left}
+.ls-rm a,.ls-rm button{min-height:36px;padding:0 10px;font-size:13px;font-weight:500}
+.lk-tbl td.ls-act{width:52px;padding-right:12px;text-align:right}
+.ls-o{font-weight:500;color:var(--ink-muted)}

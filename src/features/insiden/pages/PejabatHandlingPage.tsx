@@ -253,7 +253,7 @@ function Body({ stored }: { stored: Incident }) {
     body = (
       <div className="in-status">
         <h2>Insiden ini belum berjalan.</h2>
-        <p>Status {STATUS_LABEL[st]}. Layar ini untuk insiden Dalam penanganan, Minta ditutup, dan Ditutup.</p>
+        <p>Status {STATUS_LABEL[st]}. Layar ini untuk insiden Dalam penanganan, Menunggu penutupan, dan Ditutup.</p>
         <Link to={`/insiden/${i.no}/review`} className="p-btn p-btn-secondary" style={{ marginTop: 8 }}>Buka review</Link>
       </div>
     );

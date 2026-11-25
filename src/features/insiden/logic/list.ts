@@ -2,12 +2,13 @@ import { ORG } from '@/services/mock/seed';
 import { remainingLabel } from '@/lib/deadline';
 import { demoNow } from '@/services/mock/clock';
 import { CLOSED_AT, EXTRA_INCIDENTS } from '@/services/mock/seedExtra';
-import { DEMO_USERS, isSkk, type Role } from '@/lib/rbac';
+import { DEMO_USERS, isMaker, isSkk, type Role } from '@/lib/rbac';
 import { STATUS_LABEL, type Incident } from '@/services/types';
 import { SEV_LABEL } from '@/lib/severity';
 import { formatDateShort } from '@/lib/format';
 import type { FollowUp } from '@/services/types';
 import { followUpTasks } from '@/features/tindak-lanjut/logic/tasks';
+import { GROUP_MEMBERS } from '@/services/mock/workflow.handling';
 
 const HOUR = 3_600_000;
 const DAY = 86_400_000;
@@ -75,6 +76,54 @@ export function actionFor(i: Incident, role: Role): string {
   }
 }
 
+/** Rute membuka baris: draf bagi maker membuka form langkah 1 mode Ubah (PA-03, I12s); non-maker membuka detail baca saja (ADJ-18). */
+export function rowHref(i: Incident, role: Role): string {
+  return i.status === 'draf' && isMaker(role) ? `/insiden/${i.no}/ubah` : `/insiden/${i.no}`;
+}
+
+export interface RowMenuItem {
+  label: string;
+  /** tujuan tautan; kosong bila aksi dijalankan di halaman daftar (Hapus draf) */
+  to?: string;
+  action?: 'hapus-draf';
+  danger?: boolean;
+}
+
+/**
+ * Menu ⋯ per baris (B-15; board Main-Aksi*, V11-Aksi*, P11-AksiAmbil). "Lihat detail" tidak dipakai karena klik baris membuka
+ * detail, kecuali draf bagi non-maker (ADJ-18: menu hanya berisi Lihat). Baris tanpa aksi tidak punya ⋯. SKK tanpa ⋯.
+ */
+export function rowMenu(i: Incident, role: Role): RowMenuItem[] {
+  if (isSkk(role)) return [];
+  const me = DEMO_USERS[role].name;
+  const mine = i.reporter === me;
+  const out: RowMenuItem[] = [];
+  if (i.status === 'draf') {
+    if (!isMaker(role)) return [{ label: 'Lihat draf', to: `/insiden/${i.no}` }];
+    out.push({ label: 'Lanjutkan draf', to: `/insiden/${i.no}/ubah` });
+    if (mine) out.push({ label: 'Hapus draf', action: 'hapus-draf', danger: true });
+    return out;
+  }
+  if (role === 'pejabat') {
+    if (i.status === 'review-internal') out.push({ label: 'Periksa laporan', to: `/insiden/${i.no}/review` });
+    if (i.status === 'dalam-penanganan') {
+      out.push({ label: 'Ganti PIC', to: `/insiden/${i.no}?dialog=ganti-pic` }, { label: 'Ubah tenggat', to: `/insiden/${i.no}?dialog=tenggat` });
+    }
+    if (i.status === 'minta-ditutup') out.push({ label: 'Periksa penutupan', to: `/insiden/${i.no}` });
+    if (i.status === 'ditutup') out.push({ label: 'Buka kembali', to: `/insiden/${i.no}?dialog=buka` });
+    return out;
+  }
+  if (mine && i.status === 'review-internal') out.push({ label: 'Batalkan pengajuan', to: `/insiden/${i.no}?aksi=batalkan`, danger: true });
+  if (mine && i.status === 'perlu-perbaikan' && isMaker(role)) {
+    out.push({ label: 'Lihat catatan pemeriksa', to: `/insiden/${i.no}` }, { label: 'Perbaiki laporan', to: `/insiden/${i.no}/ubah` });
+  }
+  if (i.status === 'dalam-penanganan') {
+    if (i.pic === me) out.push({ label: 'Tangani insiden', to: `/insiden/${i.no}/tangani` });
+    else if (i.picKind === 'grup' && !i.handling?.takenBy && GROUP_MEMBERS.includes(me)) out.push({ label: 'Ambil alih penanganan', to: `/insiden/${i.no}` });
+  }
+  return out;
+}
+
 export interface QuickDef {
   key: string;
   label: string;
@@ -94,8 +143,8 @@ export function quickFilters(role: Role): QuickDef[] {
       all,
       act,
       rep,
-      { key: 'late', label: 'Lewat tenggat', test: (i) => !!i.late },
-      { key: 'esc', label: 'Dieskalasi', test: (i) => !!i.escalated },
+      { key: 'late', label: 'Terlambat', test: (i) => !!i.late },
+      { key: 'esc', label: 'Dieskalasi ke saya', test: (i) => !!i.escalated },
     ];
   }
   return [
@@ -220,7 +269,7 @@ export function taskFor(i: Incident, role: Role, all: Incident[]): Task | null {
     }
     case 'tutup':
       desc = `${head}${i.pic ? ' · diajukan ' + i.pic : ''}`;
-      st = 'Minta ditutup';
+      st = 'Menunggu penutupan';
       break;
     case 'eskalasi': {
       const over = i.handleDueAt ? now() - new Date(i.handleDueAt).getTime() : 0;
@@ -236,7 +285,7 @@ export function taskFor(i: Incident, role: Role, all: Incident[]): Task | null {
   const old = late || now() - new Date(at).getTime() > DAY;
   return {
     no: i.no, kind, title: i.title, desc, st, cls, module: 'Insiden', kkks: i.org, wk: i.wk, at, from, cta, old,
-    href: kind === 'draf' ? '/insiden/baru/kejadian' : `/insiden/${i.no}`,
+    href: kind === 'draf' ? `/insiden/${i.no}/ubah` : `/insiden/${i.no}`,
   };
 }
 

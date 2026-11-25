@@ -5,7 +5,7 @@
 import { KERAWANAN_BOARD, KERAWANAN_DETAIL } from '@/services/mock/seedExtra';
 import type { Kerawanan } from '@/services/types';
 
-export type PeriodPreset = 'all' | '7h' | '30h' | 'bulan' | '3b' | 'tahun';
+export type PeriodPreset = 'all' | '7h' | '30h' | '90h' | 'bulan' | '3b' | 'tahun';
 export type PeriodChoice = PeriodPreset | 'custom';
 /** Periode yang diterapkan (sumbernya URL). Rentang khusus memakai tanggal ISO `YYYY-MM-DD`. */
 export type Period = { kind: 'preset'; preset: PeriodPreset } | { kind: 'custom'; from: string; to: string };
@@ -32,10 +32,24 @@ export const PERIOD_CHOICES: { key: PeriodChoice; label: string }[] = [
   { key: 'tahun', label: 'Tahun berjalan' },
   { key: 'custom', label: 'Rentang khusus' },
 ];
-export const choiceLabel = (c: PeriodChoice) => PERIOD_CHOICES.find((x) => x.key === c)!.label;
+/**
+ * Chip Periode kejadian di panel Filter daftar Insiden (board Main-Filter): 7/30/90 hari, Tahun ini, Rentang tanggal. Tanpa chip aktif =
+ * Semua waktu. Preset lama (Bulan ini, 3 bulan terakhir) tetap dibaca dari URL dan dipakai dashboard, tetapi tidak ditawarkan di daftar.
+ */
+export const LIST_PERIOD_CHIPS: { key: PeriodChoice; label: string }[] = [
+  { key: '7h', label: '7 hari terakhir' },
+  { key: '30h', label: '30 hari terakhir' },
+  { key: '90h', label: '90 hari terakhir' },
+  { key: 'tahun', label: 'Tahun ini' },
+  { key: 'custom', label: 'Rentang tanggal' },
+];
+export const choiceLabel = (c: PeriodChoice) => (PERIOD_CHOICES.find((x) => x.key === c) ?? LIST_PERIOD_CHIPS.find((x) => x.key === c))!.label;
+/** Label periode di daftar Insiden: memakai nama chip Main-Filter bila ada ("Tahun ini"), selain itu label umum. */
+export const listPeriodLabel = (p: Period): string =>
+  p.kind === 'custom' ? rangeCaption(p) : (LIST_PERIOD_CHIPS.find((x) => x.key === p.preset)?.label ?? choiceLabel(p.preset));
 
 /** Nilai `?periode=` per preset. */
-const URL_KEY: Record<Exclude<PeriodPreset, 'all'>, string> = { '7h': '7h', '30h': '30h', bulan: 'bulan', '3b': '3b', tahun: 'tahun' };
+const URL_KEY: Record<Exclude<PeriodPreset, 'all'>, string> = { '7h': '7h', '30h': '30h', '90h': '90h', bulan: 'bulan', '3b': '3b', tahun: 'tahun' };
 
 const BULAN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -80,6 +94,8 @@ export function periodRange(preset: PeriodPreset, now: string): DateRange | null
       return { from: addDays(today, -7), to: today };
     case '30h':
       return { from: addDays(today, -30), to: today };
+    case '90h':
+      return { from: addDays(today, -90), to: today };
     case 'bulan':
       return { from: ymd(y, m, 1), to: today };
     case '3b':

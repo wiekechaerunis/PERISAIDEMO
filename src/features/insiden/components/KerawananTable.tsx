@@ -9,7 +9,7 @@ import { formatWib } from '@/lib/format';
 import { KERAWANAN_BOARD } from '@/services/mock/seedExtra';
 import type { Kerawanan } from '@/services/types';
 import { useDismiss } from '@/components/ui/useDismiss';
-import { ALL_TIME, draftToPeriod, inRange, isAllTime, kerawananWhen, periodLabel, periodToDraft, rangeOf, type PeriodDraft } from '../logic/period';
+import { ALL_TIME, draftToPeriod, inRange, isAllTime, kerawananWhen, listPeriodLabel, periodToDraft, rangeOf, type PeriodDraft } from '../logic/period';
 import { usePeriod } from '../logic/usePeriod';
 import { PeriodField } from './list/PeriodField';
 
@@ -161,8 +161,8 @@ export function KerawananTable() {
         </div>
         {periodOn && (
           <div className="lk-applied">
-            <button type="button" className="p-chip" aria-pressed="true" aria-label={`Hapus filter Periode: ${periodLabel(period)}`} onClick={clearPeriod}>
-              Periode: {periodLabel(period)}
+            <button type="button" className="p-chip" aria-pressed="true" aria-label={`Hapus filter Periode: ${listPeriodLabel(period)}`} onClick={clearPeriod}>
+              Periode: {listPeriodLabel(period)}
               <Icon name="close" size={14} />
             </button>
           </div>

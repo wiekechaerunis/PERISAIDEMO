@@ -129,7 +129,7 @@ export function auditEntries(i: Incident, due: string | undefined): AuditEntry[]
   }
   if (h.takenBy) out.push({ cat: 'PIC dan eskalasi', icon: 'person', text: `PIC: ${i.pic ?? GROUP_NAME} → ${h.takenBy}`, meta: `${h.takenBy} · ${d(demoNow())}` });
   if (h.escalatedTo) out.push({ cat: 'PIC dan eskalasi', icon: 'person', text: `Eskalasi: ke ${h.escalatedName ?? h.escalatedTo}`, meta: `${i.pic ?? ''} · ${d(demoNow())}`, note: h.escalationReason ? `Alasan: ${h.escalationReason}` : undefined });
-  if (i.status === 'minta-ditutup') out.push({ cat: 'Status', icon: 'check', text: 'Status: Dalam penanganan → Minta ditutup', meta: `${i.pic ?? ''} · ${d(h.closure?.requestedAt ?? demoNow())}` });
+  if (i.status === 'minta-ditutup') out.push({ cat: 'Status', icon: 'check', text: 'Status: Dalam penanganan → Menunggu penutupan', meta: `${i.pic ?? ''} · ${d(h.closure?.requestedAt ?? demoNow())}` });
   return out.reverse();
 }
 

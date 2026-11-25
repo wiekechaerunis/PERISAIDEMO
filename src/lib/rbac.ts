@@ -22,7 +22,12 @@ export const DEMO_USERS: Record<Role, DemoUser> = {
 };
 
 export const isSkk = (r: Role) => DEMO_USERS[r].org === 'skk';
-export const canCreateReport = (r: Role) => r === 'pelapor' || r === 'pejabat' || r === 'pic';
+/**
+ * Maker titik Lapor insiden (ADJ-18; nilai awal WFL-01 v3 = Pelapor KKKS), dinilai dari role aktif. Pejabat Berwenang dan Admin KKKS
+ * hanya melihat draf, tanpa Buat laporan. ASSUMPTION: persona PIC (Andi Pratama) memegang role aktif Pelapor, jadi tetap maker.
+ */
+export const isMaker = (r: Role) => r === 'pelapor' || r === 'pic';
+export const canCreateReport = isMaker;
 export const initials = (name: string) =>
   name
     .split(' ')

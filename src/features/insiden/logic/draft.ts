@@ -17,6 +17,12 @@ export interface Attachment {
 
 /** Draf laporan Pelapor (langkah 1–4). Satu draf aktif; disimpan di localStorage. */
 export interface ReportDraft {
+  /** nomor draf setelah Simpan draf (B-1, B-9); kosong = belum tersimpan ("Buat laporan") */
+  no?: string;
+  /** pembuat draf: hanya dia yang boleh Hapus draf (ADJ-18 butir 5) */
+  createdBy?: string;
+  /** waktu Simpan draf terakhir (kartu Pengajuan di Ringkasan) */
+  savedAt?: string;
   /** langkah 1 · Temuan */
   hasImpact: HasImpactAnswer | null;
   kind: ReportKind;

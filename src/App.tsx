@@ -25,6 +25,7 @@ import { ReportStep3Page } from '@/features/insiden/pages/ReportStep3Page';
 import { ReportStep4Page } from '@/features/insiden/pages/ReportStep4Page';
 import { ReportKerawananDetailPage } from '@/features/insiden/pages/ReportKerawananDetailPage';
 import { ReportStep2Page } from '@/features/insiden/pages/ReportStep2Page';
+import { DraftEditRoute } from '@/features/insiden/pages/DraftEditRoute';
 import { KonfigurasiDaftarPage } from '@/features/konfigurasi/pages/KonfigurasiDaftarPage';
 import { MatriksKeparahanPage } from '@/features/konfigurasi/pages/MatriksKeparahanPage';
 import { TenggatPage } from '@/features/konfigurasi/pages/TenggatPage';
@@ -90,6 +91,7 @@ const router = createBrowserRouter([
   { path: '/insiden/:no', element: <Responsive routeKey="/insiden/:no" desktop={<IncidentRoute />} /> },
   { path: '/insiden/:no/review', element: <Responsive routeKey="/insiden/:no/review" desktop={<IncidentReviewPage />} /> },
   { path: '/insiden/:no/tangani', element: <PicHandlingPage mode="tangani" /> },
+  { path: '/insiden/:no/ubah', element: <DraftEditRoute /> },
   { path: '/kerawanan/ringkasan', element: <KerawananRingkasanPage /> },
   { path: '/kerawanan/:no', element: <KerawananDetailPage /> },
   { path: '/analitik', element: <AnalitikPage /> },

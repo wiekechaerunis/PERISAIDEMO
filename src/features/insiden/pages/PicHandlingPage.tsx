@@ -86,7 +86,7 @@ const statusTags = (i: Incident, escalated: boolean) => (
     {i.status === 'minta-ditutup' ? (
       <>
         <span className="p-tag t-info">Dalam penanganan</span>
-        <span className="p-tag t-caution">Minta ditutup</span>
+        <span className="p-tag t-caution">Menunggu penutupan</span>
       </>
     ) : (
       <span className={`p-tag ${STATUS_TAG[i.status]}`}>{STATUS_LABEL[i.status]}</span>

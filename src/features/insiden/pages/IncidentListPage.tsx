@@ -8,17 +8,20 @@ import { DEMO_USERS } from '@/lib/rbac';
 import { SEV_LABEL } from '@/lib/severity';
 import { STATUS_LABEL, type Incident } from '@/services/types';
 import { defaultQuick, listLayout, quickFilters, scopedIncidents, taskCount } from '../logic/list';
-import { ALL_TIME, draftToPeriod, inRange, isAllTime, periodLabel, periodToDraft, rangeOf, type PeriodDraft } from '../logic/period';
+import { ALL_TIME, draftToPeriod, inRange, isAllTime, listPeriodLabel, periodToDraft, rangeOf, type PeriodDraft } from '../logic/period';
 import { usePeriod } from '../logic/usePeriod';
 import { useFollowUps } from '@/features/tindak-lanjut/logic/useFollowUps';
 import { KerawananTable } from '../components/KerawananTable';
 import { IncidentTable } from '../components/list/IncidentTable';
 import { EMPTY_FILTERS, FilterPopover, type FilterKey, type Filters } from '../components/list/FilterPopover';
 import { EmptyCard, FailedCard, LimitedPage, LoadingCard } from '../components/list/ListStates';
+import { DeleteDraftDialog } from '../components/detail/DeleteDraftDialog';
+import { deleteDraft } from '@/services/mock/workflow';
+import { detailOf } from '../components/detail/detailLogic';
 
 const SUBTITLE = {
-  insiden: 'Kejadian yang sudah terjadi dan menimbulkan kerugian, korban, atau gangguan operasi.',
-  kkks: 'Laporan insiden organisasi Anda',
+  // PA-01 (board Main): subjudul sama untuk semua peran KKKS
+  insiden: 'Insiden dan kerawanan keamanan di wilayah kerja.',
   skk: 'Insiden di KKKS dalam cakupan Anda.',
   kerawanan: 'Kerawanan: kondisi atau kejadian yang berpotensi menjadi insiden, tanpa kerugian atau korban.',
 };
@@ -46,6 +49,8 @@ function ListBody({ state }: { state: ListState | null }) {
 
   const [qState, setQState] = useState<{ role: string; key: string } | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [delNo, setDelNo] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   // S10: contoh pencarian "kebakaran" + Keparahan: Kritis + Status: Ditutup
   const [f, setF] = useState<Filters>(state === 'filter-kosong' ? { ...EMPTY_FILTERS, sev: ['kritis'], st: ['ditutup'] } : EMPTY_FILTERS);
   const [search, setSearch] = useState(state === 'filter-kosong' ? 'kebakaran' : '');
@@ -73,6 +78,7 @@ function ListBody({ state }: { state: ListState | null }) {
       (f.sev.length === 0 || (r.severity !== null && f.sev.includes(r.severity))) &&
       (f.st.length === 0 || f.st.includes(r.status)) &&
       (f.kat.length === 0 || f.kat.includes(r.category)) &&
+      (f.wk.length === 0 || f.wk.includes(r.wk)) &&
       picMatch(r) &&
       flagMatch(r) &&
       (!text || [r.no, r.title, r.category, r.location, r.area, r.org].some((x) => x.toLowerCase().includes(text)));
@@ -90,6 +96,7 @@ function ListBody({ state }: { state: ListState | null }) {
     ...f.sev.map((l) => ({ label: 'Keparahan: ' + SEV_LABEL[l as keyof typeof SEV_LABEL], key: 'sev' as FilterKey, v: l })),
     ...f.flags.map((l) => ({ label: l, key: 'flags' as FilterKey, v: l })),
     ...f.kat.map((l) => ({ label: 'Kategori: ' + l, key: 'kat' as FilterKey, v: l })),
+    ...f.wk.map((l) => ({ label: 'WK: ' + l, key: 'wk' as FilterKey, v: l })),
   ];
   const periodOn = !isAllTime(period);
   const activeCount = applied.length + (periodOn ? 1 : 0);
@@ -111,11 +118,18 @@ function ListBody({ state }: { state: ListState | null }) {
     setFilterOpen(false);
   };
   const retry = () => setParams({}, { replace: true });
+  const delInc = delNo ? allIncidents.find((x) => x.no === delNo) : undefined;
+  const doDelete = () => {
+    if (!delInc) return;
+    const r = useDemoStore.getState().decide((s) => deleteDraft(s, delInc.no, me));
+    setDelNo(null);
+    setToast(r.ok ? 'Draf dihapus.' : r.reason);
+  };
 
   const tasks = taskCount(allIncidents, role, followUps);
   if (state === 'terbatas') return <LimitedPage role={role} taskCount={tasks} />;
 
-  const subtitle = isSkkRole ? SUBTITLE.skk : role === 'pelapor' ? SUBTITLE.insiden : SUBTITLE.kkks;
+  const subtitle = isSkkRole ? SUBTITLE.skk : SUBTITLE.insiden;
   const tabs = [
     // Hitungan tab halaman = total dalam cakupan; hitungan pintasan (segmen) di bawah mengikuti periode.
     { to: '/insiden', label: 'Insiden', count: scoped.length, on: tab === 'insiden' },
@@ -227,13 +241,13 @@ function ListBody({ state }: { state: ListState | null }) {
                   type="button"
                   className="p-chip"
                   aria-pressed="true"
-                  aria-label={`Hapus filter Periode: ${periodLabel(period)}`}
+                  aria-label={`Hapus filter Periode: ${listPeriodLabel(period)}`}
                   onClick={() => {
                     setPeriod(ALL_TIME);
                     setDraft(periodToDraft(ALL_TIME));
                   }}
                 >
-                  Periode: {periodLabel(period)}
+                  Periode: {listPeriodLabel(period)}
                   <Icon name="close" size={14} />
                 </button>
               )}
@@ -250,7 +264,10 @@ function ListBody({ state }: { state: ListState | null }) {
           )}
           {rows.length > 0 ? (
             <>
-              <IncidentTable rows={rows} layout={layout} role={role} me={me} showAction={layout === 'pelapor' && (q === 'act' || q === 'all')} />
+              <IncidentTable
+                rows={rows} layout={layout} role={role} me={me} showAction={layout === 'pelapor' && (q === 'act' || q === 'all')}
+                onRowAction={(r, it) => it.action === 'hapus-draf' && setDelNo(r.no)}
+              />
               {layout === 'pelapor' ? (
                 <div
                   className="p-pager"
@@ -301,6 +318,23 @@ function ListBody({ state }: { state: ListState | null }) {
             </div>
           )}
         </section>
+      )}
+      {delInc && (
+        <DeleteDraftDialog
+          no={delInc.no} title={delInc.title} files={detailOf(delInc).attachments.length}
+          onCancel={() => setDelNo(null)} onConfirm={doDelete}
+        />
+      )}
+      {toast && (
+        <div style={{ position: 'fixed', right: 24, bottom: 24, zIndex: 120 }}>
+          <div className="p-toast" role="status">
+            <span className="ti"><Icon name="check" size={14} /></span>
+            {toast}
+            <button type="button" className="p-ibtn ghost" style={{ width: 28, height: 28 }} aria-label="Tutup notifikasi" onClick={() => setToast(null)}>
+              <Icon name="close" size={15} />
+            </button>
+          </div>
+        </div>
       )}
     </AppShell>
   );

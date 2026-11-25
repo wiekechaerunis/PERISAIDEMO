@@ -30,8 +30,9 @@ describe('daftar insiden dan Tugas saya per peran', () => {
     // V11: pintasan tindakan Pejabat = insiden Menunggu pemeriksaan (0007, 0009) + eskalasi (0005)
     expect(quick(/Perlu tindakan saya/)).toHaveTextContent('3');
     expect(quick(/Perlu tindakan saya/)).toHaveAttribute('aria-checked', 'true');
-    expect(quick(/Lewat tenggat/)).toHaveTextContent('2');
-    expect(quick(/Dieskalasi/)).toHaveTextContent('1');
+    // board V11 (canvas 24 Nov): label pintasan "Terlambat" dan "Dieskalasi ke saya"
+    expect(quick(/Terlambat/)).toHaveTextContent('2');
+    expect(quick(/Dieskalasi ke saya/)).toHaveTextContent('1');
     expect(screen.getByText('Batas pemeriksaan')).toBeInTheDocument();
     expect(screen.getByText('Lewat 5 jam')).toBeInTheDocument();
     expect(screen.getByText('sisa 20 jam')).toBeInTheDocument();
@@ -61,15 +62,17 @@ describe('daftar insiden dan Tugas saya per peran', () => {
     expect(screen.getAllByText('Belum diperiksa').length).toBeGreaterThan(0);
   });
 
-  it('SKK: filter terbuka memuat 19 chip kategori', () => {
+  it('SKK: filter terbuka memuat 19 kategori di dropdown Kategori (Main-Filter, B-16)', () => {
     asRole('pengawas');
     renderList();
     fireEvent.click(screen.getByRole('button', { name: /Filter/ }));
     const dlg = screen.getByRole('dialog', { name: 'Filter insiden' });
     expect(within(dlg).getByText('Kategori')).toBeInTheDocument();
-    expect(within(dlg).getByRole('button', { name: 'Serangan data' })).toBeInTheDocument();
+    // B-16: Kategori kini dropdown pilih-banyak, bukan 19 chip
+    fireEvent.click(within(dlg).getByRole('button', { name: 'Kategori: Semua kategori' }));
+    expect(within(dlg).getAllByRole('checkbox').filter((c) => /Serangan data/.test(c.textContent ?? ''))).toHaveLength(1);
     expect(within(dlg).getByText('Periode kejadian')).toBeInTheDocument();
-    fireEvent.click(within(dlg).getByRole('button', { name: 'Blokade area' }));
+    fireEvent.click(within(dlg).getByRole('checkbox', { name: 'Blokade area' }));
     expect(screen.getByText('Kategori: Blokade area')).toBeInTheDocument();
     expect(within(dlg).getByRole('button', { name: /Tampilkan 1 insiden/ })).toBeInTheDocument();
   });

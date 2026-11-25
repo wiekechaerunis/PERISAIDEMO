@@ -106,7 +106,7 @@ export function IncHead({ i, extra }: { i: Incident; extra?: ReactNode }) {
       <b style={{ fontSize: 18, lineHeight: '26px' }}>{i.title}</b>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {i.status === 'minta-ditutup' ? (
-          <><span className="p-tag t-info">Dalam penanganan</span><span className="p-tag t-caution">Minta ditutup</span></>
+          <><span className="p-tag t-info">Dalam penanganan</span><span className="p-tag t-caution">Menunggu penutupan</span></>
         ) : i.status === 'ditutup' ? (
           <span className="p-tag t-ok">Ditutup</span>
         ) : (

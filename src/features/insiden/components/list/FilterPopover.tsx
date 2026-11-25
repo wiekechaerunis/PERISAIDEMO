@@ -1,5 +1,6 @@
-// Popover filter lengkap (board Main-Filter): PIC, Status, Keparahan, Kategori (19), Wilayah kerja, Periode, Lainnya.
-// Periode kejadian berfungsi (PeriodField); Wilayah kerja dan "Cari nama PIC lain" masih isian statis dari board.
+// Popover filter (board Main-Filter, B-16): Status dan Keparahan (chip pilih-banyak), Kategori dan WK (dropdown), PIC penanganan
+// (dropdown pilih-banyak, Saya dan Belum ada PIC paling atas), Periode kejadian (chip), Lainnya (checkbox).
+import { useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { SEV_DOT, SEV_LABEL, SEVERITIES } from '@/lib/severity';
 import { STATUS_LABEL } from '@/services/types';
@@ -7,17 +8,19 @@ import { KATEGORI_OPTIONS, STATUS_OPTIONS } from '../../logic/list';
 import type { PeriodDraft } from '../../logic/period';
 import { PeriodField } from './PeriodField';
 
-export type FilterKey = 'sev' | 'st' | 'pic' | 'flags' | 'kat';
+export type FilterKey = 'sev' | 'st' | 'pic' | 'flags' | 'kat' | 'wk';
 export interface Filters {
   sev: string[];
   st: string[];
   pic: string[];
   flags: string[];
   kat: string[];
+  wk: string[];
 }
-export const EMPTY_FILTERS: Filters = { sev: [], st: [], pic: [], flags: [], kat: [] };
+export const EMPTY_FILTERS: Filters = { sev: [], st: [], pic: [], flags: [], kat: [], wk: [] };
 
-const PIC_DEFS = ['Saya', 'Andi Pratama', 'Dedi Kurniawan', 'Belum ada PIC'];
+const PIC_DEFS = ['Saya', 'Belum ada PIC', 'Andi Pratama', 'Dedi Kurniawan', 'Budi Santoso', 'Tim Pengamanan ADR Area 2'];
+export const WK_DEFS = ['WK Andalas Darat', 'WK Batu Ampar'];
 export const FLAG_DEFS = ['Lewat tenggat', 'Dieskalasi', 'Ditandai kemungkinan ganda'];
 
 interface Props {
@@ -36,15 +39,6 @@ interface Props {
   now: string;
 }
 
-function Select({ text, muted }: { text: string; muted?: boolean }) {
-  return (
-    <div className="p-input" style={{ height: 36 }}>
-      <span style={{ flex: 1, color: muted ? 'var(--ink-muted)' : undefined }}>{text}</span>
-      <Icon name="chevDown" size={16} />
-    </div>
-  );
-}
-
 function Check({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
   return (
     <button type="button" role="checkbox" aria-checked={on} onClick={onClick} className="ls-check">
@@ -53,6 +47,30 @@ function Check({ on, label, onClick }: { on: boolean; label: string; onClick: ()
       </span>
       {label}
     </button>
+  );
+}
+
+/** Dropdown pilih-banyak di dalam panel (daftar terbuka ikut alur panel supaya tidak terpotong area gulir, lihat D-P6). */
+function MultiSelect({ label, all, opts, picked, onToggle }: { label: string; all: string; opts: string[]; picked: string[]; onToggle: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const text = picked.length === 0 ? all : picked.length === 1 ? picked[0] : `${picked.length} dipilih`;
+  return (
+    <div className="ls-sec">
+      <span className="p-lbl">{label}</span>
+      <button type="button" className="p-input ls-dd-btn" aria-haspopup="true" aria-expanded={open} aria-label={`${label}: ${text}`} onClick={() => setOpen(!open)}>
+        <span style={{ flex: 1, color: picked.length ? undefined : 'var(--ink-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{text}</span>
+        <Icon name="chevDown" size={16} />
+      </button>
+      {open && (
+        <div className="p-pop ls-dd" role="group" aria-label={label}>
+          {opts.map((o) => (
+            <div key={o} className="row" style={{ justifyContent: 'flex-start' }}>
+              <Check on={picked.includes(o)} label={o} onClick={() => onToggle(o)} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -65,31 +83,17 @@ export function FilterPopover({ f, count, rowCount, toggle, onClear, onApply, pe
       </div>
       <div style={{ padding: '8px 16px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div className="ls-sec">
-          <span className="p-lbl">PIC penanganan</span>
+          <span className="p-lbl">Status <span className="ls-o">· bisa pilih lebih dari satu</span></span>
           <div className="in-chips" style={{ flexWrap: 'wrap' }}>
-            {PIC_DEFS.map((o) => (
-              <button key={o} type="button" className="p-chip" aria-pressed={f.pic.includes(o)} onClick={() => toggle('pic', o)}>
-                {o}
+            {STATUS_OPTIONS.map((s) => (
+              <button key={s} type="button" className="p-chip" aria-pressed={f.st.includes(s)} onClick={() => toggle('st', s)}>
+                {STATUS_LABEL[s]}
               </button>
             ))}
           </div>
-          <div className="p-input" style={{ height: 36 }}>
-            <Icon name="search" size={15} style={{ color: 'var(--ink-muted)' }} />
-            <span className="ph" style={{ flex: 1 }}>
-              Cari nama PIC lain
-            </span>
-          </div>
         </div>
         <div className="ls-sec">
-          <span className="p-lbl">Status</span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px' }}>
-            {STATUS_OPTIONS.map((s) => (
-              <Check key={s} on={f.st.includes(s)} label={STATUS_LABEL[s]} onClick={() => toggle('st', s)} />
-            ))}
-          </div>
-        </div>
-        <div className="ls-sec">
-          <span className="p-lbl">Keparahan</span>
+          <span className="p-lbl">Keparahan <span className="ls-o">· bisa pilih lebih dari satu</span></span>
           <div className="in-chips" style={{ flexWrap: 'wrap' }}>
             {[...SEVERITIES].reverse().map((s) => (
               <button key={s} type="button" className="p-chip" aria-pressed={f.sev.includes(s)} onClick={() => toggle('sev', s)}>
@@ -99,22 +103,11 @@ export function FilterPopover({ f, count, rowCount, toggle, onClear, onApply, pe
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="ls-sec">
-            <span className="p-lbl">Kategori</span>
-            <div className="in-chips" style={{ flexWrap: 'wrap' }}>
-              {KATEGORI_OPTIONS.map((o) => (
-                <button key={o} type="button" className="p-chip" aria-pressed={f.kat.includes(o)} onClick={() => toggle('kat', o)}>
-                  {o}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="ls-sec">
-            <span className="p-lbl">Wilayah kerja</span>
-            <Select text="Semua WK" muted />
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignItems: 'start' }}>
+          <MultiSelect label="Kategori" all="Semua kategori" opts={[...KATEGORI_OPTIONS]} picked={f.kat} onToggle={(v) => toggle('kat', v)} />
+          <MultiSelect label="Wilayah kerja" all="Semua WK" opts={WK_DEFS} picked={f.wk} onToggle={(v) => toggle('wk', v)} />
         </div>
+        <MultiSelect label="PIC penanganan" all="Semua PIC" opts={PIC_DEFS} picked={f.pic} onToggle={(v) => toggle('pic', v)} />
         <PeriodField draft={period} onChange={onPeriodChange} now={now} />
         <div className="ls-sec">
           <span className="p-lbl">Lainnya</span>

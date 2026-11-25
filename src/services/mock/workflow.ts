@@ -140,3 +140,12 @@ export function resolveDuplicate(s: Slice, no: string, by: string, linkedNo: str
   const text = linkedNo ? `Menautkan dengan ${linkedNo}. Kedua insiden tetap berjalan.` : 'Memutuskan tetap sebagai insiden terpisah.';
   return { ok: true, state: put(s, { ...i, possibleDuplicate: false, timeline: [...(i.timeline ?? []), stamp(by, text)] }) };
 }
+
+/** Hapus draf (B-8, ADJ-18 butir 5): hanya pembuat draf, hanya status Draf. Isian dan lampiran terhapus permanen. */
+export function deleteDraft(s: Slice, no: string, by: string): DecisionResult {
+  const i = find(s, no);
+  if (!i) return { ok: false, reason: 'Draf tidak ditemukan.' };
+  if (i.status !== 'draf') return { ok: false, reason: 'Hanya draf yang bisa dihapus.' };
+  if (i.reporter !== by) return { ok: false, reason: 'Hanya pembuat draf yang bisa menghapusnya.' };
+  return { ok: true, state: { ...s, incidents: s.incidents.filter((x) => x.no !== no) } };
+}

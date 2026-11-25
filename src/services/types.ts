@@ -18,7 +18,7 @@ export const STATUS_LABEL: Record<IncidentStatus, string> = {
   'review-internal': 'Menunggu pemeriksaan',
   'perlu-perbaikan': 'Perlu perbaikan',
   'dalam-penanganan': 'Dalam penanganan',
-  'minta-ditutup': 'Minta ditutup',
+  'minta-ditutup': 'Menunggu penutupan',
   ditutup: 'Ditutup',
   dibatalkan: 'Dibatalkan',
   digabung: 'Digabung',

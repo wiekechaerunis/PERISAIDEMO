@@ -5,7 +5,8 @@ import { formatDateShort, formatDate, formatWib } from '@/lib/format';
 import { SEV_LABEL, SEV_TAG_CLS } from '@/lib/severity';
 import { STATUS_TAG, type Incident } from '@/services/types';
 import type { Role } from '@/lib/rbac';
-import { actionFor, closedAtShort, dueIndicator, statusText, verifyIndicator, type ListLayout } from '../../logic/list';
+import { actionFor, closedAtShort, dueIndicator, rowHref, rowMenu, statusText, verifyIndicator, type ListLayout, type RowMenuItem } from '../../logic/list';
+import { RowMenu } from './RowMenu';
 
 interface Props {
   rows: Incident[];
@@ -14,9 +15,10 @@ interface Props {
   me: string;
   /** tampilkan teks tindakan di bawah status (hanya pelapor, pintasan Semua / Perlu tindakan) */
   showAction: boolean;
+  /** aksi menu ⋯ yang dijalankan di halaman daftar (Hapus draf) */
+  onRowAction?: (i: Incident, it: RowMenuItem) => void;
 }
 
-const href = (r: Incident) => (r.status === 'draf' ? '/insiden/baru/kejadian' : `/insiden/${r.no}`);
 
 function Tip({ label, text, children }: { label: string; text: string; children: string }) {
   return (
@@ -45,10 +47,10 @@ function SevTag({ r }: { r: Incident }) {
   );
 }
 
-function Title({ r }: { r: Incident }) {
+function Title({ r, role }: { r: Incident; role: Role }) {
   return (
     <td style={{ paddingLeft: 16 }}>
-      <Link className="ttl" to={href(r)}>
+      <Link className="ttl" to={rowHref(r, role)}>
         {r.title}
       </Link>
       <span className="id">{r.no}</span>
@@ -61,7 +63,18 @@ function StatusTag({ r, role }: { r: Incident; role: Role }) {
   return <span className={'p-tag ' + (s.override ?? STATUS_TAG[r.status])}>{s.label}</span>;
 }
 
-export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
+const ActTh = () => (
+  <th style={{ width: 52, paddingRight: 12 }}>
+    <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>Aksi</span>
+  </th>
+);
+
+export function IncidentTable({ rows, layout, role, me, showAction, onRowAction }: Props) {
+  const Act = ({ r }: { r: Incident }) => (
+    <td className="ls-act" style={{ position: 'relative' }}>
+      <RowMenu no={r.no} items={rowMenu(r, role)} onAction={(it) => onRowAction?.(r, it)} />
+    </td>
+  );
   if (layout === 'verifikasi') {
     return (
       <table className="p-table lk-tbl" style={{ width: '100%' }}>
@@ -78,7 +91,8 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                 Batas pemeriksaan
               </Tip>
             </th>
-            <th style={{ paddingRight: 16 }}>Status</th>
+            <th>Status</th>
+            <ActTh />
           </tr>
         </thead>
         <tbody>
@@ -87,7 +101,7 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
             const ind = waiting ? verifyIndicator(r.verifyDueAt!) : null;
             return (
               <tr key={r.no}>
-                <Title r={r} />
+                <Title r={r} role={role} />
                 <td>
                   {r.category}
                   <div className="sub">{r.area}</div>
@@ -99,9 +113,10 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                   {waiting ? `${formatDateShort(r.verifyDueAt!)}, ${r.verifyDueAt!.slice(11, 16)}` : '—'}
                   <div className={ind?.late ? 'lk-dl' : 'p-cap'}>{ind?.text ?? ''}</div>
                 </td>
-                <td style={{ paddingRight: 16 }}>
+                <td>
                   <StatusTag r={r} role={role} />
                 </td>
+                <Act r={r} />
               </tr>
             );
           })}
@@ -127,7 +142,8 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                 Tenggat
               </Tip>
             </th>
-            <th style={{ paddingRight: 16 }}>Status</th>
+            <th>Status</th>
+            <ActTh />
           </tr>
         </thead>
         <tbody>
@@ -142,7 +158,7 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                   : '';
             return (
               <tr key={r.no}>
-                <Title r={r} />
+                <Title r={r} role={role} />
                 <td>
                   {r.category}
                   <div className="sub">{r.area}</div>
@@ -157,9 +173,10 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                     {ind ? ind.text : note}
                   </div>
                 </td>
-                <td style={{ paddingRight: 16 }}>
+                <td>
                   <StatusTag r={r} role={role} />
                 </td>
+                <Act r={r} />
               </tr>
             );
           })}
@@ -185,7 +202,7 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
           <tbody>
             {rows.map((r) => (
               <tr key={r.no}>
-                <Title r={r} />
+                <Title r={r} role={role} />
                 <td>{r.org}</td>
                 <td>
                   {r.category}
@@ -216,7 +233,8 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
             <th>Keparahan</th>
             <th>Waktu kejadian</th>
             <th>Status</th>
-            <th style={{ paddingRight: 16 }}>PIC</th>
+            <th>PIC</th>
+            <ActTh />
           </tr>
         </thead>
         <tbody>
@@ -224,7 +242,7 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
             const act = showAction ? actionFor(r, role) : '';
             return (
               <tr key={r.no}>
-                <Title r={r} />
+                <Title r={r} role={role} />
                 <td>
                   {r.category}
                   <div className="sub">{r.location}</div>
@@ -241,7 +259,7 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                     </div>
                   )}
                 </td>
-                <td style={{ paddingRight: 16 }}>
+                <td>
                   {r.pic ?? '—'}
                   {r.pic === me && (
                     <span className="p-tag t-info" style={{ marginLeft: 6, height: 20 }}>
@@ -249,6 +267,7 @@ export function IncidentTable({ rows, layout, role, me, showAction }: Props) {
                     </span>
                   )}
                 </td>
+                <Act r={r} />
               </tr>
             );
           })}
