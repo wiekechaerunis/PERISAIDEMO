@@ -20,6 +20,8 @@ import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/D
 import { LocationCard } from '../components/detail/LocationCard';
 import { ClosureStatusCard } from '../components/closure/SyncParts';
 import { lpoMissing } from '../components/handling/LpoSection';
+import { ImpactDialog } from '../components/handling/ImpactDialogs';
+import { updateImpact, type ImpactPatch } from '@/services/mock/workflow.impact';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
 import { RestrictedView } from '../components/detail/StateViews';
@@ -117,6 +119,7 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
   const [expanded, setExpanded] = useState(false);
   const [audit, setAudit] = useState(false);
   const [dlg, setDlg] = useState(false);
+  const [impact, setImpact] = useState(false);
   const [toast, setToast] = useState<ToastMsg | null>(null);
 
   const hideNotes = st === 'kronologi-kosong';
@@ -150,6 +153,15 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
       return;
     }
     decide((s) => respondStep(s, i.no, step, as));
+  };
+  // ADJ-07: Perbarui dampak oleh PIC; naik langsung berlaku, turun menunggu Pejabat
+  const doImpact = (p: ImpactPatch): string | null => {
+    const r = decide((s) => updateImpact(s, i.no, me, p, false));
+    if (!r.ok) return r.reason;
+    setImpact(false);
+    const lvl = useDemoStore.getState().incidents.find((x) => x.no === i.no)?.levelChange;
+    setToast({ text: lvl?.dir === 'down' ? 'Dampak diperbarui. Penurunan level menunggu konfirmasi Pejabat Berwenang.' : lvl?.dir === 'up' ? `Dampak diperbarui. Level naik ke ${SEV_LABEL[lvl.to]}.` : 'Dampak diperbarui. Tercatat di Riwayat.' });
+    return null;
   };
   const doEscalate = (a: { to: 'pejabat' | 'skk'; name: string; reason: string }): string | null => {
     const r = decide((s) => escalate(s, i.no, me, a));
@@ -211,7 +223,7 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
 
   return (
     <HandlingShell title="Detail insiden" tags={statusTags(i, escalated)} acts={acts} toast={toast} onToastClose={() => setToast(null)} riwayatCount={entries.length}
-      overlay={<>{dlg && <EscalateDialog onClose={() => setDlg(false)} onConfirm={doEscalate} />}{audit && <AuditPanel incident={i} due={due} onClose={() => setAudit(false)} />}</>}>
+      overlay={<>{dlg && <EscalateDialog onClose={() => setDlg(false)} onConfirm={doEscalate} />}{impact && <ImpactDialog incident={i} byPejabat={false} onClose={() => setImpact(false)} onSave={doImpact} />}{audit && <AuditPanel incident={i} due={due} onClose={() => setAudit(false)} />}</>}>
       {tab === 'riwayat' ? riwayatTab : (
       <div className="lk-grid">
         <div className="c8 lk-stack">
@@ -221,7 +233,7 @@ function DetailView({ i, st, clearState }: { i: Incident; st: HandlingState | nu
               <div className="body">Penanganan sudah diambil alih <b>{h.takenBy}</b> dari {i.pic ?? 'grup'}, {takenAt(i)}. Anda hanya bisa melihat.</div>
             </div>
           )}
-          <IncidentSummaryCard incident={i} />
+          <IncidentSummaryCard incident={i} onUpdateImpact={working && (mode === 'solo' || mode === 'grup-saya') ? () => setImpact(true) : undefined} />
           {files.length > 0 && <AttachmentsCard files={files} />}
           {closure && returnedReason && <ClosureReadonly c={closure} reported={d.lossIdr} />}
         </div>
@@ -284,6 +296,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
   const [toast, setToast] = useState<ToastMsg | null>(st === 'catatan-gagal' ? { text: ERR_NOTE, tone: 'err' } : null);
   const [detail, setDetail] = useState(false);
   const [dlg, setDlg] = useState(false);
+  const [impact, setImpact] = useState(false);
 
   if (i.status !== 'dalam-penanganan' || mode === 'grup-belum' || mode === 'grup-lain') return <Navigate to={`/insiden/${i.no}`} replace />;
 
@@ -320,6 +333,15 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
     if (r.ok) navigate(`/insiden/${i.no}`, { state: { toast: `Penutupan diajukan ke ${reviewerTarget(rev, reviewerOptions(me))}` } });
     else setToast({ text: r.reason, tone: 'err' });
   };
+  // ADJ-07: Perbarui dampak oleh PIC; naik langsung berlaku, turun menunggu Pejabat
+  const doImpact = (p: ImpactPatch): string | null => {
+    const r = decide((s) => updateImpact(s, i.no, me, p, false));
+    if (!r.ok) return r.reason;
+    setImpact(false);
+    const lvl = useDemoStore.getState().incidents.find((x) => x.no === i.no)?.levelChange;
+    setToast({ text: lvl?.dir === 'down' ? 'Dampak diperbarui. Penurunan level menunggu konfirmasi Pejabat Berwenang.' : lvl?.dir === 'up' ? `Dampak diperbarui. Level naik ke ${SEV_LABEL[lvl.to]}.` : 'Dampak diperbarui. Tercatat di Riwayat.' });
+    return null;
+  };
   const doEscalate = (a: { to: 'pejabat' | 'skk'; name: string; reason: string }): string | null => {
     const r = decide((s) => escalate(s, i.no, me, a));
     if (!r.ok) return r.reason;
@@ -338,6 +360,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
       crumbs={[{ label: 'Insiden', to: '/insiden' }, { label: i.no, to: `/insiden/${i.no}` }, { label: 'Tangani insiden' }]}
       overlay={<>
         {dlg && <EscalateDialog onClose={() => setDlg(false)} onConfirm={doEscalate} />}
+        {impact && <ImpactDialog incident={i} byPejabat={false} onClose={() => setImpact(false)} onSave={doImpact} />}
         {detail && (
           <>
             <div className="lk-scrim" onClick={() => setDetail(false)}></div>
@@ -373,6 +396,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
                 ) : (
                   <button type="button" className="p-btn p-btn-secondary p-btn-sm" disabled={!note.trim()} onClick={save}>Simpan catatan</button>
                 )}
+                <button type="button" className="p-btn p-btn-ghost p-btn-sm" onClick={() => setImpact(true)}>Perbarui dampak</button>
               </div>
             </div>
             <div className="lk-divider" style={{ margin: '2px 0' }}></div>

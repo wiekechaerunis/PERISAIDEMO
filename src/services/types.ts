@@ -280,6 +280,10 @@ export interface Incident {
   raisedAt?: string;
   verifiedBy?: string;
   verifiedAt?: string;
+  /** ADJ-07: dampak sudah diperbarui selama penanganan; angka bertanda "sementara" sampai ditutup */
+  impactProvisional?: boolean;
+  /** ADJ-07: kenaikan level (bisa dikembalikan Pejabat) atau penurunan yang menunggu konfirmasi Pejabat */
+  levelChange?: import('./mock/workflow.impact').LevelChange;
 }
 
 export interface Kerawanan {

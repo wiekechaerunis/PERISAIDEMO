@@ -102,3 +102,19 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
 - B-22: banner "Ditutup …" dihapus; kartu sukses "Insiden ditutup" di atas kolom kanan berisi Ditutup, Lama penanganan, Total
   waktu (ADJ-10), Tenggat PIC (dinilai saat Ajukan penutupan, ADJ-09), tindak lanjut berjalan, batas Buka kembali.
 - B-23: Data penutupan → Tindak lanjut → Isi laporan (tidak dilipat). Sama untuk tampilan SKK (P35).
+
+## 7. Penanganan (PIC) dan Perbarui dampak
+
+- PA-18, ADJ-07 (PD1, PD1m, PD2): aksi "Perbarui dampak" di kartu Dampak Detail PIC (label "Dampak saat ini · Sementara") dan di bawah
+  kotak catatan halaman Tangani. Dialog berisi Kondisi operasi (+ Belum diketahui), Kondisi korban, Perkiraan kerugian (+ Belum
+  diketahui), Alasan atau sumber info (min. 10 karakter) dan pratinjau akibat level. `workflow.impact.ts`:
+  naik → langsung berlaku, SKK diberi tahu bila Tinggi/Kritis, tenggat = min(tenggat lama, kenaikan + tenggat level baru);
+  turun → level lama tetap, Pejabat mendapat kartu "Konfirmasi penurunan level"; diperbarui Pejabat → langsung tanpa konfirmasi.
+  Kenaikan oleh PIC memunculkan kartu Pejabat "Level naik ke …" dengan "Kembalikan ke …" (alasan wajib). Riwayat mencatat nilai
+  sebelum → sesudah dan alasan.
+- Ambil alih untuk PIC grup tetap memakai alur yang ada (P12g); menu ⋯ daftar memuat "Ambil alih penanganan".
+
+## 11b. Koreksi data setelah ditutup (PD3)
+
+- ADJ-07 butir 8: tombol "Koreksi data" di kartu "Insiden ditutup" (Pejabat) → dialog Kerugian final + alasan; status tetap Ditutup,
+  Riwayat mencatat sebelum → sesudah, SKK diberi tahu bila Tinggi/Kritis.

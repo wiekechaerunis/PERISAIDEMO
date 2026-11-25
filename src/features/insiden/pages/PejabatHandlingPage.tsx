@@ -20,6 +20,8 @@ import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/D
 import { LocationCard } from '../components/detail/LocationCard';
 import { ClosureStatusCard, DecisionSummary, DurationRows, SelfCloseDialog, selfCloseNote, selfCloseReasons } from '../components/closure/SyncParts';
 import { addNote } from '@/services/mock/workflow';
+import { correctClosedData, resolveLevelChange, updateImpact, type ImpactPatch } from '@/services/mock/workflow.impact';
+import { CorrectionDialog, ImpactDialog, LevelChangeCard } from '../components/handling/ImpactDialogs';
 import { RestrictedView } from '../components/detail/StateViews';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
@@ -34,7 +36,7 @@ import { DecisionPanel } from '../components/closure/ReviewParts';
 import { CloseDialog, DueDialog, NoReopenDialog, ReassignDialog, ReopenDialog, ReturnDialog, type CloseResult } from '../components/closure/ClosureDialogs';
 import { dueRemaining, timeShort, withDemoState } from '../logic/closure';
 
-type Dialog = null | 'tutup' | 'kembalikan' | 'ganti-pic' | 'tenggat' | 'buka' | 'nobuka' | 'terbatas' | 'sendiri';
+type Dialog = null | 'tutup' | 'kembalikan' | 'ganti-pic' | 'tenggat' | 'buka' | 'nobuka' | 'terbatas' | 'sendiri' | 'dampak' | 'koreksi';
 type Hl = 'dp' | 'bk' | 'rg' | 'tl' | null;
 const DIALOGS = ['tutup', 'kembalikan', 'ganti-pic', 'tenggat', 'buka'];
 const GRUP_FROM = 'Tim Pengamanan ADR Area 2';
@@ -119,6 +121,20 @@ function Body({ stored }: { stored: Incident }) {
     run(r, `Insiden ${i.no} dibuka kembali. Status Dalam penanganan.`);
   };
   const doDirective = (idx: number) => run(decide((s) => followUpDirective(s, i.no, by, idx, demoNow())), 'Arahan SKK dijadikan tindak lanjut.');
+  // ADJ-07: Pejabat memperbarui dampak (level berubah tanpa konfirmasi), memutus perubahan level PIC, dan Koreksi data setelah ditutup
+  const doImpact = (p: ImpactPatch): string | null => {
+    const r = decide((s) => updateImpact(s, i.no, by, p, true));
+    if (!r.ok) return r.reason;
+    run(r, 'Dampak diperbarui. Tercatat di Riwayat.');
+    return null;
+  };
+  const doLevel = (accept: boolean, reason: string) => run(decide((s) => resolveLevelChange(s, i.no, by, accept, reason)), 'Keputusan level tercatat di Riwayat.');
+  const doCorrect = (loss: number, reason: string): string | null => {
+    const r = decide((s) => correctClosedData(s, i.no, by, loss, reason));
+    if (!r.ok) return r.reason;
+    run(r, 'Koreksi data tersimpan. Status tetap Ditutup.');
+    return null;
+  };
   const doRestrict = () => run(decide((s) => markRestricted(s, i.no, by)), 'Insiden ditandai terbatas.');
 
   const tryReopen = () => setDialog(canReopen(i, demoNow()) ? 'buka' : 'nobuka');
@@ -153,6 +169,8 @@ function Body({ stored }: { stored: Incident }) {
       {dialog === 'sendiri' && (
         <SelfCloseDialog reasons={selfCloseReasons(i, by)} onCancel={() => setDialog(null)} onContinue={() => { setSelfOk(true); setDialog('tutup'); }} />
       )}
+      {dialog === 'dampak' && <ImpactDialog incident={i} byPejabat onClose={() => setDialog(null)} onSave={doImpact} />}
+      {dialog === 'koreksi' && <CorrectionDialog incident={i} onClose={() => setDialog(null)} onSave={doCorrect} />}
       {dialog === 'kembalikan' && <ReturnDialog incident={i} onClose={() => setDialog(null)} onConfirm={doReturn} />}
       {dialog === 'ganti-pic' && <ReassignDialog incident={i} onClose={() => setDialog(null)} onConfirm={doReassign} />}
       {dialog === 'tenggat' && <DueDialog incident={i} today={demoNow()} preset={demo === 'tenggat-error' ? { date: '2026-10-27', reason: 'Polsek' } : undefined} onClose={() => setDialog(null)} onConfirm={doDue} />}
@@ -219,6 +237,7 @@ function Body({ stored }: { stored: Incident }) {
               {open.length > 0 && <div className="row"><span className="k">Tindak lanjut</span><span className="v">{open.length} masih berjalan</span></div>}
               {closedAt && <div className="row"><span className="k">Buka kembali</span><span className="v">Sampai {formatDate(reopenLimit(closedAt))}</span><span className="c">30 hari sejak ditutup</span></div>}
             </div>
+            <button type="button" className="p-btn p-btn-secondary p-btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setDialog('koreksi')}>Koreksi data</button>
           </ClosureStatusCard>
           <SummaryCard i={i} title="Ringkasan" />
           <LocationCard incident={i} />
@@ -245,7 +264,7 @@ function Body({ stored }: { stored: Incident }) {
               <div className="body"><b>Arahan baru dari {dir.by} (SKK).</b> “{dir.text.split('. ')[0].replace(/\.$/, '')}.”</div>
             </div>
           )}
-          <IncidentSummaryCard incident={i} />
+          <IncidentSummaryCard incident={i} onUpdateImpact={() => setDialog('dampak')} />
           <AttachmentsCard files={detailOf(i).attachments} />
           {!i.pic && (
             <NextStep icon={P.person} title="Tunjuk PIC baru" meta={`Tenggat ${i.handleDueAt ? formatDateShort(i.handleDueAt) : '—'}${rem ? ` · ${rem.text}` : ''}`}
@@ -257,6 +276,7 @@ function Body({ stored }: { stored: Incident }) {
           )}
         </div>
         <aside className="c4 lk-stack">
+          {i.levelChange && <LevelChangeCard incident={i} onResolve={doLevel} />}
           <DueCard i={i} now={demoNow()} withEsc={!i.escalated} />
           <FollowUpsCard i={i} />
           <SummaryCard i={i} title="Ringkasan" picExtra={i.pic ? <> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={() => setDialog('ganti-pic')}>Ganti PIC</button></> : undefined} />

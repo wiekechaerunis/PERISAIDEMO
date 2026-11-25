@@ -69,3 +69,6 @@ bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
 | S-21 | Board P22: menu "Aksi lain" (Ganti PIC, Ubah tenggat, Eskalasi, Tandai terbatas) saat Minta ditutup | Tidak ada menu Aksi lain saat Menunggu penutupan | **Konflik, INS-ADJ menang** (ADJ-09) |
 | S-22 | Riwayat penuh di tab Riwayat | Pada layar PIC entri Riwayat (termasuk eskalasi otomatis) hanya terlihat di tab Riwayat, tidak lagi di kolom Detail | B-18 |
 | S-23 | Mobile (M8r, M11r, MP2, MV2) | Tab Detail \| Riwayat belum diterapkan di layar mobile | Fokus desktop |
+| S-24 | PD1/PD2: label "sementara" juga di dashboard; notifikasi SKK, Pejabat, dan item Tugas saya "Konfirmasi penurunan level" | Dicatat di Riwayat dan ditampilkan sebagai kartu di Detail Pejabat; dashboard, notifikasi, dan Tugas saya tidak diubah | Dashboard di luar cakupan tugas ini; notifikasi belum dimodelkan di mock |
+| S-25 | PD3: koreksi juga untuk korban, kondisi operasi, dan LPO | Prototype hanya mengoreksi Kerugian final | Cukup untuk menunjukkan aturan "tanpa buka kembali" |
+| S-26 | ADJ-12: saklar fitur LPO (bawaan mati) dan saklar isi AI di Konfigurasi | Bagian LPO selalu tampil; AI pembaca dokumen berupa mock | Parameter saklar ada di ADJ-15 yang masih Usulan; PA-17 meminta bagian ini terlihat |

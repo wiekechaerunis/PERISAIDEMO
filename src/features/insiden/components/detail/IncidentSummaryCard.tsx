@@ -17,7 +17,8 @@ const dd = { margin: 0, display: 'flex', flexDirection: 'column', gap: 2 } as co
 const AXIS_LABEL = { prop: 'Properti atau operasi', man: 'Manusia', ling: 'Lingkungan pengamanan', data: 'Data dan informasi' } as const;
 const AXIS_ORDER = ['prop', 'man', 'ling', 'data'] as const;
 
-export function IncidentSummaryCard({ incident: i, withLocation = false }: { incident: Incident; withLocation?: boolean }) {
+/** `onUpdateImpact`: tombol Perbarui dampak di kartu Dampak (ADJ-07; PIC dan Pejabat selama Dalam penanganan). */
+export function IncidentSummaryCard({ incident: i, withLocation = false, onUpdateImpact }: { incident: Incident; withLocation?: boolean; onUpdateImpact?: () => void }) {
   const WA_SOURCE = useWaSource(i);
   const d = detailOf(i);
   const sev = i.severity;
@@ -92,6 +93,15 @@ export function IncidentSummaryCard({ incident: i, withLocation = false }: { inc
           </dd>
         </div>
       </dl>
+      {(onUpdateImpact || i.impactProvisional) && (
+        <div style={{ padding: '0 24px 8px 24px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h3 className="p-lbl" style={{ margin: 0 }}>Dampak saat ini</h3>
+          {i.status !== 'ditutup' && <span className="p-tag t-caution" style={{ height: 20, fontSize: 11 }}>Sementara</span>}
+          <span className="p-cap">{i.status !== 'ditutup' ? 'angka awal pelapor · final saat ditutup' : 'final'}</span>
+          <span style={{ flex: 1 }}></span>
+          {onUpdateImpact && <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={onUpdateImpact}>Perbarui dampak</button>}
+        </div>
+      )}
       <div style={{ padding: '0 24px 24px 24px', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12 }}>
         <div style={box}>
           <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={icn}><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" /></svg>
