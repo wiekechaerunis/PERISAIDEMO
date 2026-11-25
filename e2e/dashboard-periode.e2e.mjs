@@ -87,7 +87,8 @@ await perBtn().click(); await pop().getByRole('option', { name: /Semua waktu/ })
 r.all = { url: search(), kpi: await kpi0(), sub: await sub(), bars: (await bars()).length };
 
 console.log(JSON.stringify(r, null, 1));
-assert.deepEqual(r.start, { btn: 'Semua waktu', kpi: '106', sub: r.start.sub, bars: 6 });
+// 147 = 106 insiden desain + 41 insiden sebaran tambahan (src/data/dashboardExtra.ts)
+assert.deepEqual(r.start, { btn: 'Semua waktu', kpi: '147', sub: r.start.sub, bars: 6 });
 assert.match(r.start.sub, /^Semester I 2026 · /);
 assert.equal(r.expanded, 'true');
 assert.deepEqual(r.options, [
@@ -99,7 +100,7 @@ assert.equal(r.d7.url, '?periode=7h');
 assert.ok(r.d7.closed);
 assert.match(r.d7.sub, /^7 hari terakhir \(23–30 Jun 2026\) · /);
 assert.equal(r.d7.bars.length, 1);
-assert.ok(Number(r.d7.kpi) > 0 && Number(r.d7.kpi) < Number(r.b3.kpi) && Number(r.b3.kpi) < 106, 'angka berbeda per periode');
+assert.ok(Number(r.d7.kpi) > 0 && Number(r.d7.kpi) < Number(r.b3.kpi) && Number(r.b3.kpi) < 147, 'angka berbeda per periode');
 assert.equal(r.b3.url, '?periode=3b');
 assert.equal(r.b3.bars.length, 4);
 assert.deepEqual(r.back, { url: '?periode=7h', kpi: r.d7.kpi });
@@ -115,9 +116,9 @@ assert.equal(r.ask.hd, 'Jawaban AI');
 assert.match(r.ask.und, /Level Kritis/);
 assert.equal(r.ask.pop, 0, 'tidak ada dropdown jawaban');
 assert.equal(r.ask.back, 'Temuan AI');
-assert.deepEqual(r.invalid, { btn: 'Semua waktu', kpi: '106' });
+assert.deepEqual(r.invalid, { btn: 'Semua waktu', kpi: '147' });
 assert.equal(r.all.url, '');
-assert.equal(r.all.kpi, '106');
+assert.equal(r.all.kpi, '147');
 assert.equal(r.all.bars, 6);
 assert.deepEqual(errs, [], 'console bersih');
 console.log('e2e Periode dashboard lolos');

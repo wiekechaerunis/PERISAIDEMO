@@ -36,7 +36,8 @@ describe('logika dashboard per periode', () => {
         JSON.stringify(view(undefined, peran)),
       );
     }
-    expect(kpi(view(), 0)).toBe('106');
+    // 106 insiden desain + 41 insiden sebaran tambahan (src/data/dashboardExtra.ts)
+    expect(kpi(view(), 0)).toBe('147');
   });
 
   it('jumlah insiden per preset dihitung tepat dari tanggal lapor', () => {
@@ -77,6 +78,6 @@ describe('logika dashboard per periode', () => {
   it('Tanya data memakai periode yang sama', () => {
     const range = { from: '2026-06-01', to: '2026-06-30', label: 'Bulan ini' };
     expect(matchInc({ range }, 'skk')).toHaveLength(countIn('2026-06-01', '2026-06-30'));
-    expect(matchInc({}, 'skk')).toHaveLength(106);
+    expect(matchInc({}, 'skk')).toHaveLength(147);
   });
 });

@@ -217,8 +217,9 @@ function portLogic(cls, name, outFile, dataNames = [], logicPatches = []) {
   }
   let imp = '';
   if (moved.length) {
-    write(path.join(ROOT, 'src/data/dashboard.ts'), `// @ts-nocheck\n// Data demo Dashboard insiden, dipindah apa adanya dari design/Dashboard.dc.html (renderVals).\n${moved.join('\n\n')}\n`);
-    imp = `import { ${dataNames.join(', ')} } from '@/data/dashboard';\n`;
+    // Sebaran insiden tambahan (src/data/dashboardExtra.ts) dipasang setelah data desain
+    write(path.join(ROOT, 'src/data/dashboard.ts'), `// @ts-nocheck\n// Data demo Dashboard insiden, dipindah apa adanya dari design/Dashboard.dc.html (renderVals).\nimport { extendDashboard } from './dashboardExtra';\n${moved.join('\n\n')}\n\nextendDashboard({ A0, INC, CAT, W });\n`);
+    imp = `import { ${dataNames.join(', ')} } from '@/data/dashboard';\nimport { EXTRA_SITES } from '@/data/dashboardExtra';\n`;
   }
   write(outFile, `// @ts-nocheck\n${HEADER}import { DCLogic } from '@/dc/runtime';\n${imp}\n${code}\n`);
 }
@@ -339,6 +340,7 @@ const LOGIC_PATCHES = [
   // Tanya data (S6): filter aktif, cara memasang filter, sorotan bulan di Tren per bulan
   ['hasMk: i === mkI, ring: i === mkI ?', 'hasMk: i === mkI, ring: (s.hi || []).includes(i) || i === mkI ?'],
   ["aSaran: ak === 'saran',", "askK: ak, aSaran: ak === 'saran',"],
+  ['    const SITES = {', '    const SITES = { ...EXTRA_SITES, '],
   ['goUp: zoomOut,', "goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length }, askApply: (patch) => this.setState(patch),"],
   ...PERIOD_PATCHES,
 ];

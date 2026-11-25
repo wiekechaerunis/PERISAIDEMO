@@ -3,6 +3,7 @@
 /* eslint-disable */
 import { DCLogic } from '@/dc/runtime';
 import { SEN, LV, W, A0, DTT, CAT, MO, INC } from '@/data/dashboard';
+import { EXTRA_SITES } from '@/data/dashboardExtra';
 
 export class DashboardLogic extends DCLogic {
   constructor(p) {
@@ -25,7 +26,7 @@ export class DashboardLogic extends DCLogic {
     const WO = ['pst', 'sbu', 'sbs', 'kls', 'jbn', 'pml'];
     // Area insiden: [id, wilayah, nama, x, y, level SR..K, kerugian jt, KKKS, WK]
     // Lokasi area buatan sendiri per WK (koordinat peta). PRODUKSI: dari modul Wilayah kerja > Buat area sendiri.
-    const SITES = {"ace": [[65.78, 43.31, "fas"], [65.64, 34.08, "sta"], [65.71, 38.7, "pipa"]], "lgk": [[79.8, 55.54, "fas"], [73.17, 57.87, "sta"], [76.49, 56.71, "pipa"]], "bkl": [[140.34, 107.49, "fas"], [148.02, 111.49, "sta"], [144.18, 109.49, "pipa"]], "sik": [[152.56, 114.56, "fas"], [153.36, 124.16, "sta"], [152.96, 119.36, "pipa"]], "mub": [[202.28, 190.45, "fas"], [188.64, 194.6, "sta"], [195.46, 192.53, "pipa"]], "bny": [[222.07, 188.94, "fas"], [217.44, 197.6, "sta"], [219.76, 193.27, "pipa"]], "mre": [[204.14, 213.91, "fas"], [197.37, 217.23, "sta"], [200.76, 215.57, "pipa"]], "tjb": [[202.98, 163.51, "fas"], [196.82, 162.7, "sta"], [199.9, 163.1, "pipa"]], "idm": [[292.67, 275.85, "fas"], [289.95, 273.19, "sta"], [291.31, 274.52, "pipa"]], "krw": [[272.19, 270.86, "fas"], [274.88, 272.35, "sta"], [273.53, 271.6, "pipa"]], "bjn": [[365.54, 290.04, "fas"], [368.18, 293.15, "sta"], [366.86, 291.59, "pipa"]], "grs": [[385.74, 289.68, "fas"], [383.17, 289.34, "sta"], [384.5, 281.0, "off"]]};
+    const SITES = { ...EXTRA_SITES, "ace": [[65.78, 43.31, "fas"], [65.64, 34.08, "sta"], [65.71, 38.7, "pipa"]], "lgk": [[79.8, 55.54, "fas"], [73.17, 57.87, "sta"], [76.49, 56.71, "pipa"]], "bkl": [[140.34, 107.49, "fas"], [148.02, 111.49, "sta"], [144.18, 109.49, "pipa"]], "sik": [[152.56, 114.56, "fas"], [153.36, 124.16, "sta"], [152.96, 119.36, "pipa"]], "mub": [[202.28, 190.45, "fas"], [188.64, 194.6, "sta"], [195.46, 192.53, "pipa"]], "bny": [[222.07, 188.94, "fas"], [217.44, 197.6, "sta"], [219.76, 193.27, "pipa"]], "mre": [[204.14, 213.91, "fas"], [197.37, 217.23, "sta"], [200.76, 215.57, "pipa"]], "tjb": [[202.98, 163.51, "fas"], [196.82, 162.7, "sta"], [199.9, 163.1, "pipa"]], "idm": [[292.67, 275.85, "fas"], [289.95, 273.19, "sta"], [291.31, 274.52, "pipa"]], "krw": [[272.19, 270.86, "fas"], [274.88, 272.35, "sta"], [273.53, 271.6, "pipa"]], "bjn": [[365.54, 290.04, "fas"], [368.18, 293.15, "sta"], [366.86, 291.59, "pipa"]], "grs": [[385.74, 289.68, "fas"], [383.17, 289.34, "sta"], [384.5, 281.0, "off"]]};
     // WK lain tanpa insiden pada periode ini (konteks di zoom wilayah, SKK saja). Cakupan = kecamatan terpilih (contoh).
     const WKX = [['x-oki', 'sbs', 'WK Komering Rawa'], ['x-mjb', 'sbs', 'WK Batang Hilir'], ['x-sbd', 'sbu', 'WK Bedagai Pesisir'], ['x-mer', 'sbu', 'WK Meranti Selat'], ['x-sbg', 'pst', 'WK Pantura Tengah'], ['x-tbn', 'jbn', 'WK Bengawan Utara']];
     // Kategori × wilayah (pola sheet WILAYAH rekap SKK, angka demo)
