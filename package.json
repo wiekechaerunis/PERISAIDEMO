@@ -10,7 +10,8 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint src server api",
     "test": "vitest run",
-    "format": "prettier --write src"
+    "format": "prettier --write src",
+    "e2e": "node e2e/tl-pengerjaan.e2e.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",
@@ -35,6 +36,7 @@
     "globals": "^15.12.0",
     "htmlparser2": "^12.0.0",
     "jsdom": "^25.0.1",
+    "playwright-core": "^1.48.2",
     "prettier": "^3.3.3",
     "typescript": "~5.6.3",
     "typescript-eslint": "^8.15.0",

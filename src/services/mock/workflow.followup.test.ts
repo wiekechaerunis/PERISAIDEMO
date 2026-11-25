@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { seedState } from './seed';
 import type { DecisionResult } from './workflow';
 import {
-  addArahanFollowUp, addFollowUp, addWorkingDays, cancelFollowUp, changeFollowUpDue, reassignFollowUp, startFollowUp, approveDone, cancelForMerge, isOnTime, returnFollowUp, submitDone, verifierOf, withdrawSubmission, workingDaysBetween,
+  addArahanFollowUp, addEvidence, addFollowUp, addWorkingDays, cancelFollowUp, changeFollowUpDue, reassignFollowUp, startFollowUp, approveDone, cancelForMerge, isOnTime, returnFollowUp, submitDone, verifierOf, withdrawSubmission, workingDaysBetween,
 } from './workflow.followup';
 import { followUpDirective } from './workflow.closure';
 import { closureDemoIncident, CLOSURE_DEMO_NO } from './seedClosure';
@@ -17,6 +17,8 @@ const st = (r: DecisionResult) => {
 };
 const fu = (r: DecisionResult, no: string) => st(r).followUps!.find((f) => f.no === no)!;
 const NO = 'TL-SEN-2026-0041';
+/** TL dengan satu bukti draf (Ajukan selesai butuh minimal satu bukti). */
+const withEv = (s: Parameters<typeof addEvidence>[0] = base(), no = NO, by = 'Rudi Hartono') => st(addEvidence(s, no, by, { name: 'bukti.jpg', sizeKb: 800 }));
 const add = { incidentNo: 'INS-SEN-2026-0007', action: 'Tambah CCTV', pic: 'Rudi Hartono', dueDate: '2026-11-06', by: 'Andi Pratama' };
 
 describe('workflow tindak lanjut', () => {
@@ -35,7 +37,7 @@ describe('workflow tindak lanjut', () => {
 
   it('submitDone hanya oleh PIC TL; withdrawSubmission mengembalikan ke berjalan', () => {
     expect(submitDone(base(), NO, 'Andi Pratama').ok).toBe(false);
-    const r = submitDone(base(), NO, 'Rudi Hartono', 'Selesai.');
+    const r = submitDone(withEv(), NO, 'Rudi Hartono', 'Selesai.');
     expect(fu(r, NO)).toMatchObject({ status: 'menunggu-verifikasi', completionNote: 'Selesai.', submittedAt: '2026-11-05T09:12:00' });
     expect(submitDone(st(r), NO, 'Rudi Hartono').ok).toBe(false);
     expect(withdrawSubmission(base(), NO, 'Rudi Hartono').ok).toBe(false);
@@ -43,7 +45,7 @@ describe('workflow tindak lanjut', () => {
   });
 
   it('approveDone: hanya PIC insiden, final tanpa buka kembali, tanggal selesai = tanggal pengajuan', () => {
-    const s = st(submitDone(base(), NO, 'Rudi Hartono'));
+    const s = st(submitDone(withEv(), NO, 'Rudi Hartono'));
     expect(approveDone(s, NO, 'Rudi Hartono').ok).toBe(false);
     const r = approveDone(s, NO, 'Andi Pratama');
     expect(fu(r, NO)).toMatchObject({ status: 'selesai', verifiedBy: 'Andi Pratama', finishedAt: '2026-11-05T09:12:00' });
@@ -52,7 +54,7 @@ describe('workflow tindak lanjut', () => {
   });
 
   it('returnFollowUp: alasan minimal 10 karakter; PIC bisa mengajukan lagi', () => {
-    const s = st(submitDone(base(), NO, 'Rudi Hartono'));
+    const s = st(submitDone(withEv(), NO, 'Rudi Hartono'));
     expect(returnFollowUp(s, NO, 'Andi Pratama', 'pendek').ok).toBe(false);
     const r = returnFollowUp(s, NO, 'Andi Pratama', 'Foto belum jelas dari jalan akses');
     expect(fu(r, NO)).toMatchObject({ status: 'dikembalikan', returnReason: 'Foto belum jelas dari jalan akses', returnedBy: 'Andi Pratama' });
@@ -65,7 +67,7 @@ describe('workflow tindak lanjut', () => {
     const all = st(r).followUps!;
     expect(all.filter((f) => f.incidentNo === 'INS-SEN-2026-0007' && f.status === 'dibatalkan').map((f) => f.no).sort()).toEqual(['TL-SEN-2026-0034', 'TL-SEN-2026-0039', 'TL-SEN-2026-0041']);
     expect(all.find((f) => f.no === NO)?.cancelledBy).toBe('Sistem');
-    const done = st(approveDone(st(submitDone(s, NO, 'Rudi Hartono')), NO, 'Andi Pratama'));
+    const done = st(approveDone(st(submitDone(withEv(s), NO, 'Rudi Hartono')), NO, 'Andi Pratama'));
     expect(st(cancelForMerge(done, 'INS-SEN-2026-0007', 'X')).followUps!.find((f) => f.no === NO)?.status).toBe('selesai');
   });
 
@@ -118,7 +120,7 @@ describe('Diperiksa sendiri (TLJ-01)', () => {
   it('pembuat sekaligus PIC: ajukan selesai langsung Selesai tanpa pemeriksaan kedua', () => {
     const r1 = addFollowUp(base(), { ...add, pic: 'Andi Pratama' });
     const no = 'TL-SEN-2026-0046';
-    const r = submitDone(st(r1), no, 'Andi Pratama');
+    const r = submitDone(withEv(st(r1), no, 'Andi Pratama'), no, 'Andi Pratama');
     expect(fu(r, no)).toMatchObject({ status: 'selesai', verifiedBy: 'Andi Pratama' });
   });
 });

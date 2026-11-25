@@ -95,7 +95,8 @@ describe('Modul Tindak lanjut · detail dan alur status (TLJ-01)', () => {
     expect(screen.queryByLabelText('Catatan penyelesaian')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Tarik pengajuan' }));
     expect(fu('TL-SEN-2026-0041').status).toBe('berjalan');
-    expect(screen.getByText('Pengajuan ditarik')).toBeInTheDocument();
+    expect(within(screen.getByRole('status')).getByText('Pengajuan ditarik')).toBeInTheDocument();
+    expect(within(screen.getByRole('list', { name: 'Riwayat tindak lanjut' })).getByText('Pengajuan ditarik')).toBeInTheDocument();
   });
 
   it('(b) pemberi tugas menyetujui: Selesai, bukti resmi, tanpa aksi lagi', () => {
@@ -129,7 +130,7 @@ describe('Modul Tindak lanjut · detail dan alur status (TLJ-01)', () => {
 
     renderDetail('TL-SEN-2026-0041', 'pic-tl');
     expect(screen.getByText(/Dikembalikan oleh Andi Pratama/)).toBeInTheDocument();
-    expect(screen.getByText('Foto belum menunjukkan sisi luar pagar.')).toBeInTheDocument();
+    expect(screen.getAllByText('Foto belum menunjukkan sisi luar pagar.')).toHaveLength(2); // banner + catatan di Riwayat
     expect(screen.getAllByText('Dikerjakan').length).toBeGreaterThan(0);
     expect(screen.getAllByText(/belum diajukan/)).toHaveLength(2);
     fireEvent.click(screen.getByRole('button', { name: 'Pilih file' }));

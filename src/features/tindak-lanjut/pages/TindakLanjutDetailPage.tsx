@@ -22,6 +22,7 @@ import { FollowUpWorkCard } from '../components/FollowUpWorkCard';
 import { SourceCell } from './TindakLanjutListPage';
 import { MOD_LABEL, MOD_TAG, canTarik, canWork, daysLeft, dueSub, isFinal, isLate, sourceId, sourceKindOf } from '../logic/followups';
 import { useFollowUps } from '../logic/useFollowUps';
+import { riwayatOf } from '../logic/riwayat';
 
 const D = {
   check: 'M20 6 9 17l-5-5',
@@ -197,9 +198,8 @@ export function TindakLanjutDetailPage() {
       {late && <span className="p-tag t-caution">Terlambat {lateDays} hari</span>}
     </>
   );
-  const acts = work ? (
-    f.status === 'belum-dimulai' ? null : <Btn kind="primary" onClick={() => (f.evidence.length ? setDlg('ajukan') : setToast({ text: 'Lampirkan minimal satu bukti untuk mengajukan selesai.', tone: 'err' }))}><Ic d={D.check} size={16} />Ajukan selesai</Btn>
-  ) : null;
+  // Board T13–T23 (pola PgKartu): header tanpa aksi; Ajukan selesai dan Tarik pengajuan ada di kartu Pengerjaan.
+  const acts = null;
 
   return (
     <TlShell
@@ -412,7 +412,7 @@ export function TindakLanjutDetailPage() {
           <section className="p-card in-sec">
             <h2 className="in-h">Rincian</h2>
             <dl className="tl-kv">
-              <dt>Dikerjakan oleh</dt><dd style={{ display: 'flex', gap: 6, alignItems: 'center' }}><Av name={f.pic} />{f.pic}</dd>
+              <dt>PIC</dt><dd style={{ display: 'flex', gap: 6, alignItems: 'center' }}><Av name={f.pic} />{f.pic}</dd>
               <dt>Pemberi tugas</dt><dd>{giver}{titleOf(giver) ? ` (${titleOf(giver)})` : ''}<div className="p-cap">{f.createdBy === f.pic ? <><span className="p-tag t-neutral">Diperiksa sendiri</span> tanpa pemeriksaan kedua</> : 'juga pemeriksa'}</div></dd>
               <dt>Tenggat</dt>
               <dd>
@@ -429,12 +429,27 @@ export function TindakLanjutDetailPage() {
           <section className="p-card in-sec">
             <h2 className="in-h">Riwayat</h2>
             <ol className="p-tl" aria-label="Riwayat tindak lanjut">
-              {[...f.history].reverse().map((h, i) => (
-                <li key={h.at + h.text}>
-                  <span className={'nd' + (i === 0 ? ' now' : '')} aria-hidden="true"></span>
-                  <div><div className="hd"><b>{h.text}</b></div><div className="dt p-cap">oleh {h.by}</div><div className="tm">{formatWibFull(h.at)}</div></div>
+              {f.status === 'menunggu-verifikasi' && (
+                <li className="next">
+                  <span className="nd next" aria-hidden="true"></span>
+                  <div><div className="hd"><b>Menunggu pemeriksaan · {giver}{titleOf(giver) ? ` (${titleOf(giver)})` : ''}</b></div></div>
                 </li>
-              ))}
+              )}
+              {[...f.history].reverse().map((h, i) => {
+                const r = riwayatOf(h.text);
+                const tone = r.tone || (i === 0 ? 'now' : '');
+                return (
+                  <li key={h.at + h.text}>
+                    <span className={'nd' + (tone ? ` ${tone}` : '')} aria-hidden="true"><Ic d={r.icon} size={12} /></span>
+                    <div>
+                      <div className="hd"><b>{r.label}</b> oleh {h.by}{r.self && <> <span className="p-tag t-neutral">Diperiksa sendiri</span></>}</div>
+                      {r.detail && <div className="dt p-cap">{r.detail}</div>}
+                      <div className="tm">{formatWibFull(h.at)}</div>
+                      {r.note && <div className={'note' + (r.tone === 'warn' || r.tone === 'err' ? ` ${r.tone}` : '')}>{r.note}</div>}
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
           </section>
         </aside>

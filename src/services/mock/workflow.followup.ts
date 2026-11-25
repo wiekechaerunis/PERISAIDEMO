@@ -138,6 +138,7 @@ export function submitDone(s: Slice, no: string, by: string, note?: string, at: 
   if (!f) return bad('Tindak lanjut tidak ditemukan.');
   if (f.status !== 'berjalan' && f.status !== 'belum-dimulai' && f.status !== 'dikembalikan') return bad('Tindak lanjut ini tidak bisa diajukan selesai.');
   if (by !== f.pic) return bad(MSG_ONLY_PIC);
+  if (f.evidence.length === 0) return bad('Lampirkan minimal satu bukti untuk mengajukan selesai.');
   if ((note ?? '').length > MAX_NOTE_TL) return bad(`Catatan penyelesaian maksimal ${MAX_NOTE_TL} karakter.`);
   if (f.createdBy === f.pic) {
     // Diperiksa sendiri: pembuat sekaligus PIC, tanpa pemeriksaan kedua.

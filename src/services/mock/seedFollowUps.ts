@@ -12,6 +12,20 @@ const tl = (x: X): FollowUp => ({
 const files = (...n: [string, number][]) => n.map(([name, sizeKb]) => ({ name, sizeKb }));
 
 const EXTRA: FollowUp[] = [
+  // Kasus "arahan-belum" (PgKartu) dari sisi PIC demo Rudi Hartono. Nomor 0042 dipilih agar nomor TL berikutnya tetap 0046.
+  tl({
+    no: 'TL-SEN-2026-0042', incidentNo: '', sourceKind: 'arahan', source: 'arahan-skk', action: 'Tambah titik patroli di jalur pipa KM 12', pic: 'Rudi Hartono',
+    createdBy: 'Sari Wulandari', createdAt: '2026-10-28T10:10:00', dueAt: '2026-11-07T17:00:00', status: 'belum-dimulai',
+    expectedEvidence: 'Jadwal patroli baru dan log patroli 1 minggu',
+    arahan: { date: '2026-10-27', channel: 'Rapat', giver: 'Bambang Sutrisno · Kepala Divisi Pengamanan, SKK Migas', title: 'Rapat koordinasi pengamanan 27 Okt 2026', doc: 'Notulen rapat koordinasi 27 Okt.pdf' },
+  }),
+  // Kasus "cctv-belum" (PgKartu) dari sisi PIC demo Rudi Hartono, pemberi tugas Andi Pratama.
+  // Bersumber INS-SEN-2026-0010 (Dalam penanganan) agar tampil sejak awal; nomor di bawah 0045 agar nomor TL berikutnya tetap 0046.
+  tl({
+    no: 'TL-SEN-2026-0035', incidentNo: 'INS-SEN-2026-0010', action: 'Pasang lampu sorot tambahan di sekitar sumur ADR-07', pic: 'Rudi Hartono',
+    createdBy: 'Andi Pratama', createdAt: '2026-10-30T09:40:00', dueAt: '2026-11-06T17:00:00', status: 'belum-dimulai',
+    expectedEvidence: 'Foto lampu terpasang dan menyala malam hari',
+  }),
   tl({
     no: 'TL-SEN-2026-0045', incidentNo: '', sourceKind: 'arahan', source: 'arahan-skk', action: 'Perketat patroli malam di jalur pipa KM 10–16', pic: 'Joko Susilo',
     createdBy: 'Dedi Kurniawan', createdAt: '2026-10-28T09:40:00', dueAt: '2026-11-07T17:00:00', status: 'belum-dimulai',
@@ -62,6 +76,10 @@ const EXTRA: FollowUp[] = [
     expectedEvidence: 'Jadwal patroli baru dan daftar hadir pelatihan',
     evidence: [{ name: 'jadwal-patroli-baru.pdf', sizeKb: 420, at: '2026-11-03T10:12:00' }],
     notes: [{ at: '2026-11-02T16:05:00', by: 'Rudi Hartono', text: 'Pelatihan sesi pertama selesai, 12 dari 20 anggota hadir.', photos: 1 }],
+    history: [
+      { at: '2026-10-20T09:00:00', by: 'Sari Wulandari', text: 'Membuat tindak lanjut dan menugaskan ke Rudi Hartono.' },
+      { at: '2026-11-02T16:05:00', by: 'Rudi Hartono', text: 'Mulai dikerjakan.' },
+    ],
   }),
   tl({
     no: 'TL-SEN-2026-0025', incidentNo: 'INS-SEN-2026-0005', action: 'Pasang CCTV di jalur truk logistik', pic: 'Dedi Kurniawan',
