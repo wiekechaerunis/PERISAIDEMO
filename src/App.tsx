@@ -2,6 +2,7 @@ import { TindakLanjutListPage } from '@/features/tindak-lanjut/pages/TindakLanju
 import { TindakLanjutDetailPage } from '@/features/tindak-lanjut/pages/TindakLanjutDetailPage';
 import { TindakLanjutBaruPage } from '@/features/tindak-lanjut/pages/TindakLanjutBaruPage';
 import { AnalitikPage } from '@/features/analitik/pages/AnalitikPage';
+import { LaporanPage } from '@/features/laporan/LaporanPage';
 import { createBrowserRouter, RouterProvider, Navigate, useLocation, useParams } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { IncidentDetailPage } from '@/features/insiden/pages/IncidentDetailPage';
@@ -92,6 +93,7 @@ const router = createBrowserRouter([
   { path: '/kerawanan/ringkasan', element: <KerawananRingkasanPage /> },
   { path: '/kerawanan/:no', element: <KerawananDetailPage /> },
   { path: '/analitik', element: <AnalitikPage /> },
+  { path: '/laporan', element: <LaporanPage /> },
   { path: '/tugas', element: <TasksPage /> },
   { path: '/tindak-lanjut', element: <TindakLanjutListPage /> },
   { path: '/tindak-lanjut/baru', element: <TindakLanjutBaruPage /> },

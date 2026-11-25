@@ -1,0 +1,100 @@
+/* Dashboard insiden (Analitik): tambahan di luar desain dan perubahan Iterasi 2 (disetujui PM 25 Nov).
+   Gaya dasar dashboard ada di ../dashboard.css (digenerate dari design/dashboard/Dashboard.dc.html). */
+
+/* ---------- Laporan PDF /laporan ---------- */
+.laporan-sheet { background: #e5e7eb; min-height: 100vh; padding: 24px 0; display: flex; flex-direction: column; align-items: center; gap: 24px; font-family: var(--font-sans); }
+.laporan-bar { width: 794px; display: flex; align-items: center; justify-content: space-between; }
+.laporan-page { width: 794px; height: 1123px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.15); overflow: hidden; }
+@media print {
+  @page { size: A4; margin: 0; }
+  .no-print { display: none !important; }
+  .laporan-sheet { background: #fff; padding: 0; gap: 0; display: block; min-height: 0; }
+  .laporan-page { box-shadow: none; break-after: page; page-break-after: always; }
+}
+
+/* ---------- B1: menu sidebar tanpa garis bawah ---------- */
+#nav-utama a.nv, #nav-utama a.nv:hover, #nav-utama a.nv span, .lk-side a, .lk-side a:hover, .lk-side a span { text-decoration: none; }
+
+/* ---------- C1: kotak peta 560px, stage 1000x400 "contain", sisa = warna laut ---------- */
+.db-map { aspect-ratio: auto; height: 560px; touch-action: none; user-select: none; }
+@media (max-width: 1240px) { .db-map { height: 480px; } }
+.db-map.drag { cursor: grabbing; }
+.db-wrap { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); margin: 0 auto; max-width: 1400px; aspect-ratio: 1000 / 400; }
+.db-pan { position: absolute; inset: 0; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+
+/* ---------- C2: kontrol zoom kiri atas, panel ringkasan kanan ---------- */
+.db-map .db-ctl { left: 16px; top: 16px; right: auto; bottom: auto; }
+.db-ctl button:disabled { opacity: .4; cursor: default; }
+.db-panel { position: absolute; top: 16px; right: 16px; bottom: 16px; width: 360px; z-index: 5; background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-overlay); display: flex; flex-direction: column; overflow: hidden; cursor: default; }
+.db-panel .pn-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 14px 12px 10px 16px; border-bottom: 1px solid var(--border-subtle); }
+.db-panel .pn-tt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.db-panel .pn-tt .p-h3 { margin: 0; font-size: 14px; line-height: 20px; }
+.db-panel .pn-x { width: 32px; height: 32px; flex: none; border: 0; border-radius: var(--radius-sm); background: none; color: var(--ink-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.db-panel .pn-x:hover { background: var(--surface-sunken); color: var(--ink); }
+.db-panel .pn-body { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; overscroll-behavior: contain; }
+.pn-row { display: flex; flex-direction: column; gap: 6px; padding: 10px 8px; margin: 0 -8px; border-top: 1px solid var(--border-subtle); border-radius: var(--radius-sm); transition: background .15s ease; }
+.pn-row:first-child { border-top: 0; }
+.pn-row.hl { background: var(--surface-sunken); }
+.pn-row.mute { color: var(--ink-muted); }
+.pn-row .pn-top, .pn-inc .pn-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pn-row .nm { border: 0; background: none; padding: 0; font: inherit; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; text-align: left; }
+.pn-row.mute .nm { color: var(--ink-subtle); cursor: default; }
+.pn-row .db-sev { height: 22px; font-size: 12px; }
+.pn-m { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pn-m.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pn-m > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pn-m .v { font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
+.pn-m .v b { font-size: 13px; color: var(--ink); }
+.pn-m .t, .db-panel .t { display: block; height: 5px; border-radius: 3px; background: var(--surface-sunken); overflow: hidden; }
+.pn-m .t i { display: block; height: 100%; border-radius: 3px; }
+.pn-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; }
+.pn-sum > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pn-sum .wide { grid-column: 1 / -1; }
+.pn-sum b { font-size: 20px; line-height: 26px; }
+.pn-sum b.sm { font-size: 13px; line-height: 18px; }
+.pn-sum .db-stack { margin-top: 4px; }
+.pn-sub { font-size: 12px; font-weight: 700; color: var(--ink); padding: 8px 0 2px; border-top: 1px solid var(--border-subtle); }
+.pn-inc { display: flex; flex-direction: column; gap: 3px; padding: 10px 8px; margin: 0 -8px; border-top: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: var(--ink); text-decoration: none; }
+.pn-inc:hover { background: var(--surface-sunken); }
+.pn-inc b { font-size: 13px; line-height: 18px; font-weight: 600; }
+.db-sumbtn, .db-legbtn { position: absolute; z-index: 4; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 0; border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--shadow-overlay); font: inherit; font-size: 12px; font-weight: 700; color: var(--ink); cursor: pointer; }
+.db-sumbtn { top: 16px; right: 16px; }
+.db-legbtn { left: 16px; bottom: 16px; }
+.db-legbtn[aria-expanded="true"] { background: var(--ink); color: var(--surface); }
+
+/* ---------- B3: kartu legenda di atas tombol Legenda ---------- */
+.db-map .db-leg { left: 16px; bottom: 56px; z-index: 6; max-width: 520px; }
+
+/* ---------- C3: kartu hover, sorot area dan pill ---------- */
+.db-card { position: absolute; z-index: 8; width: 272px; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-overlay); font-size: 12px; line-height: 16px; color: var(--ink); pointer-events: none; }
+.db-card b { font-size: 13px; line-height: 18px; }
+.db-card .s { color: var(--ink-muted); }
+.db-card .r { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; color: var(--ink-subtle); }
+.db-card .r b { color: var(--ink); }
+.db-card .db-sev { height: 20px; padding: 0 7px; font-size: 11px; }
+.db-heat i, .db-heat em { transition: transform .15s ease, box-shadow .15s ease; }
+.db-heat:hover i, .db-heat.on i { transform: scale(1.08); }
+.db-heat.ring i { box-shadow: 0 0 0 2px var(--ink); }
+.db-pill.on { box-shadow: 0 0 0 2px var(--ink), var(--shadow-overlay); }
+.db-pt { cursor: default; }
+.db-pt:hover { box-shadow: 0 0 0 2px var(--ink), 0 1px 3px rgba(28,29,33,.35); }
+
+/* ---------- D2-D5: gerak ---------- */
+@keyframes db-pop { from { opacity: 0; transform: translate(-50%, -50%) scale(.85); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.db-heat { animation: db-pop .2s ease-out both; }
+@keyframes db-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.db-fade { animation: db-fade-in .15s ease-out both; }
+.lk-app .db-mc .t i, .lk-app .db-bar .t i, .lk-app .db-tc .t i, .lk-app .db-stack i, .lk-app .db-col .st i, .lk-app .db-gb .b i, .lk-app .pn-m .t i, .lk-app [data-bar] { transition: width .35s ease, height .35s ease; }
+@keyframes db-flash { from { outline-color: var(--action); } to { outline-color: transparent; } }
+.db-flash { outline: 2px solid transparent; outline-offset: -1px; animation: db-flash .6s ease-out 1; }
+
+/* ---------- E: tooltip tunggal, kartu angka bisa diklik ---------- */
+.db-tip { position: fixed; z-index: 1000; max-width: 260px; padding: 6px 8px; border-radius: var(--radius-sm); background: var(--ink); color: var(--surface); font-size: 12px; line-height: 16px; white-space: pre-line; pointer-events: none; }
+.db-kpi-link { cursor: pointer; transition: border-color .15s ease; }
+.db-kpi-link:hover { border-color: var(--border-control); }
+[data-tip] { cursor: pointer; }
+
+/* ---------- D6: hormati prefers-reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .lk-app *, .db-tip { animation: none !important; transition: none !important; }
+}

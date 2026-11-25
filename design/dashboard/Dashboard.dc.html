@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Dashboard insiden</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/perisailime/tokens.css">
+<link rel="stylesheet" href="ds/perisailime/components/bundle.css">
+<link rel="stylesheet" href="lk.css">
+<link rel="stylesheet" href="ins.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:var(--ink)}
+.db-ai{background:var(--accent-card-bg);border:1px solid var(--accent-card-border);border-radius:var(--radius-xl);padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.db-ai .hd{display:flex;align-items:center;gap:8px}
+.db-ai .hd .ic{width:24px;height:24px;border-radius:var(--radius-sm);background:var(--action);color:var(--on-action);display:flex;align-items:center;justify-content:center}
+.db-ai .hd b{font-size:14px;line-height:20px}
+.db-ai .hd .p-cap{margin-left:4px}
+.db-ai p{margin:0;max-width:900px;font-size:14px;line-height:22px;color:var(--ink)}
+.db-ai .lnk{border:0;background:none;padding:0;font:inherit;font-weight:600;color:var(--ink);text-decoration:underline;text-decoration-color:var(--action-line);text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer}
+.db-ai .ask{display:flex;align-items:center;gap:8px;height:40px;padding:0 6px 0 12px;background:var(--surface);border:1px solid var(--accent-card-border);border-radius:var(--radius-md);cursor:text;max-width:900px}
+.db-ai .ask .ph{flex:1;font-size:13px;color:var(--ink-muted)}
+.db-ai .ask .go{width:28px;height:28px;border-radius:var(--radius-sm);background:var(--surface-sunken);color:var(--ink-muted);display:flex;align-items:center;justify-content:center}
+.db-ai .ask .go svg,.db-lvpop .cb svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.db-filters{display:flex;gap:8px;align-items:center;flex-wrap:nowrap;padding:12px 16px}
+.db-sel{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 10px 0 12px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);font:inherit;font-size:13px;cursor:pointer;color:var(--ink);white-space:nowrap}
+.db-sel:hover{border-color:var(--border-control)}
+.db-sel .k{color:var(--ink-muted);font-weight:500}
+.db-sel .v{font-weight:600}
+.db-sel .dots{display:inline-flex;gap:3px;margin-left:2px}
+.db-sel .dots i{width:7px;height:7px;border-radius:50%}
+.db-lvpop{position:absolute;left:0;top:44px;width:260px;z-index:30;padding:6px;display:flex;flex-direction:column}
+.db-lvpop .row{display:flex;align-items:center;gap:10px;height:36px;padding:0 8px;border:0;background:none;border-radius:var(--radius-sm);font:inherit;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;text-align:left}
+.db-lvpop .row:hover{background:var(--surface-sunken)}
+.db-lvpop .row i{width:8px;height:8px;border-radius:50%}
+.db-lvpop .cb{width:16px;height:16px;border-radius:4px;box-shadow:inset 0 0 0 1.5px var(--border-control);display:flex;align-items:center;justify-content:center;color:transparent}
+.db-lvpop .row[aria-checked="true"] .cb{background:var(--ink);box-shadow:none;color:var(--surface)}
+.db-lvpop .ft{display:flex;justify-content:space-between;gap:8px;padding:8px 4px 2px 4px;margin-top:4px;border-top:1px solid var(--border-subtle)}
+.db-tg{display:inline-flex;align-items:center;gap:8px;border:0;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;padding:0 4px;height:36px;white-space:nowrap}
+.db-af{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.db-af .x{border:0;background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);border-radius:var(--radius-pill);height:28px;padding:0 6px 0 10px;font:inherit;font-size:12px;font-weight:600;display:inline-flex;gap:4px;align-items:center;cursor:pointer;color:var(--ink)}
+.db-clr{border:0;background:none;font:inherit;font-size:12px;font-weight:600;color:var(--ink-muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.db-leg button.sw{border:0;background:none;padding:2px 4px;margin:-2px -4px;border-radius:4px;font:inherit;font-size:12px;cursor:pointer}
+.db-leg button.sw[aria-pressed="false"]{opacity:.4;text-decoration:line-through}
+.db-mapc{padding:0;overflow:hidden}
+.db-maphd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 20px 12px 20px}
+.db-crumb{display:flex;align-items:center;gap:6px;font-size:13px;flex-wrap:wrap}
+.db-crumb button{border:0;background:none;padding:0;font:inherit;color:var(--ink-muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.db-crumb .cur{font-weight:700;color:var(--ink)}
+.db-crumb .sep{color:var(--ink-disabled)}
+.db-map{position:relative;width:100%;aspect-ratio:1000/400;overflow:hidden;background:color-mix(in srgb,var(--status-info-bg) 55%,var(--surface));border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)}
+.db-stage{position:absolute;inset:0;transform-origin:0 0;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.db-stage img{position:absolute}
+.db-heat{position:absolute;transform:translate(-50%,-50%);aspect-ratio:1;border:0;padding:0;border-radius:50%;cursor:pointer;background:transparent}
+.db-heat:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+.db-heat i{position:absolute;inset:0;border-radius:50%;pointer-events:none}
+.db-heat em{position:absolute;left:50%;top:50%;width:18%;height:18%;transform:translate(-50%,-50%);border-radius:50%;box-shadow:0 0 0 1.5px var(--surface)}
+.db-wk{position:absolute;transform:translate(-50%,-50%);border-style:dashed;border-color:var(--ink-muted);border-radius:22%;pointer-events:none}
+.db-lbl{position:absolute;transform:translate(-50%,0);white-space:nowrap;font-weight:600;color:var(--ink);text-shadow:0 0 3px var(--surface),0 0 3px var(--surface),0 0 3px var(--surface);pointer-events:none}
+.db-pt{position:absolute;width:12px;height:12px;transform:translate(-50%,-50%);border-radius:50%;box-shadow:0 0 0 2px var(--surface),0 1px 3px rgba(28,29,33,.35)}
+.db-site{position:absolute;transform:translate(-50%,0);white-space:nowrap;font-size:11px;line-height:14px;font-weight:600;color:var(--ink-subtle);background:var(--surface);padding:2px 6px;border-radius:var(--radius-xs);box-shadow:0 0 0 1px var(--border);pointer-events:none}
+.db-pill{position:absolute;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:var(--radius-pill);background:var(--surface);box-shadow:var(--shadow-overlay);border:0;font:inherit;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap}
+.db-pill i{width:8px;height:8px;border-radius:50%;flex:none}
+.db-pill .m{font-weight:500;color:var(--ink-muted)}
+.db-pill.none{background:var(--surface-subtle);color:var(--ink-muted)}
+.db-pill.nr{background:repeating-linear-gradient(135deg,var(--surface) 0 5px,var(--surface-sunken) 5px 10px);color:var(--ink-muted)}
+.db-ctl{position:absolute;right:16px;top:16px;display:flex;flex-direction:column;gap:6px}
+.db-ctl button{width:36px;height:36px;border:0;border-radius:var(--radius-md);background:var(--surface);box-shadow:var(--shadow-overlay);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+.db-ctl button[disabled]{color:var(--ink-disabled);cursor:default}
+.db-leg{position:absolute;left:16px;bottom:16px;background:var(--surface);box-shadow:var(--shadow-overlay);border-radius:var(--radius-lg);padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:16px}
+.db-leg .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.db-leg .sw{display:inline-flex;align-items:center;gap:4px;color:var(--ink-subtle)}
+.db-leg .sw i{width:10px;height:10px;border-radius:50%}
+.db-leg .ramp{display:inline-flex;align-items:center;gap:6px;color:var(--ink-muted)}
+.db-leg .ramp span{width:64px;height:8px;border-radius:4px;background:linear-gradient(90deg,color-mix(in srgb,var(--sev-high-dot) 18%,transparent),var(--sev-high-dot))}
+.db-hint{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:var(--ink);color:var(--surface);font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--radius-pill)}
+.db-strip{padding:16px 20px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.db-wt{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.db-wt th{font-size:12px;font-weight:600;color:var(--ink-muted);text-align:left;padding:0 10px 8px 0;white-space:nowrap}
+.db-wt td{padding:12px 24px 12px 0;border-top:1px solid var(--border-subtle);vertical-align:middle}
+.db-wt tr.on td{background:var(--action-subtle-bg)}
+.db-wt .nm{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}
+.db-mc{display:flex;flex-direction:column;gap:6px;max-width:200px}
+.db-mc .mv{display:flex;align-items:baseline;gap:8px}
+.db-mc .mv b{font-size:14px;line-height:20px;font-weight:700}
+.db-mc .mv span{font-size:12px;color:var(--ink-muted);font-weight:500}
+.db-mc .t{height:6px;border-radius:3px;background:var(--surface-sunken);overflow:hidden}
+.db-mc .t i{display:block;height:100%;border-radius:3px}
+.db-wt tr.mute td{color:var(--ink-muted)}
+.db-wt tr.mute .nm{color:var(--ink-subtle)}
+.db-bar{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px;align-items:center}
+.db-bar .t{height:8px;border-radius:4px;background:var(--surface-sunken);overflow:hidden}
+.db-bar .t i{display:block;height:100%;border-radius:4px}
+.db-bar .n{text-align:right;font-weight:600;white-space:nowrap}
+.db-sev{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;white-space:nowrap}
+.db-sev i{width:7px;height:7px;border-radius:50%}
+.db-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;background:var(--surface-sunken)}
+.db-stack i{display:block;height:100%}
+.db-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.db-sum div{display:flex;flex-direction:column;gap:2px}
+.db-sum b{font-size:20px;line-height:26px}
+.db-mx{width:100%;border-collapse:separate;border-spacing:3px;font-size:13px}
+.db-mx th{font-size:12px;font-weight:600;color:var(--ink-muted);padding:4px 6px;text-align:center;vertical-align:bottom}
+.db-mx th.rh{text-align:left;color:var(--ink)}
+.db-mx th .s{display:block;font-weight:500;font-size:11px;line-height:14px}
+.db-mx td{padding:0}
+.db-mx td button{width:100%;height:36px;border:0;border-radius:var(--radius-sm);font:inherit;font-weight:600;cursor:pointer;color:var(--ink)}
+.db-mx td button.z{color:var(--ink-disabled);cursor:default;background:var(--surface-subtle)}
+.db-mx td button.sel{box-shadow:0 0 0 2px var(--ink)}
+.db-mx td.tot{font-weight:700;text-align:center;background:var(--surface-sunken);border-radius:var(--radius-sm)}
+.db-mx tr.dtt th.rh{color:var(--ink-muted)}
+.db-att{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--border-subtle)}
+.db-att:first-child{border-top:0}
+.db-att .ic{width:28px;height:28px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center}
+.db-att .ic.c{background:var(--sev-critical-bg);color:var(--sev-critical-ink)}
+.db-att .ic.w{background:var(--caution-bg);color:var(--caution-ink)}
+.db-att .ic.a{background:var(--action-subtle-bg);color:var(--action-subtle-ink)}
+.db-att b{display:block;font-size:13px;line-height:18px}
+.db-bars{display:grid;gap:14px;height:190px;align-items:end;border-bottom:1px solid var(--chart-grid);background:linear-gradient(to top,var(--chart-grid) 1px,transparent 1px) 0 0/100% 25%}
+.db-col{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;min-width:0}
+.db-col .st{display:flex;flex-direction:column;width:100%;max-width:56px}
+.db-col .st i{display:block;width:100%}
+.db-col .st i:first-child{border-radius:4px 4px 0 0}
+.db-col .v{font-size:11px;font-weight:600;color:var(--ink-subtle)}
+.db-col .mk,.db-trn .mk{width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--surface);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.db-trn{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border-radius:var(--radius-md);background:var(--surface-subtle);font-size:13px;line-height:18px}
+.db-x{display:grid;gap:14px;margin-top:6px;text-align:center;font-size:11px;color:var(--ink-muted)}
+.db-inc{display:grid;grid-template-columns:150px minmax(0,1fr) 110px 120px 64px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--border-subtle);font-size:13px}
+.db-id{font-family:var(--font-mono);font-size:12px;color:var(--ink-subtle)}
+.db-attc{display:flex;flex-direction:column}
+.db-tc{display:grid;grid-template-columns:190px minmax(0,1fr) 40px 40px 64px;gap:10px;align-items:center;border:0;background:none;padding:7px 8px;margin:0 -8px;border-radius:var(--radius-md);font:inherit;font-size:13px;color:var(--ink);cursor:pointer;text-align:left}
+.db-tc:hover{background:var(--surface-sunken)}
+.db-tc.sel{background:var(--action-subtle-bg)}
+.db-tc .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-tc .t{height:8px;border-radius:4px;background:var(--surface-sunken);overflow:hidden}
+.db-tc .t i{display:block;height:100%;border-radius:4px;background:var(--chart-series-1)}
+.db-tc.dtt .t i{background:var(--border-control)}
+.db-tc .v{text-align:right;font-weight:700}
+.db-tc .p{text-align:right;font-size:12px;color:var(--ink-muted)}
+.db-tc .d{text-align:right;font-size:12px;font-weight:600;white-space:nowrap}
+.db-tc .d.up{color:var(--sev-critical-ink)}.db-tc .d.dn{color:var(--status-success-ink)}.db-tc .d.eq{color:var(--ink-muted)}
+.db-ik{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.db-ik div{display:flex;flex-direction:column;gap:2px}
+.db-ik b{font-size:20px;line-height:26px}
+.db-gb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;height:150px;align-items:end;border-bottom:1px solid var(--chart-grid);background:linear-gradient(to top,var(--chart-grid) 1px,transparent 1px) 0 0/100% 25%}
+.db-gb .g{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.db-gb .b{display:flex;gap:3px;align-items:flex-end;height:100%}
+.db-gb .b i{display:block;width:14px;border-radius:3px 3px 0 0}
+.db-gb .m{position:relative;top:18px;height:0;font-size:11px;color:var(--ink-muted)}
+.db-key{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.db-stw{border-top:1px solid var(--border-subtle)}
+.db-stw:first-child{border-top:0}
+.db-str{display:flex;align-items:center;gap:10px;padding:8px 6px;margin:0 -6px;width:calc(100% + 12px);border:0;background:none;border-radius:var(--radius-sm);font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.db-str:hover{background:var(--surface-sunken)}
+.db-str .ch{color:var(--ink-muted);transition:transform .15s ease}
+.db-stl{display:flex;flex-direction:column;padding:0 0 8px 20px}
+.db-sti{display:grid;grid-template-columns:128px minmax(0,1fr) auto 72px;gap:10px;align-items:center;padding:7px 6px;margin:0 -6px;border-radius:var(--radius-sm);text-decoration:none;color:var(--ink);font-size:12px}
+.db-sti:hover{background:var(--surface-sunken)}
+.db-sti .tt{display:flex;flex-direction:column;min-width:0}
+.db-sti .tt b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-sti .tt span{color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-sti .x{text-align:right;color:var(--ink-muted);white-space:nowrap}
+.db-sti .x.late{color:var(--sev-critical-ink);font-weight:600}
+.db-kv{display:flex;flex-direction:column;gap:2px;align-items:flex-start;border:0;background:none;padding:6px;margin:-6px;border-radius:var(--radius-sm);font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.db-kv:hover{background:var(--surface-sunken)}
+.db-kv b{font-size:20px;line-height:26px}
+.db-str i{width:10px;height:10px;border-radius:2px}
+.db-ins{display:flex;flex-direction:column}
+.db-ins .row{display:grid;grid-template-columns:auto minmax(0,1fr) 16px;gap:12px;align-items:center;border:0;border-top:1px solid var(--border-subtle);background:none;padding:10px 8px;margin:0 -8px;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border-radius:var(--radius-md)}
+.db-ins .row:first-child{border-top-color:transparent}
+.db-ins .row:hover{background:var(--surface-sunken)}
+.db-ai .db-ins .row{border-top-color:var(--accent-card-border)}
+.db-ai .db-ins .row:first-child{border-top-color:transparent}
+.db-ai .db-ins .row:hover{background:color-mix(in srgb,var(--action-subtle-bg) 70%,var(--surface))}
+.db-ins .m{min-width:64px;height:36px;padding:0 8px;box-sizing:border-box;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;white-space:nowrap}
+.db-ins .m.bad{background:var(--sev-critical-bg);color:var(--sev-critical-ink)}
+.db-ins .m.warn{background:var(--caution-bg);color:var(--caution-ink)}
+.db-ins .m.info{background:var(--status-info-bg);color:var(--status-info-ink)}
+.db-ins .m.neu{background:var(--surface);color:var(--ink)}
+.db-ins .ic{width:32px;height:32px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center}
+.db-ins .ic.c{background:var(--sev-critical-bg);color:var(--sev-critical-ink)}
+.db-ins .ic.w{background:var(--caution-bg);color:var(--caution-ink)}
+.db-ins .ic.a{background:var(--status-info-bg);color:var(--status-info-ink)}
+.db-ins .tx{display:flex;flex-direction:column;gap:1px;min-width:0}
+.db-ins .tx b{font-size:13px;line-height:18px}
+.db-ins .tx span{font-size:12px;line-height:16px;color:var(--ink-muted)}
+.db-ins .ch{color:var(--ink-muted)}
+.db-ai .ask{margin-top:auto}
+/* Temuan AI: kartu terang, garis tepi bergradasi tipis (usulan, warna di luar token DS v2) */
+.db-ai{border:1px solid transparent;color:var(--ink);box-shadow:0 4px 16px rgba(28,29,33,.05);background:radial-gradient(70% 90% at 100% 0%,color-mix(in srgb,var(--action) 16%,transparent) 0%,transparent 70%) padding-box,radial-gradient(60% 80% at 0% 100%,rgba(42,120,214,.06) 0%,transparent 70%) padding-box,linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,var(--action) 0%,color-mix(in srgb,var(--action) 40%,#8DB8EE) 55%,#8DB8EE 100%) border-box}
+.db-ai .hd .ic{background:linear-gradient(135deg,var(--action),color-mix(in srgb,var(--action) 55%,#8DB8EE));color:var(--on-action)}
+.db-ai .db-ins .row{border-top-color:var(--border-subtle)}
+.db-ai .db-ins .row:first-child{border-top-color:transparent}
+.db-ai .db-ins .row:hover{background:var(--surface-subtle)}
+.db-ai .db-ins .m{background:none;justify-content:flex-start;padding:0;min-width:64px;font-size:20px;letter-spacing:-.01em}
+.db-ai .db-ins .m.bad{color:var(--sev-critical-ink)}
+.db-ai .db-ins .m.warn{color:var(--caution-ink)}
+.db-ai .db-ins .m.info{color:var(--status-info-ink)}
+.db-ai .db-ins .m.neu{color:var(--ink)}
+.db-ai .ask{background:var(--surface-subtle);border-color:var(--border)}
+.db-ai .ask .go{background:var(--surface);box-shadow:inset 0 0 0 1px var(--border);color:var(--ink-subtle)}
+.lk-grid > .p-card.c5,.lk-grid > .p-card.c6,.lk-grid > .p-card.c7,.lk-grid > .db-ai{align-self:stretch;display:flex;flex-direction:column}
+.db-push{margin-top:auto!important}
+.db-dl{position:absolute;right:0;top:44px;width:340px;z-index:40;padding:6px;display:flex;flex-direction:column}
+.db-dl .hd{margin:0;padding:6px 8px 8px 8px;font-size:12px;color:var(--ink-muted);border-bottom:1px solid var(--border-subtle)}
+.db-dl .it{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;border:0;background:none;padding:10px 8px;border-radius:var(--radius-sm);font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.db-dl .it:hover{background:var(--surface-sunken)}
+.db-dl .it b{display:block;font-size:13px}
+.db-dl .it span span{font-size:12px;line-height:16px;color:var(--ink-muted)}
+.db-dl .fi{width:36px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:.02em}
+.db-dl .fi.pdf{background:var(--sev-critical-bg);color:var(--sev-critical-ink)}
+.db-dl .fi.xls{background:var(--status-success-bg);color:var(--status-success-ink)}
+.db-foot{font-size:12px;line-height:18px;color:var(--ink-muted);margin:0}
+</style>
+</helmet>
+
+<div class="lk-app p-app" style="min-height: 2900px">
+  <dc-import name="Sidebar" active="analitik" user="{{user}}" role="{{role}}" task-count="{{tasks}}" h="2900" hint-size="240px,2900px"></dc-import>
+  <div class="lk-main">
+    <header class="p-appbar top"><div class="hdr">
+      <button type="button" class="p-sbtoggle" aria-expanded="true" aria-label="Perkecil sidebar"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"></path></svg></button>
+      <div class="p-col ttl"><h1>Dashboard insiden</h1><span class="sub">{{subtitle}}</span></div>
+      <div class="acts" style="display: flex; gap: 8px; align-items: center; position: relative">
+        <button type="button" class="p-input" aria-label="Periode" style="height: 36px; border: 0; font: inherit; font-weight: 600; cursor: pointer"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M3 5h18v16H3zM16 3v4M8 3v4M3 10h18"></path></svg>Semester I 2026<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"></path></svg></button>
+        <button type="button" class="p-btn p-btn-secondary p-btn-sm" aria-haspopup="menu" aria-expanded="{{dlStr}}" onClick="{{toggleDl}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>Unduh<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m6 9 6 6 6-6"></path></svg></button>
+        <sc-if value="{{dlOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop db-dl" role="menu" aria-label="Unduh">
+          <p class="hd">Mengikuti filter aktif: {{dlScope}}</p>
+          <button type="button" role="menuitem" class="it" onClick="{{toggleDl}}"><span class="fi pdf" aria-hidden="true">PDF</span><span><b>Laporan PDF</b><span>5 halaman A4: ringkasan, peta, tren, jenis, wilayah, per KKKS, insiden Tinggi/Kritis</span></span></button>
+          <button type="button" role="menuitem" class="it" onClick="{{toggleDl}}"><span class="fi xls" aria-hidden="true">XLS</span><span><b>Data Excel</b><span>6 sheet: ringkasan, per wilayah, kategori × wilayah, rekap bulanan format SKK, daftar insiden</span></span></button>
+        </div></sc-if>
+      </div>
+      <span class="p-vsep" aria-hidden="true"></span>
+      <div class="util"><button type="button" class="p-ai"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg><span class="lbl">Tanya AI</span></button><button type="button" class="p-ibtn ghost p-bell" aria-label="Notifikasi"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"></path></svg></button></div>
+    </div></header>
+    <main class="lk-content">
+      <sc-if value="{{isKkks}}" hint-placeholder-val="{{false}}"><div class="p-note" style="align-items: flex-start"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span><b>Hanya data organisasi Anda.</b> Peta terbuka di wilayah kerja PT Samudra Energi Nusantara. Data KKKS lain dan angka wilayah atau nasional tidak ditampilkan.</span></div></sc-if>
+
+      <section class="p-card db-filters" aria-label="Filter">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="3"><button type="button" class="db-sel"><span class="k">{{f.k}}</span><span class="v">{{f.v}}</span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="m6 9 6 6 6-6"></path></svg></button></sc-for>
+        <div style="position: relative">
+          <button type="button" class="db-sel" aria-haspopup="true" aria-expanded="{{lvOpenStr}}" onClick="{{toggleLv}}"><span class="k">Level</span><span class="v">{{lvSum}}</span><span class="dots" aria-hidden="true"><sc-for list="{{lvDots}}" as="d" hint-placeholder-count="5"><i style="background: {{d.c}}"></i></sc-for></span><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="m6 9 6 6 6-6"></path></svg></button>
+          <sc-if value="{{lvOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop db-lvpop" role="group" aria-label="Pilih level keparahan">
+            <sc-for list="{{lvChips}}" as="c" hint-placeholder-count="5"><button type="button" role="checkbox" aria-checked="{{c.on}}" class="row" onClick="{{c.pick}}"><span class="cb" aria-hidden="true"><svg viewBox="0 0 24 24" style="width: 12px; height: 12px"><path d="M5 12l4 4 10-10"></path></svg></span><i style="background: {{c.c}}"></i><span style="flex: 1">{{c.n}}</span><span class="p-cap">{{c.cnt}}</span></button></sc-for>
+            <div class="ft"><button type="button" class="p-btn p-btn-secondary p-btn-sm" onClick="{{lvAll}}">Semua level</button><button type="button" class="p-btn p-btn-primary p-btn-sm" onClick="{{toggleLv}}">Selesai</button></div>
+          </div></sc-if>
+        </div>
+        <span style="flex: 1"></span>
+        <sc-if value="{{isSkk}}" hint-placeholder-val="{{true}}"><button type="button" class="db-tg" role="switch" aria-checked="{{dttStr}}" onClick="{{toggleDtt}}" title="Daerah Terbatas Terlarang. Belum diputuskan apakah dihitung sebagai insiden."><span class="p-switch {{dttCls}}" aria-hidden="true"></span>Hitung DTT</button></sc-if>
+      </section>
+      <sc-if value="{{hasAf}}" hint-placeholder-val="{{false}}"><div class="db-af" style="margin-top: -8px"><span class="p-cap">Filter aktif:</span><sc-for list="{{af}}" as="a" hint-placeholder-count="1"><button type="button" class="x" onClick="{{a.clear}}" aria-label="Hapus filter {{a.l}}">{{a.l}}<svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-for><button type="button" class="db-clr" onClick="{{clearAll}}">Hapus semua</button></div></sc-if>
+      <div class="lk-grid">
+        <div class="c12" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px"><sc-for list="{{kpis}}" as="k" hint-placeholder-count="4"><div class="p-kpi">
+          <div class="k-head">{{k.label}}</div>
+          <div><span class="k-val">{{k.val}}</span><span class="k-unit">{{k.unit}}</span></div>
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap"><span class="p-trend {{k.trCls}}">{{k.tr}}</span><span class="p-cap">{{k.cmp}}</span></div>
+          <a class="k-link" href="{{k.href}}">{{k.link}}</a>
+        </div></sc-for></div>
+
+
+        <section class="db-ai c7" aria-label="Temuan AI" style="align-self: stretch">
+          <div class="hd"><span class="ic" aria-hidden="true"><svg class="p-ic" viewBox="0 0 24 24" style="width: 16px; height: 16px"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg></span><b>Temuan AI</b><span class="p-cap">{{aiCap}}</span></div>
+          <div class="db-ins"><sc-for list="{{ins}}" as="g" hint-placeholder-count="4"><button type="button" class="row" onClick="{{g.go}}">
+            <span class="m {{g.tone}}">{{g.m}}</span>
+            <span class="tx"><b>{{g.t}}</b><span>{{g.d}}</span></span>
+            <svg class="p-ic ch" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m9 6 6 6-6 6"></path></svg>
+          </button></sc-for></div>
+          <label class="ask"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; color: var(--ink-muted)"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"></path></svg><span class="ph">{{askPh}}</span><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></label>
+        </section>
+
+        <section class="p-card c5 db-attc" style="align-self: stretch">
+          <div class="lk-card-head" style="margin-bottom: 6px"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Perlu tindakan</h2><span class="p-cap">Paling mendesak di atas · seluruh wilayah</span></div><span class="p-tag t-caution">{{attnCount}}</span></div>
+          <div class="db-ins"><sc-for list="{{attn}}" as="a" hint-placeholder-count="4"><button type="button" class="row" onClick="{{a.go}}">
+            <span class="ic {{a.k}}" aria-hidden="true"><svg class="p-ic" viewBox="0 0 24 24" style="width: 15px; height: 15px"><path d="{{a.ic}}"></path></svg></span>
+            <span class="tx"><b>{{a.t}}</b><span>{{a.d}}</span></span>
+            <svg class="p-ic ch" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="m9 6 6 6-6 6"></path></svg>
+          </button></sc-for></div>
+        </section>
+
+        <section class="p-card c12 db-mapc">
+          <div class="db-maphd">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <h2 class="p-h2">Peta insiden</h2>
+              <nav class="db-crumb" aria-label="Tingkat peta"><sc-for list="{{crumb}}" as="b" hint-placeholder-count="2"><sc-if value="{{b.link}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{b.go}}">{{b.t}}</button><span class="sep" aria-hidden="true">›</span></sc-if><sc-if value="{{b.cur}}" hint-placeholder-val="{{false}}"><span class="cur" aria-current="location">{{b.t}}</span></sc-if></sc-for></nav>
+            </div>
+            <span class="p-cap" style="text-align: right; max-width: 380px">{{mapCap}}</span>
+          </div>
+          <div class="db-map" role="img" aria-label="{{mapAria}}">
+            <div class="db-stage" style="transform: {{mapT}}">
+              <img src="peta/id-prov.svg" alt="" aria-hidden="true" style="inset: 0; width: 100%; height: 100%; opacity: {{baseOp}}; transition: opacity .3s ease">
+              <sc-if value="{{hasDet}}" hint-placeholder-val="{{false}}"><img src="{{detSrc}}" alt="" aria-hidden="true" style="left: {{det.l}}; top: {{det.t}}; width: {{det.w}}; height: {{det.h}}"></sc-if>
+
+              <sc-for list="{{heat}}" as="h" hint-placeholder-count="10"><button type="button" class="db-heat" title="{{h.tip}}" aria-label="{{h.tip}}" onClick="{{h.go}}" style="left: {{h.x}}; top: {{h.y}}; width: {{h.s}}"><i style="background: {{h.bg}}"></i><em style="background: {{h.c}}"></em></button></sc-for>
+              <sc-for list="{{lbls}}" as="l" hint-placeholder-count="0"><span class="db-lbl" style="left: {{l.x}}; top: {{l.y}}; font-size: {{l.fs}}">{{l.t}}</span></sc-for>
+
+            </div>
+            <sc-for list="{{sites}}" as="t" hint-placeholder-count="0"><span class="db-site" style="left: {{t.x}}; top: {{t.y}}">{{t.n}}</span></sc-for>
+            <sc-for list="{{pts}}" as="p" hint-placeholder-count="0"><span class="db-pt" title="{{p.tip}}" style="left: {{p.x}}; top: {{p.y}}; background: {{p.c}}"></span></sc-for>
+            <sc-for list="{{pills}}" as="p" hint-placeholder-count="6"><button type="button" class="db-pill {{p.cls}}" style="left: {{p.x}}; top: {{p.y}}" onClick="{{p.go}}" aria-label="{{p.aria}}"><i style="background: {{p.c}}"></i>{{p.n}}<span class="m">{{p.m}}</span></button></sc-for>
+            <div class="db-ctl">
+              <button type="button" aria-label="Perkecil satu tingkat" onClick="{{zoomOut}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M5 12h14"></path></svg></button>
+              <sc-if value="{{isSkk}}" hint-placeholder-val="{{true}}"><button type="button" aria-label="Kembali ke seluruh Indonesia" onClick="{{zoomHome}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M3 11l9-8 9 8M5 10v10h14V10"></path></svg></button></sc-if>
+            </div>
+            <sc-if value="{{showHint}}" hint-placeholder-val="{{true}}"><span class="db-hint">{{hint}}</span></sc-if>
+            <div class="db-leg" aria-label="Legenda peta">
+              <div class="row"><span class="p-cap" style="font-weight: 700; color: var(--ink)">Warna = level tertinggi</span><sc-for list="{{lvChips}}" as="g" hint-placeholder-count="5"><button type="button" class="sw" aria-pressed="{{g.on}}" onClick="{{g.pick}}"><i style="background: {{g.c}}"></i>{{g.n}}</button></sc-for></div>
+              <div class="row"><span class="ramp"><span></span>Makin pekat = makin banyak insiden</span><sc-if value="{{isSkk}}" hint-placeholder-val="{{true}}"><span class="sw"><i style="background: var(--surface-subtle); box-shadow: inset 0 0 0 1px var(--border-control)"></i>Tidak ada insiden tercatat</span><span class="sw"><i style="background: repeating-linear-gradient(135deg, var(--surface) 0 2px, var(--border-control) 2px 3px)"></i>Belum ada laporan</span></sc-if></div>
+            </div>
+          </div>
+
+          <div class="db-strip">
+            <sc-if value="{{zNat}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; justify-content: space-between; align-items: baseline"><h3 class="p-h3" style="margin: 0; font-size: 14px">Per wilayah SKK</h3><span class="p-cap">Klik nama wilayah untuk zoom ke peta.</span></div>
+              <table class="db-wt"><colgroup><col style="width: 22%"><col style="width: 20%"><col style="width: 20%"><col style="width: 18%"><col style="width: 20%"></colgroup>
+                <thead><tr><th>Wilayah</th><th>Insiden · porsi</th><th>Kerugian · porsi</th><th>Level tertinggi</th><th>KKKS melapor (Jun)</th></tr></thead><tbody>
+                <sc-for list="{{wRows}}" as="r" hint-placeholder-count="6"><tr class="{{r.cls}}">
+                  <td><button type="button" class="nm" onClick="{{r.go}}">{{r.n}}</button><span class="p-cap" style="display: block">{{r.note}}</span></td>
+                  <td><div class="db-mc"><div class="mv"><b>{{r.nL}}</b><span>{{r.nP}}</span></div><span class="t"><i style="width: {{r.nw}}; background: var(--chart-series-1)"></i></span></div></td>
+                  <td><div class="db-mc"><div class="mv"><b>{{r.rL}}</b><span>{{r.rP}}</span></div><span class="t"><i style="width: {{r.rw}}; background: var(--action-line)"></i></span></div></td>
+                  <td><span class="db-sev" style="background: {{r.sbg}}; color: {{r.sink}}"><i style="background: {{r.sc}}"></i>{{r.sn}}</span></td>
+                  <td><div class="db-mc"><div class="mv"><b>{{r.rep}}</b><span>{{r.repP}}</span></div><span class="t"><i style="width: {{r.repW}}; background: var(--ink-subtle)"></i></span></div></td>
+                </tr></sc-for>
+              </tbody></table>
+            </sc-if>
+            <sc-if value="{{zArea}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px"><h3 class="p-h3" style="margin: 0; font-size: 14px">{{aTitle}}</h3><a class="p-btn p-btn-secondary p-btn-sm" href="{{listHref}}">Lihat {{aN}} insiden</a></div>
+              <div class="db-sum">
+                <div><span class="p-cap">Insiden</span><b>{{aN}}</b><span class="p-cap">{{aNs}}</span></div>
+                <div><span class="p-cap">Kerugian</span><b>{{aR}}</b><span class="p-cap">{{aRs}}</span></div>
+                <div><span class="p-cap">Sebaran level</span><span class="db-stack" role="img" aria-label="{{aLvAria}}" style="margin-top: 8px"><sc-for list="{{aLv}}" as="v" hint-placeholder-count="5"><i style="width: {{v.w}}; background: {{v.c}}"></i></sc-for></span><span class="p-cap" style="margin-top: 4px">{{aLvAria}}</span></div>
+                <div><span class="p-cap">Kategori terbanyak</span><b style="font-size: 15px; line-height: 22px">{{aCat}}</b><span class="p-cap">{{aCatS}}</span></div>
+              </div>
+              <table class="db-wt"><colgroup><col style="width: 32%"><col style="width: 20%"><col style="width: 20%"><col style="width: 18%"><col style="width: 10%"></colgroup>
+                <thead><tr><th>{{subHead}}</th><th>Insiden</th><th>Kerugian</th><th>Level tertinggi</th><th></th></tr></thead><tbody>
+                <sc-for list="{{subRows}}" as="r" hint-placeholder-count="4"><tr>
+                  <td><span style="font-weight: 700">{{r.n}}</span><span class="p-cap" style="display: block">{{r.sub}}</span></td>
+                  <td><div class="db-mc"><div class="mv"><b>{{r.nL}}</b></div><span class="t"><i style="width: {{r.nw}}; background: var(--chart-series-1)"></i></span></div></td>
+                  <td><div class="db-mc"><div class="mv"><b>{{r.rL}}</b></div><span class="t"><i style="width: {{r.rw}}; background: var(--action-line)"></i></span></div></td>
+                  <td><span class="db-sev" style="background: {{r.sbg}}; color: {{r.sink}}"><i style="background: {{r.sc}}"></i>{{r.sn}}</span></td>
+                  <td style="text-align: right"><button type="button" class="p-btn p-btn-secondary p-btn-sm" onClick="{{r.go}}">Zoom</button></td>
+                </tr></sc-for>
+              </tbody></table>
+            </sc-if>
+            <sc-if value="{{zLoc}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px"><h3 class="p-h3" style="margin: 0; font-size: 14px">{{aTitle}}</h3><a class="p-btn p-btn-secondary p-btn-sm" href="{{listHref}}">Lihat {{aN}} insiden</a></div>
+              <div class="db-sum">
+                <div><span class="p-cap">Insiden</span><b>{{aN}}</b><span class="p-cap">{{aNs}}</span></div>
+                <div><span class="p-cap">Kerugian</span><b>{{aR}}</b><span class="p-cap">{{aRs}}</span></div>
+                <div><span class="p-cap">Sebaran level</span><span class="db-stack" role="img" aria-label="{{aLvAria}}" style="margin-top: 8px"><sc-for list="{{aLv}}" as="v" hint-placeholder-count="5"><i style="width: {{v.w}}; background: {{v.c}}"></i></sc-for></span><span class="p-cap" style="margin-top: 4px">{{aLvAria}}</span></div>
+                <div><span class="p-cap">KKKS · WK</span><b style="font-size: 15px; line-height: 22px">{{aKkks}}</b><span class="p-cap">{{aWk}}</span></div>
+              </div>
+              <div><sc-for list="{{incs}}" as="i" hint-placeholder-count="4"><div class="db-inc">
+                <span class="db-id">{{i.id}}</span>
+                <span><b style="font-weight: 600">{{i.t}}</b><span class="p-cap" style="display: block">{{i.d}}</span></span>
+                <span class="db-sev" style="background: {{i.sbg}}; color: {{i.sink}}; justify-self: start"><i style="background: {{i.sc}}"></i>{{i.sn}}</span>
+                <span class="p-cap" style="font-weight: 600; color: var(--ink-subtle)">{{i.st}}</span>
+                <a class="p-btn p-btn-secondary p-btn-sm" href="{{i.href}}">Buka</a>
+              </div></sc-for></div>
+              <span class="p-cap">{{incFoot}}</span>
+            </sc-if>
+          </div>
+        </section>
+
+        <section class="p-card c6">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Jenis insiden terbanyak</h2><span class="p-cap">{{catCap}}</span></div></div>
+          <div style="display: flex; flex-direction: column; gap: 4px"><sc-for list="{{topCat}}" as="c" hint-placeholder-count="6"><button type="button" class="db-tc {{c.cls}}" onClick="{{c.go}}" aria-label="{{c.aria}}">
+            <span class="nm">{{c.n}}</span><span class="t"><i style="width: {{c.w}}"></i></span><span class="v">{{c.v}}</span><span class="p">{{c.p}}</span><span class="d {{c.dc}}">{{c.d}}</span>
+          </button></sc-for></div>
+          <p class="p-cap db-push" style="margin: 10px 0 0 0; padding-top: 10px">Klik jenis untuk menyaring seluruh halaman. Pembanding: Semester II 2025.</p>
+        </section>
+
+        <section class="p-card c6">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Insiden dan kerawanan</h2><span class="p-cap">Kerawanan = ancaman atau gangguan tanpa kerugian, indikator awal</span></div><div class="p-cap" style="display: flex; gap: 12px; white-space: nowrap"><span><i class="db-key" style="background: var(--chart-series-1)"></i>Insiden</span><span><i class="db-key" style="background: var(--action-line)"></i>Kerawanan</span></div></div>
+          <div class="db-ik">
+            <div><span class="p-cap">Insiden</span><b>{{ikN}}</b></div>
+            <div><span class="p-cap">Kerawanan</span><b>{{ikK}}</b></div>
+            <div><span class="p-cap">Naik jadi insiden</span><b>{{ikUp}}</b></div>
+          </div>
+          <div class="db-gb" role="img" aria-label="{{ikAria}}"><sc-for list="{{ikBars}}" as="b" hint-placeholder-count="6"><div class="g"><span class="b"><i style="height: {{b.hn}}; background: var(--chart-series-1)"></i><i style="height: {{b.hk}}; background: var(--action-line)"></i></span></div></sc-for></div>
+          <div class="db-x" style="grid-template-columns: repeat(6, minmax(0, 1fr))" aria-hidden="true"><sc-for list="{{ikBars}}" as="b" hint-placeholder-count="6"><span>{{b.m}}</span></sc-for></div>
+          <p class="p-cap db-push" style="margin: 12px 0 0 0; padding-top: 12px">{{ikNote}}</p>
+        </section>
+
+        <section class="p-card c7">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Tren per bulan</h2><span class="p-cap">{{trCap}}</span></div><div class="p-qf" role="radiogroup" aria-label="Ukuran grafik"><sc-for list="{{measures}}" as="q" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{q.on}}" onClick="{{q.pick}}">{{q.label}}</button></sc-for></div></div>
+          <div class="db-bars" style="grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 24px" role="img" aria-label="{{trAria}}"><sc-for list="{{trend}}" as="b" hint-placeholder-count="6"><div class="db-col"><sc-if value="{{b.hasMk}}" hint-placeholder-val="{{false}}"><span class="mk" aria-hidden="true">1</span></sc-if><span class="v">{{b.lbl}}</span><span class="st"><sc-if value="{{b.hasD}}" hint-placeholder-val="{{false}}"><i style="height: {{b.hd}}; background: var(--border-control)"></i></sc-if><i style="height: {{b.h}}; background: {{b.c}}; box-shadow: {{b.ring}}"></i></span></div></sc-for></div>
+          <div class="db-x" style="grid-template-columns: repeat(6, minmax(0, 1fr))" aria-hidden="true"><sc-for list="{{trend}}" as="b" hint-placeholder-count="6"><span>{{b.m}}</span></sc-for></div>
+          <div class="db-trn db-push"><span class="mk" aria-hidden="true">1</span><span><b>{{trNoteT}}</b> {{trNoteD}}</span><span class="p-tag t-act" style="height: 20px; margin-left: auto">Dibuat AI</span></div><div style="display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap"><sc-if value="{{dtt}}" hint-placeholder-val="{{false}}"><span class="p-cap"><i style="display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--border-control); vertical-align: -1px"></i> DTT</span></sc-if></div>
+        </section>
+
+        <section class="p-card c5">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">Status penanganan</h2><span class="p-cap">{{stCap}}</span></div></div>
+          <div class="db-stack" style="height: 14px" role="img" aria-label="{{stAria}}"><sc-for list="{{stBar}}" as="v" hint-placeholder-count="3"><i style="width: {{v.w}}; background: {{v.c}}"></i></sc-for></div>
+          <div style="display: flex; flex-direction: column; margin-top: 10px"><sc-for list="{{st}}" as="v" hint-placeholder-count="3"><div class="db-stw">
+            <button type="button" class="db-str" aria-expanded="{{v.openStr}}" onClick="{{v.go}}"><i style="background: {{v.c}}"></i><span style="flex: 1; text-align: left">{{v.n}}</span><b>{{v.v}}</b><span class="p-cap" style="width: 40px; text-align: right">{{v.p}}</span><svg class="p-ic ch" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; transform: {{v.rot}}"><path d="m9 6 6 6-6 6"></path></svg></button>
+            <sc-if value="{{v.open}}" hint-placeholder-val="{{false}}"><div class="db-stl"><sc-for list="{{v.items}}" as="i" hint-placeholder-count="3"><a class="db-sti" href="{{i.href}}"><span class="db-id">{{i.id}}</span><span class="tt"><b>{{i.t}}</b><span>{{i.d}}</span></span><span class="db-sev" style="background: {{i.sbg}}; color: {{i.sink}}"><i style="background: {{i.sc}}"></i>{{i.sn}}</span><span class="x {{i.xc}}">{{i.x}}</span></a></sc-for><a class="lk-alink" href="{{listHref}}" style="font-size: 12px; padding: 8px 0 2px 0">{{v.more}}</a></div></sc-if>
+          </div></sc-for></div>
+          <div class="db-ik db-push" style="margin-top: 12px; padding-top: 14px; border-top: 1px dashed var(--border-control); grid-template-columns: 1fr 1fr; margin-bottom: 0">
+            <button type="button" class="db-kv" onClick="{{lateGo}}" aria-expanded="{{lateOpenStr}}"><span class="p-cap">Lewat tenggat</span><b style="color: var(--sev-critical-ink)">{{stLate}}</b><span class="p-cap" style="text-decoration: underline; text-underline-offset: 3px">Lihat insidennya</span></button>
+            <div><span class="p-cap">Median lama penanganan</span><b>{{stMed}}</b><span class="p-cap">dari {{stClosed}} insiden yang ditutup</span></div>
+          </div>
+        </section>
+
+        <section class="p-card c12">
+          <div class="lk-card-head"><div style="display: flex; flex-direction: column; gap: 2px"><h2 class="p-h2">{{mxTitle}}</h2><span class="p-cap">{{mxCap}}</span></div></div>
+          <div style="overflow-x: auto"><table class="db-mx">
+            <thead><tr><th class="rh" style="width: 210px">Kategori</th><sc-for list="{{mxCols}}" as="h" hint-placeholder-count="6"><th>{{h.n}}<span class="s">{{h.s}}</span></th></sc-for><th>Total</th></tr></thead>
+            <tbody><sc-for list="{{mxRows}}" as="r" hint-placeholder-count="8"><tr class="{{r.cls}}"><th class="rh" scope="row">{{r.n}}</th><sc-for list="{{r.cells}}" as="c" hint-placeholder-count="6"><td><button type="button" class="{{c.cls}}" style="background: {{c.bg}}" onClick="{{c.go}}" aria-label="{{c.aria}}">{{c.v}}</button></td></sc-for><td class="tot">{{r.tot}}</td></tr></sc-for></tbody>
+          </table></div>
+        </section>
+
+        <section class="c12"><p class="db-foot">{{foot}}</p></section>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"peran":{"editor":"enum","options":["skk","kkks"],"default":"skk"},"zoom":{"editor":"enum","options":["nat","sbs","sbu","pst","jbn","loc"],"default":"nat"},"dtt":{"editor":"bool","default":false},"menuUnduh":{"editor":"bool","default":false},"statusTerbuka":{"editor":"enum","options":["","0","1","2","3"],"default":""},"$preview":{"width":1366,"height":2900}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p); p = p || {};
+    const kk = p.peran === 'kkks';
+    let z = p.zoom || 'nat', loc = null;
+    if (z === 'loc') { z = kk ? 'own' : 'sbs'; loc = 'mub'; }
+    else if (kk) z = 'own';
+    if (p.statusTerbuka === '' ) p.statusTerbuka = null;
+    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
+  }
+  renderVals() {
+    const skk = (this.props.peran ?? 'skk') !== 'kkks';
+    const s = this.state;
+    const LV = [
+      ['Sangat rendah', 'var(--ink-subtle)', 'var(--surface-sunken)', 'var(--ink-subtle)'],
+      ['Rendah', 'var(--sev-low-dot)', 'var(--sev-low-bg)', 'var(--sev-low-ink)'],
+      ['Sedang', 'var(--sev-medium-dot)', 'var(--sev-medium-bg)', 'var(--sev-medium-ink)'],
+      ['Tinggi', 'var(--sev-high-dot)', 'var(--sev-high-bg)', 'var(--sev-high-ink)'],
+      ['Kritis', 'var(--sev-critical-dot)', 'var(--sev-critical-bg)', 'var(--sev-critical-ink)']
+    ];
+    const rp = (jt) => { if (!jt) return 'Rp0'; if (jt >= 1000) return 'Rp' + (jt / 1000).toFixed(2).replace('.', ',') + ' M'; return 'Rp' + Math.round(jt) + ' jt'; };
+    const sum = (a) => a.reduce((x, y) => x + y, 0);
+    const pc = (v) => (v / 10).toFixed(2) + '%';
+    const pcy = (v) => (v / 4).toFixed(2) + '%';
+    const SEN = 'PT Samudra Energi Nusantara';
+    // Wilayah SKK: kotak zoom di koordinat peta 1000x400 (angka demo, pola rekap SKK Jan–Jun 2026)
+    const W = {
+      pst: { n: 'Pusat', bb: [245, 250, 320, 295], pill: [265, 330], kk: 18, rep: 3 },
+      sbu: { n: 'Sumbagut', bb: [30, 15, 185, 140], pill: [30, 95], kk: 24, rep: 4 },
+      sbs: { n: 'Sumbagsel', bb: [160, 145, 250, 235], pill: [115, 245], kk: 31, rep: 4 },
+      kls: { n: 'Kalsul', bb: [300, 40, 720, 290], pill: [470, 165], kk: 26, rep: 1, none: true },
+      jbn: { n: 'Jabanusa', bb: [330, 262, 470, 330], pill: [420, 345], kk: 20, rep: 2 },
+      pml: { n: 'Pamalu', bb: [640, 100, 1000, 400], pill: [800, 120], kk: 12, rep: 0, nr: true }
+    };
+    const WO = ['pst', 'sbu', 'sbs', 'kls', 'jbn', 'pml'];
+    // Area insiden: [id, wilayah, nama, x, y, level SR..K, kerugian jt, KKKS, WK]
+    const A0 = [
+      ['ace', 'sbu', 'Aceh Timur', 64.8, 38.6, [3, 6, 3, 1, 0], 40, 'PT Serambi Utara Energi', 'WK Serambi Timur'],
+      ['lgk', 'sbu', 'Langkat', 76.5, 57.8, [4, 8, 4, 1, 0], 60, 'PT Deli Raya Hulu', 'WK Deli Hilir'],
+      ['bkl', 'sbu', 'Bengkalis', 146.6, 110.4, [2, 3, 1, 0, 0], 40, 'PT Lintas Andalas Petro', 'WK Lintas Utara'],
+      ['sik', 'sbu', 'Siak', 153.4, 119.4, [3, 7, 3, 2, 0], 99, 'PT Lintas Andalas Petro', 'WK Lintas Selatan'],
+      ['mub', 'sbs', 'Musi Banyuasin', 195.4, 193.4, [1, 3, 5, 4, 2], 520, SEN, 'WK Andalas Darat'],
+      ['bny', 'sbs', 'Banyuasin', 218.3, 193.1, [1, 2, 4, 2, 0], 210, SEN, 'WK Batu Ampar'],
+      ['mre', 'sbs', 'Muara Enim', 200.2, 215.3, [1, 3, 3, 1, 0], 120, 'PT Lembayung Petro', 'WK Lembayung Hulu'],
+      ['tjb', 'sbs', 'Tanjung Jabung Timur', 199.9, 161.6, [1, 2, 2, 1, 0], 41, 'PT Bara Jambi Energi', 'WK Bara Timur'],
+      ['idm', 'pst', 'Indramayu', 291.1, 274.3, [1, 3, 2, 1, 0], 150, 'PT Pantura Gas Hulu', 'WK Pantura Pesisir'],
+      ['krw', 'pst', 'Karawang', 273.9, 271.2, [1, 3, 2, 1, 0], 132, 'PT Citarum Energi', 'WK Citarum Hilir'],
+      ['bjn', 'jbn', 'Bojonegoro', 367.1, 292.2, [1, 1, 0, 0, 0], 0, 'PT Tanjung Mas Hulu', 'WK Bengawan Tengah'],
+      ['grs', 'jbn', 'Gresik', 383.9, 289.6, [0, 1, 0, 0, 0], 0, 'PT Gresik Samudra Hulu', 'WK Bengawan Hilir']
+    ];
+    const DTT = { bjn: 300, grs: 122 };
+    // Kategori × wilayah (pola sheet WILAYAH rekap SKK, angka demo)
+    const CAT = [
+      ['Pencurian/Perampokan', { pst: 11, sbu: 48, sbs: 21 }, { mub: 8, bny: 5 }],
+      ['Illegal drilling', { sbs: 3 }, {}],
+      ['Illegal tapping', { sbs: 4 }, { mub: 3, bny: 1 }],
+      ['Penghentian kegiatan/operasi', { sbu: 1, sbs: 6 }, { mub: 2, bny: 2 }],
+      ['Unjuk rasa', { pst: 3, jbn: 3 }, {}],
+      ['Kebakaran', { sbu: 2 }, {}],
+      ['Perusakan material', { sbs: 4 }, { mub: 2, bny: 1 }]
+    ];
+    const catIdx = s.kat == null ? -1 : s.kat;
+    const dttOn = skk && s.dtt;
+    const wTot0 = {}; WO.forEach((w) => { wTot0[w] = sum(A0.filter((a) => a[1] === w).map((a) => sum(a[5]))); });
+    // area setelah filter level, kategori, DTT
+    // bagi bilangan bulat secara proporsional (largest remainder) supaya total tetap cocok
+    const alloc = (tot, ws) => { const t = sum(ws); if (!t || !tot) return ws.map(() => 0); const raw = ws.map((w) => w * tot / t); const out = raw.map(Math.floor); let rest = tot - sum(out); raw.map((r, i) => [r - Math.floor(r), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rest > 0 && ws[i] > 0) { out[i]++; rest--; } }); return out; };
+    const catN = {};
+    if (catIdx >= 0 && catIdx < CAT.length) {
+      const c = CAT[catIdx];
+      if (skk) WO.forEach((w) => { const bl = A0.filter((a) => a[1] === w); const al = alloc(c[1][w] || 0, bl.map((a) => sum(a[5]))); bl.forEach((a, i) => { catN[a[0]] = al[i]; }); });
+      else A0.forEach((a) => { catN[a[0]] = c[2][a[0]] || 0; });
+    }
+    const A = A0.filter((a) => skk || a[7] === SEN).map((a) => {
+      let lv = a[5].slice();
+      if (catIdx >= 0 && catIdx < CAT.length) lv = alloc(Math.min(catN[a[0]] || 0, sum(a[5])), lv);
+      if (catIdx === CAT.length) lv = [0, 0, 0, 0, 0];
+      if (dttOn && DTT[a[0]] && (catIdx < 0 || catIdx === CAT.length)) lv[0] += DTT[a[0]];
+      lv = lv.map((v, i) => (s.lv[i] ? v : 0));
+      const n = sum(lv); let mx = -1; lv.forEach((v, i) => { if (v > 0) mx = i; });
+      const rpv = catIdx === CAT.length ? 0 : Math.round(a[6] * (sum(a[5]) ? Math.min(1, n / sum(a[5])) : 0));
+      return { id: a[0], w: a[1], name: a[2], x: a[3], y: a[4], lv, n, mx, rp: rpv, kk: a[7], wk: a[8] };
+    });
+    const maxN = Math.max(1, ...A.map((a) => a.n));
+    const lvMax = (lv) => { let m = -1; lv.forEach((v, i) => { if (v > 0) m = i; }); return m; };
+    const sevOf = (m) => m < 0 ? { sn: 'Tidak ada', sc: 'var(--border-control)', sbg: 'var(--surface-subtle)', sink: 'var(--ink-muted)' } : { sn: LV[m][0], sc: LV[m][1], sbg: LV[m][2], sink: LV[m][3] };
+    const addLv = (list) => [0, 1, 2, 3, 4].map((i) => sum(list.map((a) => a.lv[i])));
+
+    const lvAllCnt = [0, 1, 2, 3, 4].map((i) => sum(A0.filter((a) => skk || a[7] === SEN).map((a) => a[5][i])) + (i === 0 && dttOn ? 422 : 0));
+    const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
+    // ===== zoom =====
+    const z = s.z; const loc = s.loc ? A.find((a) => a.id === s.loc) : null;
+    const own = A; // KKKS: hanya area milik sendiri
+    let bb, lvl;
+    if (loc) { bb = [loc.x - 16, loc.y - 9, loc.x + 16, loc.y + 9]; lvl = 'loc'; }
+    else if (z === 'own') { bb = [172, 172, 242, 214]; lvl = 'area'; }
+    else if (z !== 'nat') { bb = W[z].bb; lvl = 'area'; }
+    else { bb = [0, 0, 1000, 400]; lvl = 'nat'; }
+    const bw = bb[2] - bb[0], bh = bb[3] - bb[1];
+    const k = Math.min(1000 / bw, 400 / bh);
+    const cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
+    const tx = 500 / k - cx, ty = 200 / k - cy;
+    const mapT = 'scale(' + k.toFixed(3) + ') translate(' + (tx / 10).toFixed(3) + '%, ' + (ty / 4).toFixed(3) + '%)';
+    const detSrc = loc ? 'peta/l-' + loc.id + '.svg' : (lvl === 'area' ? 'peta/z-' + z + '.svg' : '');
+    const det = { l: ((cx - 500 / k) / 10).toFixed(3) + '%', t: ((cy - 200 / k) / 4).toFixed(3) + '%', w: (100 / k).toFixed(3) + '%', h: (100 / k).toFixed(3) + '%' };
+    const go = (zz, ll) => () => this.setState({ z: zz, loc: ll || null });
+
+    const inArea = (a) => lvl === 'nat' ? true : (z === 'own' ? true : a.w === z);
+    const vis = A.filter((a) => a.n > 0 && (lvl === 'nat' || inArea(a)));
+    const heat = lvl === 'loc' ? [] : vis.map((a) => {
+      const r = Math.sqrt(a.n / maxN);
+      const alpha = Math.round(30 + 60 * r);
+      const C = LV[a.mx][1];
+      const base = lvl === 'nat' ? 26 : 70 / k;
+      const sz = base * (0.85 + 0.6 * r);
+      return {
+        x: pc(a.x), y: pcy(a.y), s: (sz / 10).toFixed(2) + '%', c: C,
+        bg: 'radial-gradient(circle closest-side, color-mix(in srgb, ' + C + ' ' + alpha + '%, transparent) 0%, color-mix(in srgb, ' + C + ' ' + Math.round(alpha * 0.55) + '%, transparent) 55%, transparent 100%)',
+        tip: a.name + ': ' + a.n + ' insiden, level tertinggi ' + LV[a.mx][0] + ', kerugian ' + rp(a.rp),
+        go: lvl === 'nat' ? go(a.w) : go(z, a.id)
+      };
+    });
+    const wks = []; const _wk = lvl === 'nat' ? [] : A.filter((a) => inArea(a) && (!loc || a.id === loc.id)).map((a) => ({ x: pc(a.x), y: pcy(a.y), w: (15 / k).toFixed(3) + '%', h: (27 / k).toFixed(3) + '%', bw: (1.5 / k).toFixed(3) + 'px' }));
+    const lbls = lvl !== 'area' ? [] : A.filter((a) => inArea(a) && (!loc || a.id === loc.id)).map((a) => ({ x: pc(a.x), y: pcy(a.y + (lvl === 'loc' ? 80 : 40) / k), fs: (12 / k).toFixed(3) + 'px', t: (skk ? a.name + ' · ' : '') + a.wk }));
+    // Titik insiden (zoom titik): dikelompokkan di 3 lokasi aset demo, digambar di ruang layar (tidak ikut di-scale)
+    // PRODUKSI: posisi titik = koordinat yang diisi pelapor; nama aset dari master lokasi KKKS.
+    let pts = [], sites = [];
+    if (loc) {
+      const x0 = cx - 500 / k, y0 = cy - 200 / k;
+      const sx = (x) => ((x - x0) * k / 10).toFixed(2) + '%', sy = (y) => ((y - y0) * k / 4).toFixed(2) + '%';
+      const code = loc.id === 'mub' ? 'ADR' : loc.wk.replace('WK ', '').split(' ').map((w) => w[0]).join('').toUpperCase();
+      const SITE = [[-4.2, -1.6, 'Sumur ' + code + '-07'], [3.6, -0.4, 'Stasiun pengumpul ' + code], [-0.4, 2.4, 'Jalur pipa ' + code + ' km 12']];
+      const order = []; loc.lv.forEach((v, i) => { for (let j = 0; j < v; j++) order.push(i); });
+      const shown = order.slice(-60).reverse();
+      pts = shown.map((li, i) => { const si = i % 5 < 2 ? 0 : (i % 5 < 4 ? 1 : 2); const st = SITE[si]; const ang = i * 2.39996, rr = 0.18 + 0.32 * ((i * 7) % 5) / 5; return { x: sx(loc.x + st[0] + Math.cos(ang) * rr), y: sy(loc.y + st[1] + Math.sin(ang) * rr * 0.8), c: LV[li][1], tip: LV[li][0] + ' · ' + st[2] }; });
+      sites = SITE.map((t) => ({ x: sx(loc.x + t[0]), y: ((loc.y + t[1] - y0 + 0.75) * k / 4).toFixed(2) + '%', n: t[2] }));
+    }
+    // pill wilayah (hanya tingkat nasional, SKK)
+    const pills = (skk && lvl === 'nat') ? WO.map((w) => {
+      const list = A.filter((a) => a.w === w); const n = sum(list.map((a) => a.n)); const m = lvMax(addLv(list));
+      const nr = !!W[w].nr, none = !nr && n === 0;
+      return { x: pc(W[w].pill[0]), y: pcy(W[w].pill[1]), n: W[w].n, m: nr ? 'belum ada laporan' : (n ? n + ' insiden' : '0 insiden'), c: m < 0 ? 'var(--border-control)' : LV[m][1], cls: nr ? 'nr' : (none ? 'none' : ''), aria: W[w].n + ': ' + (nr ? 'belum ada laporan' : n + ' insiden'), go: (nr || none) ? () => {} : go(w) };
+    }) : [];
+
+    // ===== crumb =====
+    const crumb = [];
+    if (skk) crumb.push({ t: 'Indonesia', go: go('nat'), link: lvl !== 'nat', cur: lvl === 'nat' });
+    if (!skk) crumb.push({ t: 'Wilayah kerja ' + SEN, go: go('own'), link: lvl === 'loc', cur: lvl !== 'loc' });
+    if (skk && lvl !== 'nat') crumb.push({ t: W[z].n, go: go(z), link: lvl === 'loc', cur: lvl === 'area' });
+    if (loc) crumb.push({ t: (skk ? loc.name + ' · ' : '') + loc.wk, go: () => {}, link: false, cur: true });
+    const zoomOut = () => { if (loc) this.setState({ loc: null }); else if (skk && z !== 'nat') this.setState({ z: 'nat' }); };
+    const outDis = (!loc && (!skk || z === 'nat')) ? 'true' : null;
+    const hint = lvl === 'nat' ? 'Klik area panas atau nama wilayah untuk zoom' : (lvl === 'area' ? 'Klik area untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
+
+    // ===== strip =====
+    const tot = (list) => ({ n: sum(list.map((a) => a.n)), r: sum(list.map((a) => a.rp)), lv: addLv(list) });
+    const NAT = tot(A);
+    const SC = loc ? [loc] : (lvl === 'nat' ? A : A.filter(inArea));
+    const ALL = tot(SC);
+    const INC = [["INS-SUE-2026-0001", "ace", 0, 1, 2, 0, "1 Jan", "Perampokan peralatan kerja kontraktor", 9, 0], ["INS-SUE-2026-0002", "ace", 0, 1, 2, 0, "5 Jan", "Pencurian kabel instrumen di area sumur", 10, 0], ["INS-GSH-2026-0001", "grs", 4, 1, 2, 0, "3 Jan", "Unjuk rasa terkait kompensasi lahan", 10, 0], ["INS-LAP-2026-0001", "sik", 0, 3, 2, 0, "4 Jan", "Pencurian kabel instrumen di area sumur", 5, 0], ["INS-SEN-2026-0001", "bny", 0, 1, 2, 0, "6 Jan", "Perampokan peralatan kerja kontraktor", 3, 0], ["INS-LAP-2026-0002", "bkl", 5, 2, 2, 0, "5 Jan", "Kebakaran semak di sekitar jalur pipa", 9, 0], ["INS-LAP-2026-0003", "sik", 0, 0, 2, 0, "7 Jan", "Pencurian baterai di stasiun pengumpul", 4, 0], ["INS-SEN-2026-0002", "bny", 0, 1, 2, 0, "7 Jan", "Pencurian kabel instrumen di area sumur", 6, 0], ["INS-DRH-2026-0001", "lgk", 0, 1, 2, 0, "13 Jan", "Pencurian pipa bekas di laydown area", 6, 0], ["INS-LBP-2026-0001", "mre", 0, 1, 2, 0, "16 Jan", "Pencurian kabel instrumen di area sumur", 10, 0], ["INS-DRH-2026-0002", "lgk", 0, 0, 2, 0, "17 Jan", "Perampokan peralatan kerja kontraktor", 12, 0], ["INS-DRH-2026-0003", "lgk", 0, 1, 2, 0, "19 Jan", "Perampokan peralatan kerja kontraktor", 12, 0], ["INS-DRH-2026-0004", "lgk", 0, 1, 2, 0, "17 Jan", "Perampokan peralatan kerja kontraktor", 6, 0], ["INS-SUE-2026-0003", "ace", 0, 1, 2, 0, "18 Jan", "Pencurian kabel instrumen di area sumur", 9, 0], ["INS-CTE-2026-0001", "krw", 4, 1, 2, 0, "21 Jan", "Unjuk rasa terkait kompensasi lahan", 9, 0], ["INS-BJE-2026-0001", "tjb", 3, 2, 2, 0, "21 Jan", "Warga menghentikan pekerjaan seismik", 4, 0], ["INS-SEN-2026-0003", "mub", 0, 2, 2, 0, "21 Jan", "Pencurian besi grating jalur pipa", 2, 0], ["INS-DRH-2026-0005", "lgk", 0, 2, 2, 0, "21 Jan", "Pencurian kabel instrumen di area sumur", 7, 0], ["INS-SUE-2026-0004", "ace", 0, 2, 2, 0, "22 Jan", "Perampokan peralatan kerja kontraktor", 2, 0], ["INS-DRH-2026-0006", "lgk", 0, 3, 2, 0, "25 Jan", "Pencurian baterai di stasiun pengumpul", 7, 0], ["INS-SEN-2026-0004", "mub", 2, 3, 2, 0, "26 Jan", "Sambungan ilegal pada jalur pipa trunkline", 6, 0], ["INS-CTE-2026-0002", "krw", 0, 1, 2, 0, "27 Jan", "Pencurian kabel instrumen di area sumur", 10, 0], ["INS-PGH-2026-0001", "idm", 0, 1, 2, 0, "3 Feb", "Perampokan peralatan kerja kontraktor", 3, 1], ["INS-LAP-2026-0004", "sik", 0, 1, 2, 0, "4 Feb", "Pencurian kabel instrumen di area sumur", 12, 1], ["INS-SUE-2026-0005", "ace", 0, 3, 2, 0, "5 Feb", "Pencurian kabel instrumen di area sumur", 5, 1], ["INS-BJE-2026-0002", "tjb", 1, 2, 2, 0, "5 Feb", "Aktivitas pengeboran ilegal dekat jalur pipa", 10, 1], ["INS-LAP-2026-0005", "sik", 0, 1, 2, 0, "9 Feb", "Pencurian pipa bekas di laydown area", 7, 1], ["INS-SUE-2026-0006", "ace", 0, 1, 2, 0, "10 Feb", "Pencurian pipa bekas di laydown area", 6, 1], ["INS-LAP-2026-0006", "sik", 0, 1, 2, 0, "10 Feb", "Perampokan peralatan kerja kontraktor", 12, 1], ["INS-SEN-2026-0005", "mub", 0, 2, 2, 0, "16 Feb", "Pencurian baterai di stasiun pengumpul", 8, 1], ["INS-TMH-2026-0001", "bjn", 4, 0, 2, 0, "17 Feb", "Unjuk rasa terkait kompensasi lahan", 6, 1], ["INS-PGH-2026-0002", "idm", 0, 1, 2, 0, "20 Feb", "Pencurian pipa bekas di laydown area", 7, 1], ["INS-SEN-2026-0006", "mub", 0, 2, 2, 0, "21 Feb", "Perampokan peralatan kerja kontraktor", 7, 1], ["INS-LBP-2026-0002", "mre", 0, 1, 2, 0, "23 Feb", "Pencurian baterai di stasiun pengumpul", 7, 1], ["INS-LAP-2026-0007", "sik", 0, 0, 2, 0, "1 Mar", "Pencurian kabel instrumen di area sumur", 14, 1], ["INS-CTE-2026-0003", "krw", 0, 3, 2, 0, "28 Feb", "Pencurian baterai di stasiun pengumpul", 3, 1], ["INS-TMH-2026-0002", "bjn", 4, 1, 2, 0, "1 Mar", "Unjuk rasa tuntutan tenaga kerja lokal", 8, 2], ["INS-LAP-2026-0008", "bkl", 0, 0, 2, 0, "2 Mar", "Pencurian kabel instrumen di area sumur", 5, 2], ["INS-PGH-2026-0003", "idm", 0, 2, 2, 0, "6 Mar", "Pencurian kabel instrumen di area sumur", 6, 2], ["INS-LBP-2026-0003", "mre", 3, 3, 2, 0, "10 Mar", "Penutupan akses lokasi oleh kelompok warga", 3, 2], ["INS-SEN-2026-0007", "mub", 0, 0, 2, 0, "9 Mar", "Pencurian baterai di stasiun pengumpul", 7, 2], ["INS-SUE-2026-0007", "ace", 0, 0, 2, 0, "12 Mar", "Pencurian baterai di stasiun pengumpul", 2, 2], ["INS-DRH-2026-0007", "lgk", 0, 1, 2, 0, "12 Mar", "Pencurian besi grating jalur pipa", 6, 2], ["INS-SEN-2026-0008", "mub", 0, 1, 2, 0, "13 Mar", "Pencurian pipa bekas di laydown area", 7, 2], ["INS-PGH-2026-0004", "idm", 0, 3, 2, 0, "17 Mar", "Perampokan peralatan kerja kontraktor", 3, 2], ["INS-LAP-2026-0009", "sik", 5, 2, 2, 0, "19 Mar", "Kebakaran semak di sekitar jalur pipa", 8, 2], ["INS-SEN-2026-0009", "mub", 6, 3, 2, 0, "18 Mar", "Perusakan pagar area sumur", 7, 2], ["INS-CTE-2026-0004", "krw", 0, 2, 2, 0, "22 Mar", "Pencurian besi grating jalur pipa", 6, 2], ["INS-DRH-2026-0008", "lgk", 0, 0, 2, 0, "25 Mar", "Pencurian pipa bekas di laydown area", 7, 2], ["INS-LAP-2026-0010", "bkl", 0, 1, 2, 0, "26 Mar", "Pencurian pipa bekas di laydown area", 5, 2], ["INS-LAP-2026-0011", "sik", 0, 1, 2, 0, "29 Mar", "Pencurian baterai di stasiun pengumpul", 5, 2], ["INS-PGH-2026-0005", "idm", 0, 2, 2, 0, "3 Apr", "Pencurian baterai di stasiun pengumpul", 3, 3], ["INS-LAP-2026-0012", "sik", 0, 1, 2, 0, "8 Apr", "Perampokan peralatan kerja kontraktor", 9, 3], ["INS-SEN-2026-0010", "bny", 2, 3, 2, 0, "9 Apr", "Sambungan ilegal pada jalur pipa trunkline", 3, 3], ["INS-DRH-2026-0009", "lgk", 0, 0, 2, 0, "11 Apr", "Perampokan peralatan kerja kontraktor", 4, 3], ["INS-PGH-2026-0006", "idm", 4, 1, 2, 0, "10 Apr", "Unjuk rasa terkait kompensasi lahan", 12, 3], ["INS-DRH-2026-0010", "lgk", 0, 2, 2, 0, "13 Apr", "Perampokan peralatan kerja kontraktor", 8, 3], ["INS-SUE-2026-0008", "ace", 0, 0, 2, 0, "16 Apr", "Pencurian baterai di stasiun pengumpul", 6, 3], ["INS-CTE-2026-0005", "krw", 0, 2, 2, 0, "19 Apr", "Pencurian pipa bekas di laydown area", 6, 3], ["INS-CTE-2026-0006", "krw", 0, 0, 2, 0, "21 Apr", "Perampokan peralatan kerja kontraktor", 4, 3], ["INS-SUE-2026-0009", "ace", 0, 1, 2, 0, "23 Apr", "Pencurian baterai di stasiun pengumpul", 9, 3], ["INS-LAP-2026-0013", "sik", 3, 3, 2, 0, "22 Apr", "Penutupan akses lokasi oleh kelompok warga", 10, 3], ["INS-SEN-2026-0011", "mub", 0, 2, 2, 0, "26 Apr", "Pencurian baterai di stasiun pengumpul", 8, 3], ["INS-DRH-2026-0011", "lgk", 0, 0, 2, 0, "28 Apr", "Pencurian kabel instrumen di area sumur", 6, 3], ["INS-SUE-2026-0010", "ace", 0, 1, 2, 0, "27 Apr", "Pencurian pipa bekas di laydown area", 3, 3], ["INS-SEN-2026-0012", "mub", 0, 1, 2, 0, "28 Apr", "Pencurian pipa bekas di laydown area", 12, 3], ["INS-LBP-2026-0004", "mre", 0, 2, 2, 0, "29 Apr", "Pencurian kabel instrumen di area sumur", 6, 3], ["INS-DRH-2026-0012", "lgk", 0, 2, 2, 0, "28 Apr", "Pencurian pipa bekas di laydown area", 5, 3], ["INS-LBP-2026-0005", "mre", 0, 0, 2, 0, "1 Mei", "Pencurian besi grating jalur pipa", 7, 4], ["INS-DRH-2026-0013", "lgk", 0, 1, 2, 0, "1 Mei", "Pencurian baterai di stasiun pengumpul", 7, 4], ["INS-SUE-2026-0011", "ace", 0, 2, 2, 0, "2 Mei", "Pencurian besi grating jalur pipa", 7, 4], ["INS-SUE-2026-0012", "ace", 0, 0, 2, 0, "6 Mei", "Pencurian pipa bekas di laydown area", 2, 4], ["INS-LAP-2026-0014", "sik", 0, 0, 2, 0, "9 Mei", "Pencurian baterai di stasiun pengumpul", 4, 4], ["INS-SEN-2026-0013", "mub", 6, 3, 2, 0, "10 Mei", "Perusakan papan peringatan jalur pipa", 2, 4], ["INS-LBP-2026-0006", "mre", 0, 1, 2, 0, "10 Mei", "Pencurian baterai di stasiun pengumpul", 7, 4], ["INS-CTE-2026-0007", "krw", 0, 1, 2, 0, "12 Mei", "Pencurian baterai di stasiun pengumpul", 10, 4], ["INS-SUE-2026-0013", "ace", 0, 2, 2, 0, "16 Mei", "Pencurian pipa bekas di laydown area", 7, 4], ["INS-PGH-2026-0007", "idm", 4, 0, 2, 0, "19 Mei", "Unjuk rasa tuntutan tenaga kerja lokal", 7, 4], ["INS-LAP-2026-0015", "bkl", 0, 0, 2, 0, "18 Mei", "Pencurian pipa bekas di laydown area", 6, 4], ["INS-DRH-2026-0014", "lgk", 0, 1, 2, 0, "17 Mei", "Pencurian kabel instrumen di area sumur", 12, 4], ["INS-BJE-2026-0003", "tjb", 0, 0, 2, 0, "18 Mei", "Pencurian pipa bekas di laydown area", 4, 4], ["INS-LAP-2026-0016", "bkl", 0, 1, 2, 0, "19 Mei", "Perampokan peralatan kerja kontraktor", 7, 4], ["INS-LAP-2026-0017", "sik", 0, 2, 2, 0, "21 Mei", "Pencurian besi grating jalur pipa", 6, 4], ["INS-DRH-2026-0015", "lgk", 0, 1, 1, 1, "22 Mei", "Pencurian kabel instrumen di area sumur", 0, 4], ["INS-SEN-2026-0014", "bny", 0, 2, 2, 0, "24 Mei", "Perampokan peralatan kerja kontraktor", 7, 4], ["INS-SEN-2026-0015", "mub", 3, 2, 1, 0, "25 Mei", "Penghadangan truk logistik di jalan akses", 0, 4], ["INS-SEN-2026-0016", "bny", 0, 2, 1, 0, "25 Mei", "Perampokan peralatan kerja kontraktor", 0, 4], ["INS-SEN-2026-0017", "mub", 2, 4, 0, 1, "25 Mei", "Sambungan ilegal pada jalur pipa trunkline", 0, 4], ["INS-SEN-2026-0018", "bny", 6, 2, 1, 0, "27 Mei", "Perusakan pagar area sumur", 0, 4], ["INS-LBP-2026-0007", "mre", 1, 2, 1, 0, "4 Jun", "Sumur bor rakyat di dalam batas WK", 0, 5], ["INS-LAP-2026-0018", "sik", 0, 2, 1, 0, "2 Jun", "Pencurian baterai di stasiun pengumpul", 0, 5], ["INS-SEN-2026-0019", "mub", 0, 1, 1, 0, "6 Jun", "Pencurian baterai di stasiun pengumpul", 0, 5], ["INS-SEN-2026-0020", "bny", 0, 0, 0, 0, "6 Jun", "Pencurian baterai di stasiun pengumpul", 0, 5], ["INS-DRH-2026-0016", "lgk", 0, 1, 0, 0, "6 Jun", "Pencurian besi grating jalur pipa", 0, 5], ["INS-LAP-2026-0019", "sik", 0, 1, 1, 0, "6 Jun", "Pencurian pipa bekas di laydown area", 0, 5], ["INS-LAP-2026-0020", "bkl", 0, 1, 0, 0, "8 Jun", "Pencurian baterai di stasiun pengumpul", 0, 5], ["INS-BJE-2026-0004", "tjb", 0, 1, 0, 0, "12 Jun", "Perampokan peralatan kerja kontraktor", 0, 5], ["INS-LAP-2026-0021", "sik", 0, 1, 0, 0, "17 Jun", "Perampokan peralatan kerja kontraktor", 0, 5], ["INS-DRH-2026-0017", "lgk", 0, 2, 0, 0, "18 Jun", "Pencurian kabel instrumen di area sumur", 0, 5], ["INS-LBP-2026-0008", "mre", 1, 2, 0, 0, "24 Jun", "Aktivitas pengeboran ilegal dekat jalur pipa", 0, 5], ["INS-SEN-2026-0021", "mub", 3, 3, 0, 1, "23 Jun", "Warga menghentikan pekerjaan seismik", 0, 5], ["INS-SEN-2026-0022", "mub", 2, 4, 0, 0, "22 Jun", "Sambungan ilegal pada jalur pipa trunkline", 0, 5], ["INS-BJE-2026-0005", "tjb", 0, 1, 0, 0, "23 Jun", "Pencurian pipa bekas di laydown area", 0, 5], ["INS-SEN-2026-0023", "bny", 3, 2, 0, 0, "24 Jun", "Penutupan akses lokasi oleh kelompok warga", 0, 5], ["INS-BJE-2026-0006", "tjb", 6, 3, 0, 1, "25 Jun", "Perusakan pagar area sumur", 0, 5], ["INS-SEN-2026-0024", "bny", 3, 3, 0, 0, "25 Jun", "Penghadangan truk logistik di jalan akses", 0, 5]];
+    const scIds = SC.map((a) => a.id);
+    const incS = INC.filter((r) => scIds.includes(r[1]) && s.lv[r[3]] && (catIdx < 0 || catIdx === r[2]));
+    const stA = [0, 1, 2].map((k) => incS.filter((r) => r[4] === k).length);
+    const incN = incS.length;
+    const AREA = {}; A0.forEach((a) => { AREA[a[0]] = a; });
+    const incRow = (r) => ({ id: r[0], t: r[7], d: AREA[r[1]][7].replace('PT ', '') + ' · ' + AREA[r[1]][8] + ' · lapor ' + r[6], ...sevOf(r[3]), x: r[5] ? 'Lewat tenggat' : (r[4] === 2 ? r[8] + ' hari' : 'Sesuai tenggat'), xc: r[5] ? 'late' : '', href: skk ? 'P31-DetailSKK.dc.html' : 'I15-Detail.dc.html' });
+    const byPrio = (a, b) => b[5] - a[5] || b[3] - a[3];
+    const lateList = incS.filter((r) => r[5]).sort(byPrio);
+    const closed = incS.filter((r) => r[4] === 2).map((r) => r[8]).sort((a, b) => a - b);
+    const med = closed.length ? (closed.length % 2 ? closed[(closed.length - 1) / 2] : (closed[closed.length / 2 - 1] + closed[closed.length / 2]) / 2) : 0;
+    const lvStack = (lv) => { const t = sum(lv) || 1; return lv.map((v, i) => ({ w: (v / t * 100).toFixed(1) + '%', c: LV[i][1] })); };
+    const lvAria = (lv) => lv.map((v, i) => v ? LV[i][0] + ' ' + v : '').filter(Boolean).join(' · ') || 'Tidak ada insiden';
+    const wRowsRaw = WO.map((w) => { const list = A.filter((a) => a.w === w); return { w, ...tot(list) }; });
+    const nMax = Math.max(1, ...wRowsRaw.map((r) => r.n)), rMax = Math.max(1, ...wRowsRaw.map((r) => r.r));
+    const wRows = wRowsRaw.slice().sort((a, b) => b.n - a.n).map((r) => {
+      const nr = !!W[r.w].nr; const sv = sevOf(lvMax(r.lv));
+      const pN = NAT.n ? Math.round(r.n / NAT.n * 100) : 0, pR = NAT.r ? Math.round(r.r / NAT.r * 100) : 0;
+      return { n: W[r.w].n, go: (nr || !r.n) ? () => {} : go(r.w), cls: (nr || !r.n) ? 'mute' : '', note: nr ? 'Tidak ada laporan insiden maupun nihil' : (r.n ? '' : 'KKKS yang melapor menyatakan nihil'), nw: (r.n / nMax * 100).toFixed(1) + '%', nL: nr ? '–' : String(r.n), nP: nr ? '' : pN + '%', rw: (r.r / rMax * 100).toFixed(1) + '%', rL: nr ? '–' : rp(r.r), rP: nr ? '' : pR + '%', ...(nr ? { sn: 'Belum ada laporan', sc: 'var(--border-control)', sbg: 'var(--surface-subtle)', sink: 'var(--ink-muted)' } : sv), rep: W[r.w].rep + ' / ' + W[r.w].kk, repP: Math.round(W[r.w].rep / W[r.w].kk * 100) + '%', repW: (W[r.w].rep / W[r.w].kk * 100).toFixed(1) + '%' };
+    });
+    let aTitle = '', aN = '', aNs = '', aR = '', aRs = '', aLv = [], aLvAriaS = '', aCat = '', aCatS = '', subRows = [], subHead = '', aKkks = '', aWk = '', incs = [], incFoot = '', listHref = skk ? 'I31-DaftarSKK.dc.html' : 'Main.dc.html';
+    if (lvl === 'area') {
+      const list = A.filter(inArea); const T = tot(list);
+      aTitle = skk ? 'Wilayah ' + W[z].n : 'Wilayah kerja Anda';
+      aN = String(T.n); aNs = skk ? (NAT.n ? Math.round(T.n / NAT.n * 100) : 0) + '% dari nasional' : 'insiden terverifikasi';
+      aR = rp(T.r); aRs = skk ? (NAT.r ? Math.round(T.r / NAT.r * 100) : 0) + '% dari kerugian nasional' : 'perkiraan + final';
+      aLv = lvStack(T.lv); aLvAriaS = lvAria(T.lv);
+      const cc = CAT.map((c, i) => [c[0], skk ? (c[1][z] || 0) : sum(Object.values(c[2]))]).sort((a, b) => b[1] - a[1])[0];
+      aCat = cc[0]; aCatS = cc[1] + ' insiden pada periode ini';
+      subHead = skk ? 'Lokasi · KKKS' : 'Wilayah kerja';
+      const sm = Math.max(1, ...list.map((a) => a.n)), sr = Math.max(1, ...list.map((a) => a.rp));
+      subRows = list.slice().sort((a, b) => b.n - a.n).map((a) => ({ n: skk ? a.name : a.wk, sub: skk ? a.kk + ' · ' + a.wk : a.name, nw: (a.n / sm * 100).toFixed(1) + '%', nL: String(a.n), rw: (a.rp / sr * 100).toFixed(1) + '%', rL: rp(a.rp), ...sevOf(a.mx), go: go(z, a.id) }));
+    }
+    if (loc) {
+      aTitle = loc.wk + ' · ' + loc.name; aN = String(loc.n); aNs = 'titik di peta = 1 insiden'; aR = rp(loc.rp); aRs = 'termasuk kerugian akhir saat ditutup';
+      aLv = lvStack(loc.lv); aLvAriaS = lvAria(loc.lv); aKkks = loc.kk; aWk = loc.wk;
+      const code = loc.kk === SEN ? 'SEN' : loc.kk.split(' ').slice(1).map((w) => w[0]).join('').slice(0, 3).toUpperCase();
+      const T = [
+        ['Pencurian kabel instrumen di ' + (loc.kk === SEN ? 'Sumur ADR-07' : 'area sumur ' + loc.name), 'Pencurian/Perampokan · 12 Jun 2026', 4, 'Dalam penanganan · lewat tenggat'],
+        ['Pemotongan pipa alir untuk pengambilan minyak', 'Illegal tapping · 3 Jun 2026', 4, 'Dalam penanganan'],
+        ['Penghadangan truk logistik di jalan akses', 'Penghentian kegiatan/operasi · 28 Mei 2026', 3, 'Menunggu penutupan'],
+        ['Perusakan pagar area sumur', 'Perusakan material · 19 Mei 2026', 2, 'Ditutup']
+      ];
+      incs = T.filter((t) => s.lv[t[2]]).map((t, i) => ({ id: 'INS-' + code + '-2026-00' + (41 - i * 3), t: t[0], d: t[1], ...sevOf(t[2]), st: t[3], href: skk ? 'P31-DetailSKK.dc.html' : 'I15-Detail.dc.html' }));
+      incFoot = 'Menampilkan ' + incs.length + ' dari ' + loc.n + ' insiden, diurutkan dari level tertinggi. Titik dengan lokasi rahasia tidak digambar, tetap dihitung.';
+    }
+
+    // ===== KPI =====
+    const isNat = skk && lvl === 'nat', isOwn = !skk && !loc;
+    const prevN = isNat ? (dttOn ? 455 : 92) : (isOwn ? 21 : Math.max(1, Math.round(ALL.n * 0.86))), prevR = isNat ? 1100 : (isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));
+    const tk = ALL.lv[3] + ALL.lv[4];
+    const up = (a, b) => (a === 0 && b <= 1) ? 'tetap' : (a >= b ? '▲ ' : '▼ ') + Math.abs(Math.round((a - b) / b * 100)) + '%';
+    const kpis = [
+      { label: 'Insiden terverifikasi', val: String(ALL.n), unit: 'insiden', tr: up(ALL.n, prevN), trCls: ALL.n > prevN ? 'tr-bad' : 'tr-good', cmp: 'vs Sem. II 2025 (' + prevN + ')', link: 'Lihat daftar', href: listHref },
+      { label: 'Kerugian', val: rp(ALL.r), unit: '', tr: up(ALL.r, prevR), trCls: ALL.r > prevR ? 'tr-bad' : 'tr-good', cmp: 'vs Sem. II 2025 (' + rp(prevR) + ')', link: 'Rincian per wilayah', href: '#' },
+      { label: 'Tinggi & Kritis', val: String(tk), unit: 'insiden', tr: incS.filter((r) => r[3] >= 3 && r[4] < 2).length + ' masih terbuka', trCls: 'tr-bad', cmp: 'sisanya sudah ditutup', link: 'Lihat yang terbuka', href: listHref },
+      skk ? { label: 'KKKS melapor (Jun 2026)', val: String(lvl === 'nat' ? 14 : W[z].rep), unit: 'dari ' + (lvl === 'nat' ? 131 : W[z].kk) + ' KKKS', tr: '7–14 per bulan', trCls: 'tr-flat', cmp: 'insiden atau nihil', link: 'Lihat yang belum melapor', href: '#' }
+          : { label: 'Median lama penanganan', val: String(med).replace('.', ','), unit: 'hari', tr: '▼ 1 hari', trCls: 'tr-good', cmp: 'vs Sem. II 2025 (' + String(med + 1).replace('.', ',') + ' hari)', link: 'Lihat yang lewat tenggat', href: listHref }
+    ];
+
+    // ===== AI ringkasan =====
+    const seg = (t, g) => ({ t, plain: !g, act: !!g, go: g || (() => {}) });
+    const topLoc = SC.slice().sort((a, b) => b.mx - a.mx || b.n - a.n)[0];
+    const catScope = (c) => skk ? (loc ? null : (lvl === 'nat' ? sum(Object.values(c[1])) : (c[1][z] || 0))) : (loc ? (c[2][loc.id] || 0) : sum(Object.values(c[2])));
+    const aiZoom = (skk && lvl !== 'nat') ? [
+      seg('Di ' + (loc ? loc.name + ' (' + loc.wk + ')' : 'wilayah ' + W[z].n) + ' tercatat ' + ALL.n + ' insiden dengan kerugian ' + rp(ALL.r) + ', atau ' + (NAT.n ? Math.round(ALL.n / NAT.n * 100) : 0) + '% insiden dan ' + (NAT.r ? Math.round(ALL.r / NAT.r * 100) : 0) + '% kerugian nasional. '),
+      seg(topLoc && topLoc.mx >= 0 ? 'Level tertinggi ' + LV[topLoc.mx][0] + ' ada di ' : ''), seg(topLoc && topLoc.mx >= 0 ? topLoc.name : '', topLoc && !loc ? go(z, topLoc.id) : null), seg('. '),
+      seg(loc ? 'Lokasi ini berada di wilayah kerja ' + loc.kk + '.' : 'Jenis terbanyak: ' + CAT.map((c) => [c[0], c[1][z] || 0]).sort((a, b) => b[1] - a[1])[0][0] + '.')
+    ] : null;
+    const aiSeg = aiZoom ? aiZoom : skk ? [
+      seg('Semester I 2026 mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + (dttOn ? ', termasuk 422 kasus DTT di Jabanusa. ' : ', naik 15% dari Semester II 2025. ')),
+      seg('Sumbagsel', go('sbs')), seg(' menyumbang 63% kerugian walau hanya 36% insiden; kedua insiden Kritis ada di '), seg('Musi Banyuasin', go('sbs', 'mub')), seg('. '),
+      seg('Pencurian/Perampokan tetap kategori terbanyak (80), terutama di '), seg('Sumbagut', go('sbu')), seg('. '),
+      seg('Pamalu belum mengirim laporan apa pun, jadi angka 0 di wilayah itu belum bisa dibaca sebagai aman.')
+    ] : [
+      seg('Semester I 2026 organisasi Anda mencatat ' + NAT.n + ' insiden dengan kerugian ' + rp(NAT.r) + '. '),
+      seg('WK Andalas Darat', go('own', 'mub')), seg(' menyumbang dua pertiga insiden, termasuk kedua insiden Kritis. '),
+      seg('Pencurian/Perampokan masih terbanyak (13). Satu insiden Kritis sudah lewat tenggat penanganan.')
+    ];
+
+    // ===== perlu perhatian =====
+    const IC = { c: 'M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01', w: 'M12 8v4l3 2M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z', a: 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z' };
+    const attn = (skk ? [
+      { k: 'c', t: '2 insiden Kritis belum selesai', d: 'Musi Banyuasin · 1 lewat tenggat 3 hari', go: go('sbs', 'mub') },
+      (() => { const hl = INC.filter((r) => r[3] === 3 && r[5]); const by = {}; hl.forEach((r) => { const w = W[AREA[r[1]][1]].n; by[w] = (by[w] || 0) + 1; }); return { k: 'w', t: hl.length + ' insiden Tinggi lewat tenggat', d: Object.entries(by).map(([w, n]) => w + ' ' + n).join(' · '), go: () => this.setState({ stOpen: 3 }) }; })(),
+      { k: 'w', t: 'Pamalu belum melapor', d: '0 dari 12 KKKS sejak Jan 2026', go: () => {} },
+      { k: 'a', t: 'Lokasi berulang di Langkat', d: '17 insiden dalam 6 bulan', go: go('sbu', 'lgk') }
+    ] : [
+      { k: 'c', t: '1 insiden Kritis lewat tenggat', d: 'INS-SEN-2026-0041 · Sumur ADR-07', go: go('own', 'mub') },
+      { k: 'w', t: '2 laporan belum diperiksa', d: 'Lebih dari 3 hari · belum masuk angka', go: () => {} },
+      { k: 'a', t: 'Lokasi berulang: Sumur ADR-07', d: '4 insiden dalam 90 hari', go: go('own', 'mub') }
+    ]).map((a) => ({ ...a, ic: IC[a.k] }));
+
+    // ===== tren =====
+    const baseN = skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4];
+    const dN = [35, 27, 70, 122, 66, 102];
+    const baseR = skk ? [180, 95, 310, 240, 402, 185] : [60, 45, 160, 110, 240, 115];
+    const N = s.m === 'n';
+    const dttCnt = (dttOn && s.lv[0] && (catIdx < 0 || catIdx === CAT.length)) ? sum(SC.map((a) => DTT[a.id] || 0)) : 0;
+    const vN = baseN.map((v) => Math.round(v * Math.max(0, ALL.n - dttCnt) / (skk ? 106 : 24)));
+    const vals = N ? vN : baseR.map((v) => Math.round(v * (ALL.r / (skk ? 1412 : 730))));
+    const dv = (N && dttCnt) ? dN.map((v) => Math.round(v * dttCnt / 422)) : [0, 0, 0, 0, 0, 0];
+    const mx = Math.max(1, ...vals.map((v, i) => v + dv[i]));
+    const curated = isNat || isOwn;
+    let gI = 1, gD = -1e9; for (let i = 1; i < 6; i++) { const d = vals[i] - vals[i - 1]; if (d > gD) { gD = d; gI = i; } }
+    const mkI = curated ? ((!skk && N) ? 3 : 4) : (gD > 0 ? gI : -1);
+    const NOTE = !curated ? (gD > 0 ? [MO[gI] + ': ' + (N ? 'insiden' : 'kerugian') + ' naik dari ' + (N ? vals[gI - 1] : rp(vals[gI - 1])) + ' jadi ' + (N ? vals[gI] : rp(vals[gI])) + '.', 'Kenaikan terbesar dalam periode ini untuk area yang sedang dilihat.'] : ['Tidak ada kenaikan berarti.', 'Angka stabil atau turun sepanjang periode.']) : skk ? (N ? ['Mei: insiden naik 24% dari April (17 → 21).', 'Kenaikan terbesar di Sumbagsel (+3), kebanyakan Pencurian/Perampokan.'] : ['Mei: kerugian naik 1,7× dari April (Rp240 jt → Rp402 jt).', 'Penyumbang terbesar Illegal tapping di Sumbagsel.'])
+      : (N ? ['April: insiden naik dari 3 jadi 5.', 'Dua di antaranya di Sumur ADR-07, WK Andalas Darat.'] : ['Mei: kerugian naik 2,2× dari April (Rp110 jt → Rp240 jt).', 'Hampir semuanya dari satu insiden Kritis di WK Andalas Darat.']);
+    const trend = vals.map((v, i) => ({ m: MO[i], lbl: N ? String(v + dv[i]) : rp(v), h: (v / mx * 150).toFixed(1) + 'px', hd: (dv[i] / mx * 150).toFixed(1) + 'px', hasD: dv[i] > 0, c: N ? 'var(--chart-series-1)' : 'var(--action-line)', hasMk: i === mkI, ring: i === mkI ? '0 0 0 2px var(--surface), 0 0 0 4px var(--ink)' : 'none' }));
+
+    // ===== jenis terbanyak =====
+    const PREVF = [0.78, 1.3, 0.7, 0.5, 1.2, 1, 1];
+    let cats = CAT.map((c, i) => {
+      let v = catScope(c);
+      if (v == null) { const wt = wTot0[loc.w] || 1; v = Math.round((c[1][loc.w] || 0) * sum(loc.lv) / wt); }
+      return { i, n: c[0], v, prev: Math.round(v * PREVF[i]) };
+    });
+    const dttScope = (dttOn && s.lv[0]) ? sum(SC.map((a) => DTT[a.id] || 0)) : 0;
+    if (dttScope) cats.push({ i: CAT.length, n: 'Daerah Terbatas Terlarang', v: dttScope, prev: Math.round(dttScope * 0.9), dtt: true });
+    cats = cats.filter((c) => c.v > 0).sort((a, b) => b.v - a.v).slice(0, 6);
+    const ctot = sum(cats.map((c) => c.v)) || 1, cmax = Math.max(1, ...cats.map((c) => c.v));
+    const topCat = cats.map((c) => { const d = c.v - c.prev; return { n: c.n, v: String(c.v), w: (c.v / cmax * 100).toFixed(1) + '%', p: Math.round(c.v / ctot * 100) + '%', d: d > 0 ? '▲ ' + d : (d < 0 ? '▼ ' + (-d) : 'tetap'), dc: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq'), cls: (c.dtt ? 'dtt ' : '') + (s.kat === c.i ? 'sel' : ''), aria: c.n + ': ' + c.v + ' insiden', go: () => this.setState({ kat: s.kat === c.i ? null : c.i }) }; });
+    const catCap = (loc ? loc.name : (skk ? (lvl === 'nat' ? 'Semua wilayah' : 'Wilayah ' + W[z].n) : 'Wilayah kerja Anda')) + ' · ' + (cats.length ? cats.length + ' jenis teratas' : 'tidak ada insiden');
+    // ===== insiden vs kerawanan =====
+    const fS = Math.max(0, ALL.n - dttScope) / (skk ? 106 : 24);
+    const KR = (skk ? [31, 28, 35, 40, 38, 44] : [4, 5, 6, 5, 7, 6]).map((v) => Math.round(v * fS));
+    const IN = (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4]).map((v) => Math.round(v * fS));
+    const ikMax = Math.max(1, ...KR, ...IN);
+    const ikBars = MO.map((m, i) => ({ m, hn: (IN[i] / ikMax * 130).toFixed(1) + 'px', hk: (KR[i] / ikMax * 130).toFixed(1) + 'px' }));
+    const krT = sum(KR), inT = sum(IN), upN = Math.round(krT * (skk ? 0.083 : 0.09));
+    // ===== status penanganan =====
+    const stDef = [['Dalam penanganan', 'var(--chart-series-1)'], ['Menunggu penutupan', 'var(--sev-medium-dot)'], ['Ditutup', 'var(--status-success-ink)']];
+    const st = stDef.map((d, i) => { const op = s.stOpen === i; const list = incS.filter((r) => r[4] === i).sort(byPrio); return { n: d[0], c: d[1], v: String(stA[i]), w: (incN ? stA[i] / incN * 100 : 0).toFixed(1) + '%', p: (incN ? Math.round(stA[i] / incN * 100) : 0) + '%', open: op, openStr: op ? 'true' : 'false', rot: op ? 'rotate(90deg)' : 'none', go: () => this.setState({ stOpen: op ? null : i }), items: list.slice(0, 5).map(incRow), more: list.length > 5 ? 'Lihat semua ' + list.length + ' di Daftar insiden →' : 'Buka di Daftar insiden →' }; });
+    if (s.stOpen === 3) { st.push({ n: 'Lewat tenggat', c: 'var(--sev-critical-dot)', v: String(lateList.length), w: '0%', p: '', open: true, openStr: 'true', rot: 'rotate(90deg)', go: () => this.setState({ stOpen: null }), items: lateList.slice(0, 5).map(incRow), more: 'Buka di Daftar insiden →' }); }
+    const stBar = st.slice(0, 3);
+    // ===== temuan AI (pola, bukan tindakan) =====
+    const nop = () => {};
+    const c0 = cats[0];
+    const pctN = NAT.n ? Math.round(ALL.n / NAT.n * 100) : 0, pctR = NAT.r ? Math.round(ALL.r / NAT.r * 100) : 0;
+    const krUp = KR[0] ? Math.round((KR[5] - KR[0]) / KR[0] * 100) : 0;
+    const topA = SC.slice().sort((x, y) => y.n - x.n)[0];
+    const ins = [
+      (skk && lvl === 'nat') ? { m: '2,4×', tone: 'bad', t: 'Kerugian Sumbagsel melonjak', d: 'Rp370 jt → Rp891 jt · 63% kerugian nasional dari 36% insiden', go: go('sbs') }
+        : (skk ? { m: pctR + '%', tone: 'warn', t: 'Porsi dari kerugian nasional', d: 'Dari ' + pctN + '% jumlah insiden nasional', go: nop }
+        : { m: '63%', tone: 'warn', t: 'Insiden terpusat di WK Andalas Darat', d: '15 dari 24 insiden, termasuk 2 Kritis', go: go('own', 'mub') }),
+      (skk && lvl === 'nat') ? { m: '48%', tone: 'warn', t: 'Sumbagut paling sering terjadi insiden', d: '51 insiden, hampir semua Pencurian/Perampokan', go: go('sbu') }
+        : ((skk && !loc && topA) ? { m: String(topA.n), tone: topA.mx >= 4 ? 'bad' : 'warn', t: topA.name + ' paling banyak insiden', d: 'Level tertinggi ' + (topA.mx >= 0 ? LV[topA.mx][0] : '-') + ' · ' + topA.wk, go: go(z, topA.id) } : null),
+      c0 ? { m: String(c0.v), tone: 'neu', t: c0.n + ' jenis terbanyak', d: Math.round(c0.v / Math.max(1, ALL.n) * 100) + '% dari insiden pada periode ini', go: () => this.setState({ kat: c0.i }) } : null,
+      { m: (krUp >= 0 ? '▲ ' : '▼ ') + Math.abs(krUp) + '%', tone: krUp > 20 ? 'warn' : 'info', t: 'Kerawanan ' + (krUp >= 0 ? 'naik' : 'turun') + ' sejak Januari', d: 'Tanda awal: ' + KR[0] + ' → ' + KR[5] + ' per bulan', go: nop }
+    ].filter(Boolean);
+    const aiCap = 'Semester I 2026 · ' + (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + ' · data 25 Nov 2026';
+    // ===== matriks =====
+    let mxCols, mxRows;
+    if (skk) {
+      const rows = CAT.map((c, i) => ({ n: c[0], i, v: WO.map((w) => c[1][w] || 0) }));
+      if (dttOn) rows.push({ n: 'Daerah Terbatas Terlarang (DTT)', i: CAT.length, v: WO.map((w) => w === 'jbn' ? 422 : 0), dtt: true });
+      const cm = Math.max(1, ...rows.filter((r) => !r.dtt).map((r) => Math.max(...r.v)));
+      mxCols = WO.map((w) => ({ n: W[w].n, s: W[w].nr ? 'belum lapor' : (W[w].none ? 'nihil' : '') }));
+      mxRows = rows.map((r) => ({ n: r.n, cls: r.dtt ? 'dtt' : '', tot: String(sum(r.v)), cells: r.v.map((v, j) => ({ v: v ? String(v) : '–', cls: v ? (s.kat === r.i && z === WO[j] ? 'sel' : '') : 'z', bg: v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(8 + Math.min(1, v / cm) * 52) + '%, var(--surface))' : 'var(--surface-subtle)', aria: r.n + ' di ' + W[WO[j]].n + ': ' + v, go: v ? () => this.setState({ kat: r.i, z: WO[j], loc: null }) : () => {} })) }));
+    } else {
+      const ws = [['mub', 'WK Andalas Darat'], ['bny', 'WK Batu Ampar']];
+      mxCols = ws.map((w) => ({ n: w[1], s: '' }));
+      const rows = CAT.map((c, i) => ({ n: c[0], i, v: ws.map((w) => c[2][w[0]] || 0) })).filter((r) => sum(r.v) > 0);
+      const cm = Math.max(1, ...rows.map((r) => Math.max(...r.v)));
+      mxRows = rows.map((r) => ({ n: r.n, cls: '', tot: String(sum(r.v)), cells: r.v.map((v, j) => ({ v: v ? String(v) : '–', cls: v ? (s.kat === r.i ? 'sel' : '') : 'z', bg: v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(8 + v / cm * 52) + '%, var(--surface))' : 'var(--surface-subtle)', aria: r.n + ' di ' + ws[j][1] + ': ' + v, go: v ? () => this.setState({ kat: r.i, z: 'own', loc: ws[j][0] }) : () => {} })) }));
+    }
+
+    // ===== filter aktif =====
+    const af = [];
+    if (s.kat != null) af.push({ l: 'Kategori: ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]), clear: () => this.setState({ kat: null }) });
+    if (s.lv.some((v) => !v)) af.push({ l: 'Level: ' + LV.filter((l, i) => s.lv[i]).map((l) => l[0]).join(', '), clear: () => this.setState({ lv: [1, 1, 1, 1, 1] }) });
+    if (skk && lvl !== 'nat') af.push({ l: 'Wilayah: ' + W[z].n + (loc ? ' · ' + loc.name : ''), clear: () => this.setState({ z: 'nat', loc: null }) });
+
+    return {
+      isSkk: skk, isKkks: !skk,
+      user: skk ? 'Hendra Wijaya' : 'Sari Wulandari', role: skk ? 'Pengawas SKK' : 'Pejabat Berwenang KKKS', tasks: skk ? '2' : '4',
+      subtitle: 'Semester I 2026 · data per 25 Nov 2026, 08.00 WIB · hanya insiden terverifikasi',
+      filters: skk ? [{ k: 'Wilayah', v: lvl === 'nat' ? 'Semua' : W[z].n }, { k: 'KKKS', v: 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) }] : [{ k: 'Wilayah kerja', v: loc ? loc.wk : 'Semua' }, { k: 'Kategori', v: s.kat == null ? 'Semua' : CAT[s.kat][0] }],
+      lvOpen: s.lvOpen, lvOpenStr: s.lvOpen ? 'true' : 'false', toggleLv: () => this.setState({ lvOpen: !s.lvOpen }), lvAll: () => this.setState({ lv: [1, 1, 1, 1, 1] }),
+      lvSum: s.lv.every(Boolean) ? 'Semua' : (s.lv.filter(Boolean).length + ' dari 5'), lvDots: LV.filter((l, i) => s.lv[i]).map((l) => ({ c: l[1] })),
+      clearAll: () => this.setState({ kat: null, lv: [1, 1, 1, 1, 1], z: skk ? 'nat' : 'own', loc: null }),
+      lvChips: LV.map((l, i) => ({ n: l[0], c: l[1], cnt: String(lvAllCnt[i]), on: s.lv[i] ? 'true' : 'false', pick: () => { const nl = s.lv.slice(); nl[i] = nl[i] ? 0 : 1; if (nl.some(Boolean)) this.setState({ lv: nl }); } })),
+      dtt: dttOn, dttStr: dttOn ? 'true' : 'false', dttCls: dttOn ? 'on' : '', toggleDtt: () => this.setState({ dtt: !s.dtt, kat: null }),
+      hasAf: af.length > 0, af,
+      dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · Semester I 2026',
+      ins, aiCap, aiSeg, askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
+      kpis,
+      crumb, mapT, sites, baseOp: lvl === 'nat' ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
+      showHint: true, hint,
+      mapCap: lvl === 'nat' ? 'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.' : (lvl === 'area' ? 'Garis = batas provinsi dan kabupaten/kota. Batas WK menunggu data resmi (Q-272).' : 'Satu titik satu insiden. Lokasi rahasia tidak digambar.'),
+      mapAria: 'Peta insiden ' + (lvl === 'nat' ? 'Indonesia' : aTitle) + ': ' + vis.length + ' area dengan insiden',
+      legLv: LV.map((l) => ({ n: l[0], c: l[1] })),
+      zNat: lvl === 'nat', zArea: lvl === 'area', zLoc: lvl === 'loc',
+      wRows, aTitle, aN, aNs, aR, aRs, aLv, aLvAria: aLvAriaS, aCat, aCatS, subHead, subRows, aKkks, aWk, incs, incFoot, listHref,
+      attn, attnCount: String(attn.length),
+      trCap: (N ? 'Jumlah insiden' : 'Kerugian (Rp)') + ' · Semester I 2026' + (N && dttOn ? ' · abu-abu = DTT' : ''),
+      measures: [['n', 'Jumlah'], ['rp', 'Kerugian']].map(([kk, l]) => ({ label: l, on: s.m === kk ? 'true' : 'false', pick: () => this.setState({ m: kk }) })),
+      trNoteT: NOTE[0], trNoteD: NOTE[1],
+      topCat, catCap,
+      ikN: String(inT), ikK: String(krT), ikUp: upN + ' (' + (krT ? Math.round(upN / krT * 100) : 0) + '%)', ikBars, ikAria: 'Insiden dan kerawanan per bulan: ' + MO.map((m, i) => m + ' ' + IN[i] + ' insiden, ' + KR[i] + ' kerawanan').join('; '),
+      ikNote: 'Kerawanan yang dinaikkan jadi insiden pindah ke hitungan insiden.' + (dttOn ? ' DTT dihitung sebagai insiden.' : ''),
+      stCap: 'Klik status untuk melihat insidennya' + (dttOn ? ' · DTT tidak termasuk' : ''), st, stBar, stAria: 'Status penanganan: ' + stBar.map((v) => v.n + ' ' + v.v).join(', '), stLate: String(lateList.length), stMed: String(med).replace('.', ',') + ' hari', stClosed: String(closed.length), lateGo: () => this.setState({ stOpen: s.stOpen === 3 ? null : 3 }), lateOpenStr: s.stOpen === 3 ? 'true' : 'false',
+
+      trend, trAria: 'Tren per bulan: ' + trend.map((b) => b.m + ' ' + b.lbl).join(', '),
+      mxTitle: skk ? 'Kategori × wilayah' : 'Kategori × wilayah kerja',
+      mxCap: 'Klik sel untuk menyaring seluruh halaman dan zoom ke ' + (skk ? 'wilayah' : 'wilayah kerja') + ' itu.' + (skk ? ' 11 kategori tanpa insiden disembunyikan.' : ''),
+      mxCols, mxRows,
+      foot: 'Angka hanya mencakup insiden yang sudah diverifikasi; draf dan laporan yang belum diperiksa tidak dihitung. Semua angka di halaman ini dan di PDF dihitung dari sumber data yang sama. ' + (skk ? 'DTT tidak dihitung kecuali sakelar "Hitung DTT" dinyalakan (keputusan terbuka). "Belum ada laporan" berbeda dengan "0 insiden": wilayah tanpa laporan insiden maupun nihil ditandai arsir. ' : '') + 'Batas wilayah: Kemendagri 2025 via cahyadsn/wilayah_boundaries (MIT). Angka demo, pola mengikuti rekap SKK Jan–Jun 2026.'
+    };
+  }
+}
+</script>
+</body>
+</html>

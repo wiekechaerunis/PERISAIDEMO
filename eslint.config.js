@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 export default tseslint.config(
-  { ignores: ['dist', 'design-ref'] },
+  { ignores: ['dist', 'design-ref', 'design', 'src/generated', 'src/data/dashboard.ts', 'src/features/laporan/Pdf*.tsx'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

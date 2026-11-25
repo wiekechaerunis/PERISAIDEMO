@@ -1,0 +1,30 @@
+/* PERISAI · pola layar di atas DS v2 Lime (bundle.css). Nilai dari tokens.css.
+   Subset lk.css dari canvas Desain v2 Insiden yang dipakai Dashboard insiden. */
+.lk-app{box-sizing:border-box;display:flex;align-items:stretch;background:var(--surface-page);font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--ink);font-variant-numeric:tabular-nums;position:relative}
+.lk-app *{box-sizing:border-box}
+.lk-app b,.lk-app strong{font-weight:600}
+.lk-app h1,.lk-app h2,.lk-app h3{font-weight:700}
+.lk-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.lk-content{padding:24px;display:flex;flex-direction:column;gap:16px;flex:1 1 auto}
+.lk-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c7{grid-column:span 7}.c6{grid-column:span 6}.c5{grid-column:span 5}.c4{grid-column:span 4}.c3{grid-column:span 3}
+.lk-stack{display:flex;flex-direction:column;gap:16px}
+.lk-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.lk-divider{height:1px;background:var(--border-subtle);margin:16px 0}
+/* Link aksi berdiri sendiri: tanpa garis bawah + panah */
+.lk-alink{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ink-subtle);text-decoration:none}
+.lk-alink::after{content:"→";transition:transform .12s ease}
+.lk-alink:hover{color:var(--ink)}.lk-alink:hover::after{transform:translateX(2px)}
+/* Baris daftar dalam satu kartu */
+.lk-rows{display:flex;flex-direction:column}
+.lk-rows>*+*{border-top:1px solid var(--border-subtle)}
+/* Panel samping (SidePanel DS) */
+.lk-side{position:absolute;top:0;right:0;bottom:0;width:480px;background:var(--surface);box-shadow:var(--shadow-floating);z-index:6;display:flex;flex-direction:column}
+.lk-scrim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.lk-vsep{display:inline-block;width:1px;height:24px;background:var(--border);margin:0 4px;align-self:center;flex:none}
+/* Link di dalam kalimat bergaris bawah tipis */
+.lk-app p a:not(.p-btn):not(.lk-alink),.lk-app .p-note a:not(.p-btn){text-decoration:underline;text-decoration-color:var(--border-control);text-underline-offset:3px;text-decoration-thickness:1px}
+.lk-app p a:hover,.lk-app .p-note a:hover{text-decoration-color:var(--ink)}
+/* Tooltip hover untuk IconButton (teks = aria-label) */
+.p-ibtn[aria-label]{position:relative}
+.p-ibtn[aria-label]:not(:has(.p-tip)):hover::after,.p-ibtn[aria-label]:not(:has(.p-tip)):focus-visible::after{content:attr(aria-label);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:4px 8px;border-radius:var(--radius-sm);background:var(--ink);color:var(--surface);font-size:11px;font-weight:600;line-height:1.4;pointer-events:none;z-index:50}
