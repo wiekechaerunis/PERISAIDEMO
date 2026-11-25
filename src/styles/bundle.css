@@ -582,3 +582,9 @@
 .p-fab.mini .lbl{display:none}
 .p-fab:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
 @media (min-width:768px){.p-fab{display:none}}
+
+/* Sidebar ciut (permintaan 25 Nov 2026): tip label hanya saat hover/fokus; ikon tombol bar atas dibalik */
+.p-sb.mini .nv .tip{display:none}
+.p-sb.mini .nv:hover .tip,.p-sb.mini .nv:focus-visible .tip{display:flex}
+.p-sb.mini .tip .p-count{background:var(--surface);color:var(--ink)}
+.lk-app:has(.p-sb.mini) .p-sbtoggle .p-ic{transform:scaleX(-1)}
