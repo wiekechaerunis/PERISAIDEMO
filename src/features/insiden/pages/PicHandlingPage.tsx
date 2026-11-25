@@ -19,6 +19,7 @@ import {
 import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
 import { LocationCard } from '../components/detail/LocationCard';
 import { ClosureStatusCard } from '../components/closure/SyncParts';
+import { lpoMissing } from '../components/handling/LpoSection';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
 import { RestrictedView } from '../components/detail/StateViews';
@@ -288,8 +289,9 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
 
   const entries = historyEntries(i, due, false);
   const recent = entries.filter((e) => e.kind === 'note' || e.kind === 'wa').slice(0, 3);
-  const done = closureDone(form);
-  const complete = done === CLOSURE_REQUIRED.length;
+  const done = closureDone(form, i.severity);
+  // ADJ-14: 5 isian wajib; ADJ-12: LPO "Ada" wajib sumber angka + dokumen
+  const complete = done === CLOSURE_REQUIRED.length && lpoMissing(form.lpo).length === 0;
   const badge = due ? dueBadge(due) : null;
 
   const update = (patch: Partial<Closure>) => {
@@ -389,7 +391,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
                 <button type="button" className="p-btn p-btn-secondary p-btn-sm" onClick={() => setOpen(true)}><P d={D.tick} size={16} />Isi data penutupan</button>
               </div>
             ) : (
-              <ClosureForm form={form} onChange={update} showErrors={showErrors} hasMan={d.axes.includes('man')} reportedLoss={d.lossIdr} reportedHandled={handledLabel} occurredAt={i.occurredAt} opsReported={!!d.ops && d.ops !== 'tidak'} />
+              <ClosureForm form={form} onChange={update} showErrors={showErrors} hasMan={d.axes.includes('man')} reportedLoss={d.lossIdr} reportedHandled={handledLabel} occurredAt={i.occurredAt} opsReported={!!d.ops && d.ops !== 'tidak'} severity={i.severity} stopHours={d.ops === 'berhenti' ? d.opsHours : null} kurs={useDemoStore.getState().config.kursIdrPerUsd} />
             )}
           </section>
 
@@ -433,7 +435,7 @@ function WorkView({ i, st, clearState }: { i: Incident; st: HandlingState | null
             <button type="button" className="p-btn p-btn-primary" aria-disabled={!complete} aria-describedby={complete ? undefined : 'mt2'} onClick={submit}>
               <P d={D.tick} size={16} />Ajukan penutupan
             </button>
-            {!complete && <span className="in-tip r" id="mt2" role="tooltip">Lengkapi 6 isian wajib data penutupan dulu.</span>}
+            {!complete && <span className="in-tip r" id="mt2" role="tooltip">Lengkapi 5 isian wajib data penutupan dulu.</span>}
           </span>
         </span>
       </div>

@@ -2,7 +2,9 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { useDismiss } from '@/components/ui/useDismiss';
 import type { Closure } from '@/services/types';
-import { CLOSURE_REQUIRED, closureDone } from '@/services/mock/workflow.handling';
+import { CLOSURE_REQUIRED, causeDetailRequired, closureDone } from '@/services/mock/workflow.handling';
+import type { Severity } from '@/lib/severity';
+import { LpoSection } from './LpoSection';
 import { formatNumber, formatRupiah } from '@/lib/format';
 import { Icon } from '@/components/ui/Icon';
 import { Ic as P } from '../review/parts';
@@ -101,12 +103,18 @@ interface Props {
   occurredAt: string;
   /** kondisi operasi menurut laporan bukan "Tidak terganggu" */
   opsReported: boolean;
+  /** keparahan insiden (Penjelasan penyebab wajib bila Tinggi/Kritis, ADJ-14) */
+  severity?: Severity | null;
+  /** lama berhenti dari dampak (jam), isian awal LPO */
+  stopHours?: number | null;
+  kurs?: number;
 }
 
-export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, reportedHandled, occurredAt, opsReported }: Props) {
-  const done = closureDone(form);
+export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, reportedHandled, occurredAt, opsReported, severity, stopHours, kurs = 16500 }: Props) {
+  const done = closureDone(form, severity);
   const total = CLOSURE_REQUIRED.length;
-  const miss = (key: string) => showErrors && CLOSURE_REQUIRED.find((r) => r.key === key && !r.ok(form)) ? `Lengkapi ${CLOSURE_REQUIRED.find((r) => r.key === key)!.label} sebelum menutup insiden.` : undefined;
+  const detailReq = causeDetailRequired(severity);
+  const miss = (key: string) => showErrors && CLOSURE_REQUIRED.find((r) => r.key === key && !r.ok(form, severity)) ? `Lengkapi ${CLOSURE_REQUIRED.find((r) => r.key === key)!.label} sebelum menutup insiden.` : undefined;
   const file = useRef<HTMLInputElement>(null);
   const addFiles = (list: FileList | null) => {
     if (!list?.length) return;
@@ -131,17 +139,21 @@ export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, 
         <MultiPick label="Tim terlibat" placeholder="Tambah mitra atau Security internal" options={PARTNER_OPTS.map((p) => p.name)} value={names} error={!!miss('partners')} onChange={(v) => onChange({ partnerNames: v, partners: typesOf(v) })} />
       </Req>
 
-      <Req label="Penyebab" error={miss('cause')} help="Daftar penyebab dari taksonomi PLT-06 (menunggu K-05).">
-        <SinglePick label="Penyebab" placeholder="Pilih dari daftar" options={CAUSE_OPTS} value={form.cause} error={!!miss('cause')} onChange={(v) => onChange({ cause: v })} />
+      <Req label="Penyebab utama" error={miss('cause') && !form.cause.trim() ? miss('cause') : undefined} help="Pilih satu yang paling menentukan terjadinya insiden. Daftar dari Konfigurasi Insiden (KIN-01).">
+        <SinglePick label="Penyebab utama" placeholder="Pilih dari daftar" options={CAUSE_OPTS} value={form.cause} error={!!miss('cause') && !form.cause.trim()} onChange={(v) => onChange({ cause: v })} />
       </Req>
 
-      <Req label="Penjelasan" optional>
+      <Req
+        label="Penjelasan penyebab" optional={!detailReq}
+        error={showErrors && detailReq && !form.causeDetail?.trim() ? 'Penjelasan penyebab wajib untuk keparahan Tinggi atau Kritis.' : undefined}
+        help={detailReq ? 'Wajib karena keparahan Tinggi atau Kritis.' : undefined}
+      >
         <textarea className="p-input p-area" aria-label="Penjelasan penyebab" style={{ minHeight: 88 }} maxLength={MAX_CAUSE} placeholder="Jelaskan penyebabnya" value={form.causeDetail ?? ''} onChange={(e) => onChange({ causeDetail: e.target.value })} />
-        <TidyBar label="Penjelasan" value={form.causeDetail ?? ''} counter={`${(form.causeDetail ?? '').length}/500`} onApply={(t) => onChange({ causeDetail: t })} />
+        <TidyBar label="Penjelasan penyebab" value={form.causeDetail ?? ''} counter={`${(form.causeDetail ?? '').length}/500`} onApply={(t) => onChange({ causeDetail: t })} />
       </Req>
 
-      <Req label="Faktor penyebab" error={miss('factors')} help="Dipakai analisis faktor penyebab utama.">
-        <MultiPick label="Faktor penyebab" placeholder="Tambah faktor" options={FACTOR_OPTS} value={form.factors ?? []} error={!!miss('factors')} onChange={(v) => onChange({ factors: v })} />
+      <Req label="Faktor pendukung" optional help="Kondisi lain yang ikut membuat insiden terjadi atau lebih parah. Boleh lebih dari satu.">
+        <MultiPick label="Faktor pendukung" placeholder="Tambah faktor" options={FACTOR_OPTS} value={form.factors ?? []} error={false} onChange={(v) => onChange({ factors: v })} />
       </Req>
 
       <Req label="Bukti penyelesaian" error={miss('evidence')} help="Minimal 1 file: foto kondisi akhir, berita acara, atau laporan polisi.">
@@ -209,6 +221,8 @@ export function ClosureForm({ form, onChange, showErrors, hasMan, reportedLoss, 
             }} />
         </label>
       </Req>
+
+      <LpoSection value={form.lpo} onChange={(lpo) => onChange({ lpo })} stopHours={stopHours ?? null} kurs={kurs} showErrors={showErrors} />
 
       <ClosureExtraFields form={form} onChange={onChange} opsReported={opsReported} occurredAt={occurredAt} showErrors={showErrors} />
     </>

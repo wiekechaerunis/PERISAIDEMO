@@ -58,9 +58,11 @@ describe('Halaman kerja PIC', () => {
       }),
     );
     renderAt(`/insiden/${NO}/tangani`);
-    expect(screen.getByText('4 dari 6 isian wajib')).toBeInTheDocument();
+    // ADJ-14: 5 isian wajib; 0007 Tinggi tanpa Penjelasan penyebab → Penyebab utama belum lengkap
+    expect(screen.getByText('2 dari 5 isian wajib')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Ajukan penutupan/ }));
     expect(screen.getByText('Lengkapi Tim terlibat sebelum menutup insiden.')).toBeInTheDocument();
+    expect(screen.getByText('Penjelasan penyebab wajib untuk keparahan Tinggi atau Kritis.')).toBeInTheDocument();
     expect(inc().status).toBe('dalam-penanganan');
   });
 
@@ -68,7 +70,7 @@ describe('Halaman kerja PIC', () => {
     useDemoStore.getState().decide((s) =>
       saveClosure(s, NO, 'Andi Pratama', {
         actions: 'Kabel diganti.', partners: ['bujp'], partnerNames: ['PT Garda Nusantara Sejahtera · BUJP'], cause: 'Celah pengamanan fisik',
-        factors: ['Celah pagar'], evidence: [{ name: 'a.jpg', sizeKb: 10, caption: '' }], result: 'tidak-ada',
+        causeDetail: 'Panel di luar jangkauan CCTV.', factors: [], evidence: [{ name: 'a.jpg', sizeKb: 10, caption: '' }], result: 'tidak-ada',
       }),
     );
     renderAt(`/insiden/${NO}/tangani`);

@@ -161,8 +161,8 @@ export function ClosureDataCard({ incident: i, hl, hlFiles, hlLoss }: { incident
       ) : (
         <dl className="lk-kv1" style={{ gridTemplateColumns: '150px minmax(0, 1fr)' }}>
           {row('Ringkasan', closureSummary(c) || 'Belum diisi')}
-          {row('Penyebab', <>{c.cause || 'Belum diisi'}{c.causeDetail && sub(c.causeDetail)}</>)}
-          {row('Faktor penyebab', c.factors?.length ? c.factors.join(', ') : 'Belum diisi')}
+          {row('Penyebab utama', <>{c.cause || 'Belum diisi'}{c.causeDetail && sub(c.causeDetail)}</>)}
+          {row('Faktor pendukung', c.factors?.length ? c.factors.join(', ') : '–')}
           {row('Tim terlibat', <>{team.length ? team.join(', ') : 'Belum diisi'}{d.handledBy.length > 0 && sub(`Menurut pelapor saat melapor: ${handledText(d)}`)}</>)}
           {c.contracts && c.contracts.length > 0 && row('Kontrak mitra', (
             <>

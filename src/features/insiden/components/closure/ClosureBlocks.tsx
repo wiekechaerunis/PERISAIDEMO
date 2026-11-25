@@ -1,5 +1,6 @@
 // Blok bersama layar Pejabat insiden berjalan: Data penutupan, Tindak lanjut, Riwayat, Ringkasan, Tenggat, Eskalasi, Kondisi sekitar, Jejak audit.
 import { Link } from 'react-router-dom';
+import { lpoText } from '../handling/LpoSection';
 import { useState, type ReactNode } from 'react';
 import { ClosureExtraRows, UpdateLegalButton } from './ClosureExtraRows';
 import { handleDaysOf } from '@/lib/deadline';
@@ -144,8 +145,9 @@ export function ClosureDataCard({ i, hl, grupFrom }: { i: Incident; hl: string |
       </div>
       <dl className="lk-kv1" style={{ gridTemplateColumns: '150px minmax(0, 1fr)' }}>
         <dt>Ringkasan</dt><dd>{closureSummary(c) || '—'}</dd>
-        <dt>Penyebab</dt><dd>{c.cause || '—'}{c.causeDetail && <div className="sub">{c.causeDetail}</div>}</dd>
-        {c.factors && c.factors.length > 0 && (<><dt>Faktor penyebab</dt><dd>{c.factors.join(', ')}</dd></>)}
+        <dt>Penyebab utama</dt><dd>{c.cause || '–'}{c.causeDetail && <div className="sub">{c.causeDetail}</div>}</dd>
+        <dt>Faktor pendukung</dt><dd>{c.factors?.length ? c.factors.join(', ') : '–'}</dd>
+        {c.lpo && c.lpo.choice !== 'tidak' && (<><dt>Produksi hilang (LPO)</dt><dd>{lpoText(c.lpo)}</dd></>)}
         <dt>Tim terlibat</dt><dd>{partnerLabel(i).join(', ') || '—'}<div className="sub">Menurut pelapor saat melapor: {handledText(d)}</div></dd>
         <dt>Bukti</dt>
         <dd className={hl === 'bk' ? 'in-hl' : undefined}>
@@ -171,8 +173,9 @@ export function ClosedDataCard({ i }: { i: Incident }) {
       <div className="lk-card-head"><h2 className="in-h">Data penutupan</h2><span className="p-tag t-ok">Lengkap</span></div>
       <dl className="lk-kv1" style={{ gridTemplateColumns: '150px minmax(0, 1fr)' }}>
         <dt>Ringkasan</dt><dd>{closureSummary(c) || '—'}</dd>
-        <dt>Penyebab</dt><dd>{c.cause || '—'}{c.causeDetail && <div className="sub">{c.causeDetail}</div>}</dd>
-        {c.factors && c.factors.length > 0 && (<><dt>Faktor penyebab</dt><dd>{c.factors.join(', ')}</dd></>)}
+        <dt>Penyebab utama</dt><dd>{c.cause || '–'}{c.causeDetail && <div className="sub">{c.causeDetail}</div>}</dd>
+        <dt>Faktor pendukung</dt><dd>{c.factors?.length ? c.factors.join(', ') : '–'}</dd>
+        {c.lpo && c.lpo.choice !== 'tidak' && (<><dt>Produksi hilang (LPO)</dt><dd>{lpoText(c.lpo)}</dd></>)}
         <dt>Bukti</dt><dd>{(c.evidence ?? []).map((e) => e.name).join(', ') || '—'}</dd>
         <dt>Kerugian akhir</dt><dd>{c.lossFinalIdr != null ? formatRupiah(c.lossFinalIdr) : '—'}{d.lossIdr != null && <div className="sub">Perkiraan pelapor {formatRupiah(d.lossIdr)}</div>}</dd>
         <ClosureExtraRows c={c} action={<UpdateLegalButton i={i} />} />

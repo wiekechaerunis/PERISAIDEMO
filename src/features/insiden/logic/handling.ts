@@ -133,7 +133,7 @@ export function auditEntries(i: Incident, due: string | undefined): AuditEntry[]
   return out.reverse();
 }
 
-/** Mitra/penyebab/faktor (daftar pilihan demo; taksonomi PLT-06 menunggu K-05). */
+/** Mitra/penyebab/faktor. Penyebab utama dan Faktor pendukung berasal dari Konfigurasi Insiden (KIN-01, ADJ-16); isi awal menunggu K-05. */
 export const PARTNER_OPTS: { name: string; type: HandledBy }[] = [
   { name: 'PT Garda Nusantara Sejahtera · BUJP', type: 'bujp' },
   { name: 'Polres Musi Banyuasin · Polri', type: 'polri' },

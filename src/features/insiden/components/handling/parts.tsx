@@ -1,5 +1,6 @@
 // Bagian halaman kerja PIC (board P12, P14, P15, P17, PS*): kartu Langkah berikutnya, Riwayat, Ringkasan, Tindak lanjut, dialog Eskalasi.
 import { Link } from 'react-router-dom';
+import { lpoText } from './LpoSection';
 import { demoNow } from '@/services/mock/clock';
 import { useState, type ReactNode } from 'react';
 import type { Closure, Incident } from '@/services/types';
@@ -397,8 +398,9 @@ export function ClosureReadonly({ c, reported }: { c: Closure; reported?: number
       <dl className="lk-kv1" style={{ gridTemplateColumns: '150px minmax(0, 1fr)' }}>
         <dt>Ringkasan</dt><dd>{c.actions}</dd>
         <dt>Tim terlibat</dt><dd>{names.map((n) => n.replace(/^(.*) · (.*)$/, '$1 ($2)')).join(', ') || '-'}</dd>
-        <dt>Penyebab</dt><dd>{c.cause}{c.causeDetail && <div className="sub">{c.causeDetail}</div>}</dd>
-        <dt>Faktor penyebab</dt><dd>{(c.factors ?? []).join(', ')}</dd>
+        <dt>Penyebab utama</dt><dd>{c.cause || '–'}{c.causeDetail && <div className="sub">{c.causeDetail}</div>}</dd>
+        <dt>Faktor pendukung</dt><dd>{c.factors?.length ? c.factors.join(', ') : '–'}</dd>
+        {c.lpo && c.lpo.choice !== 'tidak' && (<><dt>Produksi hilang (LPO)</dt><dd>{lpoText(c.lpo)}</dd></>)}
         <dt>Bukti</dt><dd>{(c.evidence ?? []).map((e) => e.name).join(', ')}</dd>
         {c.lossFinalIdr !== null && (
           <><dt>Kerugian akhir</dt><dd>{formatRupiah(c.lossFinalIdr)}{reported ? <div className="sub">Perkiraan pelapor {formatRupiah(reported)}</div> : null}</dd></>

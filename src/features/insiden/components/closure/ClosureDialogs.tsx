@@ -18,8 +18,8 @@ import { formatDuration, registeredAt } from '../detail/detailLogic';
 import { openFollowUps } from '@/services/mock/workflow.closure';
 
 const MAX = 500;
-const Btn = ({ children, onClick, kind = 'secondary' }: { children: ReactNode; onClick: () => void; kind?: 'primary' | 'secondary' }) => (
-  <button type="button" className={`p-btn p-btn-${kind}`} onClick={onClick}>{children}</button>
+const Btn = ({ children, onClick, kind = 'secondary', disabled }: { children: ReactNode; onClick: () => void; kind?: 'primary' | 'secondary'; disabled?: boolean }) => (
+  <button type="button" className={`p-btn p-btn-${kind}`} onClick={onClick} disabled={disabled}>{children}</button>
 );
 const WARN = 'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z';
 
@@ -59,7 +59,7 @@ export function CloseDialog({ incident: i, now, contracts, note, error, onClose,
     <Modal title="Tutup insiden ini?" width={560} onClose={onClose} footer={<><Btn onClick={onClose}>Periksa lagi</Btn><Btn kind="primary" onClick={submit}><Ic d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" size={16} />Tutup insiden</Btn></>}>
       <dl className="lk-kv1" style={{ gridTemplateColumns: '140px minmax(0, 1fr)', margin: 0 }}>
         <dt>Lama penanganan</dt><dd>{formatDuration(registeredAt(i), c?.requestedAt ?? now)} · <span style={{ color: inTime ? 'var(--status-success-ink)' : 'var(--status-danger-ink, var(--err-ink))', fontWeight: 600 }}>{inTime ? 'Dalam tenggat' : 'Lewat tenggat'}</span></dd>
-        <dt>Penyebab</dt><dd>{c?.cause || '—'}</dd>
+        <dt>Penyebab utama</dt><dd>{c?.cause || '—'}</dd>
         <dt>Tim terlibat</dt><dd>{partnerLabel(i).map((p) => p.replace(/ \((.+)\)$/, '')).join(', ') || '—'}</dd>
         {contracts.length > 0 && (<><dt>Kontrak mitra</dt><dd>{contracts.map((k) => k.ref).join(', ')}</dd></>)}
         <dt>Bukti</dt><dd>{c?.evidence?.length ?? 0} file</dd>
@@ -100,7 +100,7 @@ export function ReturnDialog({ incident: i, onClose, onConfirm }: { incident: In
   const first = (i.pic ?? 'PIC').split(' ')[0];
   const submit = () => (reason.trim() ? onConfirm(reason.trim()) : setTried(true));
   return (
-    <Modal title="Kembalikan ke PIC?" width={480} onClose={onClose} footer={<><Btn onClick={onClose}>Batal</Btn><Btn kind="primary" onClick={submit}>Kembalikan</Btn></>}>
+    <Modal title="Kembalikan ke PIC?" width={480} onClose={onClose} footer={<><Btn onClick={onClose}>Batal</Btn><Btn kind="primary" onClick={submit} disabled={!reason.trim()}>Kembalikan</Btn></>}>
       <span>Insiden tetap Dalam penanganan. {first} melihat alasan Anda di Detail dan bisa meminta ditutup lagi.</span>
       <ReasonField value={reason} onChange={setReason} error={tried && !reason.trim() ? 'Tulis alasan.' : undefined} placeholder="mis. Lampirkan berita acara yang sudah ditandatangani Polsek, bukan draf." />
     </Modal>

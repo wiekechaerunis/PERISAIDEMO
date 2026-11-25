@@ -67,3 +67,38 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
   (maks. 500); toast "Pengajuan dibatalkan. Insiden kembali menjadi draf."; toast gagal "Laporan sudah diproses Pejabat Berwenang
   dan pengajuannya tidak bisa dibatalkan."; Riwayat "Pengajuan dibatalkan" + alasan. Teks di Ringkasan WA, mobile, dan email EI.10
   ikut diganti. `?aksi=batalkan` membuka dialog langsung (dari menu ⋯ daftar).
+
+## 8. Data penutupan (PIC, `/insiden/:no/tangani`)
+
+- PA-16, ADJ-14: "Penyebab utama" (satu pilihan, teks bantuan ADJ-14), "Penjelasan penyebab" (wajib bila Tinggi/Kritis, dihitung
+  bersama Penyebab utama), "Faktor pendukung · opsional"; isian wajib 6 → 5 di progres, validasi, tooltip, dan workflow
+  `requestClosure`. Layar baca (Pejabat, PIC, SKK, dialog Tutup) memakai label baru dan "–" bila Faktor pendukung kosong.
+- ADJ-16: catatan daftar menyebut Konfigurasi Insiden (KIN-01); rujukan "PLT-06" dihapus dari teks dan komentar.
+- PA-17, ADJ-12 (LPOSec, LPOm-TerisiAI): bagian "Produksi hilang (LPO) · opsional" di bawah Kerugian akhir: Tidak ada / Ada /
+  Belum dihitung; Ada → "Unggah laporan produksi" (AI mock mengisi jenis, produksi normal, sumber angka dengan tag "AI · Perlu
+  dicek"; harga memakai harga acuan) atau "Isi manual"; volume dan nilai dihitung (200 bbl/hari × 6 jam × US$70 = 50 bbl,
+  US$3.500). Ada tanpa sumber angka atau dokumen menahan Ajukan penutupan. LPO tampil di Data penutupan layar baca.
+
+## 9. Menunggu penutupan
+
+- ADJ-09: Pejabat tanpa menu Aksi lain (Ganti PIC, Ubah tenggat, Eskalasi disembunyikan); tombol Kembalikan nonaktif sampai
+  Alasan terisi (uji PT1-07). PIC tetap bisa Tambah tindak lanjut selama Menunggu penutupan (TlCard).
+- B-22, B-23 (P17): banner diganti kartu "Menunggu ditutup" di atas kolom kanan; urutan Data penutupan → Isi laporan → Lampiran,
+  tidak dilipat; Riwayat di tab.
+
+## 10. Periksa penutupan (Pejabat, P22)
+
+- ADJ-13: panel "Bahan pertimbangan" diganti tombol "Ringkasan untuk keputusan" (tertutup bawaan) berisi 5 poin: Kejadian, Yang
+  dilakukan (+ Lihat jejak), Dampak akhir, Masih berjalan setelah ditutup, Perlu dicek (jumlah + daftar + Lihat; "Tidak ada yang
+  perlu dicek" bila kosong); footer AI + Membantu?.
+- ADJ-02, ADJ-03: Tutup insiden oleh PIC atau pemeriksa yang sama → satu dialog peringatan ("Anda PIC insiden ini. Tetap tutup?" /
+  "Anda juga memeriksa laporan ini. Tetap tutup?" / gabungan), tidak memblokir; Riwayat mencatat "ditutup sendiri" / "diperiksa dan
+  ditutup orang yang sama". Catatan perhatian juga tampil di kartu status.
+- ADJ-10: Lama penanganan (disetujui → sekarang/ditutup) dan Total waktu (registrasi → sekarang/ditutup) di kartu status.
+- B-23: urutan Ringkasan untuk keputusan → Data penutupan → Tindak lanjut → Isi laporan; kartu Lokasi di kanan.
+
+## 11. Ditutup (P24, P35)
+
+- B-22: banner "Ditutup …" dihapus; kartu sukses "Insiden ditutup" di atas kolom kanan berisi Ditutup, Lama penanganan, Total
+  waktu (ADJ-10), Tenggat PIC (dinilai saat Ajukan penutupan, ADJ-09), tindak lanjut berjalan, batas Buka kembali.
+- B-23: Data penutupan → Tindak lanjut → Isi laporan (tidak dilipat). Sama untuk tampilan SKK (P35).

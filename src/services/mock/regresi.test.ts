@@ -18,13 +18,14 @@ describe('B1 · ringkasan penanganan satu sumber', () => {
     const patches = [
       { actions: 'Kabel diganti dan pompa menyala.' },
       { partners: ['bujp' as const] },
-      { cause: 'Pencurian kabel' },
+      { cause: 'Pencurian kabel', causeDetail: 'Panel di luar jangkauan CCTV.' },
       { factors: ['Celah pagar'] },
       { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] }, { result: 'tidak-ada' as const },
     ];
     for (const p of patches) s = { ...s, ...st(saveClosure(s, no, 'Andi Pratama', p as never)) };
     const i = s.incidents.find((x) => x.no === no)!;
-    expect(closureCompleteness(i)).toMatchObject({ done: 6, total: 6, complete: true, missing: [] });
+    // ADJ-14: isian wajib 5 (Faktor pendukung opsional)
+    expect(closureCompleteness(i)).toMatchObject({ done: 5, total: 5, complete: true, missing: [] });
     expect(closureSummary(i.handling?.closure)).toBe('Kabel diganti dan pompa menyala.');
   });
 });
@@ -102,16 +103,16 @@ describe('Kartu Pengerjaan · aturan status', () => {
   });
 });
 
-describe('Data penutupan 6 isian · proses hukum', () => {
-  it('5/6 bila Hasil pengamanan kosong; 6/6 bila dipilih', async () => {
+describe('Data penutupan 5 isian (ADJ-14) · proses hukum', () => {
+  it('4/5 bila Hasil pengamanan kosong; 5/5 bila dipilih', async () => {
     const { closureCompleteness, saveClosure } = await import('./workflow.handling');
     let s: ReturnType<typeof seedState> = seedState();
     const no = 'INS-SEN-2026-0007';
     s = { ...s, incidents: s.incidents.map((i) => (i.no === no ? { ...i, status: 'dalam-penanganan' as const, pic: 'Andi Pratama' } : i)) };
-    for (const p of [{ actions: 'Kabel diganti.' }, { partners: ['bujp' as const] }, { cause: 'Pencurian kabel' }, { factors: ['Celah pagar'] }, { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] }]) {
+    for (const p of [{ actions: 'Kabel diganti.' }, { partners: ['bujp' as const] }, { cause: 'Pencurian kabel', causeDetail: 'Panel di luar jangkauan CCTV.' }, { factors: ['Celah pagar'] }, { evidence: [{ name: 'a.jpg', sizeKb: 1, caption: '' }] }]) {
       s = { ...s, ...st(saveClosure(s, no, 'Andi Pratama', p as never)) };
     }
-    expect(closureCompleteness(s.incidents.find((i) => i.no === no)!)).toMatchObject({ done: 5, total: 6, complete: false, missing: ['Hasil pengamanan'] });
+    expect(closureCompleteness(s.incidents.find((i) => i.no === no)!)).toMatchObject({ done: 4, total: 5, complete: false, missing: ['Hasil pengamanan'] });
     s = { ...s, ...st(saveClosure(s, no, 'Andi Pratama', { result: 'tidak-ada' })) };
     expect(closureCompleteness(s.incidents.find((i) => i.no === no)!).complete).toBe(true);
   });

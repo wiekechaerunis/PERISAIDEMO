@@ -2,6 +2,7 @@
 import { demoNow } from '@/services/mock/clock';
 import { LEGAL_STATUS_LABEL, type LegalProcess, type LegalStatus } from '../types';
 import type { Closure, DemoState, HandlingData, Incident } from '../types';
+import { isHighOrCritical, type Severity } from '@/lib/severity';
 import type { DecisionResult } from './workflow';
 
 
@@ -29,21 +30,25 @@ export const closureSummary = (c: Closure | undefined): string => (c?.actions ||
 /** Kelengkapan 6 isian wajib data penutupan; dipakai semua layar (PIC, Pejabat, SKK, dialog Tutup). */
 export function closureCompleteness(i: Incident): { done: number; total: number; missing: string[]; complete: boolean } {
   const c = i.handling?.closure;
-  const missing = closureMissing(c).map((m) => m.label);
+  const missing = closureMissing(c, i.severity).map((m) => m.label);
   return { done: CLOSURE_REQUIRED.length - missing.length, total: CLOSURE_REQUIRED.length, missing, complete: missing.length === 0 };
 }
 
-/** Label 6 isian wajib data penutupan (P16) dan pemeriksanya; satu sumber untuk progres, validasi PS6, dan Minta ditutup. */
-export const CLOSURE_REQUIRED: { key: string; label: string; ok: (c: Closure) => boolean }[] = [
+/**
+ * Label 5 isian wajib data penutupan (ADJ-14: semula 6) dan pemeriksanya; satu sumber untuk progres, validasi PS6, dan Ajukan penutupan.
+ * Penjelasan penyebab dihitung bersama Penyebab utama: wajib bila keparahan Tinggi/Kritis (`sev`).
+ */
+export const CLOSURE_REQUIRED: { key: string; label: string; ok: (c: Closure, sev?: Severity | null) => boolean }[] = [
   { key: 'actions', label: 'Ringkasan penanganan', ok: (c) => closureSummary(c).length > 0 },
   { key: 'partners', label: 'Tim terlibat', ok: (c) => c.partners.length > 0 },
-  { key: 'cause', label: 'Penyebab', ok: (c) => c.cause.trim().length > 0 },
-  { key: 'factors', label: 'Faktor penyebab', ok: (c) => (c.factors?.length ?? 0) > 0 },
+  { key: 'cause', label: 'Penyebab utama', ok: (c, sev) => c.cause.trim().length > 0 && (!isHighOrCritical(sev) || !!c.causeDetail?.trim()) },
   { key: 'evidence', label: 'Bukti penyelesaian', ok: (c) => (c.evidence?.length ?? 0) > 0 },
   { key: 'result', label: 'Hasil pengamanan', ok: (c) => !!c.result },
 ];
-export const closureMissing = (c: Closure | undefined) => CLOSURE_REQUIRED.filter((r) => !r.ok(c ?? emptyClosure()));
-export const closureDone = (c: Closure | undefined) => CLOSURE_REQUIRED.length - closureMissing(c).length;
+export const closureMissing = (c: Closure | undefined, sev?: Severity | null) => CLOSURE_REQUIRED.filter((r) => !r.ok(c ?? emptyClosure(), sev));
+export const closureDone = (c: Closure | undefined, sev?: Severity | null) => CLOSURE_REQUIRED.length - closureMissing(c, sev).length;
+/** Penjelasan penyebab wajib (ADJ-14): keparahan Tinggi atau Kritis. */
+export const causeDetailRequired = (sev?: Severity | null) => isHighOrCritical(sev);
 
 const working = (i?: Incident): string | null =>
   !i ? 'Insiden tidak ditemukan.' : i.status !== 'dalam-penanganan' ? MSG_NOT_HANDLING : null;
@@ -129,8 +134,11 @@ export function requestClosure(s: Slice, no: string, by: string, reviewers?: str
   const bad = working(i);
   if (bad || !i) return { ok: false, reason: bad ?? '' };
   const closure = handlingOf(i).closure;
-  const missing = closureMissing(closure);
+  const missing = closureMissing(closure, i.severity);
   if (missing.length) return { ok: false, reason: `Lengkapi ${missing.map((m) => m.label).join(', ')} sebelum menutup insiden.` };
+  // ADJ-12: Produksi hilang "Ada" wajib sumber angka dan minimal 1 dokumen
+  const lpo = closure?.lpo;
+  if (lpo?.choice === 'ada' && (!lpo.source?.trim() || !lpo.files?.length)) return { ok: false, reason: 'Lengkapi Sumber angka dan Dokumen pendukung Produksi hilang sebelum menutup insiden.' };
   const next: Closure = { ...(closure as Closure), requestedAt: demoNow(), returnReason: undefined, reviewers: reviewers ?? null };
   return {
     ok: true,

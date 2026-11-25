@@ -54,12 +54,12 @@ describe('Layar Pejabat · insiden berjalan', () => {
     expect(screen.getByRole('heading', { name: 'Insiden ditutup' })).toBeInTheDocument();
   });
 
-  it('Kembalikan ke PIC: tanpa alasan ditolak, dengan alasan status Dalam penanganan', () => {
+  // ADJ-09 (uji staging PT1-07): tombol Kembalikan nonaktif sampai Alasan terisi
+  it('Kembalikan ke PIC: nonaktif tanpa alasan, dengan alasan status Dalam penanganan', () => {
     renderPage();
     fireEvent.click(screen.getByRole('button', { name: /Kembalikan ke PIC/ }));
     const dlg = screen.getByRole('dialog', { name: 'Kembalikan ke PIC?' });
-    fireEvent.click(within(dlg).getByRole('button', { name: 'Kembalikan' }));
-    expect(within(dlg).getByText('Tulis alasan.')).toBeInTheDocument();
+    expect(within(dlg).getByRole('button', { name: 'Kembalikan' })).toBeDisabled();
     expect(inc().status).toBe('minta-ditutup');
     fireEvent.change(within(dlg).getByLabelText('Alasan'), { target: { value: 'Lampirkan berita acara resmi' } });
     fireEvent.click(within(dlg).getByRole('button', { name: 'Kembalikan' }));
