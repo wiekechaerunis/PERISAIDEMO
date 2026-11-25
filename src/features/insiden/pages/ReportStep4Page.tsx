@@ -7,7 +7,8 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { formatRupiah, formatWibFull } from '@/lib/format';
-import { DEMO_USERS } from '@/lib/rbac';
+import { DEMO_USERS, reviewerOptions } from '@/lib/rbac';
+import { AjukanModal } from '../components/AjukanModal';
 import { SEV_LABEL, SEV_TAG_CLS, isHighOrCritical, type CasualtyKind } from '@/lib/severity';
 import { ORG } from '@/services/mock/seed';
 import { useDemoStore } from '@/services/mock/store';
@@ -87,6 +88,8 @@ export function ReportStep4Page() {
   const [params, setParams] = useSearchParams();
   const draft = useDraftStore((s) => s.draft);
   const resetDraft = useDraftStore((s) => s.resetDraft);
+  const patchDraft = useDraftStore((s) => s.patch);
+  const [confirm, setConfirm] = useState(false);
   const incidents = useDemoStore((s) => s.incidents);
   const config = useDemoStore((s) => s.config);
   const role = useDemoStore((s) => s.role);
@@ -117,17 +120,25 @@ export function ReportStep4Page() {
           .filter(Boolean)
           .join(', ');
 
+  const me = DEMO_USERS[role].name;
+  // ADJ-01: pengaju yang juga pemeriksa tetap muncul. Demo: ?pemeriksa=sendiri menambahkan pengguna aktif ke daftar (board I14ma).
+  const options = params.get('pemeriksa') === 'sendiri' ? [...reviewerOptions(me), me] : reviewerOptions(me);
+  /** Ajukan (footer) membuka modal "Ajukan laporan?" (B-14) bila isian wajib lengkap. */
   const submit = () => {
     if (conflict) return;
     if (missing.length > 0) {
       setTried(true);
       return;
     }
+    setConfirm(true);
+  };
+  const doSubmit = () => {
+    setConfirm(false);
     // Ajukan = simpan + ajukan (B-9): draf tersimpan memakai nomornya dan riwayatnya tetap
     const prev = draft.no ? useDemoStore.getState().incidents.find((i) => i.no === draft.no) : undefined;
     const no = draft.no ?? nextNumber('INS-SEN', useDemoStore.getState().incidents.map((i) => i.no));
     const built = buildIncident(draft, no, prev?.reporter ?? DEMO_USERS[role].name, ORG, config);
-    addIncident({ ...built, timeline: [...(prev?.timeline ?? []), ...(built.timeline ?? [])] });
+    addIncident({ ...built, reviewers: draft.reviewers, timeline: [...(prev?.timeline ?? []), ...(built.timeline ?? [])] });
     navigate(`/insiden/${no}`, {
       state: { toast: fast ? 'Insiden diajukan. SKK Migas sudah diberi tahu.' : 'Insiden diajukan.' },
     });
@@ -359,6 +370,13 @@ export function ReportStep4Page() {
   );
 
   return (
+    <>
+    {confirm && (
+      <AjukanModal
+        no={nomor} title={draft.title} severity={sev} options={options} reviewers={draft.reviewers}
+        onReviewers={(v) => patchDraft({ reviewers: v })} me={me} onCancel={() => setConfirm(false)} onConfirm={doSubmit}
+      />
+    )}
     <ReportFormShell
       step={4}
       steps={stepsOf('insiden')}
@@ -370,5 +388,6 @@ export function ReportStep4Page() {
         { label: failed ? 'Ajukan lagi' : 'Ajukan', onClick: submit, variant: 'primary', disabled: conflict },
       ]}
     />
+    </>
   );
 }

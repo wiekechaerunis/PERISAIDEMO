@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { useDraftStore } from '../logic/draft';
@@ -33,12 +33,17 @@ beforeEach(() => {
 });
 
 describe('Langkah 4 · Ringkasan & Ajukan', () => {
-  it('keparahan Tinggi: Ajukan menambah insiden review-internal', () => {
+  it('keparahan Tinggi: Ajukan membuka modal (B-14), Ajukan laporan menambah insiden review-internal', () => {
     useDraftStore.getState().patch({ ...base, ops: 'berhenti', opsHours: 6 });
     const expected = nextNumber('INS-SEN', useDemoStore.getState().incidents.map((i) => i.no));
     const before = useDemoStore.getState().incidents.length;
     renderStep4();
     fireEvent.click(screen.getByRole('button', { name: 'Ajukan' }));
+    const dlg = screen.getByRole('dialog', { name: 'Ajukan laporan?' });
+    expect(within(dlg).getByText('SKK Migas langsung diberi tahu')).toBeInTheDocument();
+    expect(within(dlg).getByText(/Isi dan lampiran terkunci sampai diverifikasi./)).toBeInTheDocument();
+    expect(useDemoStore.getState().incidents).toHaveLength(before);
+    fireEvent.click(within(dlg).getByRole('button', { name: 'Ajukan laporan' }));
     const { incidents } = useDemoStore.getState();
     expect(incidents).toHaveLength(before + 1);
     expect(incidents[0].no).toBe(expected);
@@ -70,6 +75,33 @@ describe('Langkah 4 · Ringkasan & Ajukan', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ajukan' }));
     expect(screen.getByText('1 isian belum lengkap.')).toBeInTheDocument();
     expect(useDemoStore.getState().incidents).toHaveLength(before);
+  });
+});
+
+describe('Modal Ajukan (B-14, ADJ-01)', () => {
+  it('Diperiksa oleh kosong: galat dan Ajukan laporan nonaktif', () => {
+    useDraftStore.getState().patch({ ...base, ops: 'sebagian', opsHours: 2 });
+    renderStep4();
+    fireEvent.click(screen.getByRole('button', { name: 'Ajukan' }));
+    const dlg = screen.getByRole('dialog', { name: 'Ajukan laporan?' });
+    fireEvent.click(within(dlg).getByRole('combobox', { name: /Diperiksa oleh/ }));
+    fireEvent.click(within(dlg).getByRole('button', { name: /Pilih semua/ }));
+    expect(within(dlg).getByText('Pilih minimal satu pemeriksa.')).toBeInTheDocument();
+    expect(within(dlg).getByRole('button', { name: 'Ajukan laporan' })).toBeDisabled();
+  });
+
+  it('pelapor juga pemeriksa: (Anda) + peringatan, tidak diblokir', () => {
+    useDraftStore.getState().patch({ ...base, ops: 'sebagian', opsHours: 2 });
+    render(
+      <MemoryRouter initialEntries={['/insiden/baru/ringkasan?pemeriksa=sendiri']}>
+        <Routes><Route path="/insiden/baru/ringkasan" element={<ReportStep4Page />} /></Routes>
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Ajukan' }));
+    const dlg = screen.getByRole('dialog', { name: 'Ajukan laporan?' });
+    expect(within(dlg).getByText('Budi Santoso (Anda)')).toBeInTheDocument();
+    expect(within(dlg).getByText('Anda juga termasuk pemeriksa.')).toBeInTheDocument();
+    expect(within(dlg).getByRole('button', { name: 'Ajukan laporan' })).toBeEnabled();
   });
 });
 

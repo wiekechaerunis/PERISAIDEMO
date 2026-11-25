@@ -218,6 +218,8 @@ export interface Incident {
   reporter: string;
   /** tenggat pemeriksaan (Menunggu pemeriksaan) */
   verifyDueAt?: string;
+  /** "Diperiksa oleh" saat diajukan (B-14); null/undefined = semua Pejabat Berwenang */
+  reviewers?: string[] | null;
   /** tenggat penanganan */
   handleDueAt?: string;
   /** hari kerja tenggat yang dipakai saat Setujui (konfigurasi, atau nilai yang diubah Pejabat) */

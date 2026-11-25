@@ -9,3 +9,31 @@ textarea.p-input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--action-line)}
 
 /* B-7: footer form lapor menempel di bawah layar */
 .lk-ffoot.rf-sticky{position:sticky;bottom:0;z-index:20}
+
+/* "Diperiksa oleh" combobox pilih-banyak (board I14m, B-14): dari <helmet><style> board (.cbx-w, .p-input.cbx) */
+.rv-w{position:relative}
+.rv-box{height:auto;min-height:var(--control-height);padding:6px 10px 6px 8px;flex-wrap:wrap;gap:6px;cursor:pointer;width:100%;text-align:left}
+.rv-box .car{margin-left:auto;color:var(--ink-muted);flex:none}
+.rv-box .ph{padding-left:4px}
+.rv-x{display:inline-flex;border:0;background:none;padding:0;color:inherit;cursor:pointer}
+.rv-w .p-pop{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;overflow:hidden}
+.rv-w .p-pop .srch{margin:8px 8px 0}
+.rv-w .p-pop .p-list{max-height:260px;overflow:auto;padding:4px}
+.rv-w .p-pop .p-opt{height:auto;min-height:44px;padding:6px 10px;width:100%;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.rv-w .p-pop .p-opt:hover{background:var(--surface-subtle)}
+.rv-w .p-pop .p-opt.all{min-height:40px;font-weight:600}
+.rv-w .p-pop .sep{height:1px;background:var(--border-subtle);margin:2px 0}
+.rv-w .p-pop .ft{padding:8px 12px;border-top:1px solid var(--border-subtle)}
+.rv-cbx .mnm{flex:1;display:flex;flex-direction:column;line-height:17px}
+.rv-cbx .mnm span{font-size:12px;color:var(--ink-muted)}
+
+/* Modal "Ajukan laporan?" (board I14m): ringkasan dan catatan */
+.am-dlg{width:600px}
+.am-sum{margin:0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-subtle);display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px 16px}
+.am-sum dt{font-size:13px;font-weight:600;color:var(--ink-muted)}
+.am-sum dd{margin:0}
+.am-note{display:flex;gap:10px;padding:12px 14px;border-radius:var(--radius-lg);background:var(--surface-subtle);font-size:13px;line-height:19px}
+.am-note.fast{background:var(--caution-bg,#FFF4E5)}
+.am-note .ic{flex:none;margin-top:1px;color:var(--ink-muted)}
+.am-note p{margin:0}
+.am-note p+p{margin-top:4px}

@@ -39,11 +39,17 @@ export const initials = (name: string) =>
 /** Pejabat Berwenang KKKS organisasi demo (pemeriksa laporan dan permintaan penutupan). */
 export const PEJABAT_NAMES = ['Sari Wulandari', 'Hendra Saputra', 'Dewi Anggraini'];
 
-/** Pilihan "Diperiksa oleh": pengaju tidak muncul di daftar, kecuali dia satu-satunya Pejabat. */
-export const reviewerOptions = (submitter: string): string[] => {
-  const others = PEJABAT_NAMES.filter((n) => n !== submitter);
-  return others.length ? others : PEJABAT_NAMES;
+/** Jabatan Pejabat Berwenang di daftar "Diperiksa oleh" (board I14m). */
+const REVIEWER_TITLES: Record<string, string> = {
+  'Sari Wulandari': 'Manager HSSE', 'Hendra Saputra': 'Senior Manager Security', 'Dewi Anggraini': 'VP HSSE',
 };
+export const reviewerTitle = (name: string): string => REVIEWER_TITLES[name] ?? '';
+
+/**
+ * Pilihan "Diperiksa oleh". ADJ-01: pengaju yang juga Pejabat Berwenang tetap muncul (ditandai "(Anda)" dan diberi peringatan, tidak
+ * diblokir). Parameter dipertahankan agar pemanggil lama tetap jalan.
+ */
+export const reviewerOptions = (_submitter?: string): string[] => [...PEJABAT_NAMES];
 
 /** Tujuan pengajuan ke "Diperiksa oleh": semua terpilih (null) → jumlah Pejabat; subset → nama. */
 export const reviewerTarget = (rev: string[] | null | undefined, options: string[] = PEJABAT_NAMES): string =>

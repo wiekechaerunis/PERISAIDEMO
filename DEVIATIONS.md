@@ -61,3 +61,6 @@ bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
 | S-13 | Mobile (M2a, M2, M7, M2u, M2ue, M4k) | Form mobile belum memakai B-1..B-13 | Fokus desktop |
 | S-14 | Kerawanan (S16) | Simpan draf kerawanan tidak memberi nomor (kerawanan tidak punya status Draf di data mock) | Di luar cakupan alur Insiden |
 | S-15 | B-9: lampiran yang diunggah sebelum Simpan draf dibuang bila keluar | Dibuang bersama semua perubahan lain (draf dikosongkan); bila draf sudah tersimpan, membukanya lagi memuat versi tersimpan | Prototype tidak memisahkan lampiran tersimpan dari yang baru |
+| S-16 | I14m: catatan "Isi dan lampiran terkunci sampai diperiksa." | "…sampai diverifikasi." | B-14 menulis "terkunci sampai diverifikasi" |
+| S-17 | I14m: 6 Pejabat Berwenang dengan jabatan; varian I14mg (grup) dan I14mi (individu) | Tiga Pejabat dari data mock (jabatan ditambah). Varian grup/individu tidak dibuat karena prototype belum punya halaman Persetujuan untuk mengatur pemeriksa | Mengikuti data mock yang ada |
+| S-18 | I14ma: pelapor sekaligus pemeriksa | Persona Pelapor demo bukan Pejabat; state ini ditampilkan lewat `?pemeriksa=sendiri` | Satu persona per peran (S-04) |

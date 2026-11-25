@@ -36,3 +36,15 @@ Rencana: `docs/insiden-sync/PLAN.md`. Penyimpangan: `DEVIATIONS.md` bagian "Sink
 - B-13: Ringkasan memuat Apa yang terjadi?, Sumber informasi, Jenis, Patokan, WK, koordinat, Penanganan + Tindakan awal;
   "Diperiksa oleh" dan "Yang terjadi saat Anda menekan Ajukan" tidak lagi di halaman.
 - Tes: `formSync.test.tsx` (baru), `step34.test.tsx` diperbarui (isian wajib baru di langkah 1, bagian pra-ajukan pindah ke modal).
+
+## 3. Modal Ajukan (langkah Ringkasan)
+
+- B-14 (I14m, I14mb, I14mk, I14ma): Ajukan membuka "Ajukan laporan?" berisi Nomor/Judul/Keparahan, Diperiksa oleh, catatan "Isi dan
+  lampiran terkunci sampai diverifikasi." (+ "SKK Migas langsung diberi tahu" untuk Tinggi/Kritis), Batal / Ajukan laporan.
+- `ReviewerSelect` diganti combobox pilih-banyak berchip (× hapus): cari nama atau jabatan, "Pilih semua" + hitungan, daftar
+  bercentang dengan jabatan dan "(Anda)". Mode modal boleh kosong → "Pilih minimal satu pemeriksa." + tombol nonaktif.
+- ADJ-01: pengaju tetap muncul di pilihan pemeriksa (`reviewerOptions`); bila terpilih tampil peringatan "Anda juga termasuk
+  pemeriksa…", tidak diblokir. Demo: `?pemeriksa=sendiri` di Ringkasan.
+- "Diperiksa oleh" yang dipilih disimpan di insiden (`reviewers`).
+- Tes: `reviewerSelect.test.tsx` ditulis ulang (perilaku ADJ-01 menggantikan aturan lama "pengaju tidak muncul"); `step34.test.tsx`
+  menambah kasus modal.
