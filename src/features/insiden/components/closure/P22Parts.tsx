@@ -268,7 +268,8 @@ function splitClaim(text: string, claim?: string): [string, string | null, strin
 
 /** "Hasil penanganan" (P22): KPI, ringkasan penanganan + tanda AI · Belum cocok, Penyebab, Yang menangani, Bukti. */
 /** `onCorrect`: varian Ditutup (P24) dengan tombol Koreksi data (ADJ-07, PD3) dan tanpa tanda klaim. */
-export function HandlingResultCard({ i, hl, setHl, grupFrom, onCorrect }: { i: Incident; hl: P22Hl; setHl: (h: P22Hl) => void; grupFrom?: string; onCorrect?: () => void }) {
+/** `closed`: insiden Ditutup (P24 dengan `onCorrect`, P35 SKK hanya baca tanpa `onCorrect`). */
+export function HandlingResultCard({ i, hl, setHl, grupFrom, onCorrect, closed = !!onCorrect }: { i: Incident; hl: P22Hl; setHl: (h: P22Hl) => void; grupFrom?: string; onCorrect?: () => void; closed?: boolean }) {
   const c = i.handling?.closure;
   const d = detailOf(i);
   if (!c) return null;
@@ -285,7 +286,7 @@ export function HandlingResultCard({ i, hl, setHl, grupFrom, onCorrect }: { i: I
   // ADJ-10: diukur sampai ditutup; saat Periksa penutupan sampai waktu diajukan
   const end = c.closedAt ?? asked;
   const mis = mismatches(i);
-  const m0 = onCorrect ? undefined : mis[0];
+  const m0 = closed ? undefined : mis[0];
   const tl0 = m0 ? i.handling?.followUps?.find((f) => f.title === m0.followUp) : undefined;
   // `summary` = ringkasan hasil yang tampil di Data penutupan (lebih lengkap dari isian actions), fallback ke closureSummary
   const [pre, claimTxt, post] = splitClaim(c.summary || closureSummary(c), m0?.claim);
@@ -298,12 +299,12 @@ export function HandlingResultCard({ i, hl, setHl, grupFrom, onCorrect }: { i: I
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <h2 id="s2-hs">Hasil penanganan</h2>
           <span className="p-cap">
-            {onCorrect
-              ? `Diisi ${c.requestedBy ?? i.pic ?? 'PIC'} (PIC)${c.closedBy ? `, disetujui ${c.closedBy}${c.closedAt ? ` ${timeShort(c.closedAt)}` : ''}` : ''} · angka dampak dan proses hukum bisa dikoreksi tanpa buka kembali`
+            {closed
+              ? `Diisi ${c.requestedBy ?? i.pic ?? 'PIC'} (PIC)${c.closedBy ? `, disetujui ${c.closedBy}${onCorrect && c.closedAt ? ` ${timeShort(c.closedAt)}` : ''}` : ''}${onCorrect ? ' · angka dampak dan proses hukum bisa dikoreksi tanpa buka kembali' : ''}`
               : <>Diisi {c.requestedBy ?? i.pic ?? 'PIC'} (PIC{grupFrom ? `, diambil alih dari ${grupFrom}` : ''}) · diajukan {formatWib(asked)}</>}
           </span>
         </div>
-        {onCorrect ? (
+        {closed ? onCorrect && (
           <button type="button" className="p-btn p-btn-secondary" style={{ minHeight: 32, flex: 'none' }} onClick={onCorrect}><Ic d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" size={15} />Koreksi data</button>
         ) : (
           <span className={fill.done === fill.total ? 'p-tag t-ok' : 'p-tag t-caution'}>{fill.done === fill.total ? 'Lengkap' : 'Belum lengkap'}</span>
@@ -313,7 +314,7 @@ export function HandlingResultCard({ i, hl, setHl, grupFrom, onCorrect }: { i: I
         <div className={hlc('rg')}>
           <span className="k">Kerugian akhir</span>
           <b>{fin != null ? jt(fin) : '—'}</b>
-          <span className="c">{onCorrect && est ? `Awal ${jt(est)}` : pct == null ? (est ? `Perkiraan pelapor ${jt(est)}` : 'Perkiraan pelapor belum diisi') : pct === 0 ? `Sama dengan perkiraan pelapor ${jt(est!)}` : `${pct > 0 ? 'Naik' : 'Turun'} ${Math.abs(pct)}% dari perkiraan pelapor ${jt(est!)}`}</span>
+          <span className="c">{closed && est ? `Awal ${jt(est)}` : pct == null ? (est ? `Perkiraan pelapor ${jt(est)}` : 'Perkiraan pelapor belum diisi') : pct === 0 ? `Sama dengan perkiraan pelapor ${jt(est!)}` : `${pct > 0 ? 'Naik' : 'Turun'} ${Math.abs(pct)}% dari perkiraan pelapor ${jt(est!)}`}</span>
         </div>
         <div>
           <span className="k">Produksi hilang (LPO)</span>
@@ -470,16 +471,18 @@ export function ApprovalCard({ i, now, hl, setHl, contracts, onContracts, note, 
 }
 
 /** "Info laporan" (P22): Diperiksa, PIC (+ Ganti PIC), Terkait. */
-export function ReportInfoCard({ i, onReassign, krwTitle }: { i: Incident; onReassign?: () => void; krwTitle?: string }) {
+/** `skk`: tampilan SKK (P35) dengan baris KKKS dan tanpa Terkait. */
+export function ReportInfoCard({ i, onReassign, krwTitle, skk }: { i: Incident; onReassign?: () => void; krwTitle?: string; skk?: boolean }) {
   const by = approvedBy(i);
   const at = approvedAt(i);
   return (
     <section className="p-card s2-card" style={{ padding: 20 }}>
       <h2 className="in-h" style={{ margin: 0 }}>Info laporan</h2>
       <dl className="s2-kv" style={{ gridTemplateColumns: '104px minmax(0, 1fr)' }}>
+        {skk && (<><dt>KKKS</dt><dd>{i.org}<span className="s">{i.wk}</span></dd></>)}
         <dt>Diperiksa</dt><dd>{by ?? '—'}{at && <span className="s">{timeShort(at)}</span>}</dd>
         <dt>PIC</dt><dd>{i.pic ?? '—'}{onReassign && <> <button type="button" className="lk-alink" style={{ fontSize: 12, background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={onReassign}>Ganti PIC</button></>}</dd>
-        {i.fromKrw && (<><dt>Terkait</dt><dd><Link to={`/kerawanan/${i.fromKrw}`}>{krwTitle ?? i.fromKrw}</Link><span className="s p-mono">{i.fromKrw}</span></dd></>)}
+        {!skk && i.fromKrw && (<><dt>Terkait</dt><dd><Link to={`/kerawanan/${i.fromKrw}`}>{krwTitle ?? i.fromKrw}</Link><span className="s p-mono">{i.fromKrw}</span></dd></>)}
       </dl>
     </section>
   );
@@ -522,6 +525,31 @@ export function ClosedCard({ i, closedAt, reopenUntil }: { i: Incident; closedAt
         <dt>Eskalasi</dt><dd>{i.escalated ? 'Dieskalasi' : 'Tidak dieskalasi'}</dd>
         {reopenUntil && (<><dt>Buka kembali</dt><dd>Sampai {reopenUntil}<span className="s">30 hari sejak ditutup</span></dd></>)}
       </dl>
+    </section>
+  );
+}
+
+/** Tindak lanjut tampilan SKK (P35): hanya yang sudah selesai diperiksa; sisanya disebut jumlahnya. */
+export function SkkFollowUpsCard({ i }: { i: Incident }) {
+  const fus = useFollowUps();
+  const all = tlOf(i, fus).filter((f) => f.status !== 'dibatalkan');
+  if (!all.length) return null;
+  const done = all.filter((f) => f.status === 'selesai');
+  const rest = all.length - done.length;
+  return (
+    <section className="p-card s2-card">
+      <h2>Tindak lanjut · {all.length}</h2>
+      <div>
+        {done.map((f) => (
+          <div key={f.no} className="s2-tl">
+            <span>{f.action}<span className="p-cap" style={{ display: 'block' }}>{f.pic} · {formatWib(f.dueAt).replace(/ 20\d\d,.*$/, '')}</span></span>
+            <span className="p-tag t-ok">Selesai</span>
+          </div>
+        ))}
+      </div>
+      {rest > 0 && (
+        <span className="s2-foot"><b style={{ color: 'var(--ink)', fontWeight: 600 }}>{rest} masih berjalan.</b> Rinciannya tampil setelah selesai diperiksa PIC insiden.</span>
+      )}
     </section>
   );
 }

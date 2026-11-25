@@ -11,7 +11,7 @@ import { SEV_LABEL } from '@/lib/severity';
 import { STATUS_LABEL, STATUS_TAG } from '@/services/types';
 import { DetailShell, useDetailTab, type ToastMsg } from '../components/detail/DetailShell';
 import { LocationCard } from '../components/detail/LocationCard';
-import { ClosureStatusCard, DurationRows } from '../components/closure/SyncParts';
+import { ClosedCard, DecisionSummaryCard, HandlingResultCard, InitialFilesCard, ReportInfoCard, SkkFollowUpsCard, type P22Hl } from '../components/closure/P22Parts';
 import { IncidentSummaryCard } from '../components/detail/IncidentSummaryCard';
 import { AttachmentsCard } from '../components/detail/AttachmentsCard';
 import { RestrictedView } from '../components/detail/StateViews';
@@ -20,7 +20,7 @@ import { DirectiveDialog } from '../components/skk/DirectiveDialog';
 import { EscalationBanner, EscalationCard } from '../components/skk/EscalationCard';
 import { RiwayatCard } from '../components/skk/RiwayatCard';
 import { ClosureDecision, ReturnDialog, type Focus } from '../components/skk/ClosureDecision';
-import { ClosureDataCard, DueCard, Fold, FollowUpsCard, NextStep, PenutupanCard, RelatedCard, SkkSummaryCard } from '../components/skk/Cards';
+import { ClosureDataCard, DueCard, Fold, FollowUpsCard, NextStep, RelatedCard, SkkSummaryCard } from '../components/skk/Cards';
 import { closedInfo, escalationOf, isSkkStatus, nextStepMeta, withoutDirectiveEntries } from '../components/skk/skkLogic';
 import { riwayat, timeShort } from '../logic/closure';
 
@@ -39,6 +39,7 @@ export function SkkIncidentPage() {
   const [toast, setToast] = useState<ToastMsg | null>(null);
   const [focus, setFocus] = useState<Focus>(null);
   const tab = useDetailTab();
+  const [hl, setHl] = useState<P22Hl>(null);
 
   const i = all.find((x) => x.no === no);
   const me = DEMO_USERS[role].name;
@@ -113,7 +114,7 @@ export function SkkIncidentPage() {
   const report = (
     <>
       <IncidentSummaryCard incident={i} />
-      {d.attachments.length > 0 && <AttachmentsCard files={d.attachments} />}
+      <InitialFilesCard i={i} />
     </>
   );
 
@@ -137,27 +138,24 @@ export function SkkIncidentPage() {
     );
   }
 
-  // P35: insiden ditutup, hanya baca
+  // P35: insiden ditutup, hanya baca. Board P35: Ringkasan insiden → Isi laporan → Lampiran laporan awal → Hasil penanganan →
+  // Tindak lanjut (yang selesai); kanan: Ditutup → Info laporan (KKKS) → Lokasi.
   if (closed) {
-    return (
-      shell(
-        <div className="lk-grid">
-          <div className="c8 lk-stack">
-            <ClosureDataCard incident={i} />
-            <FollowUpsCard incident={i} closed />
-            {report}
-          </div>
-          <aside className="c4 lk-stack">
-            {/* B-22: status jadi kartu di atas kolom kanan; ADJ-10: dua ukuran waktu */}
-            <ClosureStatusCard i={i}>
-              <div className="in-times"><DurationRows i={i} to={ci?.at ?? i.handling?.closure?.closedAt ?? i.occurredAt} /></div>
-            </ClosureStatusCard>
-            <SkkSummaryCard incident={i} closed kerawanan={kerawanan} />
-            <PenutupanCard incident={i} />
-            <LocationCard incident={i} />
-          </aside>
-        </div>,
-      )
+    const closedAt = i.handling?.closure?.closedAt ?? ci?.at ?? null;
+    return shell(
+      <div className="lk-grid">
+        <div className="c8 lk-stack">
+          <DecisionSummaryCard i={i} hl={hl} setHl={setHl} closed />
+          {report}
+          <HandlingResultCard i={i} hl={hl} setHl={setHl} closed />
+          <SkkFollowUpsCard i={i} />
+        </div>
+        <aside className="c4 lk-stack">
+          <ClosedCard i={i} closedAt={closedAt} />
+          <ReportInfoCard i={i} skk />
+          <LocationCard incident={i} />
+        </aside>
+      </div>,
     );
   }
 

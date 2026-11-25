@@ -61,7 +61,11 @@ describe('Detail SKK insiden disetujui', () => {
   it('P35: insiden ditutup hanya baca, tanpa tombol Beri arahan', () => {
     renderSkk('INS-SEN-2026-0004');
     expect(screen.getAllByText('Ditutup').length).toBeGreaterThan(0);
-    expect(screen.getByRole('heading', { name: 'Penutupan' })).toBeInTheDocument();
+    // board P35: kartu kanan Ditutup, Ringkasan insiden 4 poin, Hasil penanganan hanya baca (tanpa Koreksi data), Info laporan + KKKS
+    expect(screen.getByRole('heading', { name: 'Ditutup' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Ringkasan insiden' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Koreksi data/ })).toBeNull();
+    expect(screen.getByText('KKKS')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Beri arahan/ })).toBeNull();
   });
 

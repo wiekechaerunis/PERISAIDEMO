@@ -45,3 +45,6 @@
 .rk.tutup .rk-tile{background:var(--surface);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--brand-primary,#c5dc5a) 60%,var(--border-subtle))}
 .rk-ft{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;line-height:16px;color:var(--ink-subtle)}
 .rk-ft .p-ibtn[aria-pressed="true"]{color:var(--ink);background:var(--surface-subtle)}
+
+.s2-tl{display:flex;justify-content:space-between;gap:12px;padding:10px 0;font-size:13px;line-height:19px}
+.s2-tl+.s2-tl{border-top:1px solid var(--border-subtle)}
