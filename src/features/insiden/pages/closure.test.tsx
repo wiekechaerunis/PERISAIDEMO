@@ -32,14 +32,24 @@ beforeEach(() => {
 describe('Layar Pejabat · insiden berjalan', () => {
   it('Tutup insiden: dialog konfirmasi lalu status Ditutup dan toast P24', () => {
     renderPage();
-    expect(screen.getByText('Butuh keputusan penutupan dari Anda')).toBeInTheDocument();
-    // ADJ-13: ringkasan AI tertutup bawaan; dibuka atas permintaan dan memuat Perlu dicek
-    expect(screen.getByRole('button', { name: /Ringkasan untuk keputusan/ })).toHaveAttribute('aria-expanded', 'false');
-    fireEvent.click(screen.getByRole('button', { name: /Ringkasan untuk keputusan/ }));
-    expect(screen.getByText(/Perlu dicek · \d/)).toBeInTheDocument();
-    // ADJ-10: dua ukuran waktu di Periksa penutupan
-    expect(screen.getAllByText('Lama penanganan').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Total waktu').length).toBeGreaterThan(0);
+    // Board P22: kartu kanan "Butuh persetujuan Anda"
+    expect(screen.getByRole('heading', { name: 'Butuh persetujuan Anda' })).toBeInTheDocument();
+    // ADJ-13 + P22/P22r: ringkasan tertutup bawaan ("Ringkas untuk saya"); terbuka menampilkan 4 poin dan Perlu dicek
+    const rk = screen.getByRole('region', { name: 'Ringkasan untuk keputusan' });
+    expect(within(rk).getByRole('button', { name: /Ringkas untuk saya/ })).toHaveAttribute('aria-expanded', 'false');
+    expect(within(rk).queryByText('Perlu dicek')).toBeNull();
+    fireEvent.click(within(rk).getByRole('button', { name: /Ringkas untuk saya/ }));
+    ['Kejadian', 'Yang dilakukan', 'Dampak akhir', 'Masih berjalan setelah ditutup', 'Perlu dicek'].forEach((k) => expect(within(rk).getByText(k)).toBeInTheDocument());
+    expect(within(rk).getByRole('button', { name: /Lihat jejak · 3 langkah/ })).toBeInTheDocument();
+    // tombol Lihat di Perlu dicek menyorot data terkait
+    fireEvent.click(within(rk).getAllByRole('button', { name: /^Lihat$/ })[0]);
+    expect(document.querySelector('.in-hl')).not.toBeNull();
+    expect(within(rk).getByRole('button', { name: /Tutup/ })).toHaveAttribute('aria-expanded', 'true');
+    // tanda AI · Belum cocok menempel di Ringkasan penanganan
+    expect(screen.getByText('Belum cocok:')).toBeInTheDocument();
+    // ADJ-10: Lama penanganan + Total waktu di KPI Hasil penanganan
+    expect(screen.getByText('Lama penanganan')).toBeInTheDocument();
+    expect(screen.getByText(/^Total .* · dalam tenggat$/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Tutup insiden/ }));
     // ADJ-03: Sari juga memeriksa laporan ini → peringatan, tidak memblokir
     const warn = screen.queryByRole('alertdialog');
@@ -50,8 +60,10 @@ describe('Layar Pejabat · insiden berjalan', () => {
     expect(inc().status).toBe('ditutup');
     expect(inc().handling?.closure?.closedBy).toBe('Sari Wulandari');
     expect(screen.getByText(`Insiden ${NO} ditutup`)).toBeInTheDocument();
-    // B-22: status jadi kartu di kolom kanan
-    expect(screen.getByRole('heading', { name: 'Insiden ditutup' })).toBeInTheDocument();
+    // Board P24: kartu kanan "Ditutup", Ringkasan insiden 4 poin (tanpa Perlu dicek), Koreksi data di Hasil penanganan
+    expect(screen.getByRole('heading', { name: 'Ditutup' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Ringkasan insiden' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Koreksi data/ })).toBeInTheDocument();
   });
 
   // ADJ-09 (uji staging PT1-07): tombol Kembalikan nonaktif sampai Alasan terisi
@@ -104,6 +116,12 @@ describe('Layar Pejabat · insiden berjalan', () => {
     expect(within(dlg).getByText('Pilih tenggat setelah hari ini.')).toBeInTheDocument();
     expect(within(dlg).getByText('Tulis alasan minimal 10 karakter.')).toBeInTheDocument();
     expect(inc().handleDueAt).toBe('2026-11-02T07:00:00');
+  });
+
+  it('P22c: semua klaim cocok → tanpa tanda Belum cocok dan tanpa baris klaim di Kesiapan', () => {
+    renderPage('?variant=cocok');
+    expect(screen.queryByText('Belum cocok:')).toBeNull();
+    expect(screen.queryByText(/klaim belum cocok/)).toBeNull();
   });
 
   it('?state=tanpa-pic memunculkan ajakan Tunjuk PIC', () => {

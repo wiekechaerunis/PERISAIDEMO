@@ -173,11 +173,11 @@ export function SkkIncidentPage() {
         </div>
         <aside className="c4 lk-stack">
           <DueCard incident={i} />
+          <LocationCard incident={i} />
           <SkkSummaryCard incident={i} kerawanan={kerawanan} />
           {esc && <EscalationCard e={esc} />}
           <FollowUpsCard incident={i} />
           <RelatedCard incident={i} kerawanan={kerawanan} />
-          <LocationCard incident={i} />
         </aside>
       </div>,
     )

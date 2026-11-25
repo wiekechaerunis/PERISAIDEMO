@@ -188,3 +188,16 @@ Bukti: route + peran demo (Menu akun). Diverifikasi dengan tes otomatis (nama be
 - [x] Draf: rekan satu organisasi bisa melihat; hanya maker bisa Lanjutkan; Hapus hanya pembuat; non-maker tanpa Buat laporan; SKK
   tidak melihat draf (`rowMenu.test.ts`, `detailLogic.accessOf`).
 - [x] Tidak ada error di console di layar yang dicek di browser (daftar, form, detail Pelapor, detail PIC + Perbarui dampak).
+
+## 16. Periksa penutupan dan Ditutup 1:1 board (P22, P22r, P22c, P24)
+
+- `components/closure/P22Parts.tsx` + CSS board (`s2-*`, `rk-*`) di `closure.css`.
+- P22: kartu "Ringkasan untuk keputusan" (.rk, tertutup bawaan dengan "Ringkas untuk saya", terbuka "Tutup"): 4 poin berikon (Kejadian,
+  Yang dilakukan + "Lihat jejak · N langkah", Dampak akhir, Masih berjalan setelah ditutup), kotak "Perlu dicek" dengan tombol Lihat
+  yang menyorot data (in-hl), footer jempol. "Tidak ada yang perlu dicek" bila kosong (ADJ-13).
+- Hasil penanganan: KPI Kerugian akhir, Produksi hilang, Lama penanganan + Total (ADJ-10), Proses hukum; Ringkasan penanganan dengan
+  kalimat klaim disorot dan tanda "AI · Belum cocok" + "Lihat tindak lanjut"; Penyebab, Yang menangani, Bukti. P22c: tanpa tanda.
+- Urutan: Ringkasan → Isi laporan → Lampiran laporan awal → Hasil penanganan → Tindak lanjut; kanan: Butuh persetujuan Anda (Batas
+  putusan, Diajukan, Tenggat PIC, Kesiapan, Kontrak, Catatan) → Info laporan → Lokasi → Kondisi sekitar (terlipat).
+- P24: "Ringkasan insiden" 4 poin tanpa Perlu dicek, Hasil penanganan dengan Koreksi data, kartu kanan "Ditutup", Info laporan, Lokasi.
+- Kartu persetujuan tidak sticky; Lokasi di bawah Tenggat penanganan pada Detail Dalam penanganan (permintaan pengguna).

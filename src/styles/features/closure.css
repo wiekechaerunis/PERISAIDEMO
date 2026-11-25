@@ -7,3 +7,41 @@
 .cl-dec .rv-sel{background:var(--surface)}
 .cl-dec .in-cbx{display:block}
 .in-menu button{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+
+/* P22 Periksa penutupan (board P22-ReviewTutup, <helmet><style>): kartu s2, Ringkasan untuk keputusan (.rk). Kartu persetujuan sengaja tidak sticky (permintaan 25 Nov: kartu di bawahnya jadi tertutup). */
+.s2-card{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.s2-card h2{margin:0;font-size:16px;line-height:24px;font-weight:700;display:flex;align-items:center;gap:8px}
+.s2-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.s2-kpi>div{background:var(--surface-subtle);border-radius:var(--radius-lg);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.s2-kpi .k{font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted)}
+.s2-kpi b{font-size:16px;line-height:22px}
+.s2-kpi .c{font-size:12px;line-height:16px;color:var(--ink-muted)}
+.s2-p{margin:0;font-size:14px;line-height:22px}
+.s2-lbl{font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted)}
+.s2-kv{margin:0;display:grid;grid-template-columns:140px minmax(0,1fr);gap:10px 16px;font-size:13px;line-height:19px}
+.s2-kv dt{color:var(--ink-muted);font-weight:600}
+.s2-kv dd{margin:0}
+.s2-kv .s{display:block;font-size:12px;color:var(--ink-muted)}
+.s2-grp{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--border-subtle)}
+.s2-grp>.h{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted)}
+.s2-ai{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:none;padding:0;font:inherit;cursor:pointer;color:var(--ink);text-align:left}
+.s2-foot{font-size:12px;line-height:16px;color:var(--ink-muted)}
+.rk{padding:16px 20px;gap:14px}
+.rk-hd{display:flex;align-items:center;gap:12px}
+.rk-tile{width:36px;height:36px;border-radius:10px;flex:none;display:inline-flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--brand-primary,#c5dc5a) 35%,var(--surface));color:var(--ink)}
+.rk-list{display:flex;flex-direction:column;gap:12px}
+.rk-it{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.rk-it .ic{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--surface-subtle);color:var(--ink-muted)}
+.rk-it .k{display:block;font-size:12px;line-height:16px;font-weight:600;color:var(--ink-muted);margin-bottom:2px}
+.rk-it .v{font-size:14px;line-height:21px}
+.rk-cek{border-radius:var(--radius-lg);background:color-mix(in srgb,var(--caution-bg) 55%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--caution-ink) 18%,transparent);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.rk-cek .t{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--caution-ink)}
+.rk-cek .n{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--caution-ink);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.rk-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;line-height:19px;padding:8px 10px;border-radius:var(--radius-md);background:var(--surface)}
+.rk-row .go{flex:none;border:0;background:none;padding:2px 4px;font:inherit;font-size:12px;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:2px;cursor:pointer;border-radius:6px}
+.rk-row .go:hover,.rk-row .go[aria-pressed="true"]{background:var(--surface-subtle)}
+.rk-lnk{border:0;background:none;padding:0;font:inherit;font-size:13px;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:4px;cursor:pointer;margin-top:4px}
+.rk.tutup{background:linear-gradient(100deg,color-mix(in srgb,var(--brand-primary,#c5dc5a) 16%,var(--surface)) 0%,var(--surface) 70%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--brand-primary,#c5dc5a) 45%,var(--border-subtle))}
+.rk.tutup .rk-tile{background:var(--surface);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--brand-primary,#c5dc5a) 60%,var(--border-subtle))}
+.rk-ft{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;line-height:16px;color:var(--ink-subtle)}
+.rk-ft .p-ibtn[aria-pressed="true"]{color:var(--ink);background:var(--surface-subtle)}
