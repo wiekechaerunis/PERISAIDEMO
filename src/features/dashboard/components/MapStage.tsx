@@ -235,16 +235,10 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       <div className="db-wrap" ref={wrapRef}>
         <div className="db-pan" style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, transition: dragging ? 'none' : undefined }}>
           <div className="db-stage" style={{ transform: v.mapT }}>
-            {/* Iterasi 3: lapisan peta (bawah -> atas). Nasional: daratan, bidang wilayah SKK, garis antarwilayah. */}
-            <img src="/peta/id-land.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%', opacity: v.baseOp, transition: 'opacity .3s ease' }} />
-            {(v.regs ?? []).map((r: any, i: number) => (
-              <span key={i} className="db-msk" style={{ WebkitMaskImage: r.mask, maskImage: r.mask, background: r.bg }} />
-            ))}
-            {v.lvl === 'nat' && hovW && (
-              <span className="db-msk db-msk-hov" style={{ WebkitMaskImage: `url(/peta/reg-${hovW}.svg)`, maskImage: `url(/peta/reg-${hovW}.svg)` }} />
-            )}
-            {v.showRegLines && <img src="/peta/reg-lines.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%' }} />}
-            {/* Iterasi 2b: provinsi tetap bisa di-hover/klik, tapi tanpa garis (area klik transparan). */}
+            {/* Daratan polos untuk tingkat wilayah tanpa peta detail (Kalsul, Pamalu). */}
+            <img src="/peta/id-land.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%', opacity: v.lvl === 'nat' ? 0 : v.baseOp, transition: 'opacity .3s ease' }} />
+            {/* Nasional (masukan PM 25 Nov, setelah Iterasi 3): kembali ke tampilan lama = provinsi putih bergaris abu tipis,
+                tanpa bidang wilayah berwarna (v.regs dan reg-lines tidak digambar). Provinsi bisa di-hover/klik. */}
             {v.lvl === 'nat' && (
               <svg className="db-prov" viewBox="0 0 1000 400" aria-hidden="true">
                 {PROVINSI.map((p, i) => (
@@ -263,6 +257,9 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
                   />
                 ))}
               </svg>
+            )}
+            {v.lvl === 'nat' && hovW && (
+              <span className="db-msk db-msk-hov" style={{ WebkitMaskImage: `url(/peta/reg-${hovW}.svg)`, maskImage: `url(/peta/reg-${hovW}.svg)` }} />
             )}
             {/* Wilayah dan WK: batas administrasi, bidang WK, garis batas WK, fasilitas buatan sendiri. */}
             {v.hasDet && <img src={v.detSrc} alt="" aria-hidden="true" draggable={false} style={{ left: v.det.l, top: v.det.t, width: v.det.w, height: v.det.h, opacity: v.admOp, transition: 'opacity .2s ease' }} />}

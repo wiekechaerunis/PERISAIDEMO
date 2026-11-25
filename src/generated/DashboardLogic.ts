@@ -349,7 +349,7 @@ export class DashboardLogic extends DCLogic {
       layOpen: s.layOpen, layOpenStr: s.layOpen ? 'true' : 'false', toggleLay: () => this.setState({ layOpen: !s.layOpen }),
       layers: [['wk', 'Wilayah kerja', 'Cakupan WK dari modul Wilayah kerja'], ['fas', 'Fasilitas & jalur pipa', 'Area buatan sendiri di dalam WK'], ['adm', 'Batas administrasi', 'Kabupaten/kota dan kecamatan']].map(([kk, n, d]) => ({ n, d, on: s.lay[kk] ? 'true' : 'false', pick: () => this.setState({ lay: { ...s.lay, [kk]: !s.lay[kk] } }) })), baseOp: (lvl === 'nat' || !detSrc) ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
       showHint: true, hint,
-      mapCap: lvl === 'nat' ? 'Bidang = wilayah SKK, diwarnai level tertinggi. Area panas di lokasi insiden; makin pekat makin banyak.' : (lvl === 'area' ? 'Bidang berwarna = cakupan WK (dari modul Wilayah kerja, contoh). Abu-abu = WK tanpa insiden.' : 'Garis putus-putus = batas WK. Kotak biru = fasilitas, garis hijau = jalur pipa. Satu titik satu insiden.'),
+      mapCap: lvl === 'nat' ? 'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.' : (lvl === 'area' ? 'Bidang berwarna = cakupan WK (dari modul Wilayah kerja, contoh). Abu-abu = WK tanpa insiden.' : 'Garis putus-putus = batas WK. Kotak biru = fasilitas, garis hijau = jalur pipa. Satu titik satu insiden.'),
       mapAria: 'Peta insiden ' + (lvl === 'nat' ? 'Indonesia' : aTitle) + ': ' + vis.length + ' area dengan insiden',
       legLv: LV.map((l) => ({ n: l[0], c: l[1] })),
       zNat: lvl === 'nat', zArea: lvl === 'area', zLoc: lvl === 'loc',

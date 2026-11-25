@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 Nov 2026 · Masukan PM setelah Iterasi 3
+
+- Tampilan nasional kembali ke gaya lama: provinsi putih bergaris abu tipis di atas laut, tanpa bidang wilayah berwarna dan tanpa garis antarwilayah. Keterangan peta nasional ikut kembali ("Area panas di lokasi insiden. ..."). Hover provinsi menyorot tipis seluruh wilayah SKK-nya, chip wilayah tetap hanya saat hover.
+- Tingkat wilayah dan WK tetap memakai lapisan Iterasi 3 (cakupan WK, batas WK, fasilitas, tombol Lapisan).
+
 ## 25 Nov 2026 · Iterasi 3 · disetujui PM 25 Nov
 
 Peta wilayah SKK, cakupan WK, dan fasilitas. Desain dan `public/peta/` (68 file) dari zip terbaru.

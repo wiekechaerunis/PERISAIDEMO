@@ -131,3 +131,8 @@
 .db-laybtn[aria-expanded="true"] { background: var(--ink); color: var(--surface); }
 .db-ctl .db-laypop button { width: 100%; height: auto; box-shadow: none; background: none; justify-content: flex-start; text-align: left; border-radius: var(--radius-sm); cursor: pointer; }
 .db-ctl .db-laypop button:hover { background: var(--surface-sunken); }
+
+/* ---------- Nasional kembali ke tampilan lama (masukan PM 25 Nov setelah Iterasi 3) ---------- */
+.db-prov path { fill: #fff; stroke: #B9BCC5; stroke-width: .6px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.db-prov path.on { fill: color-mix(in srgb, var(--ink) 5%, #fff); stroke: var(--ink-muted); }
+.db-msk-hov { background: rgba(28, 29, 33, .05); }

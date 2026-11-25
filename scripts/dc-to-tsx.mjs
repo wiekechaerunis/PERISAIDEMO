@@ -264,6 +264,8 @@ const LOGIC_PATCHES = [
   ["const base = lvl === 'nat' ? 26 : 70 / k;", "const base = lvl === 'nat' ? 39 : 70 / k;"],
   // Iterasi 3: hover area panas di tingkat wilayah menaikkan bidang WK yang sama ke 30%
   ["return { mask: 'url(/peta/wk-' + a.id + '.svg)', bg };", "return { id: a.id, mask: 'url(/peta/wk-' + a.id + '.svg)', bg, hov: a.n > 0 ? tint(LV[a.mx][1], 30) : 'rgba(142,146,157,.22)' };"],
+  // Masukan PM setelah Iterasi 3: nasional kembali ke tampilan lama (tanpa bidang wilayah), keterangan ikut
+  ["'Bidang = wilayah SKK, diwarnai level tertinggi. Area panas di lokasi insiden; makin pekat makin banyak.'", "'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.'"],
 ];
 
 // Peta komponen ke ID bagian PRD §6a (S1..S19)
