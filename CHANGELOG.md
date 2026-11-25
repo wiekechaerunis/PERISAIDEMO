@@ -1,5 +1,21 @@
 # Changelog
 
+## 25 Nov 2026 · Iterasi 3 · disetujui PM 25 Nov
+
+Peta wilayah SKK, cakupan WK, dan fasilitas. Desain dan `public/peta/` (68 file) dari zip terbaru.
+
+- Lapisan nasional: `id-land.svg` (tanpa garis provinsi) → 6 bidang wilayah SKK (`.db-msk` + mask `reg-<w>.svg`; level tertinggi 16%, abu 10% bila 0 insiden, arsir bila belum ada laporan) → `reg-lines.svg` → area panas.
+- Lapisan wilayah: `z-<w>.svg` (opacity ikut lapisan Batas administrasi) → bidang WK (mask `wk-<id>.svg`; level 18%, abu untuk WK tanpa insiden dan WK lain milik KKKS lain, khusus SKK) → area panas + label WK.
+- Lapisan WK: `l-<id>.svg` → bidang WK terpilih 12%, WK lain 5% → `wkl-<id>.svg` (garis putus-putus) → `wka-<id>.svg` (fasilitas, jalur pipa, anjungan lepas pantai) → chip lokasi aset dengan ikon dan titik insiden.
+- Tombol "Lapisan" di kontrol peta: Wilayah kerja, Fasilitas & jalur pipa, Batas administrasi (default menyala); tutup dengan klik di luar atau Esc.
+- Teks: breadcrumb "WK Andalas Darat · Musi Banyuasin", petunjuk "Klik WK untuk melihat titik insiden", keterangan peta per tingkat, nama lokasi aset dari konstanta SITES.
+- Penyesuaian iterasi 2: panel ringkasan tersembunyi di nasional dan muncul otomatis saat zoom ke wilayah/WK; area panas nasional 1,5×; hover area panas di tingkat wilayah menaikkan bidang WK yang sama ke 30%.
+- Perbaikan: kartu hover yang terbuka sebelum zoom tidak lagi tertinggal di tingkat berikutnya.
+
+**Menyimpang dari prompt Iterasi 3**
+- Perilaku iterasi 2b dipertahankan: chip wilayah hanya muncul saat hover, dan provinsi tetap bisa di-hover/diklik. Provinsi kini jadi area klik tak terlihat (tanpa garis provinsi); hover menyorot bidang wilayah SKK-nya.
+- Kontrol peta ada di kiri (aturan iterasi 2), jadi popover Lapisan membuka ke kanan, bukan ke kiri seperti di desain.
+
 ## 25 Nov 2026 · Iterasi 2b (masukan PM)
 
 - Peta nasional: 38 provinsi bisa di-hover dan diklik (path dari `id-prov.svg`, data di `src/data/provinsi.ts`, dibuat oleh `scripts/build-provinsi.mjs`). Hover menyorot provinsi dan wilayah SKK-nya, kartu menampilkan nama provinsi, wilayah, dan jumlah insiden di provinsi itu. Klik atau scroll naik = zoom ke wilayah SKK provinsi tersebut, termasuk Kalsul dan Pamalu (memakai peta dasar karena belum ada peta detail).

@@ -198,4 +198,12 @@
 .db-dl .fi{width:36px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:.02em}
 .db-dl .fi.pdf{background:var(--sev-critical-bg);color:var(--sev-critical-ink)}
 .db-dl .fi.xls{background:var(--status-success-bg);color:var(--status-success-ink)}
+.db-msk{position:absolute;inset:0;pointer-events:none;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;transition:background-color .3s ease}
+.db-site{display:inline-flex;align-items:center;gap:4px}
+.db-site .p-ic{color:var(--status-info-ink)}
+.db-ctl{z-index:3}
+.db-laypop{position:absolute;right:44px;top:0;width:280px;left:auto}
+.db-laypop .hd{margin:0;padding:6px 8px 4px 8px;font-size:12px;font-weight:600;color:var(--ink-muted)}
+.db-laypop .row{height:auto;padding:8px;align-items:flex-start}
+.db-laypop .row .cb{margin-top:2px}
 .db-foot{font-size:12px;line-height:18px;color:var(--ink-muted);margin:0}

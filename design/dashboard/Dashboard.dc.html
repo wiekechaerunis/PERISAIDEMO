@@ -213,6 +213,14 @@
 .db-dl .fi{width:36px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:.02em}
 .db-dl .fi.pdf{background:var(--sev-critical-bg);color:var(--sev-critical-ink)}
 .db-dl .fi.xls{background:var(--status-success-bg);color:var(--status-success-ink)}
+.db-msk{position:absolute;inset:0;pointer-events:none;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;transition:background-color .3s ease}
+.db-site{display:inline-flex;align-items:center;gap:4px}
+.db-site .p-ic{color:var(--status-info-ink)}
+.db-ctl{z-index:3}
+.db-laypop{position:absolute;right:44px;top:0;width:280px;left:auto}
+.db-laypop .hd{margin:0;padding:6px 8px 4px 8px;font-size:12px;font-weight:600;color:var(--ink-muted)}
+.db-laypop .row{height:auto;padding:8px;align-items:flex-start}
+.db-laypop .row .cb{margin-top:2px}
 .db-foot{font-size:12px;line-height:18px;color:var(--ink-muted);margin:0}
 </style>
 </helmet>
@@ -289,19 +297,26 @@
           </div>
           <div class="db-map" role="img" aria-label="{{mapAria}}">
             <div class="db-stage" style="transform: {{mapT}}">
-              <img src="peta/id-prov.svg" alt="" aria-hidden="true" style="inset: 0; width: 100%; height: 100%; opacity: {{baseOp}}; transition: opacity .3s ease">
-              <sc-if value="{{hasDet}}" hint-placeholder-val="{{false}}"><img src="{{detSrc}}" alt="" aria-hidden="true" style="left: {{det.l}}; top: {{det.t}}; width: {{det.w}}; height: {{det.h}}"></sc-if>
+              <img src="peta/id-land.svg" alt="" aria-hidden="true" style="inset: 0; width: 100%; height: 100%; opacity: {{baseOp}}; transition: opacity .3s ease">
+              <sc-for list="{{regs}}" as="r" hint-placeholder-count="6"><span class="db-msk" style="-webkit-mask-image: {{r.mask}}; mask-image: {{r.mask}}; background: {{r.bg}}"></span></sc-for>
+              <sc-if value="{{showRegLines}}" hint-placeholder-val="{{true}}"><img src="peta/reg-lines.svg" alt="" aria-hidden="true" style="inset: 0; width: 100%; height: 100%"></sc-if>
+              <sc-if value="{{hasDet}}" hint-placeholder-val="{{false}}"><img src="{{detSrc}}" alt="" aria-hidden="true" style="left: {{det.l}}; top: {{det.t}}; width: {{det.w}}; height: {{det.h}}; opacity: {{admOp}}; transition: opacity .2s ease"></sc-if>
+              <sc-for list="{{wkm}}" as="m" hint-placeholder-count="0"><span class="db-msk" style="-webkit-mask-image: {{m.mask}}; mask-image: {{m.mask}}; background: {{m.bg}}"></span></sc-for>
+              <sc-if value="{{showWkLine}}" hint-placeholder-val="{{false}}"><img src="{{wkLineSrc}}" alt="" aria-hidden="true" style="inset: 0; width: 100%; height: 100%"></sc-if>
+              <sc-if value="{{showAreas}}" hint-placeholder-val="{{false}}"><img src="{{areasSrc}}" alt="" aria-hidden="true" style="inset: 0; width: 100%; height: 100%"></sc-if>
 
               <sc-for list="{{heat}}" as="h" hint-placeholder-count="10"><button type="button" class="db-heat" title="{{h.tip}}" aria-label="{{h.tip}}" onClick="{{h.go}}" style="left: {{h.x}}; top: {{h.y}}; width: {{h.s}}"><i style="background: {{h.bg}}"></i><em style="background: {{h.c}}"></em></button></sc-for>
               <sc-for list="{{lbls}}" as="l" hint-placeholder-count="0"><span class="db-lbl" style="left: {{l.x}}; top: {{l.y}}; font-size: {{l.fs}}">{{l.t}}</span></sc-for>
 
             </div>
-            <sc-for list="{{sites}}" as="t" hint-placeholder-count="0"><span class="db-site" style="left: {{t.x}}; top: {{t.y}}">{{t.n}}</span></sc-for>
+            <sc-for list="{{sites}}" as="t" hint-placeholder-count="0"><span class="db-site" style="left: {{t.x}}; top: {{t.y}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="{{t.ic}}"></path></svg>{{t.n}}</span></sc-for>
             <sc-for list="{{pts}}" as="p" hint-placeholder-count="0"><span class="db-pt" title="{{p.tip}}" style="left: {{p.x}}; top: {{p.y}}; background: {{p.c}}"></span></sc-for>
             <sc-for list="{{pills}}" as="p" hint-placeholder-count="6"><button type="button" class="db-pill {{p.cls}}" style="left: {{p.x}}; top: {{p.y}}" onClick="{{p.go}}" aria-label="{{p.aria}}"><i style="background: {{p.c}}"></i>{{p.n}}<span class="m">{{p.m}}</span></button></sc-for>
             <div class="db-ctl">
               <button type="button" aria-label="Perkecil satu tingkat" onClick="{{zoomOut}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M5 12h14"></path></svg></button>
               <sc-if value="{{isSkk}}" hint-placeholder-val="{{true}}"><button type="button" aria-label="Kembali ke seluruh Indonesia" onClick="{{zoomHome}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M3 11l9-8 9 8M5 10v10h14V10"></path></svg></button></sc-if>
+              <button type="button" aria-label="Lapisan peta" aria-expanded="{{layOpenStr}}" onClick="{{toggleLay}}"><svg class="p-ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="m12 3 9 5-9 5-9-5 9-5zM3 13l9 5 9-5"></path></svg></button>
+              <sc-if value="{{layOpen}}" hint-placeholder-val="{{false}}"><div class="p-pop db-lvpop db-laypop" role="group" aria-label="Lapisan peta"><p class="hd">Lapisan peta</p><sc-for list="{{layers}}" as="y" hint-placeholder-count="3"><button type="button" role="checkbox" aria-checked="{{y.on}}" class="row" onClick="{{y.pick}}"><span class="cb" aria-hidden="true"><svg viewBox="0 0 24 24" style="width: 12px; height: 12px"><path d="M5 12l4 4 10-10"></path></svg></span><span style="flex: 1">{{y.n}}<span class="p-cap" style="display: block">{{y.d}}</span></span></button></sc-for></div></sc-if>
             </div>
             <sc-if value="{{showHint}}" hint-placeholder-val="{{true}}"><span class="db-hint">{{hint}}</span></sc-if>
             <div class="db-leg" aria-label="Legenda peta">
@@ -426,7 +441,7 @@ class Component extends DCLogic {
     if (z === 'loc') { z = kk ? 'own' : 'sbs'; loc = 'mub'; }
     else if (kk) z = 'own';
     if (p.statusTerbuka === '' ) p.statusTerbuka = null;
-    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
+    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
   }
   renderVals() {
     const skk = (this.props.peran ?? 'skk') !== 'kkks';
@@ -469,6 +484,10 @@ class Component extends DCLogic {
       ['grs', 'jbn', 'Gresik', 383.9, 289.6, [0, 1, 0, 0, 0], 0, 'PT Gresik Samudra Hulu', 'WK Bengawan Hilir']
     ];
     const DTT = { bjn: 300, grs: 122 };
+    // Lokasi area buatan sendiri per WK (koordinat peta). PRODUKSI: dari modul Wilayah kerja > Buat area sendiri.
+    const SITES = {"ace": [[65.78, 43.31, "fas"], [65.64, 34.08, "sta"], [65.71, 38.7, "pipa"]], "lgk": [[79.8, 55.54, "fas"], [73.17, 57.87, "sta"], [76.49, 56.71, "pipa"]], "bkl": [[140.34, 107.49, "fas"], [148.02, 111.49, "sta"], [144.18, 109.49, "pipa"]], "sik": [[152.56, 114.56, "fas"], [153.36, 124.16, "sta"], [152.96, 119.36, "pipa"]], "mub": [[202.28, 190.45, "fas"], [188.64, 194.6, "sta"], [195.46, 192.53, "pipa"]], "bny": [[222.07, 188.94, "fas"], [217.44, 197.6, "sta"], [219.76, 193.27, "pipa"]], "mre": [[204.14, 213.91, "fas"], [197.37, 217.23, "sta"], [200.76, 215.57, "pipa"]], "tjb": [[202.98, 163.51, "fas"], [196.82, 162.7, "sta"], [199.9, 163.1, "pipa"]], "idm": [[292.67, 275.85, "fas"], [289.95, 273.19, "sta"], [291.31, 274.52, "pipa"]], "krw": [[272.19, 270.86, "fas"], [274.88, 272.35, "sta"], [273.53, 271.6, "pipa"]], "bjn": [[365.54, 290.04, "fas"], [368.18, 293.15, "sta"], [366.86, 291.59, "pipa"]], "grs": [[385.74, 289.68, "fas"], [383.17, 289.34, "sta"], [384.5, 281.0, "off"]]};
+    // WK lain tanpa insiden pada periode ini (konteks di zoom wilayah, SKK saja). Cakupan = kecamatan terpilih (contoh).
+    const WKX = [['x-oki', 'sbs', 'WK Komering Rawa'], ['x-mjb', 'sbs', 'WK Batang Hilir'], ['x-sbd', 'sbu', 'WK Bedagai Pesisir'], ['x-mer', 'sbu', 'WK Meranti Selat'], ['x-sbg', 'pst', 'WK Pantura Tengah'], ['x-tbn', 'jbn', 'WK Bengawan Utara']];
     // Kategori × wilayah (pola sheet WILAYAH rekap SKK, angka demo)
     const CAT = [
       ['Pencurian/Perampokan', { pst: 11, sbu: 48, sbs: 21 }, { mub: 8, bny: 5 }],
@@ -549,12 +568,26 @@ class Component extends DCLogic {
       const x0 = cx - 500 / k, y0 = cy - 200 / k;
       const sx = (x) => ((x - x0) * k / 10).toFixed(2) + '%', sy = (y) => ((y - y0) * k / 4).toFixed(2) + '%';
       const code = loc.id === 'mub' ? 'ADR' : loc.wk.replace('WK ', '').split(' ').map((w) => w[0]).join('').toUpperCase();
-      const SITE = [[-4.2, -1.6, 'Sumur ' + code + '-07'], [3.6, -0.4, 'Stasiun pengumpul ' + code], [-0.4, 2.4, 'Jalur pipa ' + code + ' km 12']];
+      const NM = { fas: 'Sumur ' + code + '-07', sta: 'Stasiun pengumpul ' + code, pipa: 'Jalur pipa ' + code + ' km 12', off: 'Anjungan lepas pantai ' + code };
+      const SITE = SITES[loc.id].map((t) => [t[0] - loc.x, t[1] - loc.y, NM[t[2]], t[2]]);
       const order = []; loc.lv.forEach((v, i) => { for (let j = 0; j < v; j++) order.push(i); });
       const shown = order.slice(-60).reverse();
       pts = shown.map((li, i) => { const si = i % 5 < 2 ? 0 : (i % 5 < 4 ? 1 : 2); const st = SITE[si]; const ang = i * 2.39996, rr = 0.18 + 0.32 * ((i * 7) % 5) / 5; return { x: sx(loc.x + st[0] + Math.cos(ang) * rr), y: sy(loc.y + st[1] + Math.sin(ang) * rr * 0.8), c: LV[li][1], tip: LV[li][0] + ' · ' + st[2] }; });
-      sites = SITE.map((t) => ({ x: sx(loc.x + t[0]), y: ((loc.y + t[1] - y0 + 0.75) * k / 4).toFixed(2) + '%', n: t[2] }));
+      const ICS = { fas: 'M12 2v20M8 6h8M7 22h10M9 10h6', sta: 'M3 21V9l9-6 9 6v12H3zM9 21v-6h6v6', pipa: 'M3 12h18M7 8v8M17 8v8', off: 'M4 20h16M6 20l2-8h8l2 8M12 12V4M9 7h6' };
+      sites = s.lay.fas ? SITE.map((t) => ({ x: sx(loc.x + t[0]), y: ((loc.y + t[1] - y0 + 0.8) * k / 4).toFixed(2) + '%', n: t[2], ic: ICS[t[3]] })) : [];
     }
+    // Bidang wilayah SKK (nasional) dan cakupan WK (zoom)
+    const tint = (c, a) => 'color-mix(in srgb, ' + c + ' ' + a + '%, transparent)';
+    const HATCH = 'repeating-linear-gradient(135deg, rgba(142,146,157,.24) 0 3px, transparent 3px 7px)';
+    const regs = lvl === 'nat' ? WO.map((w) => {
+      const m = lvMax(addLv(A.filter((a) => a.w === w)));
+      return { mask: 'url(peta/reg-' + w + '.svg)', bg: W[w].nr ? HATCH : (m < 0 ? 'rgba(142,146,157,.10)' : tint(LV[m][1], 16)) };
+    }) : [];
+    const wkm = (lvl === 'nat' || !s.lay.wk) ? [] : A.filter((a) => (z === 'own' || a.w === z)).map((a) => {
+      const sel = loc && a.id === loc.id;
+      const bg = a.n > 0 ? tint(LV[a.mx][1], loc ? (sel ? 12 : 5) : 18) : 'rgba(142,146,157,.10)';
+      return { mask: 'url(peta/wk-' + a.id + '.svg)', bg };
+    }).concat(skk && !loc ? WKX.filter((x) => x[1] === z).map((x) => ({ mask: 'url(peta/wk-' + x[0] + '.svg)', bg: 'rgba(142,146,157,.12)' })) : []);
     // pill wilayah (hanya tingkat nasional, SKK)
     const pills = (skk && lvl === 'nat') ? WO.map((w) => {
       const list = A.filter((a) => a.w === w); const n = sum(list.map((a) => a.n)); const m = lvMax(addLv(list));
@@ -567,10 +600,10 @@ class Component extends DCLogic {
     if (skk) crumb.push({ t: 'Indonesia', go: go('nat'), link: lvl !== 'nat', cur: lvl === 'nat' });
     if (!skk) crumb.push({ t: 'Wilayah kerja ' + SEN, go: go('own'), link: lvl === 'loc', cur: lvl !== 'loc' });
     if (skk && lvl !== 'nat') crumb.push({ t: W[z].n, go: go(z), link: lvl === 'loc', cur: lvl === 'area' });
-    if (loc) crumb.push({ t: (skk ? loc.name + ' · ' : '') + loc.wk, go: () => {}, link: false, cur: true });
+    if (loc) crumb.push({ t: loc.wk + (skk ? ' · ' + loc.name : ''), go: () => {}, link: false, cur: true });
     const zoomOut = () => { if (loc) this.setState({ loc: null }); else if (skk && z !== 'nat') this.setState({ z: 'nat' }); };
     const outDis = (!loc && (!skk || z === 'nat')) ? 'true' : null;
-    const hint = lvl === 'nat' ? 'Klik area panas atau nama wilayah untuk zoom' : (lvl === 'area' ? 'Klik area untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
+    const hint = lvl === 'nat' ? 'Klik area panas atau nama wilayah untuk zoom' : (lvl === 'area' ? 'Klik WK untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
 
     // ===== strip =====
     const tot = (list) => ({ n: sum(list.map((a) => a.n)), r: sum(list.map((a) => a.rp)), lv: addLv(list) });
@@ -764,9 +797,11 @@ class Component extends DCLogic {
       dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · Semester I 2026',
       ins, aiCap, aiSeg, askPh: skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"',
       kpis,
-      crumb, mapT, sites, baseOp: lvl === 'nat' ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
+      crumb, mapT, sites, regs, wkm, showRegLines: lvl === 'nat', admOp: s.lay.adm ? '1' : '0', showWkLine: !!loc && s.lay.wk, wkLineSrc: loc ? 'peta/wkl-' + loc.id + '.svg' : '', showAreas: !!loc && s.lay.fas, areasSrc: loc ? 'peta/wka-' + loc.id + '.svg' : '',
+      layOpen: s.layOpen, layOpenStr: s.layOpen ? 'true' : 'false', toggleLay: () => this.setState({ layOpen: !s.layOpen }),
+      layers: [['wk', 'Wilayah kerja', 'Cakupan WK dari modul Wilayah kerja'], ['fas', 'Fasilitas & jalur pipa', 'Area buatan sendiri di dalam WK'], ['adm', 'Batas administrasi', 'Kabupaten/kota dan kecamatan']].map(([kk, n, d]) => ({ n, d, on: s.lay[kk] ? 'true' : 'false', pick: () => this.setState({ lay: { ...s.lay, [kk]: !s.lay[kk] } }) })), baseOp: lvl === 'nat' ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
       showHint: true, hint,
-      mapCap: lvl === 'nat' ? 'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.' : (lvl === 'area' ? 'Garis = batas provinsi dan kabupaten/kota. Batas WK menunggu data resmi (Q-272).' : 'Satu titik satu insiden. Lokasi rahasia tidak digambar.'),
+      mapCap: lvl === 'nat' ? 'Bidang = wilayah SKK, diwarnai level tertinggi. Area panas di lokasi insiden; makin pekat makin banyak.' : (lvl === 'area' ? 'Bidang berwarna = cakupan WK (dari modul Wilayah kerja, contoh). Abu-abu = WK tanpa insiden.' : 'Garis putus-putus = batas WK. Kotak biru = fasilitas, garis hijau = jalur pipa. Satu titik satu insiden.'),
       mapAria: 'Peta insiden ' + (lvl === 'nat' ? 'Indonesia' : aTitle) + ': ' + vis.length + ' area dengan insiden',
       legLv: LV.map((l) => ({ n: l[0], c: l[1] })),
       zNat: lvl === 'nat', zArea: lvl === 'area', zLoc: lvl === 'loc',

@@ -43,3 +43,12 @@ Di mesin dengan kebijakan Windows Application Control, binary native Rollup dibl
 - **Gagal atau timeout:** UI menampilkan state "AI Copilot sedang tidak tersedia" (board S19) dengan tombol **Coba lagi** dan **Pakai mode contoh** (beralih ke mock).
 - Copilot hanya menyarankan: yang masuk ke form hanya saran yang di-**Pakai**. Keparahan tidak diisi AI.
 - **Suara:** Web Speech API `id-ID`. Tidak didukung atau izin ditolak → S20; teks nyaris kosong → S21 "Suara kurang jelas"; batas 3 menit → S22.
+
+## Dashboard insiden (Analitik)
+
+`/analitik` memakai Dashboard insiden dari `design/dashboard/Dashboard.dc.html` (PRD dan prompt iterasi di `docs/dashboard/`, riwayat di `CHANGELOG.md`).
+Kode markup, logika, dan data dihasilkan oleh `node scripts/dc-to-tsx.mjs`; data provinsi oleh `node scripts/build-provinsi.mjs`.
+
+**Catatan produksi (belum dibangun di prototype):**
+- Bentuk WK dan area (fasilitas, jalur pipa, anjungan) di produk diambil dari modul Wilayah kerja ("Pilih wilayah" + "Buat area sendiri"), bukan SVG statis di `public/peta/`.
+- Bentuk wilayah SKK diambil dari pemetaan provinsi → wilayah yang dikonfirmasi SKK. Di prototype, Sumatera Barat dan Kepulauan Riau dianggap masuk Sumbagut (asumsi).

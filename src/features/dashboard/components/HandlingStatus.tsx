@@ -16,10 +16,10 @@ export function HandlingStatus({ v }: { v: any }) {
 <span className="p-cap">{v.stCap}</span>
 </div>
 </div>
-<div className="db-stack" style={{ height: "14px" }} role="img" aria-label={v.stAria}>{(v.stBar ?? []).map((v: any, k25: number) => (<Fragment key={k25}>
+<div className="db-stack" style={{ height: "14px" }} role="img" aria-label={v.stAria}>{(v.stBar ?? []).map((v: any, k28: number) => (<Fragment key={k28}>
 <i style={{ width: v.w, background: v.c }} />
 </Fragment>))}</div>
-<div className="db-fade" key={v.fk} style={{ display: "flex", flexDirection: "column", marginTop: "10px" }}>{(v.st ?? []).map((v: any, k26: number) => (<Fragment key={k26}>
+<div className="db-fade" key={v.fk} style={{ display: "flex", flexDirection: "column", marginTop: "10px" }}>{(v.st ?? []).map((v: any, k29: number) => (<Fragment key={k29}>
 <div className="db-stw">
 <button type="button" className="db-str" aria-expanded={v.openStr} onClick={v.go}>
 <i style={{ background: v.c }} />
@@ -32,7 +32,7 @@ export function HandlingStatus({ v }: { v: any }) {
 <path d="m9 6 6 6-6 6" />
 </svg>
 </button>{(v.open) && (<>
-<div className="db-stl">{(v.items ?? []).map((i: any, k27: number) => (<Fragment key={k27}>
+<div className="db-stl">{(v.items ?? []).map((i: any, k30: number) => (<Fragment key={k30}>
 <a className="db-sti" href={routeHref(i.href, i.id)}>
 <span className="db-id">{i.id}</span>
 <span className="tt">

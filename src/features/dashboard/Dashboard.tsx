@@ -14,6 +14,13 @@ export function Dashboard(props: DashboardProps) {
   const [panelOpen, setPanelOpen] = useState(true);
   const [mapW, setMapW] = useState(1078);
   const v = useDashboard({ ...props, panelOpen, mapW });
+  // Iterasi 3: di tingkat nasional panel ringkasan tersembunyi (bidang wilayah + chip sudah membawa informasinya);
+  // panel muncul otomatis saat zoom ke wilayah atau WK. Tombol "Ringkasan" tetap bisa membukanya.
+  const [lastLvl, setLastLvl] = useState<string | null>(null);
+  if (v.lvl !== lastLvl) {
+    setLastLvl(v.lvl);
+    setPanelOpen(v.lvl !== 'nat');
+  }
   const navigate = useNavigate();
   const ui = {
     panelOpen,

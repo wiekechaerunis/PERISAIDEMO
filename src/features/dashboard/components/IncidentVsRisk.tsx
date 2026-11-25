@@ -40,7 +40,7 @@ export function IncidentVsRisk({ v }: { v: any }) {
 <b>{v.ikUp}</b>
 </div>
 </div>
-<div className="db-gb" role="img" aria-label={v.ikAria}>{(v.ikBars ?? []).map((b: any, k20: number) => (<Fragment key={k20}>
+<div className="db-gb" role="img" aria-label={v.ikAria}>{(v.ikBars ?? []).map((b: any, k23: number) => (<Fragment key={k23}>
 <div className="g" data-tip={b.tip}>
 <span className="b">
 <i style={{ height: b.hn, background: "var(--chart-series-1)" }} />
@@ -48,7 +48,7 @@ export function IncidentVsRisk({ v }: { v: any }) {
 </span>
 </div>
 </Fragment>))}</div>
-<div className="db-x" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }} aria-hidden="true">{(v.ikBars ?? []).map((b: any, k21: number) => (<Fragment key={k21}>
+<div className="db-x" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }} aria-hidden="true">{(v.ikBars ?? []).map((b: any, k24: number) => (<Fragment key={k24}>
 <span>{b.m}</span>
 </Fragment>))}</div>
 <p className="p-cap db-push" style={{ margin: "12px 0 0 0", paddingTop: "12px" }}>{v.ikNote}</p>

@@ -119,3 +119,15 @@
 
 /* ---------- Iterasi 2b: hint peta lebih halus ---------- */
 .db-map .db-hint { background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink-muted); font-weight: 500; box-shadow: 0 0 0 1px var(--border-subtle); backdrop-filter: blur(4px); pointer-events: none; }
+
+/* ---------- Iterasi 3 (disetujui PM 25 Nov): lapisan peta ---------- */
+.db-msk { -webkit-mask-position: 0 0; mask-position: 0 0; transition: background-color .2s ease, background .2s ease; }
+.db-msk-hov { background: rgba(28, 29, 33, .07); }
+/* provinsi: area klik tanpa garis (garis provinsi tidak digambar di nasional) */
+.db-prov path, .db-prov path.on { fill: transparent; stroke: none; }
+.db-prov path.on { fill: rgba(28, 29, 33, .04); }
+/* kontrol di kiri: popover Lapisan membuka ke kanan */
+.db-map .db-laypop { left: 44px; right: auto; top: 0; }
+.db-laybtn[aria-expanded="true"] { background: var(--ink); color: var(--surface); }
+.db-ctl .db-laypop button { width: 100%; height: auto; box-shadow: none; background: none; justify-content: flex-start; text-align: left; border-radius: var(--radius-sm); cursor: pointer; }
+.db-ctl .db-laypop button:hover { background: var(--surface-sunken); }

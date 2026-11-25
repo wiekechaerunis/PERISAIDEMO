@@ -12,7 +12,7 @@ export class DashboardLogic extends DCLogic {
     if (z === 'loc') { z = kk ? 'own' : 'sbs'; loc = 'mub'; }
     else if (kk) z = 'own';
     if (p.statusTerbuka === '' ) p.statusTerbuka = null;
-    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
+    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka) };
   }
   renderVals() {
     const skk = (this.props.peran ?? 'skk') !== 'kkks';
@@ -24,6 +24,10 @@ export class DashboardLogic extends DCLogic {
     // Wilayah SKK: kotak zoom di koordinat peta 1000x400 (angka demo, pola rekap SKK Jan–Jun 2026)
     const WO = ['pst', 'sbu', 'sbs', 'kls', 'jbn', 'pml'];
     // Area insiden: [id, wilayah, nama, x, y, level SR..K, kerugian jt, KKKS, WK]
+    // Lokasi area buatan sendiri per WK (koordinat peta). PRODUKSI: dari modul Wilayah kerja > Buat area sendiri.
+    const SITES = {"ace": [[65.78, 43.31, "fas"], [65.64, 34.08, "sta"], [65.71, 38.7, "pipa"]], "lgk": [[79.8, 55.54, "fas"], [73.17, 57.87, "sta"], [76.49, 56.71, "pipa"]], "bkl": [[140.34, 107.49, "fas"], [148.02, 111.49, "sta"], [144.18, 109.49, "pipa"]], "sik": [[152.56, 114.56, "fas"], [153.36, 124.16, "sta"], [152.96, 119.36, "pipa"]], "mub": [[202.28, 190.45, "fas"], [188.64, 194.6, "sta"], [195.46, 192.53, "pipa"]], "bny": [[222.07, 188.94, "fas"], [217.44, 197.6, "sta"], [219.76, 193.27, "pipa"]], "mre": [[204.14, 213.91, "fas"], [197.37, 217.23, "sta"], [200.76, 215.57, "pipa"]], "tjb": [[202.98, 163.51, "fas"], [196.82, 162.7, "sta"], [199.9, 163.1, "pipa"]], "idm": [[292.67, 275.85, "fas"], [289.95, 273.19, "sta"], [291.31, 274.52, "pipa"]], "krw": [[272.19, 270.86, "fas"], [274.88, 272.35, "sta"], [273.53, 271.6, "pipa"]], "bjn": [[365.54, 290.04, "fas"], [368.18, 293.15, "sta"], [366.86, 291.59, "pipa"]], "grs": [[385.74, 289.68, "fas"], [383.17, 289.34, "sta"], [384.5, 281.0, "off"]]};
+    // WK lain tanpa insiden pada periode ini (konteks di zoom wilayah, SKK saja). Cakupan = kecamatan terpilih (contoh).
+    const WKX = [['x-oki', 'sbs', 'WK Komering Rawa'], ['x-mjb', 'sbs', 'WK Batang Hilir'], ['x-sbd', 'sbu', 'WK Bedagai Pesisir'], ['x-mer', 'sbu', 'WK Meranti Selat'], ['x-sbg', 'pst', 'WK Pantura Tengah'], ['x-tbn', 'jbn', 'WK Bengawan Utara']];
     // Kategori × wilayah (pola sheet WILAYAH rekap SKK, angka demo)
     const catIdx = s.kat == null ? -1 : s.kat;
     const dttOn = skk && s.dtt;
@@ -77,7 +81,7 @@ export class DashboardLogic extends DCLogic {
       const r = Math.sqrt(a.n / maxN);
       const alpha = Math.round(30 + 60 * r);
       const C = LV[a.mx][1];
-      const base = lvl === 'nat' ? 26 : 70 / k;
+      const base = lvl === 'nat' ? 39 : 70 / k;
       const sz = base * (0.85 + 0.6 * r);
       return {
         hid: lvl === 'nat' ? a.w : a.id, area: a, mxL: LV[a.mx][0], rpS: rp(a.rp), x: pc(a.x), y: pcy(a.y), s: (sz / 10).toFixed(2) + '%', c: C,
@@ -97,13 +101,27 @@ export class DashboardLogic extends DCLogic {
       const x0 = cx - 500 * fa / k, y0 = cy - 200 / k;
       const sx = (x) => ((x - x0) * k / 10).toFixed(2) + '%', sy = (y) => ((y - y0) * k / 4).toFixed(2) + '%';
       const code = loc.id === 'mub' ? 'ADR' : loc.wk.replace('WK ', '').split(' ').map((w) => w[0]).join('').toUpperCase();
-      const SITE = [[-4.2, -1.6, 'Sumur ' + code + '-07'], [3.6, -0.4, 'Stasiun pengumpul ' + code], [-0.4, 2.4, 'Jalur pipa ' + code + ' km 12']];
+      const NM = { fas: 'Sumur ' + code + '-07', sta: 'Stasiun pengumpul ' + code, pipa: 'Jalur pipa ' + code + ' km 12', off: 'Anjungan lepas pantai ' + code };
+      const SITE = SITES[loc.id].map((t) => [t[0] - loc.x, t[1] - loc.y, NM[t[2]], t[2]]);
       const order = []; loc.lv.forEach((v, i) => { for (let j = 0; j < v; j++) order.push(i); });
       const pool = INC.filter((r) => r[1] === loc.id); const used = new Set(); const pickInc = (li) => { const qi = pool.findIndex((q, i) => q[3] === li && !used.has(i)); if (qi < 0) return null; used.add(qi); const r = pool[qi]; return { id: r[0], t: r[7], st: ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'][r[4]] }; };
       const shown = order.slice(-60).reverse();
       pts = shown.map((li, i) => { const si = i % 5 < 2 ? 0 : (i % 5 < 4 ? 1 : 2); const st = SITE[si]; const ang = i * 2.39996, rr = 0.18 + 0.32 * ((i * 7) % 5) / 5; return { x: sx(loc.x + st[0] + Math.cos(ang) * rr), y: sy(loc.y + st[1] + Math.sin(ang) * rr * 0.8), c: LV[li][1], tip: LV[li][0] + ' · ' + st[2], lvN: LV[li][0], site: st[2], inc: pickInc(li) }; });
-      sites = SITE.map((t) => ({ x: sx(loc.x + t[0]), y: ((loc.y + t[1] - y0 + 0.75) * k / 4).toFixed(2) + '%', n: t[2] }));
+      const ICS = { fas: 'M12 2v20M8 6h8M7 22h10M9 10h6', sta: 'M3 21V9l9-6 9 6v12H3zM9 21v-6h6v6', pipa: 'M3 12h18M7 8v8M17 8v8', off: 'M4 20h16M6 20l2-8h8l2 8M12 12V4M9 7h6' };
+      sites = s.lay.fas ? SITE.map((t) => ({ x: sx(loc.x + t[0]), y: ((loc.y + t[1] - y0 + 0.8) * k / 4).toFixed(2) + '%', n: t[2], ic: ICS[t[3]] })) : [];
     }
+    // Bidang wilayah SKK (nasional) dan cakupan WK (zoom)
+    const tint = (c, a) => 'color-mix(in srgb, ' + c + ' ' + a + '%, transparent)';
+    const HATCH = 'repeating-linear-gradient(135deg, rgba(142,146,157,.24) 0 3px, transparent 3px 7px)';
+    const regs = lvl === 'nat' ? WO.map((w) => {
+      const m = lvMax(addLv(A.filter((a) => a.w === w)));
+      return { mask: 'url(/peta/reg-' + w + '.svg)', bg: W[w].nr ? HATCH : (m < 0 ? 'rgba(142,146,157,.10)' : tint(LV[m][1], 16)) };
+    }) : [];
+    const wkm = (lvl === 'nat' || !s.lay.wk) ? [] : A.filter((a) => (z === 'own' || a.w === z)).map((a) => {
+      const sel = loc && a.id === loc.id;
+      const bg = a.n > 0 ? tint(LV[a.mx][1], loc ? (sel ? 12 : 5) : 18) : 'rgba(142,146,157,.10)';
+      return { id: a.id, mask: 'url(/peta/wk-' + a.id + '.svg)', bg, hov: a.n > 0 ? tint(LV[a.mx][1], 30) : 'rgba(142,146,157,.22)' };
+    }).concat(skk && !loc ? WKX.filter((x) => x[1] === z).map((x) => ({ mask: 'url(/peta/wk-' + x[0] + '.svg)', bg: 'rgba(142,146,157,.12)' })) : []);
     // pill wilayah (hanya tingkat nasional, SKK)
     const pills = (skk && lvl === 'nat') ? WO.map((w) => {
       const list = A.filter((a) => a.w === w); const n = sum(list.map((a) => a.n)); const m = lvMax(addLv(list));
@@ -116,10 +134,10 @@ export class DashboardLogic extends DCLogic {
     if (skk) crumb.push({ t: 'Indonesia', go: go('nat'), link: lvl !== 'nat', cur: lvl === 'nat' });
     if (!skk) crumb.push({ t: 'Wilayah kerja ' + SEN, go: go('own'), link: lvl === 'loc', cur: lvl !== 'loc' });
     if (skk && lvl !== 'nat') crumb.push({ t: W[z].n, go: go(z), link: lvl === 'loc', cur: lvl === 'area' });
-    if (loc) crumb.push({ t: (skk ? loc.name + ' · ' : '') + loc.wk, go: () => {}, link: false, cur: true });
+    if (loc) crumb.push({ t: loc.wk + (skk ? ' · ' + loc.name : ''), go: () => {}, link: false, cur: true });
     const zoomOut = () => { if (loc) this.setState({ loc: null }); else if (skk && z !== 'nat') this.setState({ z: 'nat' }); };
     const outDis = (!loc && (!skk || z === 'nat')) ? 'true' : null;
-    const hint = lvl === 'nat' ? 'Klik provinsi atau area panas untuk zoom' : (lvl === 'area' ? 'Klik area untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
+    const hint = lvl === 'nat' ? 'Klik area panas atau nama wilayah untuk zoom' : (lvl === 'area' ? 'Klik WK untuk melihat titik insiden' : 'Titik = satu insiden, warna = level');
 
     // ===== strip =====
     const tot = (list) => ({ n: sum(list.map((a) => a.n)), r: sum(list.map((a) => a.rp)), lv: addLv(list) });
@@ -327,9 +345,11 @@ export class DashboardLogic extends DCLogic {
       }
       const wkO = [{ n: 'Semua wilayah kerja', on: !loc, go: () => this.setState({ z: 'own', loc: null }) }, ...A.map((a) => ({ n: a.wk, sub: a.name + ' · ' + a.n + ' insiden', on: !!loc && loc.id === a.id, go: () => this.setState({ z: 'own', loc: a.id }) }))];
       return [wkO, katO];
-    })(), fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m].join('|'), mapK: k, mapFa: fa, mapMw: mw, baseOp: (lvl === 'nat' || !detSrc) ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
+    })(), fk: [s.z, s.loc, s.kat, s.lv.join(''), s.dtt, s.m].join('|'), mapK: k, mapFa: fa, mapMw: mw, regs, wkm, showRegLines: lvl === 'nat', admOp: s.lay.adm ? '1' : '0', showWkLine: !!loc && s.lay.wk, wkLineSrc: loc ? '/peta/wkl-' + loc.id + '.svg' : '', showAreas: !!loc && s.lay.fas, areasSrc: loc ? '/peta/wka-' + loc.id + '.svg' : '',
+      layOpen: s.layOpen, layOpenStr: s.layOpen ? 'true' : 'false', toggleLay: () => this.setState({ layOpen: !s.layOpen }),
+      layers: [['wk', 'Wilayah kerja', 'Cakupan WK dari modul Wilayah kerja'], ['fas', 'Fasilitas & jalur pipa', 'Area buatan sendiri di dalam WK'], ['adm', 'Batas administrasi', 'Kabupaten/kota dan kecamatan']].map(([kk, n, d]) => ({ n, d, on: s.lay[kk] ? 'true' : 'false', pick: () => this.setState({ lay: { ...s.lay, [kk]: !s.lay[kk] } }) })), baseOp: (lvl === 'nat' || !detSrc) ? '1' : '0', hasDet: !!detSrc, detSrc, det, heat, wks, lbls, pts, pills, zoomOut, outDis, zoomHome: go('nat'),
       showHint: true, hint,
-      mapCap: lvl === 'nat' ? 'Area panas di lokasi insiden. Warna mengikuti level tertinggi di area itu; makin pekat makin banyak insiden.' : (lvl === 'area' ? 'Garis = batas provinsi dan kabupaten/kota. Batas WK menunggu data resmi (Q-272).' : 'Satu titik satu insiden. Lokasi rahasia tidak digambar.'),
+      mapCap: lvl === 'nat' ? 'Bidang = wilayah SKK, diwarnai level tertinggi. Area panas di lokasi insiden; makin pekat makin banyak.' : (lvl === 'area' ? 'Bidang berwarna = cakupan WK (dari modul Wilayah kerja, contoh). Abu-abu = WK tanpa insiden.' : 'Garis putus-putus = batas WK. Kotak biru = fasilitas, garis hijau = jalur pipa. Satu titik satu insiden.'),
       mapAria: 'Peta insiden ' + (lvl === 'nat' ? 'Indonesia' : aTitle) + ': ' + vis.length + ' area dengan insiden',
       legLv: LV.map((l) => ({ n: l[0], c: l[1] })),
       zNat: lvl === 'nat', zArea: lvl === 'area', zLoc: lvl === 'loc',

@@ -16,7 +16,7 @@ export function TopCategories({ v }: { v: any }) {
 <span className="p-cap">{v.catCap}</span>
 </div>
 </div>
-<div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>{(v.topCat ?? []).map((c: any, k19: number) => (<Fragment key={k19}>
+<div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>{(v.topCat ?? []).map((c: any, k22: number) => (<Fragment key={k22}>
 <button type="button" className={`db-tc ${c.cls}`} data-tip={c.tip} onClick={c.go} aria-label={c.aria}>
 <span className="nm">{c.n}</span>
 <span className="t">

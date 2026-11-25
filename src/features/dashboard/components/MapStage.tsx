@@ -10,7 +10,8 @@ import { W } from '@/data/dashboard';
 const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const SKIP = '.db-panel, .db-ctl, .db-leg, .db-legbtn, .db-sumbtn';
 
-type Card = { x: number; y: number; kind: 'area' | 'pill' | 'pt' | 'prov'; d: any } | null;
+// k = tingkat zoom (zKey) saat kartu dibuat; kartu dari tingkat lain tidak ditampilkan.
+type Card = { x: number; y: number; kind: 'area' | 'pill' | 'pt' | 'prov'; d: any; k: string } | null;
 const WN = W as Record<string, { n: string; nr?: boolean }>;
 
 export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => void }) {
@@ -83,6 +84,22 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       document.removeEventListener('keydown', close);
     };
   }, [legOpen]);
+
+  // Iterasi 3: popover Lapisan ditutup dengan klik di luar atau Esc.
+  useEffect(() => {
+    if (!v.layOpen) return;
+    const close = (e: Event) => {
+      if (e.type === 'keydown' && (e as KeyboardEvent).key !== 'Escape') return;
+      if (e.type === 'mousedown' && (e.target as HTMLElement | null)?.closest?.('.db-laypop, .db-laybtn')) return;
+      if (vRef.current.layOpen) vRef.current.toggleLay();
+    };
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', close);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', close);
+    };
+  }, [v.layOpen]);
 
   // C4: sasaran di bawah kursor (wilayah di nasional, area di tingkat wilayah), toleransi 90px.
   const curZ = () => String(vRef.current.zKey).split('|')[1];
@@ -168,7 +185,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     if (hid) setHl({ id: hid, from: 'map' });
     window.clearTimeout(timer.current);
     if (drag.current.on) return;
-    timer.current = window.setTimeout(() => setCard({ ...p, kind, d }), reduced() ? 0 : 120);
+    timer.current = window.setTimeout(() => setCard({ ...p, kind, d, k: String(vRef.current.zKey) }), reduced() ? 0 : 120);
   };
   const moveCard = (e: React.MouseEvent) => {
     const p = rel(e);
@@ -218,24 +235,42 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
       <div className="db-wrap" ref={wrapRef}>
         <div className="db-pan" style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, transition: dragging ? 'none' : undefined }}>
           <div className="db-stage" style={{ transform: v.mapT }}>
-            <svg className={`db-prov${v.baseOp === '0' ? ' off' : ''}`} viewBox="0 0 1000 400" aria-hidden="true">
-              {PROVINSI.map((p, i) => (
-                <path
-                  key={i}
-                  d={p.d}
-                  data-prov={i}
-                  className={`${hovW === p.w && v.lvl === 'nat' ? 'w' : ''}${hovP === i ? ' on' : ''}`}
-                  onMouseEnter={(e) => {
-                    setHovP(i);
-                    showCard('prov', { i }, v.isSkk && v.lvl === 'nat' ? p.w : undefined)(e);
-                  }}
-                  onMouseMove={moveCard}
-                  onMouseLeave={hideCard}
-                  onClick={() => goProv(i)}
-                />
-              ))}
-            </svg>
-            {v.hasDet && <img src={v.detSrc} alt="" aria-hidden="true" draggable={false} style={{ left: v.det.l, top: v.det.t, width: v.det.w, height: v.det.h }} />}
+            {/* Iterasi 3: lapisan peta (bawah -> atas). Nasional: daratan, bidang wilayah SKK, garis antarwilayah. */}
+            <img src="/peta/id-land.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%', opacity: v.baseOp, transition: 'opacity .3s ease' }} />
+            {(v.regs ?? []).map((r: any, i: number) => (
+              <span key={i} className="db-msk" style={{ WebkitMaskImage: r.mask, maskImage: r.mask, background: r.bg }} />
+            ))}
+            {v.lvl === 'nat' && hovW && (
+              <span className="db-msk db-msk-hov" style={{ WebkitMaskImage: `url(/peta/reg-${hovW}.svg)`, maskImage: `url(/peta/reg-${hovW}.svg)` }} />
+            )}
+            {v.showRegLines && <img src="/peta/reg-lines.svg" alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%' }} />}
+            {/* Iterasi 2b: provinsi tetap bisa di-hover/klik, tapi tanpa garis (area klik transparan). */}
+            {v.lvl === 'nat' && (
+              <svg className="db-prov" viewBox="0 0 1000 400" aria-hidden="true">
+                {PROVINSI.map((p, i) => (
+                  <path
+                    key={i}
+                    d={p.d}
+                    data-prov={i}
+                    className={hovP === i ? 'on' : undefined}
+                    onMouseEnter={(e) => {
+                      setHovP(i);
+                      showCard('prov', { i }, v.isSkk ? p.w : undefined)(e);
+                    }}
+                    onMouseMove={moveCard}
+                    onMouseLeave={hideCard}
+                    onClick={() => goProv(i)}
+                  />
+                ))}
+              </svg>
+            )}
+            {/* Wilayah dan WK: batas administrasi, bidang WK, garis batas WK, fasilitas buatan sendiri. */}
+            {v.hasDet && <img src={v.detSrc} alt="" aria-hidden="true" draggable={false} style={{ left: v.det.l, top: v.det.t, width: v.det.w, height: v.det.h, opacity: v.admOp, transition: 'opacity .2s ease' }} />}
+            {(v.wkm ?? []).map((m: any, i: number) => (
+              <span key={i} className="db-msk" style={{ WebkitMaskImage: m.mask, maskImage: m.mask, background: m.id && hlId === m.id ? m.hov : m.bg }} />
+            ))}
+            {v.showWkLine && <img src={v.wkLineSrc} alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%' }} />}
+            {v.showAreas && <img src={v.areasSrc} alt="" aria-hidden="true" draggable={false} style={{ inset: 0, width: '100%', height: '100%' }} />}
             <Fragment key={v.zKey}>
               {(v.heat ?? []).map((h: any, i: number) => (
                 <button
@@ -264,6 +299,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
           </div>
           {(v.sites ?? []).map((t: any, i: number) => (
             <span key={i} className="db-site" style={{ left: t.x, top: t.y }}>
+              <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 12, height: 12 }}><path d={t.ic} /></svg>
               {t.n}
             </span>
           ))}
@@ -305,6 +341,26 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
         <button type="button" aria-label="Perbesar ke area dengan insiden terbanyak" onClick={zoomBest} disabled={!(v.heat ?? []).length}>
           <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 18, height: 18 }}><path d="M12 5v14M5 12h14" /></svg>
         </button>
+        {/* Iterasi 3: tombol Lapisan */}
+        <button type="button" className="db-laybtn" aria-label="Lapisan peta" aria-expanded={v.layOpen} onClick={v.toggleLay}>
+          <svg className="p-ic" viewBox="0 0 24 24" aria-hidden="true" style={{ width: 18, height: 18 }}><path d="m12 3 9 5-9 5-9-5 9-5zM3 13l9 5 9-5" /></svg>
+        </button>
+        {v.layOpen && (
+          <div className="p-pop db-lvpop db-laypop" role="group" aria-label="Lapisan peta">
+            <p className="hd">Lapisan peta</p>
+            {(v.layers ?? []).map((y: any, i: number) => (
+              <button key={i} type="button" role="checkbox" aria-checked={y.on} className="row" onClick={y.pick}>
+                <span className="cb" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" style={{ width: 12, height: 12 }}><path d="M5 12l4 4 10-10" /></svg>
+                </span>
+                <span style={{ flex: 1 }}>
+                  {y.n}
+                  <span className="p-cap" style={{ display: 'block' }}>{y.d}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {v.showHint && <span className="db-hint" style={{ left: ui.panelOpen ? 'calc(50% - 188px)' : undefined }}>{v.hint}</span>}
@@ -345,7 +401,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
         </button>
       )}
 
-      {card && (
+      {card && card.k === v.zKey && (
         <div
           className="db-card"
           role="tooltip"
