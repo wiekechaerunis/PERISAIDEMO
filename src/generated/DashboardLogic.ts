@@ -419,7 +419,7 @@ export class DashboardLogic extends DCLogic {
 
       trend, trAria: 'Tren per bulan: ' + trend.map((b) => b.m + ' ' + b.lbl).join(', '),
       tdInc, tdSkk: skk, tdApply: (patch) => this.setState(patch),
-      foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila "Hitung DTT" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + (pFull ? '' : 'Jumlah insiden dihitung dari tanggal lapor; kerugian, jenis, kerawanan, dan DTT diskalakan (perkiraan). ') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'
+      foot: 'Hanya insiden terverifikasi · ' + (skk ? 'Arsir = belum ada laporan · ' : '') + (pFull ? '' : 'Angka selain jumlah insiden = perkiraan · ') + 'Data demo · Batas wilayah Kemendagri 2025'
     };
   }
 }

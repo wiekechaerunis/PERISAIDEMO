@@ -67,7 +67,7 @@ describe('logika dashboard per periode', () => {
     const v = view(cu);
     expect(kpi(v, 0)).toBe(String(countIn('2026-05-01', '2026-05-15')));
     expect(v.kpis[0].cmp).toMatch(/^vs periode sebelumnya, perkiraan/);
-    expect(v.foot).toMatch(/diskalakan \(perkiraan\)/);
+    expect(v.foot).toMatch(/Angka selain jumlah insiden = perkiraan/);
     expect(v.askCtx.per).toEqual({ from: '2026-05-01', to: '2026-05-15', label: '1–15 Mei 2026' });
     const k = view(dashPeriodInfo(P('3b')), 'kkks');
     const own = ROWS.filter((r) => ['mub', 'bny'].includes(r[1]) && dateOf(r[6]) >= '2026-03-30').length;

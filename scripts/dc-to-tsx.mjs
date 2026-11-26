@@ -287,7 +287,7 @@ const PERIOD_PATCHES = [
   ["subtitle: 'Semester I 2026 · data per", "subtitle: PL + ' · data per"],
   ["const aiCap = 'Semester I 2026 · '", "const aiCap = PL + ' · '"],
   ["' · Semester I 2026',", "' · ' + PL,"],
-  ["'Angka demo. Batas wilayah", "(pFull ? '' : 'Jumlah insiden dihitung dari tanggal lapor; kerugian, jenis, kerawanan, dan DTT diskalakan (perkiraan). ') + 'Angka demo. Batas wilayah"],
+  ["'Data demo · Batas wilayah", "(pFull ? '' : 'Angka selain jumlah insiden = perkiraan · ') + 'Data demo · Batas wilayah"],
   ["s.dtt, s.m].join('|')", "s.dtt, s.m, pFull ? '' : PD.from + PD.to].join('|')"],
   ['catN: CAT.length }', 'catN: CAT.length, per: pFull ? null : { from: PD.from, to: PD.to, label: PD.label } }'],
 ];
@@ -325,7 +325,7 @@ const LOGIC_PATCHES = [
   // Iterasi 2b: isi dropdown filter + jumlah insiden per area (kartu provinsi)
   ['goUp: zoomOut,', "goUp: zoomOut, areaN: Object.fromEntries(A.map((a) => [a.id, a.n])), fOpts: (() => {\n      const allA = A0.filter((a) => skk || a[7] === SEN);\n      const cnt = (f) => sum(A.filter(f).map((a) => a.n));\n      const katO = [{ n: 'Semua kategori', on: s.kat == null, go: () => this.setState({ kat: null }) }, ...CAT.map((c, i) => ({ n: c[0], on: s.kat === i, go: () => this.setState({ kat: i }) }))];\n      if (skk) {\n        const wO = [{ n: 'Semua wilayah', on: lvl === 'nat', go: () => this.setState({ z: 'nat', loc: null }) }, ...WO.map((w) => ({ n: W[w].n, sub: W[w].nr ? 'belum ada laporan' : cnt((a) => a.w === w) + ' insiden', on: lvl !== 'nat' && z === w, go: () => this.setState({ z: w, loc: null }) }))];\n        const kks = [...new Set(allA.map((a) => a[7]))].sort();\n        const kO = [{ n: 'Semua KKKS', on: !s.kk, go: () => this.setState({ kk: null }) }, ...kks.map((kn) => ({ n: kn, sub: allA.filter((a) => a[7] === kn).map((a) => a[8]).join(', '), on: s.kk === kn, go: () => this.setState({ kk: kn }) }))];\n        return [kO, wO, katO];\n      }\n      const wkO = [{ n: 'Semua wilayah kerja', on: !loc, go: () => this.setState({ z: 'own', loc: null }) }, ...A.map((a) => ({ n: a.wk, sub: a.name + ' · ' + a.n + ' insiden', on: !!loc && loc.id === a.id, go: () => this.setState({ z: 'own', loc: a.id }) }))];\n      return [wkO, katO];\n    })(),"],
   // Iterasi 2b: catatan kaki lebih pendek
-  [/foot: 'Angka hanya mencakup.*?Jan–Jun 2026\.'/, () => "foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila \"Hitung DTT\" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'"],
+  [/foot: 'Angka hanya mencakup.*?Jan–Jun 2026\.'/, () => "foot: 'Hanya insiden terverifikasi · ' + (skk ? 'Arsir = belum ada laporan · ' : '') + 'Data demo · Batas wilayah Kemendagri 2025'"],
   // Iterasi 3 (disetujui PM 25 Nov): mask lapisan peta memakai path absolut
   ['url(peta/', 'url(/peta/'],
   // Iterasi 3: area panas nasional 1,5x

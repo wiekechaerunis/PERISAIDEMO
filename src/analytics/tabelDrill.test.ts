@@ -116,7 +116,7 @@ describe('Tabel insiden: drill', () => {
     expect(go({ ...INIT, list: { c: 'tk' } }).lAll.every((i) => i.lv >= 3)).toBe(true);
     expect(go({ ...INIT, list: { c: 'op' } }).lAll.every((i) => i.st !== 2)).toBe(true);
     expect(go({ ...INIT, list: { c: 'lk' } }).lAll.every((i) => i.lk > 0)).toBe(true);
-    expect(v0.foot2).toMatch(/; 1 insiden dengan korban "Belum diketahui" tidak dihitung\. Angka demo\.$/);
+    expect(v0.foot2).toBe('Meninggal/Luka = jumlah orang · 1 insiden korban belum diketahui');
   });
 
   it('breadcrumb kembali, Reset, sortir, urutan alami', () => {

@@ -277,7 +277,7 @@ export function drillView(inc: DrillInc[], s: DrillState, kk: boolean) {
     lColL: kk ? 'Wilayah kerja' : 'KKKS · WK', lRows, lAll: lXs,
     pgT: lXs.length ? pg * PG + 1 + '–' + Math.min(lXs.length, pg * PG + PG) + ' dari ' + lXs.length : '',
     pg, pages, prevDis: pg === 0, nextDis: pg >= pages - 1,
-    foot2: 'Hanya insiden terverifikasi; draf tidak dihitung. Meninggal dan Luka = jumlah orang, dari laporan pelapor dan diganti rincian PIC setelah insiden ditutup' + (unk ? '; ' + unk + ' insiden dengan korban "Belum diketahui" tidak dihitung.' : '.') + ' Angka demo.',
+    foot2: 'Meninggal/Luka = jumlah orang' + (unk ? ' · ' + unk + ' insiden korban belum diketahui' : ''),
   };
 }
 export type DrillView = ReturnType<typeof drillView>;
