@@ -8,6 +8,7 @@ import path from 'node:path';
 import { parseDocument } from 'htmlparser2';
 import { decodeHTML } from 'entities';
 import { SOURCE_PATCHES, TABLE_LOGIC_PATCHES } from './dashboard-tabel.mjs';
+import { AGG_PATCHES } from './dashboard-agg.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DESIGN = path.join(ROOT, 'design/dashboard');
@@ -220,7 +221,7 @@ function portLogic(cls, name, outFile, dataNames = [], logicPatches = []) {
   if (moved.length) {
     // Sebaran insiden tambahan (src/data/dashboardExtra.ts) dipasang setelah data desain
     write(path.join(ROOT, 'src/data/dashboard.ts'), `// @ts-nocheck\n// Data demo Dashboard insiden, dipindah apa adanya dari design/Dashboard.dc.html (renderVals).\nimport { extendDashboard } from './dashboardExtra';\n${moved.join('\n\n')}\n\nextendDashboard({ A0, INC, CAT, W });\n`);
-    imp = `import { ${dataNames.join(', ')} } from '@/data/dashboard';\nimport { EXTRA_SITES } from '@/data/dashboardExtra';\n`;
+    imp = `import { ${dataNames.join(', ')} } from '@/data/dashboard';\nimport { EXTRA_SITES } from '@/data/dashboardExtra';\nimport { aggInc } from '@/analytics/incAgg';\n`;
   }
   write(outFile, `// @ts-nocheck\n${HEADER}import { DCLogic } from '@/dc/runtime';\n${imp}\n${code}\n`);
 }
@@ -354,6 +355,8 @@ const LOGIC_PATCHES = [
   // Tabel insiden (TabelDrill, board TD0–TD8) menggantikan matriks Kategori × wilayah: scripts/dashboard-tabel.mjs
   ...TABLE_LOGIC_PATCHES,
   ...PERIOD_PATCHES,
+  // Satu sumber angka per bulan/kategori/status untuk semua kartu: scripts/dashboard-agg.mjs
+  ...AGG_PATCHES,
 ];
 
 // Peta komponen ke ID bagian PRD §6a (S1..S19)

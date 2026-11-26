@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 Nov 2026 (malam) · Tabel insiden: susunan Baris · Kolom · Nilai (TD0–TD20), angka per bulan satu sumber
+
+- Kontrol "› Rincian" diganti chip **Baris** (maks. 3, pemisah ›), **Kolom** (maks. 2, pemisah ×), dan **Nilai** (hanya saat Kolom terisi). Klik chip = ganti dimensi, × = hapus (chip Baris terakhir tidak bisa dihapus), **+ Tambah** = menu "Rincikan baris menurut" / "Jadikan kolom" / "Pecah kolom menurut". Satu dimensi tidak bisa dipakai dua kali.
+- Baris bertingkat juga tanpa Kolom (TD18): baris induk abu-abu = subtotal 7 ukuran, − / +, "{n} {dimensi}", rincian menjorok 28 px per tingkat, "Buka semua · Lipat semua". Kolom 2 tingkat (TD19): header 2 baris, satu kolom Total, garis di awal tiap grup kolom, kolom nama menempel saat digulir.
+- Popover sel di tingkat mana pun membawa semua filter sel; setelah Rincikan tabel kembali ke satu Baris. × Reset mengosongkan Baris tambahan, Kolom, dan status lipat. URL: `baris`, `kolom`, `nilai`, `lipat` (+ jejak); param lama `rincian`/`kelompok` dihapus.
+- Angka per bulan satu sumber: kartu angka, Tren per bulan, Insiden dan kerawanan, Jenis terbanyak, Status penanganan, dan Tabel insiden dihitung dari insiden yang sama lewat `src/analytics/incAgg.ts`. Seed: bulan kejadian 4 insiden KKKS dipindah supaya sebaran KKKS = 3, 4, 3, 5, 5, 4 (sebelumnya tabel 4, 2, 3, 3, 6, 6). Lihat DEVIATIONS D-TD13.
+- Tes: unit pohon baris 1–3 tingkat, kolom 1–2 tingkat, batas maks., dimensi ganda, filter popover baris anak, total per bulan = Tren (SKK/KKKS, dengan/tanpa filter); e2e `node e2e/tabel-drill.e2e.mjs` menambah TD9–TD11, TD17–TD20.
+
 ## 26 Nov 2026 · Tabel insiden: pivot 2 tingkat (TD9–TD16)
 
 - Bar kontrol Tabel insiden kini **Baris**, **› Rincian**, **Kolom**, **Nilai** (komponen TabelDrill terbaru). Kolom mengubah tabel jadi pivot satu nilai (Insiden, Kerugian, Tinggi & Kritis, Meninggal, Luka, Masih terbuka) dengan kolom Total dan baris Total; Kolom bisa Kategori dan Triwulan, Triwulan juga bisa jadi Baris atau Rincian.

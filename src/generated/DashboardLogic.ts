@@ -4,6 +4,7 @@
 import { DCLogic } from '@/dc/runtime';
 import { SEN, LV, W, A0, DTT, CAT, MO, INC } from '@/data/dashboard';
 import { EXTRA_SITES } from '@/data/dashboardExtra';
+import { aggInc } from '@/analytics/incAgg';
 
 export class DashboardLogic extends DCLogic {
   constructor(p) {
@@ -58,8 +59,7 @@ export class DashboardLogic extends DCLogic {
       else A0.forEach((a) => { catN[a[0]] = c[2][a[0]] || 0; });
     }
     const A = A0.filter((a) => (skk || a[7] === SEN) && (!s.kk || a[7] === s.kk)).map((a) => {
-      let lv = pFull ? a[5].slice() : [0, 1, 2, 3, 4].map((l) => INCP.filter((r) => r[1] === a[0] && r[3] === l).length);
-      if (catIdx >= 0 && catIdx < CAT.length) lv = alloc(Math.min(Math.round((catN[a[0]] || 0) * aF[a[0]]), sum(lv)), lv);
+      let lv = aggInc(INCP.filter((r) => r[1] === a[0] && (catIdx < 0 || catIdx >= CAT.length || r[2] === catIdx)), undefined, CAT.length).byLv;
       if (catIdx === CAT.length) lv = [0, 0, 0, 0, 0];
       if (dttOn && DTT[a[0]] && (catIdx < 0 || catIdx === CAT.length)) lv[0] += Math.round(DTT[a[0]] * dttF);
       lv = lv.map((v, i) => (s.lv[i] ? v : 0));
@@ -162,8 +162,16 @@ export class DashboardLogic extends DCLogic {
     const ALL = tot(SC);
     const scIds = SC.map((a) => a.id);
     const incS = INCP.filter((r) => scIds.includes(r[1]) && s.lv[r[3]] && (catIdx < 0 || catIdx === r[2]));
+    // Kerugian per insiden: data demo belum punya kerugian per insiden, jadi kerugian area setelah filter (angka yang sama
+    // dengan KPI Kerugian) dibagi rata ke insiden area itu. Disimpan per baris, bukan per nomor. PRODUKSI: dari data layer.
+    const tdRp = new Map();
+    { const cnt = {}; incS.forEach((r) => { cnt[r[1]] = (cnt[r[1]] || 0) + 1; }); const aRp = {}; SC.forEach((a) => { aRp[a.id] = a.rp; }); incS.forEach((r) => { tdRp.set(r, (aRp[r[1]] || 0) / cnt[r[1]]); }); }
+    // Satu sumber (src/analytics/incAgg.ts): Tren per bulan, Insiden dan kerawanan, Status penanganan, Tabel insiden = incS.
+    // Jenis terbanyak memakai cakupan yang sama tanpa filter Kategori (supaya jenis lain tetap terlihat).
+    const AG = aggInc(incS, (r) => tdRp.get(r) || 0, CAT.length);
+    const AGc = aggInc(INCP.filter((r) => scIds.includes(r[1]) && s.lv[r[3]]), undefined, CAT.length);
     const scAll = INC.filter((r) => scIds.includes(r[1])).length; const pShare = pFull ? 1 : (scAll ? INCP.filter((r) => scIds.includes(r[1])).length / scAll : 0);
-    const stA = [0, 1, 2].map((k) => incS.filter((r) => r[4] === k).length);
+    const stA = AG.byStatus;
     const incN = incS.length;
     const AREA = {}; A0.forEach((a) => { AREA[a[0]] = a; });
     const incRow = (r) => ({ id: r[0], t: r[7], d: AREA[r[1]][7].replace('PT ', '') + ' · ' + AREA[r[1]][8] + ' · lapor ' + r[6], ...sevOf(r[3]), x: r[5] ? 'Lewat tenggat' : (r[4] === 2 ? r[8] + ' hari' : 'Sesuai tenggat'), xc: r[5] ? 'late' : '', href: skk ? 'P31-DetailSKK.dc.html' : 'I15-Detail.dc.html' });
@@ -265,12 +273,12 @@ export class DashboardLogic extends DCLogic {
     const baseR = skk ? [180, 95, 310, 240, 402, 185] : [60, 45, 160, 110, 240, 115];
     const N = s.m === 'n';
     const dttCnt = (dttOn && s.lv[0] && (catIdx < 0 || catIdx === CAT.length)) ? sum(SC.map((a) => Math.round((DTT[a.id] || 0) * dttF))) : 0;
-    const vN = pFull ? baseN.map((v) => Math.round(v * Math.max(0, ALL.n - dttCnt) / (skk ? 106 : 24))) : [0, 1, 2, 3, 4, 5].map((i) => incS.filter((r) => r[9] === i).length);
-    const rMo = pFull ? baseR.map((x) => Math.round(x * (ALL.r / (skk ? 1412 : 730)))) : vN.map((x) => Math.round(ALL.r * x / Math.max(1, sum(vN))));
+    const vN = AG.byMonth.slice();
+    const rMo = AG.byMonthRp.map((x) => Math.round(x));
     const vals = N ? vN : rMo;
     const dv = (N && dttCnt) ? dN.map((v, i) => Math.round(v * moCov[i] * dttCnt / Math.max(1, sum(dN.map((x, j) => x * moCov[j]))))) : [0, 0, 0, 0, 0, 0];
     const mx = Math.max(1, ...vals.map((v, i) => v + dv[i]));
-    const curated = (isNat || isOwn) && pFull;
+    const curated = false;
     let gI = 1, gD = -1e9; for (let i = 1; i < 6; i++) { if (!(moCov[i] > 0 && moCov[i - 1] > 0)) continue; const d = vals[i] - vals[i - 1]; if (d > gD) { gD = d; gI = i; } }
     const mkI = curated ? ((!skk && N) ? 3 : 4) : (gD > 0 ? gI : -1);
     const NOTE = !curated ? (gD > 0 ? [MO[gI] + ': ' + (N ? 'insiden' : 'kerugian') + ' naik dari ' + (N ? vals[gI - 1] : rp(vals[gI - 1])) + ' jadi ' + (N ? vals[gI] : rp(vals[gI])) + '.', 'Kenaikan terbesar dalam periode ini untuk area yang sedang dilihat.'] : ['Tidak ada kenaikan berarti.', 'Angka stabil atau turun sepanjang periode.']) : skk ? (N ? ['Mei: insiden naik 24% dari April (17 → 21).', 'Kenaikan terbesar di Sumbagsel (+3), kebanyakan Pencurian/Perampokan.'] : ['Mei: kerugian naik 1,7× dari April (Rp240 jt → Rp402 jt).', 'Penyumbang terbesar Illegal tapping di Sumbagsel.'])
@@ -281,8 +289,7 @@ export class DashboardLogic extends DCLogic {
     // ===== jenis terbanyak =====
     const PREVF = [0.78, 1.3, 0.7, 0.5, 1.2, 1, 1];
     let cats = CAT.map((c, i) => {
-      let v = catScope(c); if (v != null && !pFull) v = Math.round(v * pShare);
-      if (v == null) { const wt = wTot0[loc.w] || 1; v = Math.round((c[1][loc.w] || 0) * sum(loc.lv) / wt); }
+      const v = AGc.byCat[i];
       return { i, n: c[0], v, prev: Math.round(v * PREVF[i]) };
     });
     const dttScope = (dttOn && s.lv[0]) ? sum(SC.map((a) => Math.round((DTT[a.id] || 0) * dttF))) : 0;
@@ -292,9 +299,9 @@ export class DashboardLogic extends DCLogic {
     const topCat = cats.map((c) => { const d = c.v - c.prev; return { tip: c.n + '\n' + c.v + ' insiden · ' + Math.round(c.v / ctot * 100) + '% dari jenis teratas\nKerugian (perkiraan): ' + rp(ALL.r * c.v / ctot) + '\n' + PRVL + (pFull ? '' : ' (perkiraan)') + ': ' + c.prev + ' insiden', n: c.n, v: String(c.v), w: (c.v / cmax * 100).toFixed(1) + '%', p: Math.round(c.v / ctot * 100) + '%', d: d > 0 ? '▲ ' + d : (d < 0 ? '▼ ' + (-d) : 'tetap'), dc: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq'), cls: (c.dtt ? 'dtt ' : '') + (s.kat === c.i ? 'sel' : ''), aria: c.n + ': ' + c.v + ' insiden', go: () => this.setState({ kat: s.kat === c.i ? null : c.i }) }; });
     const catCap = (loc ? loc.name : (skk ? (lvl === 'nat' ? 'Semua wilayah' : 'Wilayah ' + W[z].n) : 'Wilayah kerja Anda')) + ' · ' + (cats.length ? cats.length + ' jenis teratas' : 'tidak ada insiden');
     // ===== insiden vs kerawanan =====
-    const fS = Math.max(0, ALL.n - dttScope) / (skk ? 106 : 24);
-    const KR = (skk ? [31, 28, 35, 40, 38, 44] : [4, 5, 6, 5, 7, 6]).map((v, i) => pFull ? Math.round(v * fS) : Math.round(v / (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4])[i] * vN[i]));
-    const IN = (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4]).map((v, i) => pFull ? Math.round(v * fS) : vN[i]);
+    const IN0 = skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4];
+    const KR = (skk ? [31, 28, 35, 40, 38, 44] : [4, 5, 6, 5, 7, 6]).map((v, i) => Math.round(v / IN0[i] * vN[i]));
+    const IN = vN.slice();
     const ikMax = Math.max(1, ...KR, ...IN);
     const ikBars = MO.map((m, i) => ({ tip: m + ' 2026\nInsiden: ' + IN[i] + '\nKerawanan: ' + KR[i] + '\nNaik jadi insiden: ' + Math.round(KR[i] * (skk ? 0.083 : 0.09)), m, hn: (IN[i] / ikMax * 130).toFixed(1) + 'px', hk: (KR[i] / ikMax * 130).toFixed(1) + 'px' })).filter((b, i) => moCov[i] > 0);
     const krT = sum(KR), inT = sum(IN), upN = Math.round(krT * (skk ? 0.083 : 0.09));
@@ -355,10 +362,6 @@ export class DashboardLogic extends DCLogic {
     ].filter(Boolean);
     const aiCap = PL + ' · ' + (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + ' · data 25 Nov 2026';
     // ===== Tabel insiden (TabelDrill): insiden dalam cakupan filter halaman, untuk src/analytics/tabelDrill.ts =====
-    // Kerugian per insiden: data demo belum punya kerugian per insiden, jadi kerugian area setelah filter (angka yang sama
-    // dengan KPI Kerugian) dibagi rata ke insiden area itu. Disimpan per baris, bukan per nomor. PRODUKSI: dari data layer.
-    const tdRp = new Map();
-    { const cnt = {}; incS.forEach((r) => { cnt[r[1]] = (cnt[r[1]] || 0) + 1; }); const aRp = {}; SC.forEach((a) => { aRp[a.id] = a.rp; }); incS.forEach((r) => { tdRp.set(r, (aRp[r[1]] || 0) / cnt[r[1]]); }); }
     const tdInc = incS.map((r) => { const a = AREA[r[1]]; return { id: r[0], t: r[7], katI: r[2], kat: CAT[r[2]][0], wilKey: a[1], wil: W[a[1]].n, kk: a[7], wk: a[8], areaId: a[0], area: a[2], lv: r[3], st: r[4], tgl: r[6], m: r[9], rp: tdRp.get(r) || 0 }; });
 
     // ===== filter aktif =====

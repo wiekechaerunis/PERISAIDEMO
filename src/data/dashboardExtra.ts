@@ -72,10 +72,26 @@ export function extraIncidents(existing: unknown[][] = []) {
   return rows;
 }
 
+/**
+ * Bulan kejadian yang dipindah (masukan 26 Nov): sebaran bulan insiden KKKS (PT Samudra Energi Nusantara) disamakan
+ * dengan kartu Tren per bulan di desain (3, 4, 3, 5, 5, 4). Hanya tanggal lapor dan bulan yang diubah; kategori, level,
+ * status, dan jumlah tetap. Sebelum: 4, 2, 3, 3, 6, 6.
+ */
+export const MONTH_MOVES: Record<string, string> = {
+  'INS-SEN-2026-0003': '3 Feb', // dari 21 Jan
+  'INS-SEN-2026-0013': '10 Feb', // dari 10 Mei
+  'INS-SEN-2026-0023': '14 Apr', // dari 24 Jun
+  'INS-SEN-2026-0024': '21 Apr', // dari 25 Jun
+};
+
 /** Pasang tambahan ke data desain: area, insiden, hitungan kategori per wilayah, dan status wilayah Kalsul. */
 type Cat = [string, Record<string, number>, Record<string, number>];
 export function extendDashboard({ A0, INC, CAT, W }: { A0: unknown[][]; INC: unknown[][]; CAT: Cat[]; W: Record<string, { none?: boolean; rep: number }> }) {
   if (A0.some((a) => a[0] === EXTRA_AREAS[0][0])) return;
+  INC.forEach((r) => {
+    const t = MONTH_MOVES[String(r[0])];
+    if (t) { r[6] = t; r[9] = MON.indexOf(t.split(' ')[1]); }
+  });
   EXTRA_AREAS.forEach((a) => A0.push(a.slice(0, 9)));
   const inc = extraIncidents(INC);
   INC.push(...inc);

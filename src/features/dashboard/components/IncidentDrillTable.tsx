@@ -1,19 +1,21 @@
-// S16 Tabel insiden: tabel ringkasan + drill-down, dan pivot Baris (› Rincian) × Kolom (TabelDrill, board TD0–TD16 Desain v2).
+// S16 Tabel insiden: tabel ringkasan + drill-down dengan susunan Baris · Kolom · Nilai (chip + "+ Tambah"), baris
+// bertingkat sampai 3 dan kolom sampai 2 (TabelDrill, board TD0–TD20 Desain v2, 26 Nov malam).
 // Markup dan kelas td-* disalin dari project/TabelDrill.dc.html; perilaku di src/analytics/tabelDrill.ts.
-// Jejak drill, Baris, tingkat insiden, halaman, Kolom, Rincian, dan Nilai disimpan di URL
-// (?tabel=…&lihat=…&kelompok=…&hal=…&kolom=…&rincian=…&nilai=…); buka/tutup grup dan sortir tidak.
+// Jejak drill, Baris, Kolom, Nilai, grup terlipat, tingkat insiden, dan halaman disimpan di URL
+// (?tabel=…&baris=…&kolom=…&nilai=…&lipat=…&lihat=…&hal=…), jadi reload dan Back mengembalikan tampilan; sortir tidak.
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   closePop, crumbTo, DIM, drillCsv, drillFromParams, drillInto, drillToParams, drillView, INIT, listHref, monthRange,
-  openPop, pickMenu, quarterRange, reset, setAllGroups, showList, sortBy, toDrillInc, toggleGroupRow, toggleMenu, toggleSub,
-  toPage, LV,
-  type Col, type DashIncRaw, type Dim, type DrillInc, type DrillState, type DrillView, type Step,
+  openPop, quarterRange, reset, setAllGroups, setCols, setMeasure, setRows, showList, sortBy, toDrillInc, toggleGroup,
+  toggleMenu, toggleSub, toPage, LV,
+  type Chip, type Col, type CtlGroup, type DashIncRaw, type Dim, type DrillCell, type DrillInc, type DrillRow, type DrillState,
+  type DrillView, type Measure, type Step,
 } from '@/analytics/tabelDrill';
 import { useDashPeriod } from '../dashPeriod';
 
-type Local = Pick<DrillState, 'sort' | 'pop' | 'sub' | 'dd' | 'cl'>;
-const LOCAL0: Local = { sort: null, pop: null, sub: false, dd: null, cl: {} };
+type Local = Pick<DrillState, 'sort' | 'pop' | 'sub' | 'dd'>;
+const LOCAL0: Local = { sort: null, pop: null, sub: false, dd: null };
 const STO = ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'];
 
 const Chev = ({ d, size = 14, rot }: { d: string; size?: number; rot?: string }) => (
@@ -32,9 +34,10 @@ export function IncidentDrillTable({ v }: { v: any }) {
   const url = drillFromParams(params, kk);
   const s: DrillState = { ...INIT, ...url, ...local };
   const view = drillView(inc, s, kk);
+  const { rd, cd } = view.layout;
 
   const set = (n: DrillState) => {
-    setLocal({ sort: n.sort, pop: n.pop, sub: n.sub, dd: n.dd, cl: n.cl });
+    setLocal({ sort: n.sort, pop: n.pop, sub: n.sub, dd: n.dd });
     const next = drillToParams(params, n, kk);
     if (next.toString() !== params.toString()) setParams(next, { replace: false });
   };
@@ -44,7 +47,7 @@ export function IncidentDrillTable({ v }: { v: any }) {
     if (!local.pop && !local.dd) return;
     const down = (e: MouseEvent) => {
       const t = e.target;
-      if (!(t instanceof Element) || !t.closest('.td-pop, .td-menu, .td-t .cv, .td-t .nm, .td-grp .pill')) setLocal((l) => ({ ...l, pop: null, sub: false, dd: null }));
+      if (!(t instanceof Element) || !t.closest('.td-pop, .td-menu, .td-t .cv, .td-t .nm, .td-chip .pill, .td-add')) setLocal((l) => ({ ...l, pop: null, sub: false, dd: null }));
     };
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setLocal((l) => ({ ...l, pop: null, sub: false, dd: null })); };
     document.addEventListener('mousedown', down);
@@ -67,7 +70,7 @@ export function IncidentDrillTable({ v }: { v: any }) {
     setToast('CSV tampilan ini diunduh (' + n + ').');
   };
 
-  /** Saring halaman: pasang filter halaman untuk baris (+ rincian + kolom) sel ini; Status penanganan tidak punya filter halaman. */
+  /** Saring halaman: pasang filter halaman untuk semua filter sel ini; Status penanganan tidak punya filter halaman. */
   const stepsOf = (p: DrillView['pop']): Step[] => (p ? p.steps.filter((x) => x.d !== 'st') : []);
   const filterPage = () => {
     const steps = stepsOf(view.pop);
@@ -133,6 +136,65 @@ export function IncidentDrillTable({ v }: { v: any }) {
       </div>
     );
 
+  // kontrol Baris / Kolom / Nilai
+  const pickChip = (gp: CtlGroup, ix: number, val: Dim | Measure) => {
+    if (gp.k === 'm') return set(setMeasure(s, val as Measure));
+    if (gp.k === 'r') { const a = rd.slice(); a[ix] = val as Dim; return set(setRows(s, a)); }
+    const a = cd.slice(); a[ix] = val as Dim; return set(setCols(s, a));
+  };
+  const removeChip = (gp: CtlGroup, ix: number) =>
+    set(gp.k === 'r' ? setRows(s, rd.filter((_, j) => j !== ix)) : setCols(s, cd.filter((_, j) => j !== ix)));
+  const addDim = (gp: CtlGroup, d: Dim) => set(gp.k === 'r' ? setRows(s, [...rd, d]) : setCols(s, [...cd, d]));
+
+  const chip = (gp: CtlGroup, mn: Chip, ix: number) => (
+    <Fragment key={mn.id}>
+      {mn.sep && <span className="sep" aria-hidden="true">{gp.sep}</span>}
+      <span className="dd">
+        <span className="td-chip">
+          <button type="button" className="pill" onClick={() => set(toggleMenu(s, mn.id))} aria-haspopup="menu" aria-expanded={s.dd === mn.id ? 'true' : 'false'} aria-label={`${gp.l} ${mn.n}: ${mn.v}`}>
+            {mn.v}<Chev d="m6 9 6 6 6-6" />
+          </button>
+          {mn.x && <button type="button" className="chx" onClick={() => removeChip(gp, ix)} aria-label={`Hapus ${mn.v} dari ${gp.l}`}>×</button>}
+        </span>
+        {s.dd === mn.id && (
+          <span className="p-pop td-menu" role="menu">
+            {mn.opts.map((o) => (
+              <button key={o.l} type="button" role="menuitemradio" aria-checked={o.on ? 'true' : 'false'} onClick={() => pickChip(gp, ix, o.val)}>{o.l}</button>
+            ))}
+          </span>
+        )}
+      </span>
+    </Fragment>
+  );
+
+  /** Sel tabel (ringkasan atau pivot) dengan popover aksi. */
+  const cell = (r: DrillRow, c: DrillCell, k: string) => (
+    <td key={k} className={`num ${c.cls}`}>
+      {c.z && <span className="z" aria-label="nol">–</span>}
+      {!c.z && (
+        <button type="button" className="cv" onClick={() => set(c.exp ? closePop(s) : openPop(s, r.rv, c.k as Col, false, c.cv))} aria-haspopup="dialog" aria-expanded={c.exp ? 'true' : 'false'} aria-label={c.aria}>
+          {c.v}
+          {c.bar && <span className="bar" aria-hidden="true"><i style={{ width: c.w }} /></span>}
+        </button>
+      )}
+      {c.exp && popover(c.side)}
+    </td>
+  );
+  /** Kepala baris: − / + (baris induk), nama, jumlah rincian. */
+  const rowHead = (r: DrillRow) => (
+    <th scope="row">
+      <span className="pvn" style={{ paddingLeft: r.pad }}>
+        {r.tg && (
+          <button type="button" className="tg" onClick={() => set(toggleGroup(s, r.key, r.open))} aria-expanded={r.open ? 'true' : 'false'} aria-label={r.tgAria}>{r.open ? '−' : '+'}</button>
+        )}
+        <button type="button" className="nm" onClick={() => set(openPop(s, r.rv, view.showPivot ? (view.pv.m as Col) : 'n', true))} aria-label={r.aria}>
+          <span>{r.label}<span className="pvc">{r.cnt}</span></span>
+          <Chev d="m9 6 6 6-6 6" />
+        </button>
+      </span>
+    </th>
+  );
+
   return (
     <div className="c12" aria-label="Tabel insiden">
       <section className="p-card td" aria-label="Tabel insiden">
@@ -147,56 +209,56 @@ export function IncidentDrillTable({ v }: { v: any }) {
           <div className="td-toast" role="status"><span>{toast}</span><button type="button" onClick={() => setToast(null)} aria-label="Tutup pesan">×</button></div>
         )}
 
-        <div className="td-bar">
-          {view.drilled && (
-            <nav className="td-crumb" aria-label="Jejak rincian">
-              {view.crumb.map((b, k) => (
-                <Fragment key={k}>
-                  {b.link && (
-                    <>
-                      <button type="button" onClick={() => set(b.ix < 0 ? reset(s) : crumbTo(s, b.ix))}>{b.t}</button>
-                      <span className="sep" aria-hidden="true">›</span>
-                    </>
-                  )}
-                  {b.cur && <span className="cur" aria-current="location">{b.t}</span>}
-                </Fragment>
-              ))}
-              <button type="button" className="rst" onClick={() => set(reset(s))}>× Reset</button>
-            </nav>
-          )}
-          {view.pv.two && (
-            <span className="td-ca">
-              <button type="button" onClick={() => set(setAllGroups(s, view.pv.groups, false))}>Buka semua</button>
-              <span aria-hidden="true">·</span>
-              <button type="button" onClick={() => set(setAllGroups(s, view.pv.groups, true))}>Tutup semua</button>
-            </span>
-          )}
-          {view.showTable && (
-            <span className="td-grp">
-              {view.menus.map((mn) => (
-                <Fragment key={mn.k}>
-                  <span className="p-cap">{mn.l}</span>
+        {view.showCtl && (
+          <div className="td-ctl" role="group" aria-label="Susunan tabel">
+            {view.ctl.map((gp) => (
+              <span key={gp.k} className="td-gl" role="group" aria-label={gp.l}>
+                <span className="lb">{gp.l}</span>
+                {gp.chips.map((mn, ix) => chip(gp, mn, ix))}
+                {gp.canAdd && (
                   <span className="dd">
-                    <button type="button" className={`pill ${mn.empty ? 'empty' : ''}`} onClick={() => set(toggleMenu(s, mn.k))} aria-haspopup="menu" aria-expanded={s.dd === mn.k ? 'true' : 'false'} aria-label={`${mn.l}: ${mn.v}`}>
-                      {mn.v}
-                      <Chev d="m6 9 6 6 6-6" />
-                    </button>
-                    {s.dd === mn.k && (
+                    <button type="button" className="td-add" onClick={() => set(toggleMenu(s, gp.addId))} aria-haspopup="menu" aria-expanded={s.dd === gp.addId ? 'true' : 'false'} aria-label={`Tambah dimensi ke ${gp.l}`}>+ Tambah</button>
+                    {s.dd === gp.addId && (
                       <span className="p-pop td-menu" role="menu">
-                        {mn.opts.map((o) => (
-                          <button key={o.l} type="button" role="menuitemradio" aria-checked={o.on ? 'true' : 'false'} onClick={() => set(pickMenu(s, mn.k, o.val))}>{o.l}</button>
+                        <span className="mh">{gp.addH}</span>
+                        {gp.addOpts.map((o) => (
+                          <button key={o.val} type="button" role="menuitem" onClick={() => addDim(gp, o.val)}>{o.l}</button>
                         ))}
                       </span>
                     )}
                   </span>
-                </Fragment>
-              ))}
-            </span>
-          )}
-        </div>
+                )}
+              </span>
+            ))}
+            {view.nested && (
+              <span className="td-ca">
+                <button type="button" onClick={() => set(setAllGroups(s, view.groupKeys, false))}>Buka semua</button>
+                <span aria-hidden="true">·</span>
+                <button type="button" onClick={() => set(setAllGroups(s, view.groupKeys, true))}>Lipat semua</button>
+              </span>
+            )}
+          </div>
+        )}
+
+        {view.drilled && (
+          <nav className="td-crumb" aria-label="Jejak rincian">
+            {view.crumb.map((b, k) => (
+              <Fragment key={k}>
+                {b.link && (
+                  <>
+                    <button type="button" onClick={() => set(b.ix < 0 ? reset(s) : crumbTo(s, b.ix))}>{b.t}</button>
+                    <span className="sep" aria-hidden="true">›</span>
+                  </>
+                )}
+                {b.cur && <span className="cur" aria-current="location">{b.t}</span>}
+              </Fragment>
+            ))}
+            <button type="button" className="rst" onClick={() => set(reset(s))}>× Reset</button>
+          </nav>
+        )}
 
         {view.showFlat && (
-          // td-sum: lebar kolom otomatis, kolom angka selebar isinya, Kategori mengambil sisa; layar sempit bergeser
+          // td-sum: lebar kolom otomatis, kolom angka selebar isinya, kolom baris mengambil sisa; layar sempit bergeser
           <div className="td-scroll"><table className="td-t td-sum">
             <thead>
               <tr>
@@ -212,25 +274,9 @@ export function IncidentDrillTable({ v }: { v: any }) {
             </thead>
             <tbody>
               {view.rows.map((r) => (
-                <tr key={r.v}>
-                  <th scope="row">
-                    <button type="button" className="nm" onClick={() => set(openPop(s, r.v, 'n', true))} aria-label={r.aria}>
-                      <span>{r.label}</span>
-                      <Chev d="m9 6 6 6-6 6" />
-                    </button>
-                  </th>
-                  {r.cells.map((c) => (
-                    <td key={c.k} className={`num ${c.cls}`}>
-                      {c.z && <span className="z" aria-label="nol">–</span>}
-                      {!c.z && (
-                        <button type="button" className="cv" onClick={() => set(c.exp ? closePop(s) : openPop(s, r.v, c.k as Col, false))} aria-haspopup="dialog" aria-expanded={c.exp ? 'true' : 'false'} aria-label={c.aria}>
-                          {c.v}
-                          {c.bar && <span className="bar" aria-hidden="true"><i style={{ width: c.w }} /></span>}
-                        </button>
-                      )}
-                      {c.exp && popover(c.side)}
-                    </td>
-                  ))}
+                <tr key={r.key} className={r.rc}>
+                  {rowHead(r)}
+                  {r.cells.map((c) => cell(r, c, c.k))}
                 </tr>
               ))}
             </tbody>
@@ -243,48 +289,36 @@ export function IncidentDrillTable({ v }: { v: any }) {
         {view.showPivot && (
           <>
             <div className="td-pvw"><table className="td-t td-pv" style={{ minWidth: view.pv.minW }}>
-              <colgroup><col style={{ width: view.pv.w0 }} /></colgroup>
               <thead>
-                <tr>
-                  <th scope="col" aria-sort={view.hDim.sort}>
-                    <button type="button" className="sh" onClick={() => set(sortBy(s, 'dim'))}>{view.pv.dimL}<span className="pvx">↓ × {view.pv.colL} →</span><span className="ar">{view.hDim.a}</span></button>
+                <tr className="h1">
+                  <th scope="col" rowSpan={view.pv.rs} aria-sort={view.hDim.sort}>
+                    <button type="button" className="sh" onClick={() => set(sortBy(s, 'dim'))}>{view.rowL}<span className="pvx">↓ × {view.colL} →</span><span className="ar">{view.hDim.a}</span></button>
                   </th>
                   {view.pv.head.map((h) => (
-                    <th key={h.v} scope="col" className="num"><span className="pvh"><i className="dot" style={{ display: h.dot ? 'inline-block' : 'none', background: h.dot ?? 'transparent' }} />{h.l}</span></th>
+                    <th key={h.v} scope="col" colSpan={h.span} className={h.cls}><span className="pvh"><i className="dot" style={{ display: h.dot ? 'inline-block' : 'none', background: h.dot ?? 'transparent' }} />{h.l}</span></th>
                   ))}
-                  <th scope="col" className="num tot" aria-sort={view.pv.hTot.sort}>
+                  <th scope="col" rowSpan={view.pv.rs} className="num tot" aria-sort={view.pv.hTot.sort}>
                     <button type="button" className="sh" onClick={() => set(sortBy(s, view.pv.m))}>Total<span className="ar">{view.pv.hTot.a}</span></button>
                   </th>
                 </tr>
+                {view.pv.twoCol && (
+                  <tr className="h2">
+                    {view.pv.head2.map((h, k) => (
+                      <th key={k} scope="col" className={`num ${h.cls}`}><span className="pvh"><i className="dot" style={{ display: h.dot ? 'inline-block' : 'none', background: h.dot ?? 'transparent' }} />{h.l}</span></th>
+                    ))}
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {view.pv.rows.map((r) => (
                   <tr key={r.key} className={r.rc}>
-                    <th scope="row">
-                      <span className="pvn" style={{ paddingLeft: r.pad }}>
-                        {r.tg && (
-                          <button type="button" className="tg" onClick={() => set(toggleGroupRow(s, r.v, r.open))} aria-expanded={r.open ? 'true' : 'false'} aria-label={(r.open ? 'Tutup rincian ' : 'Buka rincian ') + r.v}>{r.open ? '−' : '+'}</button>
-                        )}
-                        <button type="button" className="nm" onClick={() => set(r.v2 ? openPop(s, r.v, view.pv.m, false, r.v2) : openPop(s, r.v, view.pv.m, true))} aria-label={r.aria}>
-                          <span>{r.label}<span className="pvc">{r.cnt}</span></span>
-                          <Chev d="m9 6 6 6-6 6" />
-                        </button>
-                      </span>
-                    </th>
-                    {r.cells.map((c) => (
-                      <td key={c.cv ?? '\u0000tot'} className={`num ${c.cls}`}>
-                        {c.z && <span className="z" aria-label="nol">–</span>}
-                        {!c.z && (
-                          <button type="button" className="cv" onClick={() => set(c.exp ? closePop(s) : openPop(s, r.v, view.pv.m, false, r.v2, c.cv))} aria-haspopup="dialog" aria-expanded={c.exp ? 'true' : 'false'} aria-label={c.aria}>{c.v}</button>
-                        )}
-                        {c.exp && popover(c.side)}
-                      </td>
-                    ))}
+                    {rowHead(r)}
+                    {r.cells.map((c, k) => cell(r, c, String(k)))}
                   </tr>
                 ))}
               </tbody>
               <tfoot>
-                <tr><th scope="row">Total</th>{view.pv.foot.map((f, k) => <td key={k} className="num">{f}</td>)}</tr>
+                <tr><th scope="row">Total</th>{view.pv.foot.map((f, k) => <td key={k} className={`num ${f.cls}`}>{f.v}</td>)}</tr>
               </tfoot>
             </table></div>
             <p className="p-cap" style={{ margin: 0 }}>{view.pv.note}</p>

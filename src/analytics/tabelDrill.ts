@@ -1,8 +1,9 @@
-// Kartu "Tabel insiden" (TabelDrill, board TD0–TD16 Desain v2, 26 Nov): tabel ringkasan + drill-down, dan pivot
-// Baris (› Rincian) × Kolom dengan satu Nilai (TD9–TD16: baris grup abu-abu = subtotal, − / + buka-tutup rincian).
-// Fungsi murni: insiden dalam cakupan filter halaman + state drill → view model. Komponen React ada di
+// Kartu "Tabel insiden" (TabelDrill, board TD0–TD20 Desain v2, 26 Nov malam): tabel ringkasan + drill-down dengan
+// susunan Baris · Kolom · Nilai (chip + "+ Tambah", pola Metabase). Baris maks. 3 tingkat (baris induk = subtotal, bisa
+// dilipat), Kolom maks. 2 tingkat (header 2 baris), Nilai satu ukuran saat Kolom terisi.
+// Fungsi murni: insiden dalam cakupan filter halaman + state → view model. Komponen React ada di
 // src/features/dashboard/components/IncidentDrillTable.tsx. Teks UI disalin dari project/TabelDrill.dc.html (renderVals).
-// Aturan: satu tampilan = satu tingkat; drill mengganti isi tabel, tidak menyisipkan baris.
+// Aturan: drill (Rincikan / Lihat insiden) mengganti isi tabel, tidak pernah menyisipkan baris insiden.
 import { casualtiesOfDashboard, casualtyText } from './casualties';
 import { jamKejadian } from '@/data/dashboardIncidentMeta';
 
@@ -44,27 +45,27 @@ export interface DrillInc extends DashIncRaw {
 export type Dim = 'kat' | 'wil' | 'kkks' | 'wk' | 'lv' | 'tw' | 'bln' | 'st';
 /** Nilai sel pivot */
 export type Measure = 'n' | 'rp' | 'tk' | 'md' | 'lk' | 'op';
-export type Menu = 'g' | 'g2' | 'col' | 'm';
 export type Col = 'n' | 'pct' | 'rp' | 'tk' | 'md' | 'lk' | 'op';
+/** Menu terbuka: chip Baris ke-i ('r0'..'r2'), + Tambah Baris ('ra'), chip Kolom ('c0','c1'), + Tambah Kolom ('ca'), Nilai ('m'). */
+export type Menu = 'r0' | 'r1' | 'r2' | 'ra' | 'c0' | 'c1' | 'ca' | 'm';
 export interface Step { d: Dim; v: string }
 export interface DrillState {
   path: Step[];
-  g: Dim;
+  /** dimensi Baris (1–3), urut dari luar ke dalam */
+  rows: Dim[];
+  /** dimensi Kolom (0–2) */
+  cols: Dim[];
+  m: Measure;
+  /** grup baris yang dilipat (kunci = nilai baris digabung "›") */
+  cl: Record<string, boolean>;
   /** tingkat insiden (kolom yang menentukan syarat) */
   list: { c: Col } | null;
   pg: number;
   sort: { k: Col | 'dim'; dir: 'asc' | 'desc' } | null;
-  /** v2 = nilai Rincian, cv = nilai Kolom (pivot) */
-  pop: { v: string; c: Col; v2?: string | null; cv?: string | null } | null;
+  /** sel popover: nilai baris per tingkat (rv) dan nilai kolom per tingkat (cv) */
+  pop: { rv: string[]; c: Col; cv: string[] } | null;
   sub: boolean;
-  /** menu terbuka (Baris, › Rincian, Kolom, Nilai) */
   dd: Menu | null;
-  /** pivot: dimensi Kolom, dimensi Rincian (tingkat 2 Baris), nilai sel */
-  col: Dim | null;
-  g2: Dim | null;
-  m: Measure;
-  /** grup yang ditutup (true) / dibuka (false) eksplisit; tanpa entri = bawaan (tertutup bila > 10 rincian) */
-  cl: Record<string, boolean>;
 }
 
 export const LV: [string, string, string, string][] = [
@@ -77,6 +78,8 @@ export const LV: [string, string, string, string][] = [
 const BL = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
 const STO = ['Dalam penanganan', 'Menunggu penutupan', 'Ditutup'];
 const WIL_ORD = ['Pusat', 'Sumbagut', 'Sumbagsel', 'Kalsul', 'Jabanusa', 'Pamalu'];
+export const MAXR = 3;
+export const MAXC = 2;
 
 export const rp = (jt: number) => (!jt ? 'Rp0' : jt >= 1000 ? 'Rp' + (jt / 1000).toFixed(2).replace('.', ',') + ' M' : 'Rp' + Math.round(jt) + ' jt');
 
@@ -86,9 +89,9 @@ export const DIM: Record<Dim, { l: string; f: (i: DrillInc) => string; ord?: str
   kkks: { l: 'KKKS', f: (i) => i.kk },
   wk: { l: 'Wilayah kerja', f: (i) => i.wk },
   lv: { l: 'Level', f: (i) => LV[i.lv][0], ord: LV.map((x) => x[0]).reverse() },
+  tw: { l: 'Triwulan', f: (i) => (i.m < 3 ? 'TW I' : 'TW II') + ' 2026', ord: ['TW I 2026', 'TW II 2026'] },
   bln: { l: 'Bulan', f: (i) => BL[i.m] + ' 2026', ord: BL.map((b) => b + ' 2026') },
   st: { l: 'Status penanganan', f: (i) => STO[i.st], ord: STO },
-  tw: { l: 'Triwulan', f: (i) => (i.m < 3 ? 'TW I' : 'TW II') + ' 2026', ord: ['TW I 2026', 'TW II 2026'] },
 };
 export const dimsFor = (kk: boolean): Dim[] => (kk ? ['kat', 'wk', 'lv', 'tw', 'bln', 'st'] : ['kat', 'wil', 'kkks', 'wk', 'lv', 'tw', 'bln', 'st']);
 /** Dimensi yang boleh jadi Kolom (paling banyak 12 nilai). */
@@ -110,55 +113,68 @@ export const toDrillInc = (r: DashIncRaw): DrillInc => {
   return { ...r, md: c.meninggal, lk: c.luka, unk: c.unknown, day: Number(String(r.tgl).trim().split(' ')[0]) || 1, jam: jamKejadian(r.id) };
 };
 
+/** Kunci grup baris (nilai per tingkat). */
+export const rowKey = (rv: string[]) => rv.join('›');
+
 /* ------------------------------------------------------------------ state */
 
-export const INIT: DrillState = { path: [], g: 'kat', list: null, pg: 0, sort: null, pop: null, sub: false, dd: null, col: null, g2: null, m: 'n', cl: {} };
-const clean = { pop: null, sub: false, sort: null, list: null, pg: 0 } as const;
+export const INIT: DrillState = { path: [], rows: ['kat'], cols: [], m: 'n', cl: {}, list: null, pg: 0, sort: null, pop: null, sub: false, dd: null };
+const clean = { pop: null, sub: false, sort: null, list: null, pg: 0, dd: null } as const;
 
-/** Kolom, Rincian, dan Nilai yang berlaku (yang tidak sah untuk Baris/jejak/peran diabaikan). */
-export function pivotOf(s: DrillState, kk: boolean): { col: Dim | null; g2: Dim | null; m: Measure } {
+/** Susunan yang berlaku: Baris maks. 3, Kolom maks. 2, tidak ada dimensi ganda (Baris, Kolom, jejak), Nilai sah. */
+export function layoutOf(s: DrillState, kk: boolean): { rd: Dim[]; cd: Dim[]; m: Measure } {
+  const dims = dimsFor(kk);
   const used = s.path.map((p) => p.d);
-  const col = s.col && s.col !== s.g && !used.includes(s.col) && colDimsFor(kk).includes(s.col) ? s.col : null;
-  const g2 = col && s.g2 && s.g2 !== s.g && s.g2 !== col && !used.includes(s.g2) && dimsFor(kk).includes(s.g2) ? s.g2 : null;
-  return { col, g2, m: MS[s.m] ? s.m : 'n' };
+  const okR = (d: Dim) => dims.includes(d) && !used.includes(d);
+  const rd: Dim[] = [];
+  s.rows.forEach((d) => { if (okR(d) && !rd.includes(d) && rd.length < MAXR) rd.push(d); });
+  if (!rd.length) rd.push(dims.find(okR) ?? 'kat');
+  const cd: Dim[] = [];
+  s.cols.forEach((d) => { if (colDimsFor(kk).includes(d) && !used.includes(d) && !rd.includes(d) && !cd.includes(d) && cd.length < MAXC) cd.push(d); });
+  return { rd, cd, m: MS[s.m] ? s.m : 'n' };
 }
-/** Jejak setelah memilih sel popover: jejak + baris (+ rincian) (+ kolom). */
+/** Jejak setelah memilih sel popover: jejak + semua tingkat baris + semua kolom sel. */
 export function popPath(s: DrillState, kk: boolean): Step[] {
   if (!s.pop) return s.path;
-  const { col, g2 } = pivotOf(s, kk);
-  return [...s.path, { d: s.g, v: s.pop.v }]
-    .concat(s.pop.v2 && g2 ? [{ d: g2, v: s.pop.v2 }] : [])
-    .concat(s.pop.cv && col ? [{ d: col, v: s.pop.cv }] : []);
+  const { rd, cd } = layoutOf(s, kk);
+  return s.path
+    .concat(s.pop.rv.map((v, ix) => ({ d: rd[ix], v })))
+    .concat(s.pop.cv.map((v, ix) => ({ d: cd[ix], v })));
 }
 
-export const openPop = (s: DrillState, v: string, c: Col, sub: boolean, v2: string | null = null, cv: string | null = null): DrillState => ({ ...s, pop: { v, c, v2, cv }, sub, dd: null });
+export const openPop = (s: DrillState, rv: string[], c: Col, sub: boolean, cv: string[] = []): DrillState => ({ ...s, pop: { rv, c, cv }, sub, dd: null });
 export const closePop = (s: DrillState): DrillState => ({ ...s, pop: null, sub: false });
 export const toggleSub = (s: DrillState): DrillState => ({ ...s, sub: !s.sub });
-/** Rincikan menurut d: sel popover masuk jejak, tabel dikelompokkan menurut d. */
+/** Rincikan menurut d: semua filter sel masuk jejak; tabel kembali ke satu Baris; dimensi jejak dilepas dari Kolom. */
 export const drillInto = (s: DrillState, d: Dim, kk: boolean): DrillState => {
   if (!s.pop) return s;
   const path = popPath(s, kk);
   const usedNext = path.map((p) => p.d);
-  return { ...s, ...clean, path, g: d, col: s.col && (usedNext.includes(s.col) || s.col === d) ? null : s.col };
+  return { ...s, ...clean, path, rows: [d], cols: s.cols.filter((x) => !usedNext.includes(x) && x !== d), cl: {} };
 };
-/** Lihat n insiden: tingkat insiden untuk sel popover (baris, rincian, kolom, syarat kolom ukuran). */
+/** Lihat n insiden: tingkat insiden untuk sel popover (semua filter sel + syarat kolom ukuran). */
 export const showList = (s: DrillState, kk: boolean): DrillState => (s.pop ? { ...s, ...clean, path: popPath(s, kk), list: { c: s.pop.c } } : s);
-export const reset = (s: DrillState): DrillState => ({ ...s, ...clean, path: [], g: 'kat', dd: null });
+/** × Reset / Semua insiden: jejak, Baris tambahan, Kolom, dan status lipat dikosongkan. */
+export const reset = (s: DrillState): DrillState => ({ ...s, ...clean, path: [], rows: ['kat'], cols: [], cl: {} });
 /** Klik segmen jejak ke-ix (0 = segmen pertama setelah "Semua insiden"). */
-export const crumbTo = (s: DrillState, ix: number): DrillState => ({ ...s, ...clean, path: s.path.slice(0, ix + 1), g: s.path[ix + 1]?.d ?? s.g });
+export const crumbTo = (s: DrillState, ix: number): DrillState => {
+  const next = s.path[ix + 1]?.d;
+  return { ...s, ...clean, path: s.path.slice(0, ix + 1), rows: next ? [next] : s.rows.slice(0, 1), cl: {} };
+};
 export const toggleMenu = (s: DrillState, k: Menu): DrillState => ({ ...s, dd: s.dd === k ? null : k, pop: null, sub: false });
-/** Pilih isi menu Baris / › Rincian / Kolom / Nilai (null = Tanpa rincian / Tanpa kolom). */
-export function pickMenu(s: DrillState, k: Menu, v: Dim | Measure | null): DrillState {
-  const o = { ...s, dd: null, pop: null, sub: false };
-  if (k === 'g') return { ...o, g: v as Dim, col: v === s.col ? null : s.col, sort: null };
-  if (k === 'g2') return { ...o, g2: v as Dim | null, cl: {} };
-  if (k === 'col') return { ...o, col: v as Dim | null, sort: null };
-  return { ...o, m: v as Measure };
-}
-/** − / + pada baris grup: isOpen = grup sedang terbuka (jadi ditutup). */
-export const toggleGroupRow = (s: DrillState, v: string, isOpen: boolean): DrillState => ({ ...s, cl: { ...s.cl, [v]: isOpen }, pop: null, sub: false });
-/** Buka semua (closed = false) / Tutup semua (closed = true) untuk grup yang tampil. */
-export const setAllGroups = (s: DrillState, groups: string[], closed: boolean): DrillState => ({ ...s, cl: Object.fromEntries(groups.map((g) => [g, closed])), pop: null, sub: false });
+/** Ganti susunan Baris (Kolom yang sama dengan Baris baru dilepas; status lipat direset). */
+export const setRows = (s: DrillState, rows: Dim[]): DrillState => ({ ...s, rows: rows.slice(0, MAXR), cols: s.cols.filter((x) => !rows.includes(x)), cl: {}, dd: null, pop: null, sub: false, sort: null });
+export const setCols = (s: DrillState, cols: Dim[]): DrillState => ({ ...s, cols: cols.slice(0, MAXC), dd: null, pop: null, sub: false, sort: null });
+export const setMeasure = (s: DrillState, m: Measure): DrillState => ({ ...s, m, dd: null, pop: null, sub: false });
+/** − / + pada baris induk: isOpen = grup sedang terbuka (jadi dilipat). */
+export const toggleGroup = (s: DrillState, key: string, isOpen: boolean): DrillState => {
+  const cl = { ...s.cl };
+  if (isOpen) cl[key] = true; else delete cl[key];
+  return { ...s, cl, pop: null, sub: false };
+};
+/** Buka semua (closed = false) / Lipat semua (closed = true). */
+export const setAllGroups = (s: DrillState, keys: string[], closed: boolean): DrillState =>
+  ({ ...s, cl: closed ? Object.fromEntries(keys.map((k) => [k, true])) : {}, pop: null, sub: false });
 export const sortBy = (s: DrillState, k: Col | 'dim'): DrillState => {
   const on = s.sort && s.sort.k === k;
   return { ...s, sort: on ? { k, dir: s.sort!.dir === 'asc' ? 'desc' : 'asc' } : { k, dir: k === 'dim' ? 'asc' : 'desc' }, pop: null, sub: false };
@@ -167,185 +183,213 @@ export const toPage = (s: DrillState, pg: number): DrillState => ({ ...s, pg });
 
 /* ------------------------------------------------------------------ URL */
 
-type UrlPart = Pick<DrillState, 'path' | 'g' | 'list' | 'pg' | 'col' | 'g2' | 'm'>;
-/** `?tabel=kat:Pencurian%2FPerampokan|wil:Sumbagsel&lihat=n&kelompok=wil&hal=2&kolom=lv&rincian=kkks&nilai=rp` */
+type UrlPart = Pick<DrillState, 'path' | 'rows' | 'cols' | 'm' | 'cl' | 'list' | 'pg'>;
+const isDim = (x: string): x is Dim => x in DIM;
+/** `?tabel=kat:Pencurian%2FPerampokan&baris=wil,kkks&kolom=tw,lv&nilai=rp&lipat=Pusat|Sumbagut&lihat=n&hal=2` */
 export function drillFromParams(p: URLSearchParams, kk: boolean): UrlPart {
   const dims = dimsFor(kk);
   const path: Step[] = [];
   for (const seg of (p.get('tabel') ?? '').split('|').filter(Boolean)) {
     const i = seg.indexOf(':');
-    const d = seg.slice(0, i) as Dim;
-    if (i < 1 || !dims.includes(d) || path.some((x) => x.d === d)) continue;
+    const d = seg.slice(0, i);
+    if (i < 1 || !isDim(d) || !dims.includes(d) || path.some((x) => x.d === d)) continue;
     path.push({ d, v: decodeURIComponent(seg.slice(i + 1)) });
   }
-  const c = p.get('lihat') as Col | null;
-  const list = c && COLS.some((x) => x.k === c) ? { c } : null;
   const used = path.map((x) => x.d);
-  const k = p.get('kelompok') as Dim | null;
-  const g = k && dims.includes(k) && !used.includes(k) ? k : (dims.find((d) => !used.includes(d)) ?? 'kat');
-  const pg = Math.max(0, (Number(p.get('hal')) || 1) - 1);
-  const col = p.get('kolom') as Dim | null;
-  const g2 = p.get('rincian') as Dim | null;
+  const bar = (p.get('baris') ?? '').split(',').filter(isDim).filter((d) => dims.includes(d));
+  const rows = bar.length ? bar : [dims.find((d) => !used.includes(d)) ?? 'kat'];
+  const cols = (p.get('kolom') ?? '').split(',').filter(isDim).filter((d) => colDimsFor(kk).includes(d));
   const m = p.get('nilai') as Measure | null;
-  return {
-    path, g, list, pg: list ? pg : 0,
-    col: col && colDimsFor(kk).includes(col) ? col : null,
-    g2: g2 && dims.includes(g2) ? g2 : null,
-    m: m && MS[m] ? m : 'n',
-  };
+  const cl = Object.fromEntries((p.get('lipat') ?? '').split('|').filter(Boolean).map((k) => [k, true]));
+  const c = p.get('lihat') as Col | null;
+  const lst = c && COLS.some((x) => x.k === c) ? { c } : null;
+  const pg = Math.max(0, (Number(p.get('hal')) || 1) - 1);
+  return { path, rows, cols, m: m && MS[m] ? m : 'n', cl, list: lst, pg: lst ? pg : 0 };
 }
 
 export function drillToParams(cur: URLSearchParams, s: UrlPart, kk: boolean): URLSearchParams {
   const p = new URLSearchParams(cur);
-  ['tabel', 'lihat', 'kelompok', 'hal', 'kolom', 'rincian', 'nilai'].forEach((k) => p.delete(k));
+  ['tabel', 'baris', 'kolom', 'nilai', 'lipat', 'lihat', 'hal'].forEach((k) => p.delete(k));
   if (s.path.length) p.set('tabel', s.path.map((x) => `${x.d}:${encodeURIComponent(x.v)}`).join('|'));
-  if (s.list) p.set('lihat', s.list.c);
   const used = s.path.map((x) => x.d);
   const def = dimsFor(kk).find((d) => !used.includes(d));
-  if (!s.list && s.g !== def) p.set('kelompok', s.g);
+  if (!s.list && !(s.rows.length === 1 && s.rows[0] === def)) p.set('baris', s.rows.join(','));
+  if (!s.list && s.cols.length) p.set('kolom', s.cols.join(','));
+  if (!s.list && s.cols.length && s.m !== 'n') p.set('nilai', s.m);
+  const lip = Object.keys(s.cl).filter((k) => s.cl[k]);
+  if (!s.list && lip.length) p.set('lipat', lip.join('|'));
+  if (s.list) p.set('lihat', s.list.c);
   if (s.list && s.pg > 0) p.set('hal', String(s.pg + 1));
-  if (s.col) p.set('kolom', s.col);
-  if (s.col && s.g2) p.set('rincian', s.g2);
-  if (s.col && s.m !== 'n') p.set('nilai', s.m);
   return p;
 }
 
 /* ------------------------------------------------------------------ view */
 
 interface Agg { n: number; rp: number; tk: number; md: number; lk: number; op: number }
-const agg = (xs: DrillInc[]): Agg => ({
+export const agg = (xs: DrillInc[]): Agg => ({
   n: xs.length, rp: xs.reduce((a, i) => a + i.rp, 0), tk: xs.filter((i) => i.lv >= 3).length,
   md: xs.reduce((a, i) => a + i.md, 0), lk: xs.reduce((a, i) => a + i.lk, 0), op: xs.filter((i) => i.st !== 2).length,
 });
-type Row = Agg & { v: string; xs: DrillInc[]; pct: number };
 
-export interface DrillCell { k: Col; side: 'l' | 'r'; z: boolean; v: string; cls: string; bar: boolean; w: string; exp: boolean; aria: string }
-export interface DrillRow { v: string; label: string; aria: string; cells: DrillCell[] }
+export interface DrillCell { k: Col | Measure; cv: string[]; side: 'l' | 'r'; z: boolean; v: string; cls: string; bar: boolean; w: string; exp: boolean; aria: string }
+/** rc: '' (baris tunggal), 'grp' (baris induk = subtotal), 'ch' (rincian) */
+export interface DrillRow { key: string; rv: string[]; rc: '' | 'grp' | 'ch'; pad: string; tg: boolean; open: boolean; label: string; cnt: string; aria: string; tgAria: string; cells: DrillCell[] }
 export interface DrillListRow {
   id: string; t: string; kat: string; c1: string; c2: string; sn: string; sc: string; sbg: string; sink: string;
   d: string; h: string; rp: string; k: string; kc: string; x: string; xc: string; inc: DrillInc;
 }
 export interface DrillHead { k: Col | 'dim'; l: string; a: string; sort: 'ascending' | 'descending' | 'none' }
-export interface PivotCell { cv: string | null; side: 'l' | 'r'; z: boolean; v: string; cls: string; exp: boolean; aria: string }
-/** rc: '' (tanpa rincian), 'grp' (baris grup = subtotal), 'ch' (baris rincian) */
-export interface PivotRow { rc: '' | 'grp' | 'ch'; key: string; v: string; v2: string | null; label: string; pad: string; tg: boolean; open: boolean; cnt: string; aria: string; cells: PivotCell[] }
-export interface PivotMenu { k: Menu; l: string; v: string; empty: boolean; opts: { val: Dim | Measure | null; l: string; on: boolean }[] }
+export interface ChipOpt { val: Dim | Measure; l: string; on: boolean }
+export interface Chip { id: Menu; n: number; v: string; sep: boolean; x: boolean; opts: ChipOpt[] }
+export interface CtlGroup { k: 'r' | 'c' | 'm'; l: string; sep: string; chips: Chip[]; canAdd: boolean; addId: Menu; addH: string; addOpts: { val: Dim; l: string }[] }
+export interface PvHead { l: string; v: string; span: number; cls: string; dot: string | null }
 
 export function drillView(inc: DrillInc[], s: DrillState, kk: boolean) {
   const dims = dimsFor(kk);
   const base = inc.filter((i) => s.path.every((p) => DIM[p.d].f(i) === p.v));
   const used = s.path.map((p) => p.d);
-  const g = s.g;
   const scopeTxt = kk ? 'wilayah kerja Anda' : 'seluruh KKKS';
-
-  // ringkasan per dimensi
-  const groups: Record<string, DrillInc[]> = {};
-  base.forEach((i) => { const v = DIM[g].f(i); (groups[v] = groups[v] || []).push(i); });
-  const tot = agg(base);
-  const rows: Row[] = Object.keys(groups).map((v) => ({ v, xs: groups[v], ...agg(groups[v]), pct: 0 }));
-  rows.forEach((r) => { r.pct = tot.n ? r.n / tot.n : 0; });
-  const sort = s.sort;
-  if (sort) {
-    rows.sort((a, b) => {
-      const x = sort.k === 'dim' ? a.v.localeCompare(b.v) : (a[sort.k] as number) - (b[sort.k] as number);
-      return sort.dir === 'asc' ? x : -x;
-    });
-  } else if (DIM[g].ord) {
-    const o = DIM[g].ord!;
-    rows.sort((a, b) => o.indexOf(a.v) - o.indexOf(b.v));
-  } else rows.sort((a, b) => b.n - a.n || a.v.localeCompare(b.v));
-  const fmt = (k: Col, r: Agg & { pct: number }) => (k === 'rp' ? rp(r.rp) : k === 'pct' ? Math.round(r.pct * 100) + '%' : String(r[k]));
+  const { rd, cd, m } = layoutOf(s, kk);
+  const pivot = cd.length > 0;
   const pop = s.pop;
+  const tot = agg(base);
+  const sort = s.sort;
 
-  const rowsV: DrillRow[] = rows.map((r) => ({
-    v: r.v,
-    label: r.v.replace('/', '/​'),
-    aria: 'Rincikan ' + r.v,
-    cells: COLS.map((c, ci) => {
-      const val = c.k === 'pct' ? r.pct : r[c.k];
-      const on = !!(pop && pop.v === r.v && pop.c === c.k);
-      return {
-        k: c.k, side: ci >= 4 ? 'r' : 'l', z: !val, v: fmt(c.k, r), cls: c.k === 'md' && r.md > 0 ? 'strong' : '',
-        bar: c.k === 'pct', w: Math.round(r.pct * 100) + '%', exp: on,
-        aria: c.l + ' ' + r.v + ': ' + fmt(c.k, r) + '. Klik untuk pilihan',
-      };
-    }),
-  }));
-  const foot = COLS.map((c) => (c.k === 'pct' ? '100%' : c.k === 'rp' ? rp(tot.rp) : String(tot[c.k])));
-
-  // pivot (Baris › Rincian × Kolom, satu Nilai)
-  const { col, g2, m } = pivotOf(s, kk);
-  const fm = (k: Measure, x: number) => (k === 'rp' ? rp(x) : String(x));
-  let colVals: string[] = [];
-  if (col) {
-    colVals = Array.from(new Set(base.map(DIM[col].f)));
-    const o = DIM[col].ord;
-    if (o) colVals.sort((a, b) => o.indexOf(a) - o.indexOf(b)); else colVals.sort();
-    colVals = colVals.slice(0, 12);
-  }
-  const ordOf = (d: Dim, vals: string[], xsOf: (v: string) => DrillInc[]) => {
+  const order = (d: Dim, vals: string[], xsOf: (v: string) => DrillInc[]) => {
     const a = vals.slice();
-    const o = DIM[d].ord;
-    if (o) a.sort((x, y) => o.indexOf(x) - o.indexOf(y)); else a.sort((x, y) => xsOf(y).length - xsOf(x).length || x.localeCompare(y));
+    if (sort) {
+      const k = sort.k;
+      a.sort((x, y) => {
+        const r = k === 'dim' ? x.localeCompare(y) : k === 'pct' ? xsOf(x).length - xsOf(y).length : agg(xsOf(x))[k] - agg(xsOf(y))[k];
+        return sort.dir === 'asc' ? r : -r;
+      });
+    } else if (DIM[d].ord) { const o = DIM[d].ord!; a.sort((x, y) => o.indexOf(x) - o.indexOf(y)); }
+    else a.sort((x, y) => xsOf(y).length - xsOf(x).length || x.localeCompare(y));
     return a;
   };
-  const pvCells = (xs: DrillInc[], rv: string, v2: string | null): PivotCell[] =>
-    [...colVals, null].map((cv, ci) => {
-      const cx = cv === null ? xs : xs.filter((i) => DIM[col!].f(i) === cv);
-      const val = agg(cx)[m];
-      const on = !!(pop && pop.v === rv && (pop.v2 || null) === v2 && (pop.cv || null) === cv);
-      return {
-        cv, side: ci >= Math.floor((colVals.length + 1) / 2) ? 'r' : 'l', z: !val, v: fm(m, val),
-        cls: (cv === null ? 'tot ' : '') + (m === 'md' && val > 0 ? 'strong' : ''), exp: on,
-        aria: MS[m] + ' ' + rv + (v2 ? ' › ' + v2 : '') + (cv ? ' · ' + cv : ' · total') + ': ' + fm(m, val) + '. Klik untuk pilihan',
-      };
+
+  // pohon baris: baris induk = subtotal, bisa dilipat
+  const tree: { rv: string[]; xs: DrillInc[]; depth: number; isG: boolean; open: boolean; kids: number }[] = [];
+  const groupKeys: string[] = [];
+  const walk = (xs: DrillInc[], depth: number, vals: string[]) => {
+    const d = rd[depth];
+    const gp: Record<string, DrillInc[]> = {};
+    xs.forEach((i) => { const v = DIM[d].f(i); (gp[v] = gp[v] || []).push(i); });
+    order(d, Object.keys(gp), (v) => gp[v]).forEach((v) => {
+      const rv = vals.concat([v]);
+      const isG = depth < rd.length - 1;
+      const kids = isG ? new Set(gp[v].map(DIM[rd[depth + 1]].f)).size : 0;
+      const open = isG ? !s.cl[rowKey(rv)] : false;
+      if (isG) groupKeys.push(rowKey(rv));
+      tree.push({ rv, xs: gp[v], depth, isG, open, kids });
+      if (isG && open) walk(gp[v], depth + 1, rv);
     });
-  const pvRows: PivotRow[] = [];
-  const pvGroups: string[] = [];
-  if (col) rows.forEach((r) => {
-    if (!g2) { pvRows.push({ rc: '', key: r.v, v: r.v, v2: null, label: r.v.replace('/', '/​'), pad: '0px', tg: false, open: false, cnt: '', aria: 'Rincikan ' + r.v, cells: pvCells(r.xs, r.v, null) }); return; }
-    const sub: Record<string, DrillInc[]> = {};
-    r.xs.forEach((i) => { const v = DIM[g2].f(i); (sub[v] = sub[v] || []).push(i); });
-    const kids = ordOf(g2, Object.keys(sub), (v) => sub[v]);
-    const isOpen = s.cl[r.v] !== undefined ? !s.cl[r.v] : kids.length <= 10;
-    pvGroups.push(r.v);
-    pvRows.push({ rc: 'grp', key: r.v, v: r.v, v2: null, label: r.v.replace('/', '/​'), pad: '0px', tg: true, open: isOpen, cnt: kids.length + ' ' + DIM[g2].l.toLowerCase(), aria: 'Rincikan ' + r.v, cells: pvCells(r.xs, r.v, null) });
-    if (isOpen) kids.forEach((k) => pvRows.push({ rc: 'ch', key: r.v + '\u0000' + k, v: r.v, v2: k, label: k.replace('/', '/​'), pad: '28px', tg: false, open: false, cnt: '', aria: 'Pilihan untuk ' + r.v + ' › ' + k, cells: pvCells(sub[k], r.v, k) }));
-  });
-  const pvFoot = col ? colVals.map((cv) => fm(m, agg(base.filter((i) => DIM[col].f(i) === cv))[m])).concat([fm(m, tot[m])]) : [];
-  const pvHead = colVals.map((cv) => {
-    const li = col === 'lv' ? LV.findIndex((x) => x[0] === cv) : -1;
-    return { v: cv, l: col === 'bln' ? cv.replace(' 2026', '') : cv, dot: li >= 0 ? LV[li][1] : null };
+  };
+  walk(base, 0, []);
+
+  const sameArr = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x === b[i]);
+  const isOn = (rv: string[], c: Col | Measure, cv: string[]) => !!(pop && sameArr(pop.rv, rv) && pop.c === c && sameArr(pop.cv, cv));
+  const rowMeta = (t: (typeof tree)[number]) => ({
+    key: rowKey(t.rv), rv: t.rv, rc: (t.isG ? 'grp' : t.depth > 0 ? 'ch' : '') as DrillRow['rc'], pad: t.depth * 28 + 'px',
+    tg: t.isG, open: t.open,
+    tgAria: (t.open ? 'Lipat rincian ' : 'Buka rincian ') + t.rv.join(' › '),
+    label: t.rv[t.rv.length - 1].replace('/', '/​'),
+    cnt: t.isG ? t.kids + ' ' + DIM[rd[t.depth + 1]].l : '',
+    aria: 'Pilihan untuk ' + t.rv.join(' › '),
   });
 
-  // popover aksi (ringkasan: sel baris × ukuran; pivot: sel baris [› rincian] × kolom, nilai = ukuran)
+  // tabel tanpa kolom: 7 ukuran
+  const fmt = (k: Col, a: Agg, pct: number) => (k === 'rp' ? rp(a.rp) : k === 'pct' ? Math.round(pct * 100) + '%' : String(a[k]));
+  const rowsV: DrillRow[] = pivot ? [] : tree.map((t) => {
+    const a = agg(t.xs);
+    const pct = tot.n ? a.n / tot.n : 0;
+    return {
+      ...rowMeta(t),
+      cells: COLS.map((c, ci) => {
+        const val = c.k === 'pct' ? pct : a[c.k];
+        return {
+          k: c.k, cv: [], side: ci >= 4 ? 'r' : 'l', z: !val, v: fmt(c.k, a, pct), cls: c.k === 'md' && a.md > 0 ? 'strong' : '',
+          bar: c.k === 'pct', w: Math.round(pct * 100) + '%', exp: isOn(t.rv, c.k, []),
+          aria: c.l + ' ' + t.rv.join(' › ') + ': ' + fmt(c.k, a, pct) + '. Klik untuk pilihan',
+        } as DrillCell;
+      }),
+    };
+  });
+  const foot = COLS.map((c) => (c.k === 'pct' ? '100%' : c.k === 'rp' ? rp(tot.rp) : String(tot[c.k])));
+
+  // pivot: Baris × Kolom (1–2 tingkat), satu Nilai
+  const fm = (x: number) => (m === 'rp' ? rp(x) : String(x));
+  const valsOf = (d: Dim) => {
+    const a = Array.from(new Set(base.map(DIM[d].f)));
+    const o = DIM[d].ord;
+    if (o) a.sort((x, y) => o.indexOf(x) - o.indexOf(y));
+    else a.sort((x, y) => base.filter((i) => DIM[d].f(i) === y).length - base.filter((i) => DIM[d].f(i) === x).length || x.localeCompare(y));
+    return a.slice(0, 12);
+  };
+  const v1 = cd[0] ? valsOf(cd[0]) : [];
+  const v2 = cd[1] ? valsOf(cd[1]) : [];
+  const ck: string[][] = cd.length === 1 ? v1.map((v) => [v]) : cd.length === 2 ? v1.flatMap((v) => v2.map((w) => [v, w])) : [];
+  const inCol = (i: DrillInc, c: string[]) => cd.every((d, ix) => DIM[d].f(i) === c[ix]);
+  const short = (d: Dim, v: string) => (d === 'bln' || d === 'tw' ? v.replace(' 2026', '') : v);
+  const dotOf = (d: Dim, v: string) => { const li = d === 'lv' ? LV.findIndex((x) => x[0] === v) : -1; return li >= 0 ? LV[li][1] : null; };
+  const half = Math.floor((ck.length + 1) / 2);
+  const firstOfGroup = (ci: number) => cd.length === 2 && ci % v2.length === 0;
+  const pvRows: DrillRow[] = !pivot ? [] : tree.map((t) => ({
+    ...rowMeta(t),
+    cells: [...ck, null].map((c, ci) => {
+      const val = agg(c ? t.xs.filter((i) => inCol(i, c)) : t.xs)[m];
+      return {
+        k: m, cv: c ?? [], side: ci >= half ? 'r' : 'l', z: !val, v: fm(val), bar: false, w: '',
+        cls: (c ? '' : 'tot ') + (c && firstOfGroup(ci) ? 'c0 ' : '') + (m === 'md' && val > 0 ? 'strong' : ''),
+        exp: isOn(t.rv, m, c ?? []),
+        aria: MS[m] + ' ' + t.rv.join(' › ') + (c ? ' · ' + c.join(' · ') : ' · total') + ': ' + fm(val) + '. Klik untuk pilihan',
+      } as DrillCell;
+    }),
+  }));
+  const pvHead: PvHead[] = cd.length === 1
+    ? ck.map((c) => ({ l: short(cd[0], c[0]), v: c[0], span: 1, cls: 'num', dot: dotOf(cd[0], c[0]) }))
+    : cd.length === 2 ? v1.map((v) => ({ l: short(cd[0], v), v, span: v2.length, cls: 'cg', dot: dotOf(cd[0], v) })) : [];
+  const pvHead2: PvHead[] = cd.length === 2 ? ck.map((c, ci) => ({ l: short(cd[1], c[1]), v: c[1], span: 1, cls: ci % v2.length === 0 ? 'c0' : '', dot: dotOf(cd[1], c[1]) })) : [];
+  const pvFoot = !pivot ? [] : ck.map((c, ci) => ({ v: fm(agg(base.filter((i) => inCol(i, c)))[m]), cls: firstOfGroup(ci) ? 'c0' : '' })).concat([{ v: fm(tot[m]), cls: 'tot' }]);
+
+  // popover aksi (filter = semua nilai baris + kolom sel)
   let popV = null as null | { T: string; S: string; N: number; V: string; subOpts: { d: Dim; l: string }[]; steps: Step[] };
   if (pop) {
-    const gx = (groups[pop.v] || [])
-      .filter((i) => !pop.v2 || !g2 || DIM[g2].f(i) === pop.v2)
-      .filter((i) => !pop.cv || !col || DIM[col].f(i) === pop.cv);
+    const pp = popPath(s, kk);
+    const steps = pp.slice(s.path.length);
+    const gx = base.filter((i) => steps.every((p) => DIM[p.d].f(i) === p.v));
     const cond = COND[pop.c];
     const xs = gx.filter((i) => !cond || cond(i));
-    const V = pop.v + (pop.v2 && g2 ? ' › ' + pop.v2 : '') + (pop.cv && col ? ' · ' + pop.cv : '');
-    const next = popPath(s, kk);
-    const usedNext = next.map((p) => p.d);
+    const V = pop.rv.join(' › ') + (pop.cv.length ? ' · ' + pop.cv.join(' · ') : '');
+    const usedNext = pp.map((p) => p.d);
     popV = {
       N: xs.length, V,
       T: V + (CONDL[pop.c] ? ' · ' + CONDL[pop.c] : ''),
       S: xs.length + ' insiden' + (pop.c === 'md' ? ' · ' + gx.reduce((a, i) => a + i.md, 0) + ' orang meninggal' : pop.c === 'lk' ? ' · ' + gx.reduce((a, i) => a + i.lk, 0) + ' orang luka' : pop.c === 'rp' ? ' · ' + rp(xs.reduce((a, i) => a + i.rp, 0)) : ''),
       subOpts: dims.filter((d) => !usedNext.includes(d)).map((d) => ({ d, l: DIM[d].l })),
-      /** langkah baru dari sel ini (baris, rincian, kolom), dipakai Saring halaman */
-      steps: next.slice(s.path.length),
+      /** langkah baru dari sel ini (semua tingkat baris + kolom), dipakai Saring halaman */
+      steps,
     };
   }
 
-  // menu Baris, › Rincian, Kolom, Nilai (Rincian dan Nilai hanya bila Kolom terisi)
-  const menus = ([
-    { k: 'g', l: 'Baris', v: DIM[g].l, empty: false, opts: dims.filter((d) => !used.includes(d)).map((d) => ({ val: d, l: DIM[d].l, on: d === g })) },
-    { k: 'g2', l: '› Rincian', v: g2 ? DIM[g2].l : 'Tanpa rincian', empty: !g2, opts: [{ val: null, l: 'Tanpa rincian', on: !g2 }, ...dims.filter((d) => d !== g && d !== col && !used.includes(d)).map((d) => ({ val: d, l: DIM[d].l, on: d === g2 }))] },
-    { k: 'col', l: 'Kolom', v: col ? DIM[col].l : 'Tanpa kolom', empty: !col, opts: [{ val: null, l: 'Tanpa kolom', on: !col }, ...colDimsFor(kk).filter((d) => d !== g && !used.includes(d)).map((d) => ({ val: d, l: DIM[d].l, on: d === col }))] },
-    { k: 'm', l: 'Nilai', v: MS[m], empty: false, opts: (Object.keys(MS) as Measure[]).map((k) => ({ val: k, l: MS[k], on: k === m })) },
-  ] as PivotMenu[]).filter((x) => (x.k !== 'm' && x.k !== 'g2') || !!col);
+  // kontrol Baris / Kolom / Nilai
+  const okR = (d: Dim) => dims.includes(d) && !used.includes(d);
+  const colDims = colDimsFor(kk);
+  const rowChips: Chip[] = rd.map((d, ix) => ({
+    id: ('r' + ix) as Menu, n: ix + 1, v: DIM[d].l, sep: ix > 0, x: rd.length > 1,
+    opts: dims.filter((x) => okR(x) && (x === d || !rd.includes(x))).map((x) => ({ val: x, l: DIM[x].l, on: x === d })),
+  }));
+  const colChips: Chip[] = cd.map((d, ix) => ({
+    id: ('c' + ix) as Menu, n: ix + 1, v: DIM[d].l, sep: ix > 0, x: true,
+    opts: colDims.filter((x) => !used.includes(x) && !rd.includes(x) && (x === d || !cd.includes(x))).map((x) => ({ val: x, l: DIM[x].l, on: x === d })),
+  }));
+  const rowAdd = dims.filter((x) => okR(x) && !rd.includes(x) && !cd.includes(x));
+  const colAdd = colDims.filter((x) => !used.includes(x) && !rd.includes(x) && !cd.includes(x));
+  const ctl: CtlGroup[] = [
+    { k: 'r', l: 'Baris', sep: '›', chips: rowChips, canAdd: rd.length < MAXR && rowAdd.length > 0, addId: 'ra', addH: 'Rincikan baris menurut', addOpts: rowAdd.map((x) => ({ val: x, l: DIM[x].l })) },
+    { k: 'c', l: 'Kolom', sep: '×', chips: colChips, canAdd: cd.length < MAXC && colAdd.length > 0, addId: 'ca', addH: cd.length ? 'Pecah kolom menurut' : 'Jadikan kolom', addOpts: colAdd.map((x) => ({ val: x, l: DIM[x].l })) },
+  ];
+  if (pivot) ctl.push({ k: 'm', l: 'Nilai', sep: '', canAdd: false, addId: 'm', addH: '', addOpts: [], chips: [{ id: 'm', n: 1, v: MS[m], sep: false, x: false, opts: (Object.keys(MS) as Measure[]).map((k) => ({ val: k, l: MS[k], on: k === m })) }] });
 
   // daftar insiden (tingkat paling dalam)
   const lst = s.list;
@@ -386,18 +430,22 @@ export function drillView(inc: DrillInc[], s: DrillState, kk: boolean) {
 
   const unk = (lst ? lXs : base).filter((i) => i.unk).length;
   const pathTxt = s.path.map((p) => p.v).join(' · ');
+  const rowL = rd.map((d) => DIM[d].l).join(' › ');
+  const colL = cd.map((d) => DIM[d].l).join(' × ');
+  const nested = !lst && rd.length > 1;
   return {
-    cap: lst ? 'Klik baris untuk membuka detail insiden' : tot.n + ' insiden terverifikasi · ' + (pathTxt || scopeTxt) + (col ? ' · ' + DIM[g].l + ' × ' + DIM[col].l : '') + ' · klik angka untuk merinci',
+    cap: lst ? 'Klik baris untuk membuka detail insiden' : tot.n + ' insiden terverifikasi · ' + (pathTxt || scopeTxt) + ' · ' + rowL + (pivot ? ' × ' + colL : '') + ' · klik angka untuk merinci',
     drilled, crumb,
-    showTable: !lst, showFlat: !lst && !col, showPivot: !lst && !!col, showList: !!lst,
-    menus,
-    hDim: hd('dim', DIM[g].l), heads: COLS.map((c) => hd(c.k, c.l)),
-    pv: {
-      col, g2, m, colL: col ? DIM[col].l : '', dimL: DIM[g].l + (g2 ? ' › ' + DIM[g2].l : ''), two: !lst && !!g2, groups: pvGroups,
-      w0: g2 ? '30%' : '26%', minW: 300 + (colVals.length + 1) * 88 + 'px', head: pvHead, rows: pvRows, foot: pvFoot, hTot: hd(m, 'Total'),
-      note: col ? (g2 ? 'Baris abu-abu = subtotal per ' + DIM[g].l.toLowerCase() + '; klik − / + untuk menutup atau membuka rinciannya. ' : '') + 'Nilai sel: ' + MS[m] + (m === 'md' || m === 'lk' ? ' (jumlah orang)' : '') + '. Klik angka untuk melihat insiden atau merinci; kolom hanya untuk dimensi dengan paling banyak 12 nilai.' : '',
-    },
+    showCtl: !lst, showFlat: !lst && !pivot, showPivot: !lst && pivot, showList: !!lst,
+    layout: { rd, cd, m },
+    ctl, nested, groupKeys, rowL, colL,
+    hDim: hd('dim', rowL), heads: COLS.map((c) => hd(c.k, c.l)),
     rows: rowsV, foot, tot,
+    pv: {
+      rs: cd.length === 2 ? 2 : 1, twoCol: cd.length === 2, head: pvHead, head2: pvHead2, rows: pvRows, foot: pvFoot, hTot: hd(m, 'Total'), m,
+      minW: 280 + rd.length * 20 + (ck.length + 1) * 84 + 'px', cols: ck,
+      note: pivot ? (nested ? 'Baris abu-abu = subtotal; klik − / + untuk melipat atau membuka rinciannya. ' : '') + 'Nilai sel: ' + MS[m] + (m === 'md' || m === 'lk' ? ' (jumlah orang)' : '') + '. Kolom hanya untuk dimensi dengan paling banyak 12 nilai.' : '',
+    },
     pop: popV,
     lN: lXs.length + ' insiden',
     lS: (pathTxt || scopeTxt) + (lst && CONDL[lst.c] ? ' · ' + CONDL[lst.c] : '') + ' · urut level tertinggi lalu terbaru',
@@ -413,7 +461,7 @@ export type DrillView = ReturnType<typeof drillView>;
 
 const csvCell = (x: string | number) => { const t = String(x); return /[",\n;]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
 
-/** CSV = isi tampilan saat ini (tabel ringkasan atau semua insiden di tingkat insiden). */
+/** CSV = isi tampilan saat ini (baris yang tampil, termasuk subtotal; atau semua insiden di tingkat insiden). */
 export function drillCsv(view: DrillView, kk: boolean): string {
   let lines: (string | number)[][];
   if (view.showList) {
@@ -423,13 +471,12 @@ export function drillCsv(view: DrillView, kk: boolean): string {
       Math.round(i.rp * 10) / 10, i.md, i.lk, casualtyText({ meninggal: i.md, luka: i.lk, unknown: i.unk }), STO[i.st],
     ]));
   } else if (view.showPivot) {
-    // pivot: baris grup = subtotal, baris rincian ditulis "Grup › Rincian"; grup tertutup hanya subtotal
-    lines = [[view.pv.dimL, ...view.pv.head.map((h) => h.v), 'Total']];
-    view.pv.rows.forEach((r) => lines.push([r.v2 ? r.v + ' › ' + r.v2 : r.v, ...r.cells.map((c) => (c.z ? 0 : c.v))]));
-    lines.push(['Total', ...view.pv.foot]);
+    lines = [[view.rowL, ...view.pv.cols.map((c) => c.join(' · ')), 'Total']];
+    view.pv.rows.forEach((r) => lines.push([r.rv.join(' › '), ...r.cells.map((c) => (c.z ? 0 : c.v))]));
+    lines.push(['Total', ...view.pv.foot.map((f) => f.v)]);
   } else {
-    lines = [[view.hDim.l, ...COLS.map((c) => c.l)]];
-    view.rows.forEach((r) => lines.push([r.v, ...r.cells.map((c) => (c.z ? 0 : c.v))]));
+    lines = [[view.rowL, ...COLS.map((c) => c.l)]];
+    view.rows.forEach((r) => lines.push([r.rv.join(' › '), ...r.cells.map((c) => (c.z ? 0 : c.v))]));
     lines.push(['Total', ...view.foot]);
   }
   return '﻿' + lines.map((l) => l.map(csvCell).join(',')).join('\r\n') + '\r\n';
