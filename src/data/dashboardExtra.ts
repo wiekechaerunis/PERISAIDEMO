@@ -39,10 +39,18 @@ const TITLE = [
 ];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
 
-/** Baris insiden: [nomor, area, kategori, level, status, lewat tenggat, tgl lapor, judul, lama tutup (hari), bulan]. */
-export function extraIncidents() {
+/**
+ * Baris insiden: [nomor, area, kategori, level, status, lewat tenggat, tgl lapor, judul, lama tutup (hari), bulan].
+ * Nomor per KKKS melanjutkan nomor yang sudah ada di `existing` (mis. PT Bara Jambi Energi punya WK di tjb dan jbi,
+ * keduanya berkode BJE), supaya tidak ada nomor dobel.
+ */
+export function extraIncidents(existing: unknown[][] = []) {
   const rows: (string | number)[][] = [];
   const seq: Record<string, number> = {};
+  existing.forEach((r) => {
+    const m = /^INS-([A-Z]+)-2026-(\d+)$/.exec(String(r[0]));
+    if (m) seq[m[1]] = Math.max(seq[m[1]] ?? 0, Number(m[2]));
+  });
   let k = 0;
   EXTRA_AREAS.forEach((a) => {
     const cats = AREA_CATS[a[0]];
@@ -69,7 +77,7 @@ type Cat = [string, Record<string, number>, Record<string, number>];
 export function extendDashboard({ A0, INC, CAT, W }: { A0: unknown[][]; INC: unknown[][]; CAT: Cat[]; W: Record<string, { none?: boolean; rep: number }> }) {
   if (A0.some((a) => a[0] === EXTRA_AREAS[0][0])) return;
   EXTRA_AREAS.forEach((a) => A0.push(a.slice(0, 9)));
-  const inc = extraIncidents();
+  const inc = extraIncidents(INC);
   INC.push(...inc);
   inc.forEach((r) => {
     const w = EXTRA_AREAS.find((a) => a[0] === r[1])![1];

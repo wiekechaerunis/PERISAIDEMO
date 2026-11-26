@@ -357,7 +357,7 @@ export class DashboardLogic extends DCLogic {
     const setTb = (o) => this.setState({ tb: Object.assign({}, tb, o) });
     // kerugian per insiden: data demo belum punya kerugian per insiden, jadi kerugian area setelah filter (angka yang sama dengan
     // KPI Kerugian) dibagi rata ke insiden area itu. PRODUKSI: nilai kerugian per insiden dari data layer. Lihat DEVIATIONS D-T2.
-    // Disimpan per baris (bukan per nomor): data demo tambahan punya nomor yang sama di dua area (INS-BJE-2026-0001..0004).
+    // Disimpan per baris, bukan per nomor, supaya total tetap benar walau ada nomor yang sama.
     const RPI = new Map();
     { const cnt = {}; incS.forEach((r) => { cnt[r[1]] = (cnt[r[1]] || 0) + 1; }); const aRp = {}; SC.forEach((a) => { aRp[a.id] = a.rp; }); incS.forEach((r) => { RPI.set(r, (aRp[r[1]] || 0) / cnt[r[1]]); }); }
     const DIM = { wil: ['Wilayah', (r) => W[AREA[r[1]][1]].n], kkks: ['KKKS', (r) => AREA[r[1]][7].replace(/^PT /, '')], wk: ['Wilayah kerja', (r) => AREA[r[1]][8]], kat: ['Kategori', (r) => CAT[r[2]][0]], lv: ['Level', (r) => LV[r[3]][0]] };

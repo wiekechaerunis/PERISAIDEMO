@@ -1,5 +1,9 @@
 # Changelog
 
+## 26 Nov 2026 · Nomor insiden demo tidak lagi dobel
+
+- Area tambahan Batanghari (`jbi`, PT Bara Jambi Energi) memakai nomor INS-BJE-2026-0001..0004 yang sudah dipakai WK Bara Timur (`tjb`, KKKS yang sama). Nomor area tambahan kini melanjutkan nomor KKKS yang sudah ada (jbi = INS-BJE-2026-0007..0010), jadi tautan Detail dari Dashboard membuka insiden yang benar. Tes `src/data/dashboardExtra.test.ts` menjaga semua nomor unik.
+
 ## 26 Nov 2026 · Tabel insiden di Dashboard
 
 - Kartu "Kategori × wilayah" di bawah Dashboard diganti **Tabel insiden** (board Dashboard dan Dashboard-Tabel, Desain v2): Baris [Kategori] › [+ Rincikan] dan Kolom [Wilayah] (SKK: Wilayah, KKKS, Wilayah kerja, Kategori, Level; KKKS: Wilayah kerja, Kategori, Level), Jumlah | Kerugian, sel berwarna tipis, baris dan kolom Total, kolom nama tetap saat digulir.
