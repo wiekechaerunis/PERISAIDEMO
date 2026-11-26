@@ -1,0 +1,119 @@
+/* ---------- Responsif tablet dan mobile (26 Nov 2026) ----------
+   Titik henti DS D11: mobile < 768 · tablet 768–1279 · desktop ≥ 1280.
+   Shell: tablet = rail ikon 72 px + laci; mobile = tanpa sidebar, tombol menu di bar atas membuka laci. */
+
+/* Tablet: rail ikon tetap terlihat saat halaman discroll */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .lk-app > .p-sb { position: sticky; top: 0; height: 100vh; min-height: 0; }
+}
+
+/* Laci navigasi (tablet dan mobile) */
+.p-sbdrawer { position: fixed; inset: 0; z-index: 200; display: flex; }
+.p-sbdrawer .scrim { position: absolute; inset: 0; border: 0; padding: 0; background: var(--scrim, rgba(16, 17, 20, .45)); cursor: pointer; animation: p-fade .16s ease; }
+.p-sbdrawer > .p-sb { position: relative; width: 280px !important; max-width: 86vw; height: 100%; min-height: 0; overflow-y: auto; box-shadow: var(--shadow-floating); animation: p-slide .2s ease; }
+.p-sbdrawer .sb-close { position: absolute; top: 14px; right: 10px; z-index: 1; }
+@keyframes p-fade { from { opacity: 0; } }
+@keyframes p-slide { from { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { .p-sbdrawer .scrim, .p-sbdrawer > .p-sb { animation: none; } }
+
+/* Tablet dan mobile: tombol bar atas = ikon menu (hamburger) */
+@media (max-width: 1279px) {
+  .p-app .p-sbtoggle .p-ic { display: none; }
+  .p-app .p-sbtoggle::before { content: ''; width: 18px; height: 2px; border-radius: 1px; background: currentColor; box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor; }
+  .lk-app .p-sbtoggle .p-ic { transform: none; }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1279px) {
+  .lk-content { padding: 20px; }
+  .p-appbar { padding: 12px 20px; }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 767px) {
+  .p-app .p-sbtoggle { display: inline-flex; width: 44px; height: 44px; background: transparent; }
+  .p-appbar { padding: 8px 12px 8px 8px; }
+  .p-appbar .hdr { gap: 8px; min-height: 44px; flex-wrap: wrap; }
+  .p-appbar.top h1 { font-size: 20px; line-height: 28px; }
+  .p-appbar.top .sub { -webkit-line-clamp: 1; font-size: 12px; }
+  .p-appbar .acts { gap: 6px; flex-wrap: wrap; }
+  .p-appbar .p-tabs { margin: 0 -12px 0 -8px; padding: 0 12px; }
+  .lk-content { padding: 12px; gap: 12px; }
+  /* grid 12 kolom → satu kolom */
+  .lk-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .lk-grid > * { grid-column: 1 / -1 !important; }
+  /* tabel lebar: scroll ke samping di dalam kartu, bukan seluruh halaman */
+  .lk-content table { max-width: none; }
+}
+
+/* ---------- Konten: tabel lebar scroll di tempat (tablet dan mobile) ---------- */
+@media (max-width: 1279px) {
+  .lk-content table.lk-tbl, .lk-content table.wa-inbox, .v2-root table.wa-inbox, .lk-content table.ek-t { display: block; position: relative; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .db-filters { flex-wrap: wrap; }
+  .p-toolbar { flex-wrap: wrap; row-gap: 8px; }
+  .p-toolbar > div { flex-wrap: wrap; row-gap: 8px; min-width: 0; }
+}
+
+/* ---------- Mobile: bar atas = [menu][judul] lalu aksi di baris bawah ---------- */
+@media (max-width: 767px) {
+  .p-appbar .hdr > .ttl { flex: 1 1 0; min-width: 0; }
+  .p-appbar .hdr > .acts { flex: 1 1 100%; order: 5; }
+  .p-appbar .hdr > .acts > * { flex: 1 1 auto; justify-content: center; }
+  /* KPI dashboard 4 → 2 kolom */
+  .lk-grid > .c12[style*="repeat(4"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+  .db-filters { padding: 10px 12px; }
+  .db-filters > * { flex: 1 1 auto; min-width: 0; }
+  .db-filters .db-sel { width: 100%; justify-content: space-between; }
+  .db-sum, .db-ik { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .p-toolbar label.p-input { flex: 1 1 100%; width: auto !important; }
+  .p-toolbar .lk-seg { overflow-x: auto; max-width: 100%; }
+}
+
+/* Dashboard: baris berkolom tetap dipadatkan di mobile */
+@media (max-width: 767px) {
+  .db-tc { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 28px 28px 52px; gap: 6px; }
+  .db-sti { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto 56px; }
+  .db-inc { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
+  .db-inc > :nth-child(n + 3) { grid-column: auto; }
+}
+
+/* Tugas saya: kolom pertama boleh membungkus supaya tag status terlihat */
+@media (max-width: 767px) {
+  .lk-content table.tg-t td:first-child { white-space: normal; min-width: 280px; }
+}
+
+/* Tabel insiden: tabel bergeser ke samping di dalam kartu */
+.td-scroll { max-width: 100%; }
+@media (max-width: 1279px) {
+  .td-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .td-scroll > .td-t { min-width: 640px; }
+  .td-scroll > .td-t.td-l { min-width: 560px; }
+}
+
+/* Peta dashboard di mobile: peta utuh selebar layar, panel ringkasan pindah ke bawah peta */
+@media (max-width: 767px) {
+  .db-maphd { flex-direction: column; padding: 14px 14px 10px; }
+  .db-map { height: auto; overflow: visible; display: flex; flex-direction: column; }
+  .db-map .db-wrap { position: relative; top: auto; transform: none; width: 100%; margin: 48px 0 12px; flex: none; }
+  .db-map .db-hint { top: 10px; left: 136px; right: 12px; transform: none; text-align: center; font-size: 11px; }
+  .db-map .db-ctl { top: 8px; left: 8px; flex-direction: row; }
+  .db-panel { position: relative; inset: auto; width: auto; max-height: none; margin: 0 8px 8px; box-shadow: none; border: 1px solid var(--border); }
+  .db-map .db-leg { bottom: auto; top: 52px; max-width: calc(100% - 32px); }
+}
+
+/* Daftar dan tabel di tablet: kolom pertama tidak terhimpit */
+@media (max-width: 1279px) {
+  .lk-content table.lk-tbl th:first-child:not(:has(input)), .lk-content table.lk-tbl td:first-child:not(:has(input)) { min-width: 200px; }
+}
+
+/* Tindak lanjut di mobile: stepper Pengerjaan bersusun, chip metadata boleh turun baris */
+@media (max-width: 767px) {
+  .pg-steps { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .pg-steps .ln { width: 2px; height: 10px; margin: 0 0 0 10px; }
+  .pg-h { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .lk-card-head:has(.lk-meta), .p-card :has(> .lk-meta) { flex-wrap: wrap; }
+  .lk-meta { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+}
+
+/* Sisa luberan beberapa piksel (margin negatif) tidak menggeser halaman di tablet/mobile */
+@media (max-width: 1279px) { .lk-main { overflow-x: clip; } }

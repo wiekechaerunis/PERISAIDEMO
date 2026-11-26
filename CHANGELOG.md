@@ -1,5 +1,12 @@
 # Changelog
 
+## 26 Nov 2026 · Responsif tablet dan mobile
+
+- Shell semua halaman: tablet (768–1279 px) memakai rail ikon 72 px, mobile (< 768 px) tanpa sidebar; tombol menu di bar atas membuka laci navigasi 280 px (Esc, klik luar, dan pindah halaman menutupnya). Desktop tidak berubah.
+- Konten: grid 12 kolom jadi satu kolom di mobile, KPI dashboard 2 kolom, filter dan toolbar boleh turun baris, tabel lebar (Tugas, Insiden, inbox WhatsApp, Tabel insiden) bergeser ke samping di dalam kartu, peta dashboard selebar layar dengan panel ringkasan di bawahnya, stepper Pengerjaan TL bersusun.
+- Aturan di `src/styles/features/responsive.css`; titik henti mengikuti DS D11. Screenshot di `screenshots/responsif/`.
+- e2e `tanya-data.e2e.mjs` sudah usang sejak Tanya data pindah ke dalam kartu (commit d293942), bukan karena perubahan ini.
+
 ## 26 Nov 2026 · Tabel insiden: tabel ringkasan + drill-down (TabelDrill)
 
 - Kartu Tabel insiden 1:1 komponen TabelDrill (board TD1–TD8): satu tampilan = satu tingkat, breadcrumb + × Reset, Kelompokkan menurut (SKK 7 dimensi, KKKS 5), kolom Insiden (bar), %, Kerugian, Tinggi & Kritis, Meninggal, Luka, Masih terbuka; klik angka membuka popover Lihat n insiden / Rincikan menurut / Saring halaman; tingkat insiden 10 per halaman, klik baris membuka Detail.

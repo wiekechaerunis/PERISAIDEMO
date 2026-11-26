@@ -136,7 +136,7 @@ export function IncidentDrillTable({ v }: { v: any }) {
         </div>
 
         {view.showTable && (
-          <table className="td-t">
+          <div className="td-scroll"><table className="td-t">
             <colgroup>
               {['30%', '13%', '6%', '11%', '11%', '10%', '8%', '11%'].map((w, k) => <col key={k} style={{ width: w }} />)}
             </colgroup>
@@ -210,7 +210,7 @@ export function IncidentDrillTable({ v }: { v: any }) {
             <tfoot>
               <tr><th scope="row">Total</th>{view.foot.map((f, k) => <td key={k} className="num">{f}</td>)}</tr>
             </tfoot>
-          </table>
+          </table></div>
         )}
 
         {view.showList && (
@@ -219,7 +219,7 @@ export function IncidentDrillTable({ v }: { v: any }) {
               <span><b>{view.lN}</b> {view.lS}</span>
               <a className="lk-alink" href={hrefList} style={{ fontSize: 13 }} onClick={(e) => { e.preventDefault(); v.ui?.go?.(hrefList); }}>Buka di daftar insiden</a>
             </div>
-            <table className="td-t td-l">
+            <div className="td-scroll"><table className="td-t td-l">
               <colgroup>
                 {['16%', '21%', '16%', '9%', '13%', '7%', '6%', '12%'].map((w, k) => <col key={k} style={{ width: w }} />)}
               </colgroup>
@@ -243,7 +243,7 @@ export function IncidentDrillTable({ v }: { v: any }) {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
             <div className="td-pg">
               <span className="p-cap">{view.pgT}</span>
               <button type="button" onClick={() => { if (!view.prevDis) set(toPage(s, view.pg - 1)); }} aria-disabled={view.prevDis ? 'true' : 'false'} aria-label="Halaman sebelumnya">‹</button>

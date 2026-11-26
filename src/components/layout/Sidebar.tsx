@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useWaSimUi } from '@/features/whatsapp/sim/WaSimPanel';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useDemoStore } from '@/services/mock/store';
 import { Icon, type IconName } from '../ui/Icon';
-import { useSidebar } from './sidebarState';
+import { useBreakpoint, useSidebar } from './sidebarState';
 import { DEMO_USERS, initials, isSkk, type Role } from '@/lib/rbac';
 
 /** Menu profil (demo): pilih peran dan reset data. Menggantikan bilah "Peran demo" yang melayang. */
@@ -88,9 +88,12 @@ function Item({ to, icon, label, on, count, mini }: { to: string; icon: IconName
  *  jadi semua shell ikut tanpa diubah satu per satu. Label dan aria-expanded diselaraskan setiap render. */
 let wired = 0;
 const onToggleClick = (e: MouseEvent) => {
-  if ((e.target as Element | null)?.closest?.('.p-sbtoggle')) useSidebar.getState().toggle();
+  if (!(e.target as Element | null)?.closest?.('.p-sbtoggle')) return;
+  // tablet/mobile: tombol yang sama membuka laci navigasi; desktop: lebar/ciut
+  if (window.matchMedia?.('(max-width: 1279px)').matches) useSidebar.getState().setDrawer(true);
+  else useSidebar.getState().toggle();
 };
-function useToggleWiring(mini: boolean) {
+function useToggleWiring(mini: boolean, bp: string, drawer: boolean) {
   useEffect(() => {
     // satu pendengar global walau Sidebar dirender lebih dari sekali (mis. Dashboard)
     if (wired++ === 0) document.addEventListener('click', onToggleClick);
@@ -98,17 +101,47 @@ function useToggleWiring(mini: boolean) {
   }, []);
   useEffect(() => {
     document.querySelectorAll('.p-sbtoggle').forEach((b) => {
-      b.setAttribute('aria-expanded', String(!mini));
-      b.setAttribute('aria-label', mini ? 'Lebarkan sidebar' : 'Perkecil sidebar');
-      b.setAttribute('aria-controls', 'nav-utama');
+      const compact = bp !== 'desktop';
+      b.setAttribute('aria-expanded', String(compact ? drawer : !mini));
+      b.setAttribute('aria-label', compact ? 'Buka menu' : mini ? 'Lebarkan sidebar' : 'Perkecil sidebar');
+      b.setAttribute('aria-controls', compact ? 'nav-laci' : 'nav-utama');
     });
   });
 }
 
 /** Sidebar PERISAI (board Sidebar.dc.html): Ikhtisar, Tugas saya, Tindak lanjut | Analitik, Insiden | Administrasi. */
 export function Sidebar({ active, role, taskCount }: Props) {
-  const mini = useSidebar((s) => s.mini);
-  useToggleWiring(mini);
+  const bp = useBreakpoint();
+  const storedMini = useSidebar((s) => s.mini);
+  const drawer = useSidebar((s) => s.drawer);
+  const setDrawer = useSidebar((s) => s.setDrawer);
+  const loc = useLocation();
+  useToggleWiring(storedMini, bp, drawer);
+  // tutup laci saat pindah halaman, saat kembali ke desktop, dan dengan Esc
+  useEffect(() => { setDrawer(false); }, [loc.pathname, loc.search, bp, setDrawer]);
+  useEffect(() => {
+    if (!drawer) return;
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawer(false); };
+    document.addEventListener('keydown', esc);
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', esc); document.body.style.overflow = ''; };
+  }, [drawer, setDrawer]);
+  const props = { active, role, taskCount };
+  return (
+    <>
+      {bp === 'desktop' && <SidebarNav {...props} mini={storedMini} id="nav-utama" />}
+      {bp === 'tablet' && <SidebarNav {...props} mini id="nav-utama" />}
+      {bp !== 'desktop' && drawer && (
+        <div className="p-sbdrawer" role="dialog" aria-modal="true" aria-label="Menu navigasi">
+          <button type="button" className="scrim" aria-label="Tutup menu" onClick={() => setDrawer(false)} />
+          <SidebarNav {...props} mini={false} id="nav-laci" onClose={() => setDrawer(false)} />
+        </div>
+      )}
+    </>
+  );
+}
+
+function SidebarNav({ active, role, taskCount, mini, id, onClose }: Props & { mini: boolean; id: string; onClose?: () => void }) {
   const lbl = (text: string, first: boolean) =>
     mini
       ? <span aria-hidden="true" style={{ display: 'block', width: 24, height: 1, background: 'var(--border-subtle)', margin: first ? '0 0 8px' : '12px 0 8px' }} />
@@ -117,12 +150,17 @@ export function Sidebar({ active, role, taskCount }: Props) {
     <nav
       className={`p-sb ${mini ? 'mini' : 'wide'} p-wedge`}
       aria-label="Navigasi utama"
-      id="nav-utama"
+      id={id}
       style={{
         border: 0, borderRight: '1px solid var(--border)', borderRadius: 0, width: mini ? 72 : 240, flex: 'none',
         fontFamily: 'var(--font-sans)', fontSize: 13, lineHeight: '18px', color: 'var(--ink)',
       }}
     >
+      {onClose && (
+        <button type="button" className="p-ibtn ghost sb-close" aria-label="Tutup menu" onClick={onClose}>
+          <Icon name="close" size={18} />
+        </button>
+      )}
       <div className="p-col" style={{ gap: 14, padding: mini ? '0 0 16px' : '0 6px 16px 6px', width: mini ? 44 : undefined }}>
         {/* ASSUMPTION: logo PERISAI (/_blob) tidak ada di artifact; diganti wordmark teks (ciut: huruf P). */}
         <div style={{ width: mini ? 44 : 176, fontWeight: 700, fontSize: 22, letterSpacing: '.04em', textAlign: mini ? 'center' : undefined }} aria-label={mini ? 'PERISAI' : undefined}>{mini ? 'P' : 'PERISAI'}</div>
