@@ -81,7 +81,7 @@ export function Pdf2() {
 <th className="r">Insiden</th>
 <th className="r">Porsi</th>
 <th className="r">Kerugian</th>
-<th className="r">Sem. II 2025</th>
+<th className="r">Sem. I 2025</th>
 <th className="r">Perubahan</th>
 </tr>
 </thead>

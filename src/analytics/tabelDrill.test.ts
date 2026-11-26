@@ -71,7 +71,7 @@ describe('Tabel insiden: drill', () => {
   it('ringkasan (TD1): per Kategori, 7 kolom ukuran, 0 = "–"', () => {
     const v = go(INIT);
     expect(v.hDim.l).toBe('Kategori');
-    expect(v.heads.map((h) => h.l)).toEqual(['Insiden', '%', 'Kerugian', 'Tinggi & Kritis', 'Meninggal', 'Luka', 'Masih terbuka']);
+    expect(v.heads.map((h) => h.l)).toEqual(['Insiden (jumlah)', 'Insiden (%)', 'Kerugian', 'Tinggi & Kritis', 'Meninggal', 'Luka', 'Masih terbuka']);
     expect(v.rows[0].v).toBe('Pencurian/Perampokan');
     expect(v.rows.every((r) => r.cells.every((c) => !c.z || c.v === '0' || c.v === 'Rp0' || c.v === '0%'))).toBe(true);
     expect(v.cap).toBe(`${v.tot.n} insiden terverifikasi · seluruh KKKS · klik angka untuk merinci`);
@@ -116,7 +116,13 @@ describe('Tabel insiden: drill', () => {
     expect(go({ ...INIT, list: { c: 'tk' } }).lAll.every((i) => i.lv >= 3)).toBe(true);
     expect(go({ ...INIT, list: { c: 'op' } }).lAll.every((i) => i.st !== 2)).toBe(true);
     expect(go({ ...INIT, list: { c: 'lk' } }).lAll.every((i) => i.lk > 0)).toBe(true);
-    expect(v0.foot2).toBe('Meninggal/Luka = jumlah orang · 1 insiden korban belum diketahui');
+    expect(v0.foot2).toBe(`Insiden (%) = porsi dari ${v0.tot.n} insiden di tampilan ini. Meninggal/Luka = jumlah orang · 1 insiden korban belum diketahui`);
+    // bar tipis ada di kolom Insiden (%), panjangnya = porsi baris
+    const pc = v0.rows[0].cells.find((c) => c.k === 'pct')!;
+    expect(pc.bar).toBe(true);
+    expect(pc.w).toBe(pc.v);
+    expect(v0.rows[0].cells.find((c) => c.k === 'n')!.bar).toBe(false);
+    expect(v0.foot[1]).toBe('100%');
   });
 
   it('breadcrumb kembali, Reset, sortir, urutan alami', () => {
@@ -156,7 +162,7 @@ describe('Tabel insiden: drill', () => {
 
   it('CSV dan tautan daftar insiden', () => {
     const csv = drillCsv(go(INIT), false);
-    expect(csv.split('\r\n')[0]).toBe('﻿Kategori,Insiden,%,Kerugian,Tinggi & Kritis,Meninggal,Luka,Masih terbuka');
+    expect(csv.split('\r\n')[0]).toBe('﻿Kategori,Insiden (jumlah),Insiden (%),Kerugian,Tinggi & Kritis,Meninggal,Luka,Masih terbuka');
     expect(csv).toContain('\r\nTotal,');
     expect(listHref([{ d: 'kat', v: 'Pencurian/Perampokan' }, { d: 'wil', v: 'Sumbagsel' }], 'md')).toBe('/insiden?kategori=Pencurian%2FPerampokan&wilayah=Sumbagsel&korban=meninggal');
   });

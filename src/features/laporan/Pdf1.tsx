@@ -13,18 +13,18 @@ export function Pdf1() {
 </div>
 <div className="ai">
 <span className="tg">Ringkasan dibuat AI · dicek ulang sebelum dibagikan</span>
-<p>Semester I 2026 mencatat 106 insiden terverifikasi dengan kerugian Rp1,41 M, naik 15% dari Semester II 2025. Sumbagsel menyumbang 63% kerugian walau hanya 36% insiden; kedua insiden Kritis ada di Musi Banyuasin. Pencurian/Perampokan tetap kategori terbanyak (80), terutama di Sumbagut. Pamalu belum mengirim laporan apa pun, jadi angka 0 di wilayah itu belum bisa dibaca sebagai aman.</p>
+<p>Semester I 2026 mencatat 106 insiden terverifikasi dengan kerugian Rp1,41 M, naik 15% dari Semester I 2025. Sumbagsel menyumbang 63% kerugian walau hanya 36% insiden; kedua insiden Kritis ada di Musi Banyuasin. Pencurian/Perampokan tetap kategori terbanyak (80), terutama di Sumbagut. Pamalu belum mengirim laporan apa pun, jadi angka 0 di wilayah itu belum bisa dibaca sebagai aman.</p>
 </div>
 <div className="kp">
 <div>
 <span>Insiden terverifikasi</span>
 <b>106</b>
-<i>▲ 15% vs Sem. II 2025 (92)</i>
+<i>▲ 15% vs Sem. I 2025 (92)</i>
 </div>
 <div>
 <span>Kerugian</span>
 <b>Rp1,41 M</b>
-<i>▲ 28% vs Sem. II 2025 (Rp1,10 M)</i>
+<i>▲ 28% vs Sem. I 2025 (Rp1,10 M)</i>
 </div>
 <div>
 <span>{"Tinggi & Kritis"}</span>

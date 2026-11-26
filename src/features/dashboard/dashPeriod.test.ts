@@ -26,13 +26,24 @@ describe('dashPeriodInfo (hari ini dashboard = 30 Jun 2026)', () => {
     expect(dashPeriodInfo(P('tahun'))).toMatchObject({ from: '2026-01-01', to: '2026-06-30', full: true, label: 'Tahun berjalan' });
     expect(dashPeriodInfo({ kind: 'custom', from: '2026-05-01', to: '2026-05-15' })).toMatchObject({ full: false, label: '1–15 Mei 2026', text: '1–15 Mei 2026' });
   });
+
+  it('pembanding = periode yang sama tahun lalu', () => {
+    expect(dashPeriodInfo(P('all'))).toMatchObject({ prev: 'Sem. I 2025', prevLong: 'Semester I 2025' });
+    expect(dashPeriodInfo(P('tahun'))).toMatchObject({ prev: '1 Jan–30 Jun 2025', prevLong: '1 Jan – 30 Jun 2025' });
+    expect(dashPeriodInfo(P('bulan'))).toMatchObject({ prev: 'Jun 2025', prevLong: 'Jun 2025' });
+    expect(dashPeriodInfo(P('7h'))).toMatchObject({ prev: '23–30 Jun 2025' });
+    expect(dashPeriodInfo({ kind: 'custom', from: '2026-05-01', to: '2026-05-15' })).toMatchObject({ prev: '1–15 Mei 2025' });
+  });
 });
 
 describe('logika dashboard per periode', () => {
   it('Semua waktu = angka semester apa adanya (sama persis dengan tanpa periode), SKK dan KKKS', () => {
     for (const peran of ['skk', 'kkks'] as const) {
       expect(JSON.stringify(view(dashPeriodInfo(P('all')), peran))).toBe(JSON.stringify(view(undefined, peran)));
-      expect(JSON.stringify(view(dashPeriodInfo(P('tahun')), peran)).replace(/Tahun berjalan \(1 Jan – 30 Jun 2026\)/g, 'Semester I 2026')).toBe(
+      expect(JSON.stringify(view(dashPeriodInfo(P('tahun')), peran))
+        .replace(/Tahun berjalan \(1 Jan – 30 Jun 2026\)/g, 'Semester I 2026')
+        .replace(/1 Jan–30 Jun 2025/g, 'Sem. I 2025')
+        .replace(/1 Jan – 30 Jun 2025/g, 'Semester I 2025')).toBe(
         JSON.stringify(view(undefined, peran)),
       );
     }
@@ -66,7 +77,11 @@ describe('logika dashboard per periode', () => {
     const cu = dashPeriodInfo({ kind: 'custom', from: '2026-05-01', to: '2026-05-15' });
     const v = view(cu);
     expect(kpi(v, 0)).toBe(String(countIn('2026-05-01', '2026-05-15')));
-    expect(v.kpis[0].cmp).toMatch(/^vs periode sebelumnya, perkiraan/);
+    expect(v.kpis[0].cmp).toMatch(/^vs 1–15 Mei 2025 \(\d+\)$/);
+    expect(v.aiCap.startsWith('1–15 Mei 2026')).toBe(true);
+    expect(view(undefined).kpis[0].cmp).toMatch(/^vs Sem\. I 2025 \(\d+\)$/);
+    expect(view(dashPeriodInfo(P('bulan'))).kpis[1].cmp).toMatch(/^vs Jun 2025 \(/);
+    expect(JSON.stringify(view(dashPeriodInfo(P('3b'))))).not.toMatch(/Sem\. II|Semester II/);
     expect(v.foot).toMatch(/Angka selain jumlah insiden = perkiraan/);
     expect(v.askCtx.per).toEqual({ from: '2026-05-01', to: '2026-05-15', label: '1–15 Mei 2026' });
     const k = view(dashPeriodInfo(P('3b')), 'kkks');

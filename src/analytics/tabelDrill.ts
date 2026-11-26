@@ -80,7 +80,7 @@ export const DIM: Record<Dim, { l: string; f: (i: DrillInc) => string; ord?: str
 export const dimsFor = (kk: boolean): Dim[] => (kk ? ['kat', 'wk', 'lv', 'bln', 'st'] : ['kat', 'wil', 'kkks', 'wk', 'lv', 'bln', 'st']);
 
 export const COLS: { k: Col; l: string }[] = [
-  { k: 'n', l: 'Insiden' }, { k: 'pct', l: '%' }, { k: 'rp', l: 'Kerugian' }, { k: 'tk', l: 'Tinggi & Kritis' },
+  { k: 'n', l: 'Insiden (jumlah)' }, { k: 'pct', l: 'Insiden (%)' }, { k: 'rp', l: 'Kerugian' }, { k: 'tk', l: 'Tinggi & Kritis' },
   { k: 'md', l: 'Meninggal' }, { k: 'lk', l: 'Luka' }, { k: 'op', l: 'Masih terbuka' },
 ];
 /** Kolom menentukan syarat "Lihat insiden". */
@@ -190,7 +190,6 @@ export function drillView(inc: DrillInc[], s: DrillState, kk: boolean) {
     const o = DIM[g].ord!;
     rows.sort((a, b) => o.indexOf(a.v) - o.indexOf(b.v));
   } else rows.sort((a, b) => b.n - a.n || a.v.localeCompare(b.v));
-  const maxN = Math.max(1, ...rows.map((r) => r.n));
   const fmt = (k: Col, r: Agg & { pct: number }) => (k === 'rp' ? rp(r.rp) : k === 'pct' ? Math.round(r.pct * 100) + '%' : String(r[k]));
   const pop = s.pop;
 
@@ -203,7 +202,7 @@ export function drillView(inc: DrillInc[], s: DrillState, kk: boolean) {
       const on = !!(pop && pop.v === r.v && pop.c === c.k);
       return {
         k: c.k, side: ci >= 4 ? 'r' : 'l', z: !val, v: fmt(c.k, r), cls: c.k === 'md' && r.md > 0 ? 'strong' : '',
-        bar: c.k === 'n', w: Math.round((r.n / maxN) * 100) + '%', exp: on,
+        bar: c.k === 'pct', w: Math.round(r.pct * 100) + '%', exp: on,
         aria: c.l + ' ' + r.v + ': ' + fmt(c.k, r) + '. Klik untuk pilihan',
       };
     }),
@@ -277,7 +276,7 @@ export function drillView(inc: DrillInc[], s: DrillState, kk: boolean) {
     lColL: kk ? 'Wilayah kerja' : 'KKKS · WK', lRows, lAll: lXs,
     pgT: lXs.length ? pg * PG + 1 + '–' + Math.min(lXs.length, pg * PG + PG) + ' dari ' + lXs.length : '',
     pg, pages, prevDis: pg === 0, nextDis: pg >= pages - 1,
-    foot2: 'Meninggal/Luka = jumlah orang' + (unk ? ' · ' + unk + ' insiden korban belum diketahui' : ''),
+    foot2: 'Insiden (%) = porsi dari ' + tot.n + ' insiden di tampilan ini. Meninggal/Luka = jumlah orang' + (unk ? ' · ' + unk + ' insiden korban belum diketahui' : ''),
   };
 }
 export type DrillView = ReturnType<typeof drillView>;

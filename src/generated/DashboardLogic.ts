@@ -45,7 +45,8 @@ export class DashboardLogic extends DCLogic {
     const moCov = [31, 28, 31, 30, 31, 30].map((dn, i) => { if (pFull) return 1; let c = 0; for (let d = 1; d <= dn; d++) { const t = '2026-' + pad2(i + 1) + '-' + pad2(d); if (t >= PD.from && t <= PD.to) c++; } return c / dn; });
     const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
     const PL = PD ? PD.text : 'Semester I 2026';
-    const PCMP = pFull ? 'vs Sem. II 2025' : 'vs periode sebelumnya, perkiraan';
+    // Pembanding = periode yang sama tahun lalu, ikut pilihan periode (masukan PM 26 Nov)
+    const PCMP = 'vs ' + (PD ? PD.prev : 'Sem. I 2025'), PRVL = PD ? PD.prevLong : 'Semester I 2025';
     const wTot0 = {}; WO.forEach((w) => { wTot0[w] = sum(A0.filter((a) => a[1] === w).map((a) => sum(a[5]))); });
     // area setelah filter level, kategori, DTT
     // bagi bilangan bulat secara proporsional (largest remainder) supaya total tetap cocok
@@ -216,12 +217,13 @@ export class DashboardLogic extends DCLogic {
       { label: 'Insiden terverifikasi', val: String(ALL.n), unit: 'insiden', tr: up(ALL.n, prevN), trCls: ALL.n > prevN ? 'tr-bad' : 'tr-good', cmp: PCMP + ' (' + prevN + ')', link: 'Lihat daftar', href: listHref },
       { label: 'Kerugian', val: rp(ALL.r), unit: '', tr: up(ALL.r, prevR), trCls: ALL.r > prevR ? 'tr-bad' : 'tr-good', cmp: PCMP + ' (' + rp(prevR) + ')', link: 'Rincian per wilayah', href: '#' },
       { label: 'Tinggi & Kritis', val: String(tk), unit: 'insiden', tr: incS.filter((r) => r[3] >= 3 && r[4] < 2).length + ' masih terbuka', trCls: 'tr-bad', cmp: 'sisanya sudah ditutup', link: 'Lihat yang terbuka', href: listHref },
-      skk ? { label: 'KKKS melapor (Jun 2026)', val: String(lvl === 'nat' ? 14 : W[z].rep), unit: 'dari ' + (lvl === 'nat' ? 131 : W[z].kk) + ' KKKS', tr: '7–14 per bulan', trCls: 'tr-flat', cmp: 'insiden atau nihil', link: 'Lihat yang belum melapor', href: '#' }
+      skk ? { label: 'KKKS melapor (Jun 2026)', val: String(lvl === 'nat' ? 14 : W[z].rep), unit: 'dari ' + (lvl === 'nat' ? 131 : W[z].kk) + ' KKKS', tr: '7–14 per bulan', trCls: 'tr-flat', cmp: 'mengirim laporan insiden atau kerawanan', link: 'Lihat per KKKS', href: '#' }
           : { label: 'Median lama penanganan', val: String(med).replace('.', ','), unit: 'hari', tr: '▼ 1 hari', trCls: 'tr-good', cmp: PCMP + ' (' + String(med + 1).replace('.', ',') + ' hari)', link: 'Lihat yang lewat tenggat', href: listHref }
     ];
 
     { const wq = skk && lvl !== 'nat' ? '&wilayah=' + z : ''; const TO = ['/insiden?status=terverifikasi' + wq, '/insiden?urut=kerugian' + wq, '/insiden?level=tinggi,kritis&status=terbuka' + wq, skk ? '/insiden?kkks=belum-melapor' + wq : '/insiden?status=lewat-tenggat']; kpis.forEach((kp, i) => { kp.to = TO[i]; }); }
     // ===== AI ringkasan =====
+    const chgTo = (a, b) => a === b ? 'sama dengan' : (a > b ? 'naik ' : 'turun ') + Math.abs(Math.round((a - b) / Math.max(1, b) * 100)) + '% dari';
     const seg = (t, g) => ({ t, plain: !g, act: !!g, go: g || (() => {}) });
     const topLoc = SC.slice().sort((a, b) => b.mx - a.mx || b.n - a.n)[0];
     const catScope = (c) => skk ? (loc ? null : (lvl === 'nat' ? sum(Object.values(c[1])) : (c[1][z] || 0))) : (loc ? (c[2][loc.id] || 0) : sum(Object.values(c[2])));
@@ -231,15 +233,15 @@ export class DashboardLogic extends DCLogic {
       seg(loc ? 'Lokasi ini berada di wilayah kerja ' + loc.kk + '.' : 'Jenis terbanyak: ' + CAT.map((c) => [c[0], c[1][z] || 0]).sort((a, b) => b[1] - a[1])[0][0] + '.')
     ] : null;
     const aiSeg = aiZoom ? aiZoom : !pFull ? [
-      seg(PD.text + ' mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + ' (perkiraan). '),
+      seg(PD.text + ' mencatat ' + ALL.n + ' insiden terverifikasi, ' + chgTo(ALL.n, prevN) + ' ' + PRVL + ' (' + prevN + '), dengan kerugian ' + rp(ALL.r) + ' (perkiraan). '),
       seg(topLoc && topLoc.mx >= 0 && topLoc.n ? 'Level tertinggi ' + LV[topLoc.mx][0] + ' ada di ' : (ALL.n ? '' : 'Tidak ada insiden terverifikasi pada periode ini.')), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? topLoc.name : '', topLoc && topLoc.mx >= 0 && topLoc.n ? go(skk ? topLoc.w : 'own', topLoc.id) : null), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? '.' : '')
     ] : skk ? [
-      seg('Semester I 2026 mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + (dttOn ? ', termasuk 422 kasus DTT di Jabanusa. ' : ', naik 15% dari Semester II 2025. ')),
+      seg(PL + ' mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + (dttOn ? ', termasuk 422 kasus DTT di Jabanusa. ' : ', ' + chgTo(ALL.n, prevN) + ' ' + PRVL + ' (' + prevN + '). ')),
       seg('Sumbagsel', go('sbs')), seg(' menyumbang 63% kerugian walau hanya 36% insiden; kedua insiden Kritis ada di '), seg('Musi Banyuasin', go('sbs', 'mub')), seg('. '),
       seg('Pencurian/Perampokan tetap kategori terbanyak (80), terutama di '), seg('Sumbagut', go('sbu')), seg('. '),
       seg('Pamalu belum mengirim laporan apa pun, jadi angka 0 di wilayah itu belum bisa dibaca sebagai aman.')
     ] : [
-      seg('Semester I 2026 organisasi Anda mencatat ' + NAT.n + ' insiden dengan kerugian ' + rp(NAT.r) + '. '),
+      seg(PL + ' organisasi Anda mencatat ' + NAT.n + ' insiden dengan kerugian ' + rp(NAT.r) + ', ' + chgTo(NAT.n, prevN) + ' ' + PRVL + ' (' + prevN + '). '),
       seg('WK Andalas Darat', go('own', 'mub')), seg(' menyumbang dua pertiga insiden, termasuk kedua insiden Kritis. '),
       seg('Pencurian/Perampokan masih terbanyak (13). Satu insiden Kritis sudah lewat tenggat penanganan.')
     ];
@@ -287,7 +289,7 @@ export class DashboardLogic extends DCLogic {
     if (dttScope) cats.push({ i: CAT.length, n: 'Daerah Terbatas Terlarang', v: dttScope, prev: Math.round(dttScope * 0.9), dtt: true });
     cats = cats.filter((c) => c.v > 0).sort((a, b) => b.v - a.v).slice(0, 6);
     const ctot = sum(cats.map((c) => c.v)) || 1, cmax = Math.max(1, ...cats.map((c) => c.v));
-    const topCat = cats.map((c) => { const d = c.v - c.prev; return { tip: c.n + '\n' + c.v + ' insiden · ' + Math.round(c.v / ctot * 100) + '% dari jenis teratas\nKerugian (perkiraan): ' + rp(ALL.r * c.v / ctot) + '\n' + (pFull ? 'Semester II 2025' : 'Periode sebelumnya (perkiraan)') + ': ' + c.prev + ' insiden', n: c.n, v: String(c.v), w: (c.v / cmax * 100).toFixed(1) + '%', p: Math.round(c.v / ctot * 100) + '%', d: d > 0 ? '▲ ' + d : (d < 0 ? '▼ ' + (-d) : 'tetap'), dc: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq'), cls: (c.dtt ? 'dtt ' : '') + (s.kat === c.i ? 'sel' : ''), aria: c.n + ': ' + c.v + ' insiden', go: () => this.setState({ kat: s.kat === c.i ? null : c.i }) }; });
+    const topCat = cats.map((c) => { const d = c.v - c.prev; return { tip: c.n + '\n' + c.v + ' insiden · ' + Math.round(c.v / ctot * 100) + '% dari jenis teratas\nKerugian (perkiraan): ' + rp(ALL.r * c.v / ctot) + '\n' + PRVL + (pFull ? '' : ' (perkiraan)') + ': ' + c.prev + ' insiden', n: c.n, v: String(c.v), w: (c.v / cmax * 100).toFixed(1) + '%', p: Math.round(c.v / ctot * 100) + '%', d: d > 0 ? '▲ ' + d : (d < 0 ? '▼ ' + (-d) : 'tetap'), dc: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq'), cls: (c.dtt ? 'dtt ' : '') + (s.kat === c.i ? 'sel' : ''), aria: c.n + ': ' + c.v + ' insiden', go: () => this.setState({ kat: s.kat === c.i ? null : c.i }) }; });
     const catCap = (loc ? loc.name : (skk ? (lvl === 'nat' ? 'Semua wilayah' : 'Wilayah ' + W[z].n) : 'Wilayah kerja Anda')) + ' · ' + (cats.length ? cats.length + ' jenis teratas' : 'tidak ada insiden');
     // ===== insiden vs kerawanan =====
     const fS = Math.max(0, ALL.n - dttScope) / (skk ? 106 : 24);
@@ -334,7 +336,7 @@ export class DashboardLogic extends DCLogic {
     const cMax = Math.max(1, ...perM);
     const dlt = (a, b) => b === a ? { t: 'tetap', cls: 'eq' } : { t: (b > a ? '▲ ' : '▼ ') + Math.abs(Math.round((b - a) / (a || 1) * 100)) + '%', cls: b > a ? 'up' : 'dn' };
     const cRows = (skk ? WO.map((w) => [W[w].n, (r) => AREA[r[1]][1] === w]) : A0.filter((a) => a[7] === SEN).map((a) => [a[8], (r) => r[1] === a[0]])).map(([n, f]) => { const x = pcI.filter((r) => r[9] === 2 && f(r)).length, y = pcI.filter((r) => r[9] === 5 && f(r)).length; return { n, a: String(x), b: String(y), ...(() => { const d = y - x; return { d: d === 0 ? '0' : (d > 0 ? '+' : '−') + Math.abs(d), cls: d > 0 ? 'up' : (d < 0 ? 'dn' : 'eq') }; })(), s: Math.abs(y - x) }; }).filter((r) => r.a !== '0' || r.b !== '0').sort((p, q) => q.s - p.s).slice(0, 3);
-    const CHIPS = { kkks: [skk ? 'Per KKKS' : 'Per WK', 'Kerugian terbesar', askScopeL, 'Semester I 2026'], kritis: ['Level Kritis', skk ? 'Wilayah Sumbagsel' : 'Wilayah kerja Anda', 'Juni 2026'], banding: ['Pencurian/Perampokan', 'Maret vs Juni 2026', skk ? 'Seluruh wilayah' : 'Wilayah kerja Anda'], telat: ['Lewat tenggat', 'Belum ditutup', askScopeL] };
+    const CHIPS = { kkks: [skk ? 'Per KKKS' : 'Per WK', 'Kerugian terbesar', askScopeL, pFull ? PL : PD.label], kritis: ['Level Kritis', skk ? 'Wilayah Sumbagsel' : 'Wilayah kerja Anda', 'Juni 2026'], banding: ['Pencurian/Perampokan', 'Maret vs Juni 2026', skk ? 'Seluruh wilayah' : 'Wilayah kerja Anda'], telat: ['Lewat tenggat', 'Belum ditutup', askScopeL] };
     const nAll = ak === 'kkks' ? aRows.length : (ak === 'kritis' || ak === 'telat' ? lSrc.length : 0);
     const c0 = cats[0];
     const pctN = NAT.n ? Math.round(ALL.n / NAT.n * 100) : 0, pctR = NAT.r ? Math.round(ALL.r / NAT.r * 100) : 0;
@@ -378,7 +380,7 @@ export class DashboardLogic extends DCLogic {
       dtt: dttOn, dttStr: dttOn ? 'true' : 'false', dttCls: dttOn ? 'on' : '', toggleDtt: () => this.setState({ dtt: !s.dtt, kat: null }),
       hasAf: af.length > 0, af,
       dlOpen: s.dl, dlStr: s.dl ? 'true' : 'false', toggleDl: () => this.setState({ dl: !s.dl }), dlScope: (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + (s.kat != null ? ' · ' + (s.kat === CAT.length ? 'DTT' : CAT[s.kat][0]) : '') + (s.lv.every(Boolean) ? '' : ' · level terpilih') + ' · ' + PL,
-      ins, aiCap, aiSeg, aiHd: !askOn ? 'Temuan AI' : (res ? 'Jawaban AI' : 'Tanya data'), askOn, askOff: !askOn, askCls: askOn ? 'on' : '', askTxt: (askOn && ak !== 'saran') ? qOf(ak) : (skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"'), askGo: () => this.setState({ ask: ak && ak !== 'saran' ? ak : 'saran', askAll: false }), askClr: () => this.setState({ ask: null, askAll: false }),
+      ins, tcCmp: PRVL + (pFull ? '' : ' (perkiraan)'), aiCap, aiSeg, aiHd: !askOn ? 'Temuan AI' : (res ? 'Jawaban AI' : 'Tanya data'), askOn, askOff: !askOn, askCls: askOn ? 'on' : '', askTxt: (askOn && ak !== 'saran') ? qOf(ak) : (skk ? 'Tanya data, mis. "insiden Kritis di Sumbagsel bulan Juni"' : 'Tanya data, mis. "insiden yang lewat tenggat di WK Andalas Darat"'), askGo: () => this.setState({ ask: ak && ak !== 'saran' ? ak : 'saran', askAll: false }), askClr: () => this.setState({ ask: null, askAll: false }),
       askK: ak, aSaran: ak === 'saran', aBlank: ak === 'tidakpaham', aRes: res, aRank: ak === 'kkks', aList: ak === 'kritis' || ak === 'telat', aCmp: ak === 'banding', sugs,
       askChips: (CHIPS[ak] || []).map((l) => ({ l })), ansRows, lRows,
       lN: lSrc.length + ' insiden', lS: ak === 'kritis' ? (lSrc.length ? (kritMei ? kritMei + ' insiden Kritis lain pada Mei' : 'tidak ada insiden Kritis lain pada Mei') : 'tidak ada insiden Kritis pada Juni') : Object.entries(lateBy).map(([w, n]) => w + ' ' + n).join(' · '),

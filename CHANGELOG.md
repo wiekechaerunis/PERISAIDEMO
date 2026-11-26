@@ -1,5 +1,11 @@
 # Changelog
 
+## 26 Nov 2026 · Dashboard: pembanding tahun lalu, kartu KKKS melapor, kolom Tabel insiden
+
+- Pembanding "vs …" = periode yang sama tahun lalu, ikut tombol Periode: Semester I 2026 → "vs Sem. I 2025", Tahun berjalan → "vs 1 Jan–30 Jun 2025", Bulan ini → "vs Jun 2025", rentang lain digeser satu tahun. Berlaku di kartu KPI, kalimat Temuan AI (naik/turun % dihitung), tooltip dan catatan Jenis terbanyak. "Sem. II 2025" tidak dipakai lagi, termasuk di Laporan PDF dan contoh Excel (keduanya isi tetap Semester I 2026).
+- Kartu KKKS melapor: sub-teks "mengirim laporan insiden atau kerawanan", tautan "Lihat per KKKS".
+- Tabel insiden: kolom "Insiden (jumlah)" dan "Insiden (%)"; bar tipis pindah ke kolom Insiden (%) dengan panjang = porsi; catatan kaki "Insiden (%) = porsi dari n insiden di tampilan ini."
+
 ## 26 Nov 2026 · Responsif tablet dan mobile
 
 - Shell semua halaman: tablet (768–1279 px) memakai rail ikon 72 px, mobile (< 768 px) tanpa sidebar; tombol menu di bar atas membuka laci navigasi 280 px (Esc, klik luar, dan pindah halaman menutupnya). Desktop tidak berubah.

@@ -27,7 +27,7 @@ export function TopCategories({ v }: { v: any }) {
 <span className={`d ${c.dc}`}>{c.d}</span>
 </button>
 </Fragment>))}</div>
-<p className="p-cap db-push" style={{ margin: "10px 0 0 0", paddingTop: "10px" }}>Klik jenis untuk menyaring seluruh halaman. Pembanding: Semester II 2025.</p>
+<p className="p-cap db-push" style={{ margin: "10px 0 0 0", paddingTop: "10px" }}>Klik jenis untuk menyaring seluruh halaman. Pembanding: {v.tcCmp}.</p>
 </section></>
   );
 }

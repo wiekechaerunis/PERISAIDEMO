@@ -246,7 +246,8 @@ const PERIOD_PATCHES = [
     const moCov = [31, 28, 31, 30, 31, 30].map((dn, i) => { if (pFull) return 1; let c = 0; for (let d = 1; d <= dn; d++) { const t = '2026-' + pad2(i + 1) + '-' + pad2(d); if (t >= PD.from && t <= PD.to) c++; } return c / dn; });
     const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
     const PL = PD ? PD.text : 'Semester I 2026';
-    const PCMP = pFull ? 'vs Sem. II 2025' : 'vs periode sebelumnya, perkiraan';`],
+    // Pembanding = periode yang sama tahun lalu, ikut pilihan periode (masukan PM 26 Nov)
+    const PCMP = 'vs ' + (PD ? PD.prev : 'Sem. I 2025'), PRVL = PD ? PD.prevLong : 'Semester I 2025';`],
   ['let lv = a[5].slice();', 'let lv = pFull ? a[5].slice() : [0, 1, 2, 3, 4].map((l) => INCP.filter((r) => r[1] === a[0] && r[3] === l).length);'],
   ['lv = alloc(Math.min(catN[a[0]] || 0, sum(a[5])), lv);', 'lv = alloc(Math.min(Math.round((catN[a[0]] || 0) * aF[a[0]]), sum(lv)), lv);'],
   ['lv[0] += DTT[a[0]];', 'lv[0] += Math.round(DTT[a[0]] * dttF);'],
@@ -261,7 +262,7 @@ const PERIOD_PATCHES = [
   ['(isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));', '(isOwn ? 600 : Math.max(1, Math.round(ALL.r * 0.78)));\n    const prevN = (pFull || !(isNat || isOwn)) ? prevN0 : Math.max(1, Math.round(prevN0 * pShare)), prevR = (pFull || !(isNat || isOwn)) ? prevR0 : Math.max(1, Math.round(prevR0 * pShare));'],
   ["'vs Sem. II 2025 ('", "PCMP + ' ('"],
   ['const aiSeg = aiZoom ? aiZoom : skk ? [', String.raw`const aiSeg = aiZoom ? aiZoom : !pFull ? [
-      seg(PD.text + ' mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + ' (perkiraan). '),
+      seg(PD.text + ' mencatat ' + ALL.n + ' insiden terverifikasi, ' + chgTo(ALL.n, prevN) + ' ' + PRVL + ' (' + prevN + '), dengan kerugian ' + rp(ALL.r) + ' (perkiraan). '),
       seg(topLoc && topLoc.mx >= 0 && topLoc.n ? 'Level tertinggi ' + LV[topLoc.mx][0] + ' ada di ' : (ALL.n ? '' : 'Tidak ada insiden terverifikasi pada periode ini.')), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? topLoc.name : '', topLoc && topLoc.mx >= 0 && topLoc.n ? go(skk ? topLoc.w : 'own', topLoc.id) : null), seg(topLoc && topLoc.mx >= 0 && topLoc.n ? '.' : '')
     ] : skk ? [`],
   ["      (skk && lvl === 'nat') ? { m: '2,4×',", "      (!pFull && (lvl === 'nat' || !skk)) ? { m: String(ALL.n), tone: 'neu', t: 'Insiden pada periode ini', d: 'Kerugian ' + rp(ALL.r) + ' (perkiraan) · ' + PD.cap, go: nop }\n        : (skk && lvl === 'nat') ? { m: '2,4×',"],
@@ -279,7 +280,7 @@ const PERIOD_PATCHES = [
   ["0 0 0 4px var(--ink)' : 'none' }));", "0 0 0 4px var(--ink)' : 'none' })).filter((b) => moCov[b.bulan - 1] > 0);"],
   ["' · Semester I 2026' + (N && dttOn", "' · ' + PL + (N && dttOn"],
   ['let v = catScope(c);', 'let v = catScope(c); if (v != null && !pFull) v = Math.round(v * pShare);'],
-  [String.raw`'\nSemester II 2025: '`, String.raw`'\n' + (pFull ? 'Semester II 2025' : 'Periode sebelumnya (perkiraan)') + ': '`],
+  [String.raw`'\nSemester II 2025: '`, String.raw`'\n' + PRVL + (pFull ? '' : ' (perkiraan)') + ': '`],
   ['.map((v) => Math.round(v * fS));\n    const IN =', ".map((v, i) => pFull ? Math.round(v * fS) : Math.round(v / (skk ? [22, 14, 15, 17, 21, 17] : [3, 4, 3, 5, 5, 4])[i] * vN[i]));\n    const IN ="],
   ['[3, 4, 3, 5, 5, 4]).map((v) => Math.round(v * fS));', '[3, 4, 3, 5, 5, 4]).map((v, i) => pFull ? Math.round(v * fS) : vN[i]);'],
   ["(KR[i] / ikMax * 130).toFixed(1) + 'px' }));", "(KR[i] / ikMax * 130).toFixed(1) + 'px' })).filter((b, i) => moCov[i] > 0);"],
@@ -290,6 +291,17 @@ const PERIOD_PATCHES = [
   ["'Data demo · Batas wilayah", "(pFull ? '' : 'Angka selain jumlah insiden = perkiraan · ') + 'Data demo · Batas wilayah"],
   ["s.dtt, s.m].join('|')", "s.dtt, s.m, pFull ? '' : PD.from + PD.to].join('|')"],
   ['catN: CAT.length }', 'catN: CAT.length, per: pFull ? null : { from: PD.from, to: PD.to, label: PD.label } }'],
+  // Masukan PM 26 Nov: kalimat Temuan AI memakai periode terpilih dan pembanding periode yang sama tahun lalu
+  ['const seg = (t, g) =>', "const chgTo = (a, b) => a === b ? 'sama dengan' : (a > b ? 'naik ' : 'turun ') + Math.abs(Math.round((a - b) / Math.max(1, b) * 100)) + '% dari';\n    const seg = (t, g) =>"],
+  ["seg('Semester I 2026 mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + (dttOn ? ', termasuk 422 kasus DTT di Jabanusa. ' : ', naik 15% dari Semester II 2025. ')),",
+    "seg(PL + ' mencatat ' + ALL.n + ' insiden terverifikasi dengan kerugian ' + rp(ALL.r) + (dttOn ? ', termasuk 422 kasus DTT di Jabanusa. ' : ', ' + chgTo(ALL.n, prevN) + ' ' + PRVL + ' (' + prevN + '). ')),"],
+  ["seg('Semester I 2026 organisasi Anda mencatat ' + NAT.n + ' insiden dengan kerugian ' + rp(NAT.r) + '. '),",
+    "seg(PL + ' organisasi Anda mencatat ' + NAT.n + ' insiden dengan kerugian ' + rp(NAT.r) + ', ' + chgTo(NAT.n, prevN) + ' ' + PRVL + ' (' + prevN + '). '),"],
+  ["askScopeL, 'Semester I 2026']", "askScopeL, pFull ? PL : PD.label]"],
+  // Masukan PM 26 Nov: kartu KKKS melapor
+  ["cmp: 'insiden atau nihil', link: 'Lihat yang belum melapor'", "cmp: 'mengirim laporan insiden atau kerawanan', link: 'Lihat per KKKS'"],
+  // catatan Jenis terbanyak: pembanding ikut periode
+  ['ins, aiCap,', "ins, tcCmp: PRVL + (pFull ? '' : ' (perkiraan)'), aiCap,"],
 ];
 
 // Iterasi 2 (disetujui PM 25 Nov): tambahan di logika peta. Lihat CHANGELOG.md.
@@ -386,6 +398,7 @@ const patches = {
     [/<div className="db-col">/, '<div className="db-col" data-tip={b.tip} role="link" tabIndex={0} onClick={() => v.ui?.go?.("/insiden?bulan=" + b.bulan)} onKeyDown={(e) => { if (e.key === "Enter") v.ui?.go?.("/insiden?bulan=" + b.bulan); }}>'],
   ],
   TopCategories: [
+    [/Pembanding: Semester II 2025\./, 'Pembanding: {v.tcCmp}.'],
     [/className=\{\`db-tc \$\{c\.cls\}\`\} onClick=\{c\.go\}/, 'className={\`db-tc \${c.cls}\`} data-tip={c.tip} onClick={c.go}'],
   ],
   AppBar: [
@@ -469,7 +482,8 @@ function main() {
       const html = read(`Dashboard-PDF${n}.dc.html`);
       const { tpl, style: st } = extractParts(html);
       style = st;
-      const jsx = convertTemplate(tpl);
+      // Masukan PM 26 Nov: pembanding = periode yang sama tahun lalu (laporan berisi Semester I 2026 → Semester I 2025)
+      const jsx = convertTemplate(tpl).split('Sem. II 2025').join('Sem. I 2025').split('Semester II 2025').join('Semester I 2025');
       write(
         path.join(ROOT, `src/features/laporan/Pdf${n}.tsx`),
         `${HEADER}export function Pdf${n}() {\n  return (\n    <>${pretty(jsx)}</>\n  );\n}\n`,
