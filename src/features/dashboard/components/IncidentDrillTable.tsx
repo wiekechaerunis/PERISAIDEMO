@@ -136,10 +136,8 @@ export function IncidentDrillTable({ v }: { v: any }) {
         </div>
 
         {view.showTable && (
-          <div className="td-scroll"><table className="td-t">
-            <colgroup>
-              {['30%', '13%', '6%', '11%', '11%', '10%', '8%', '11%'].map((w, k) => <col key={k} style={{ width: w }} />)}
-            </colgroup>
+          // td-sum: lebar kolom otomatis, kolom angka selebar isinya, Kategori mengambil sisa; layar sempit bergeser
+          <div className="td-scroll"><table className="td-t td-sum">
             <thead>
               <tr>
                 <th scope="col" aria-sort={view.hDim.sort}>

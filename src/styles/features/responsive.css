@@ -86,7 +86,7 @@
 .td-scroll { max-width: 100%; }
 @media (max-width: 1279px) {
   .td-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .td-scroll > .td-t { min-width: 640px; }
+  .td-scroll > .td-t:not(.td-sum) { min-width: 640px; }
   .td-scroll > .td-t.td-l { min-width: 560px; }
 }
 
