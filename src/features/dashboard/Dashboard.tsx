@@ -6,6 +6,7 @@ import { DashboardView } from './DashboardView';
 import { TipLayer } from './TipLayer';
 import { incidentFromDashboard, type IncInfo } from './openIncident';
 import { useDashPeriod } from './dashPeriod';
+import { useBreakpoint } from '@/components/layout/sidebarState';
 
 export type { DashboardProps };
 
@@ -18,7 +19,10 @@ export function Dashboard(props: DashboardProps) {
   const [mapW, setMapW] = useState(1078);
   // Periode dari tombol Periode (URL); rentang penuh Jan–Jun 2026 = angka semester apa adanya
   const { info: periode } = useDashPeriod();
-  const v = useDashboard({ ...props, panelOpen, mapW, periode });
+  // Mobile: panel ringkasan ada di bawah peta (responsive.css), jadi tidak mengurangi lebar area peta di rumus zoom.
+  const bp = useBreakpoint();
+  const panelCovers = panelOpen && bp !== 'mobile';
+  const v = useDashboard({ ...props, panelOpen: panelCovers, mapW, periode });
   // Iterasi 3: di tingkat nasional panel ringkasan tersembunyi (bidang wilayah + chip sudah membawa informasinya);
   // panel muncul otomatis saat zoom ke wilayah atau WK. Tombol "Ringkasan" tetap bisa membukanya.
   const [lastLvl, setLastLvl] = useState<string | null>(null);
@@ -43,6 +47,7 @@ export function Dashboard(props: DashboardProps) {
 
   const ui = {
     panelOpen,
+    panelCovers,
     setPanelOpen,
     mapW,
     setMapW: (w: number) => setMapW((o) => (Math.abs(o - w) > 1 ? w : o)),

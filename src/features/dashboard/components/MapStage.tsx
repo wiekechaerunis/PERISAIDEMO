@@ -63,7 +63,7 @@ export function MapStage({ v, hl, setHl }: { v: any; hl: Hl; setHl: (h: Hl) => v
     const map = mapRef.current;
     if (!map) return;
     const mr = map.getBoundingClientRect();
-    const right = mr.right - (ui.panelOpen ? 376 : 0) - 8;
+    const right = mr.right - (ui.panelCovers ? 376 : 0) - 8;
     map.querySelectorAll<HTMLElement>('.db-pill').forEach((p) => {
       p.style.marginLeft = '0px';
       if (pan.x || pan.y) return;

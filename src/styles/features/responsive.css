@@ -95,7 +95,8 @@
   .db-maphd { flex-direction: column; padding: 14px 14px 10px; }
   .db-map { height: auto; overflow: visible; display: flex; flex-direction: column; }
   .db-map .db-wrap { position: relative; top: auto; transform: none; width: 100%; margin: 48px 0 12px; flex: none; }
-  .db-map .db-hint { top: 10px; left: 136px; right: 12px; transform: none; text-align: center; font-size: 11px; }
+  .db-map .db-hint { display: none; }
+  .db-maphd > :last-child { text-align: left !important; }
   .db-map .db-ctl { top: 8px; left: 8px; flex-direction: row; }
   .db-panel { position: relative; inset: auto; width: auto; max-height: none; margin: 0 8px 8px; box-shadow: none; border: 1px solid var(--border); }
   .db-map .db-leg { bottom: auto; top: 52px; max-width: calc(100% - 32px); }
@@ -117,3 +118,22 @@
 
 /* Sisa luberan beberapa piksel (margin negatif) tidak menggeser halaman di tablet/mobile */
 @media (max-width: 1279px) { .lk-main { overflow-x: clip; } }
+
+/* Dashboard mobile: tanpa subtitle; Periode dan Unduh jadi tombol ikon di baris judul */
+@media (max-width: 767px) {
+  .db-page .p-appbar.top .sub { display: none; }
+  .db-page .p-appbar .hdr { flex-wrap: nowrap; }
+  .db-page .p-appbar .hdr > .acts { flex: none; order: 0; gap: 4px !important; }
+  .db-page .p-appbar .hdr > .acts > * { flex: none; }
+  .db-page .p-appbar .acts > div > .p-input,
+  .db-page .p-appbar .acts > .p-btn { position: relative; width: 44px; height: 44px !important; min-height: 44px; padding: 0; gap: 0; justify-content: center; font-size: 0 !important; background: var(--surface); }
+  .db-page .p-appbar .acts > div > .p-input > svg:last-of-type,
+  .db-page .p-appbar .acts > .p-btn > svg:last-of-type { display: none; }
+  .db-page .p-appbar .acts > div > .p-input > svg:first-of-type { width: 20px !important; height: 20px !important; color: var(--ink) !important; }
+  .db-page .p-appbar .acts > .p-btn > svg:first-of-type { width: 20px !important; height: 20px !important; }
+  /* titik penanda bila periode bukan Semua waktu */
+  .db-page .p-appbar .acts > div > .p-input:not([aria-label="Periode: Semester I 2026"])::after { content: ''; position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--action); box-shadow: 0 0 0 2px var(--surface); }
+  /* menu tidak keluar layar */
+  .db-page .p-appbar .acts .db-dl { width: min(340px, calc(100vw - 24px)); right: 0; top: 50px; }
+  .db-page .p-appbar .acts > div > .p-pop { position: fixed !important; left: 12px !important; right: 12px !important; width: auto !important; top: 64px !important; }
+}
