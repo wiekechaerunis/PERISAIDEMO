@@ -87,7 +87,9 @@ bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
 | S-39 | P31 untuk eskalasi otomatis karena lewat tenggat (PS1) | Kartu "Diminta arahan dari Anda" hanya saat PIC mengeskalasi ke SKK; PS1 tetap banner + Langkah berikutnya | P31 hanya menggambarkan eskalasi manual ke SKK |
 | S-40 | Sidebar ciut tidak digambar di board Sidebar | Mode ciut memakai kelas DS `.p-sb.mini` (72 px, ikon, tip saat hover), wordmark jadi "P", kaki hak cipta disembunyikan | Permintaan pengguna (expand/collapse); status disimpan per peramban |
 
-## Tabel insiden Dashboard (S16, `/analitik`, 26 Nov 2026)
+## Tabel insiden Dashboard (S16, `/analitik`, 26 Nov 2026) · versi pivot, sudah diganti
+
+> Diganti kartu TabelDrill (bagian berikutnya). D-T1..D-T5 hanya catatan sejarah; pivot dan tesnya sudah dihapus.
 
 Kartu "Kategori × wilayah" / "Kategori × wilayah kerja" diganti kartu "Tabel insiden" dari canvas Desain v2
 (`project/Dashboard.dc.html`, `section.db-tb`, versi 1795661784-3e31; contoh dirinci di `Dashboard-Tabel.dc.html`).
@@ -101,3 +103,24 @@ Kartu "Kategori × wilayah" / "Kategori × wilayah kerja" diganti kartu "Tabel i
 | D-T3 | Tautan "Buka di daftar insiden →" | Teks tanpa "→"; panah datang dari `.lk-alink::after` | Di desain panahnya tampil dua kali |
 | D-T4 | Menu Baris / Rincikan / Kolom hanya dibuka-tutup lewat tombol | Menu juga menutup dengan Escape atau saat fokus pindah ke luar | Tambahan kecil; tampilan tidak berubah |
 | D-T5 | — | "Buka di daftar insiden" membuka `/insiden` tanpa filter | Daftar insiden belum membaca filter dari URL (sama dengan tautan dashboard lain) |
+
+## Tabel insiden Dashboard · TabelDrill (S16, `/analitik`, 26 Nov 2026)
+
+Kartu Tabel insiden kini tabel ringkasan + drill-down sesuai komponen `project/TabelDrill.dc.html` dan board TD0–TD8
+(canvas Desain v2, versi 1795666495-d16d). Markup dan kelas `td-*` disalin ke
+`src/features/dashboard/components/IncidentDrillTable.tsx` dan `src/styles/tabel-drill.css`; perilaku `renderVals()` diport
+ke `src/analytics/tabelDrill.ts` (fungsi murni). Aturan korban ada di `src/analytics/casualties.ts`. Pivot sebelumnya
+(state `tb`, prop `tabel`) dihapus dari generator (`scripts/dashboard-tabel.mjs`).
+
+| ID | Desain / acuan | Prototype | Alasan |
+|---|---|---|---|
+| D-TD1 | `data()` demo: 147 insiden dengan angka sendiri | Insiden dalam cakupan filter halaman dari logika dashboard (`v.tdInc`, data `INC`), jadi baris Total = kartu Insiden terverifikasi, Kerugian, dan Tinggi & Kritis (dijaga `src/analytics/tabelDrill.test.ts`). Kerugian per insiden = kerugian area setelah filter dibagi rata ke insidennya. Dua pengecualian kartu angka: dengan filter **Kategori**, kartu Tinggi & Kritis memakai sebaran level perkiraan (alokasi matriks desain) sedangkan tabel menghitung insiden sebenarnya; bila **Hitung DTT** aktif, kartu ikut menghitung DTT sedangkan tabel tidak | Kartu lain tidak boleh diubah; DTT tidak punya baris insiden |
+| D-TD2 | Korban dari isian pelapor dan rincian PIC | Data `INC` dashboard belum punya korban. Ditambahkan di `src/data/dashboardIncidentMeta.ts`: 2 insiden Kritis dengan korban meninggal, 6 dengan luka (satu juga dengan korban meninggal; dua Ditutup dengan rincian PIC yang berbeda dari isian pelapor), 1 "Belum diketahui". Level tidak diubah. Detail insiden yang dibuat dari dashboard ikut memuat korban yang sama | Permintaan tugas |
+| D-TD3 | Waktu kejadian = tanggal + jam | Data dashboard hanya punya tanggal; jam demo diturunkan tetap dari nomor insiden (`jamKejadian`) dan dipakai juga di Detail | Tidak ada jam di data desain |
+| D-TD4 | Wilayah kerja (KKKS) baris kedua "Sumatera Selatan" | Nama area (kabupaten) dari data dashboard, mis. "Musi Banyuasin" | Data provinsi per WK tidak ada |
+| D-TD5 | Toast "Contoh: CSV tampilan ini diunduh (…). Unduhan tercatat di jejak audit." | File CSV sungguhan (UTF-8, isi = tampilan saat ini; tingkat insiden = semua halaman), toast "CSV tampilan ini diunduh (…)." tanpa kalimat jejak audit | Prototype belum punya jejak audit unduhan |
+| D-TD6 | "Saring halaman" hanya toast | Filter halaman benar-benar dipasang (chip Filter aktif, semua kartu ikut): Kategori, Wilayah SKK, KKKS, Wilayah kerja (zoom ke WK), Level (hanya level itu), Bulan (Periode = rentang bulan itu). Untuk **Status penanganan** butir ini tidak ditampilkan | Bar filter dashboard tidak punya filter status |
+| D-TD7 | Tautan "Buka di daftar insiden →" | Teks tanpa "→" (panah dari `.lk-alink::after`); tautan membawa filter jejak + syarat kolom (`/insiden?kategori=…&wilayah=…&korban=meninggal`). Daftar insiden belum membaca parameter ini | Daftar insiden di luar cakupan tugas |
+| D-TD8 | Popover hanya ditutup tombol × | Juga Escape dan klik di luar | Tambahan kecil |
+| D-TD9 | Kategori Illegal tapping/drilling (TD0 gap #3) | Mengikuti kategori kartu lain | Sesuai catatan TD0 |
+

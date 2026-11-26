@@ -22,6 +22,7 @@
 @import './dashboard.css';
 @import './laporan.css';
 @import './features/dashboard-app.css';
+@import './tabel-drill.css';
 @import './features/tl.css';
 @import './features/kerawanan.css';
 @import './features/tindak-lanjut.css';

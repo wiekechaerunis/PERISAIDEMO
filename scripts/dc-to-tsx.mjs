@@ -339,17 +339,17 @@ const LOGIC_PATCHES = [
   ["aSaran: ak === 'saran',", "askK: ak, aSaran: ak === 'saran',"],
   ['    const SITES = {', '    const SITES = { ...EXTRA_SITES, '],
   ['goUp: zoomOut,', "goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length }, askApply: (patch) => this.setState(patch),"],
-  // Tabel insiden (Desain v2, section.db-tb) menggantikan matriks Kategori × wilayah: scripts/dashboard-tabel.mjs
+  // Tabel insiden (TabelDrill, board TD0–TD8) menggantikan matriks Kategori × wilayah: scripts/dashboard-tabel.mjs
   ...TABLE_LOGIC_PATCHES,
   ...PERIOD_PATCHES,
 ];
 
 // Peta komponen ke ID bagian PRD §6a (S1..S19)
-const HAND = new Set(['IncidentMap', 'MapStage', 'MapStrip']); // + MapPanel, FilterSelect (bukan hasil split)
+const HAND = new Set(['IncidentMap', 'MapStage', 'MapStrip', 'IncidentDrillTable']); // + MapPanel, FilterSelect (bukan hasil split)
 const S_TAG = {
   AppBar: 'S1', KkksBanner: 'S2', FilterBar: 'S3', ActiveFilters: 'S4', KpiRow: 'S5', AiFindings: 'S6', ActionList: 'S7',
   IncidentMap: 'S8', MapStage: 'S8 (peta, zoom, lapisan)', MapStrip: 'S9-S11 (legenda, tabel wilayah)', TopCategories: 'S12',
-  IncidentVsRisk: 'S13', TrendChart: 'S14', HandlingStatus: 'S15', IncidentTable: 'S16 (Tabel insiden)', Footnote: 'S17',
+  IncidentVsRisk: 'S13', TrendChart: 'S14', HandlingStatus: 'S15', IncidentDrillTable: 'S16 (Tabel insiden)', Footnote: 'S17',
 };
 
 const patches = {
@@ -387,10 +387,6 @@ const patches = {
   ],
   TopCategories: [
     [/className=\{\`db-tc \$\{c\.cls\}\`\} onClick=\{c\.go\}/, 'className={\`db-tc \${c.cls}\`} data-tip={c.tip} onClick={c.go}'],
-  ],
-  // Tabel insiden: menu Baris/Rincikan/Kolom menutup saat fokus keluar atau Escape (desain hanya membuka/menutup lewat tombol)
-  IncidentTable: [
-    [/<span className="dd">(<button type="button" className=(?:"pill"|\{`pill \$\{v\.\w+\.cls\}`\}) onClick=\{v\.(\w+)\.t\})/g, '<span className="dd" onBlur={(e) => { if (v.$2.open && !e.currentTarget.contains(e.relatedTarget as Node)) v.$2.t(); }} onKeyDown={(e) => { if (e.key === "Escape" && v.$2.open) v.$2.t(); }}>$1'],
   ],
   AppBar: [
     // Masukan PM 25 Nov: tombol periode bisa dibuka (PeriodSelect)

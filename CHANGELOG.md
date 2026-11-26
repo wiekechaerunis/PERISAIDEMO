@@ -1,5 +1,12 @@
 # Changelog
 
+## 26 Nov 2026 · Tabel insiden: tabel ringkasan + drill-down (TabelDrill)
+
+- Kartu Tabel insiden 1:1 komponen TabelDrill (board TD1–TD8): satu tampilan = satu tingkat, breadcrumb + × Reset, Kelompokkan menurut (SKK 7 dimensi, KKKS 5), kolom Insiden (bar), %, Kerugian, Tinggi & Kritis, Meninggal, Luka, Masih terbuka; klik angka membuka popover Lihat n insiden / Rincikan menurut / Saring halaman; tingkat insiden 10 per halaman, klik baris membuka Detail.
+- "Saring halaman" memasang filter halaman sungguhan; Unduh CSV mengunduh file; jejak drill di URL (`?tabel=…&lihat=…`), bertahan saat reload dan Back.
+- Korban (Meninggal, Luka = jumlah orang; PIC menggantikan pelapor setelah Ditutup; Belum diketahui tidak dihitung) di `src/analytics/casualties.ts`; data korban demo di `src/data/dashboardIncidentMeta.ts`. Pivot sebelumnya dihapus.
+- Tes: `src/analytics/tabelDrill.test.ts` (20 unit, termasuk Total = kartu angka), e2e `node e2e/tabel-drill.e2e.mjs`, screenshot per board di `screenshots/tabel-drill/`. Penyimpangan: DEVIATIONS D-TD1..D-TD9.
+
 ## 26 Nov 2026 · Nomor insiden demo tidak lagi dobel
 
 - Area tambahan Batanghari (`jbi`, PT Bara Jambi Energi) memakai nomor INS-BJE-2026-0001..0004 yang sudah dipakai WK Bara Timur (`tjb`, KKKS yang sama). Nomor area tambahan kini melanjutkan nomor KKKS yang sudah ada (jbi = INS-BJE-2026-0007..0010), jadi tautan Detail dari Dashboard membuka insiden yang benar. Tes `src/data/dashboardExtra.test.ts` menjaga semua nomor unik.

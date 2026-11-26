@@ -15,7 +15,7 @@ import { TopCategories } from './components/TopCategories';
 import { IncidentVsRisk } from './components/IncidentVsRisk';
 import { TrendChart } from './components/TrendChart';
 import { HandlingStatus } from './components/HandlingStatus';
-import { IncidentTable } from './components/IncidentTable';
+import { IncidentDrillTable } from './components/IncidentDrillTable';
 import { Footnote } from './components/Footnote';
 
 /** Kerangka halaman Dashboard; isi tiap bagian ada di ./components. `v` = hasil renderVals(). */
@@ -39,7 +39,7 @@ export function DashboardView({ v }: { v: any }) {
 <IncidentVsRisk v={v} />
 <TrendChart v={v} />
 <HandlingStatus v={v} />
-<IncidentTable v={v} />
+<IncidentDrillTable v={v} />
 <Footnote v={v} />
 </div>
 </main>
