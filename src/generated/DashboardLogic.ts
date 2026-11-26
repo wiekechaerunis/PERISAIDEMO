@@ -13,7 +13,7 @@ export class DashboardLogic extends DCLogic {
     if (z === 'loc') { z = kk ? 'own' : 'sbs'; loc = 'mub'; }
     else if (kk) z = 'own';
     if (p.statusTerbuka === '' ) p.statusTerbuka = null;
-    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka), ask: p.tanya === true ? 'kkks' : (p.tanya || null), askAll: false };
+    this.state = { z, loc, lv: [1, 1, 1, 1, 1], dtt: !!p.dtt, kat: null, m: 'n', lvOpen: false, layOpen: false, lay: { wk: true, fas: true, adm: true }, dl: !!p.menuUnduh, stOpen: p.statusTerbuka == null ? null : Number(p.statusTerbuka), ask: p.tanya === true ? 'kkks' : (p.tanya || null), askAll: false, tb: { r1: 'kat', r2: null, col: kk ? 'lv' : 'wil', m: 'n', open: {}, cf: null, dd: null } };
   }
   renderVals() {
     const skk = (this.props.peran ?? 'skk') !== 'kkks';
@@ -352,21 +352,56 @@ export class DashboardLogic extends DCLogic {
       (mI.length < 2 ? { m: String(krT), tone: 'info', t: 'Kerawanan pada periode ini', d: 'Perkiraan dari pola bulanan · ' + (PD ? PD.cap : ''), go: nop } : { m: (krUp >= 0 ? '▲ ' : '▼ ') + Math.abs(krUp) + '%', tone: krUp > 20 ? 'warn' : 'info', t: 'Kerawanan ' + (krUp >= 0 ? 'naik' : 'turun') + ' sejak ' + MOL[mI[0]], d: 'Tanda awal: ' + k0 + ' → ' + k1 + ' per bulan', go: nop })
     ].filter(Boolean);
     const aiCap = PL + ' · ' + (loc ? loc.name : (skk ? (lvl === 'nat' ? 'seluruh wilayah' : W[z].n) : 'wilayah kerja Anda')) + ' · data 25 Nov 2026';
-    // ===== matriks =====
-    let mxCols, mxRows;
-    if (skk) {
-      const rows = CAT.map((c, i) => ({ n: c[0], i, v: WO.map((w) => Math.round((c[1][w] || 0) * wF[w])) }));
-      if (dttOn) rows.push({ n: 'Daerah Terbatas Terlarang (DTT)', i: CAT.length, v: WO.map((w) => w === 'jbn' ? Math.round(422 * dttF) : 0), dtt: true });
-      const cm = Math.max(1, ...rows.filter((r) => !r.dtt).map((r) => Math.max(...r.v)));
-      mxCols = WO.map((w) => ({ n: W[w].n, s: W[w].nr ? 'belum lapor' : (W[w].none ? 'nihil' : '') }));
-      mxRows = rows.map((r) => ({ n: r.n, cls: r.dtt ? 'dtt' : '', tot: String(sum(r.v)), cells: r.v.map((v, j) => ({ v: v ? String(v) : '–', cls: v ? (s.kat === r.i && z === WO[j] ? 'sel' : '') : 'z', bg: v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(8 + Math.min(1, v / cm) * 52) + '%, var(--surface))' : 'var(--surface-subtle)', aria: r.n + ' di ' + W[WO[j]].n + ': ' + v, go: v ? () => this.setState({ kat: r.i, z: WO[j], loc: null }) : () => {} })) }));
-    } else {
-      const ws = [['mub', 'WK Andalas Darat'], ['bny', 'WK Batu Ampar']];
-      mxCols = ws.map((w) => ({ n: w[1], s: '' }));
-      const rows = CAT.map((c, i) => ({ n: c[0], i, v: ws.map((w) => Math.round((c[2][w[0]] || 0) * aF[w[0]])) })).filter((r) => sum(r.v) > 0);
-      const cm = Math.max(1, ...rows.map((r) => Math.max(...r.v)));
-      mxRows = rows.map((r) => ({ n: r.n, cls: '', tot: String(sum(r.v)), cells: r.v.map((v, j) => ({ v: v ? String(v) : '–', cls: v ? (s.kat === r.i ? 'sel' : '') : 'z', bg: v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(8 + v / cm * 52) + '%, var(--surface))' : 'var(--surface-subtle)', aria: r.n + ' di ' + ws[j][1] + ': ' + v, go: v ? () => this.setState({ kat: r.i, z: 'own', loc: ws[j][0] }) : () => {} })) }));
-    }
+    // ===== Tabel insiden: pivot ringan + drill-down (menggantikan matriks kategori × wilayah) =====
+    const tb = s.tb;
+    const setTb = (o) => this.setState({ tb: Object.assign({}, tb, o) });
+    // kerugian per insiden: data demo belum punya kerugian per insiden, jadi kerugian area setelah filter (angka yang sama dengan
+    // KPI Kerugian) dibagi rata ke insiden area itu. PRODUKSI: nilai kerugian per insiden dari data layer. Lihat DEVIATIONS D-T2.
+    // Disimpan per baris (bukan per nomor): data demo tambahan punya nomor yang sama di dua area (INS-BJE-2026-0001..0004).
+    const RPI = new Map();
+    { const cnt = {}; incS.forEach((r) => { cnt[r[1]] = (cnt[r[1]] || 0) + 1; }); const aRp = {}; SC.forEach((a) => { aRp[a.id] = a.rp; }); incS.forEach((r) => { RPI.set(r, (aRp[r[1]] || 0) / cnt[r[1]]); }); }
+    const DIM = { wil: ['Wilayah', (r) => W[AREA[r[1]][1]].n], kkks: ['KKKS', (r) => AREA[r[1]][7].replace(/^PT /, '')], wk: ['Wilayah kerja', (r) => AREA[r[1]][8]], kat: ['Kategori', (r) => CAT[r[2]][0]], lv: ['Level', (r) => LV[r[3]][0]] };
+    const DK = skk ? ['wil', 'kkks', 'wk', 'kat', 'lv'] : ['wk', 'kat', 'lv'];
+    const mVal = (list) => tb.m === 'rp' ? sum(list.map((r) => RPI.get(r) || 0)) : list.length;
+    const fmtV = (v) => tb.m === 'rp' ? (v ? rp(v) : '–') : (v ? String(v) : '–');
+    const ordVals = (k, list) => { const u = [...new Set(list.map(DIM[k][1]))]; if (k === 'lv') return LV.map((l) => l[0]).filter((l) => u.includes(l)); if (k === 'wil') return WO.map((w) => W[w].n).filter((n) => u.includes(n)); return u.sort((x, y) => mVal(list.filter((r) => DIM[k][1](r) === y)) - mVal(list.filter((r) => DIM[k][1](r) === x))); };
+    const TB = incS;
+    const colVals = tb.col ? ordVals(tb.col, TB) : [];
+    const cellsOf = (list) => colVals.map((cv) => mVal(list.filter((r) => DIM[tb.col][1](r) === cv)));
+    const cMaxAll = (() => { let m = 1; ordVals(tb.r1, TB).forEach((g) => { const l = TB.filter((r) => DIM[tb.r1][1](r) === g); cellsOf(l).forEach((v) => { if (v > m) m = v; }); if (!tb.col) m = Math.max(m, mVal(l)); }); return m; })();
+    const tbHeat = (v) => v ? 'color-mix(in srgb, var(--chart-series-1) ' + Math.round(6 + Math.min(1, v / cMaxAll) * 46) + '%, var(--surface))' : 'var(--surface-subtle)';
+    const tbLines = [];
+    const leafs = (list, key, pad) => {
+      const cf = tb.cf && tb.cf.k === key ? tb.cf.v : null;
+      const l2 = (cf ? list.filter((r) => DIM[tb.col][1](r) === cf) : list).slice().sort(byPrio);
+      l2.slice(0, 5).forEach((r) => { const ir = incRow(r); tbLines.push({ leaf: true, agg: false, more: false, pad, ...ir, d: (skk ? AREA[r[1]][7].replace(/^PT /, '') + ' · ' : '') + AREA[r[1]][8] + ' · ' + r[6], x: stName(r), xc: r[5] ? 'late' : '' }); });
+      tbLines.push({ more: true, agg: false, leaf: false, pad, mT: (l2.length > 5 ? '5 dari ' : '') + l2.length + ' insiden' + (cf ? ' · ' + DIM[tb.col][0] + ' ' + cf : ''), mL: 'Buka di daftar insiden', href: listHref });
+    };
+    const aggLine = (name, list, key, depth, hasKids) => {
+      const ex = !!tb.open[key];
+      const cv = cellsOf(list);
+      tbLines.push({ agg: true, leaf: false, more: false, cls: depth ? 'l2' : 'l1', n: name, sub: '', pad: (8 + depth * 22) + 'px', exStr: ex ? 'true' : 'false', rot: ex ? 'rotate(90deg)' : 'none',
+        tog: () => { const o = Object.assign({}, tb.open); if (o[key]) delete o[key]; else o[key] = 1; setTb({ open: o, cf: tb.cf && tb.cf.k === key ? null : tb.cf }); },
+        tot: fmtV(mVal(list)),
+        cells: cv.map((v, j) => ({ v: fmtV(v), bg: tbHeat(v), cls: v ? (tb.cf && tb.cf.k === key && tb.cf.v === colVals[j] ? 'sel' : '') : 'z', aria: name + ', ' + DIM[tb.col][0] + ' ' + colVals[j] + ': ' + fmtV(v), go: v ? () => { const o = Object.assign({}, tb.open); o[key] = 1; const same = tb.cf && tb.cf.k === key && tb.cf.v === colVals[j]; setTb({ open: o, cf: same ? null : { k: key, v: colVals[j] } }); } : nop })) });
+      return ex;
+    };
+    ordVals(tb.r1, TB).forEach((g) => {
+      const l = TB.filter((r) => DIM[tb.r1][1](r) === g);
+      const ex = aggLine(g, l, g, 0, !!tb.r2);
+      if (!ex) return;
+      const cfHere = tb.cf && tb.cf.k === g;
+      if (tb.r2 && !cfHere) ordVals(tb.r2, l).forEach((h) => { const l2 = l.filter((r) => DIM[tb.r2][1](r) === h); const k2 = g + '|' + h; if (aggLine(h, l2, k2, 1, false)) leafs(l2, k2, '52px'); });
+      else leafs(l, g, '30px');
+    });
+    const tbNcol = colVals.length;
+    const tbGrid = 'minmax(220px, 1.6fr)' + (tbNcol ? ' repeat(' + tbNcol + ', minmax(72px, 1fr))' : '') + ' 88px';
+    const ddOf = (slot, cur, opts, ph) => ({ l: cur ? DIM[cur][0] : ph, cls: cur ? '' : 'ph', open: tb.dd === slot, str: tb.dd === slot ? 'true' : 'false', t: () => setTb({ dd: tb.dd === slot ? null : slot }),
+      opts: opts.map((k) => ({ l: k ? DIM[k][0] : (slot === 'col' ? 'Tanpa kolom' : 'Tanpa rincian'), on: k === cur ? 'true' : 'false', pick: () => { const o = { dd: null, open: {}, cf: null }; o[slot] = k; if (slot === 'r1' && k === tb.r2) o.r2 = null; if (slot !== 'col' && k && k === tb.col) o.col = null; setTb(o); } })) });
+    const dR1 = ddOf('r1', tb.r1, DK, '');
+    const dR2 = ddOf('r2', tb.r2, [null].concat(DK.filter((k) => k !== tb.r1 && k !== tb.col)), '+ Rincikan');
+    const dCol = ddOf('col', tb.col, [null].concat(DK.filter((k) => k !== tb.r1 && k !== tb.r2)), 'Tanpa kolom');
+    const tbFootV = cellsOf(TB).map(fmtV);
 
     // ===== filter aktif =====
     const af = [];
@@ -427,9 +462,10 @@ export class DashboardLogic extends DCLogic {
       stCap: 'Klik status untuk melihat insidennya' + (dttOn ? ' · DTT tidak termasuk' : ''), st, stBar, stAria: 'Status penanganan: ' + stBar.map((v) => v.n + ' ' + v.v).join(', '), stLate: String(lateList.length), stMed: String(med).replace('.', ',') + ' hari', stClosed: String(closed.length), lateGo: () => this.setState({ stOpen: s.stOpen === 3 ? null : 3 }), lateOpenStr: s.stOpen === 3 ? 'true' : 'false',
 
       trend, trAria: 'Tren per bulan: ' + trend.map((b) => b.m + ' ' + b.lbl).join(', '),
-      mxTitle: skk ? 'Kategori × wilayah' : 'Kategori × wilayah kerja',
-      mxCap: (pFull ? '' : 'Angka per periode = perkiraan dari porsi insiden. ') + 'Klik sel untuk menyaring seluruh halaman dan zoom ke ' + (skk ? 'wilayah' : 'wilayah kerja') + ' itu.' + (skk ? ' 11 kategori tanpa insiden disembunyikan.' : ''),
-      mxCols, mxRows,
+      tbCap: TB.length + ' insiden terverifikasi · klik baris untuk merinci, klik angka untuk melihat insidennya' + (dttOn ? ' · DTT tidak termasuk' : ''),
+      tbMs: [['n', 'Jumlah'], ['rp', 'Kerugian']].map(([k, l]) => ({ l, on: tb.m === k ? 'true' : 'false', pick: () => setTb({ m: k }) })),
+      dR1, dR2, dCol, tbGrid, tbRowHead: DIM[tb.r1][0] + (tb.r2 ? ' › ' + DIM[tb.r2][0] : ''), tbCols: colVals.map((v) => { const li = LV.findIndex((l) => l[0] === v); return { l: v, dD: tb.col === 'lv' ? 'inline-block' : 'none', dc: li >= 0 ? LV[li][1] : 'transparent' }; }),
+      tbLines, tbFoot: tbFootV, tbTot: fmtV(mVal(TB)), tbAnyOpen: Object.keys(tb.open).length > 0, tbCollapse: () => setTb({ open: {}, cf: null }),
       foot: 'Hanya insiden terverifikasi; draf tidak dihitung. ' + (skk ? 'DTT dihitung bila "Hitung DTT" aktif. Arsir = belum ada laporan, beda dengan 0 insiden. ' : '') + (pFull ? '' : 'Jumlah insiden dihitung dari tanggal lapor; kerugian, jenis, kerawanan, dan DTT diskalakan (perkiraan). ') + 'Angka demo. Batas wilayah: Kemendagri 2025 (MIT).'
     };
   }

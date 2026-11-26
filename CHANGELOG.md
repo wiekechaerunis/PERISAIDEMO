@@ -1,5 +1,12 @@
 # Changelog
 
+## 26 Nov 2026 · Tabel insiden di Dashboard
+
+- Kartu "Kategori × wilayah" di bawah Dashboard diganti **Tabel insiden** (board Dashboard dan Dashboard-Tabel, Desain v2): Baris [Kategori] › [+ Rincikan] dan Kolom [Wilayah] (SKK: Wilayah, KKKS, Wilayah kerja, Kategori, Level; KKKS: Wilayah kerja, Kategori, Level), Jumlah | Kerugian, sel berwarna tipis, baris dan kolom Total, kolom nama tetap saat digulir.
+- Klik nama baris membuka rinciannya (atau daftar insiden bila tanpa rincian); klik angka menyaring insiden ke kolom itu (klik lagi melepas). Maksimal 5 insiden per kelompok + "Buka di daftar insiden"; baris insiden membuka Detail.
+- Data mengikuti filter halaman (zoom, KKKS, level, kategori, Periode). Total tabel = KPI Insiden terverifikasi dan Kerugian. Penyimpangan di DEVIATIONS.md D-T1..D-T5.
+- Tes: `src/features/dashboard/incidentTable.test.ts` (14 unit), e2e `node e2e/tabel-insiden.e2e.mjs`, screenshot di `screenshots/tabel-insiden/`.
+
 ## 25 Nov 2026 · Tanya data di Temuan AI
 
 - Kolom "Tanya data" bisa diketik: saran saat fokus (↑/↓, Enter), "Dipahami sebagai" dengan chip yang bisa dihapus (debounce 250 ms), "Menghitung..." 500 ms, lalu jawaban di popover. Intent: saring, peringkat, banding, lokasi, tindakan; hasil 0, tidak dikenali, dan pembatasan peran KKKS.

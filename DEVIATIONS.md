@@ -86,3 +86,18 @@ bukan dengan mengedit `src/generated/DashboardLogic.ts` langsung.
 | S-38 | P31/P33: kanan = kartu arahan, Info laporan, lalu Lokasi | Lokasi tepat di bawah kartu arahan (yang memuat Tenggat), lalu Info laporan | Permintaan pengguna: Lokasi di bawah Tenggat (S-35) |
 | S-39 | P31 untuk eskalasi otomatis karena lewat tenggat (PS1) | Kartu "Diminta arahan dari Anda" hanya saat PIC mengeskalasi ke SKK; PS1 tetap banner + Langkah berikutnya | P31 hanya menggambarkan eskalasi manual ke SKK |
 | S-40 | Sidebar ciut tidak digambar di board Sidebar | Mode ciut memakai kelas DS `.p-sb.mini` (72 px, ikon, tip saat hover), wordmark jadi "P", kaki hak cipta disembunyikan | Permintaan pengguna (expand/collapse); status disimpan per peramban |
+
+## Tabel insiden Dashboard (S16, `/analitik`, 26 Nov 2026)
+
+Kartu "Kategori × wilayah" / "Kategori × wilayah kerja" diganti kartu "Tabel insiden" dari canvas Desain v2
+(`project/Dashboard.dc.html`, `section.db-tb`, versi 1795661784-3e31; contoh dirinci di `Dashboard-Tabel.dc.html`).
+`design/dashboard/Dashboard.dc.html` tidak diganti; markup, CSS, dan logika tabel dipasang lewat `scripts/dashboard-tabel.mjs`
+(dipanggil `scripts/dc-to-tsx.mjs`). Matriks lama beserta logikanya dan patch periodenya dihapus.
+
+| ID | Desain / acuan | Prototype | Alasan |
+|---|---|---|---|
+| D-T1 | Tabel memakai insiden dalam cakupan filter (`incS`) | Sama, termasuk Periode. Total tabel = KPI Insiden terverifikasi dan Kerugian (dijaga `src/features/dashboard/incidentTable.test.ts`, termasuk filter wilayah, KKKS, WK, level, kategori, periode). Bila "Hitung DTT" aktif, KPI ikut menghitung DTT sedangkan tabel tidak; caption menulis "DTT tidak termasuk" seperti di desain | DTT tidak punya baris insiden |
+| D-T2 | Kerugian per insiden = kerugian area dibagi ke insidennya dengan bobot level (tetap) | Kerugian area **setelah filter** (angka yang sama dengan KPI Kerugian) dibagi **rata** ke insiden area itu dalam cakupan | Data mock belum punya kerugian per insiden. Bobot level membuat total berbeda dari KPI saat filter level aktif. PRODUKSI: nilai per insiden dari data layer |
+| D-T3 | Tautan "Buka di daftar insiden →" | Teks tanpa "→"; panah datang dari `.lk-alink::after` | Di desain panahnya tampil dua kali |
+| D-T4 | Menu Baris / Rincikan / Kolom hanya dibuka-tutup lewat tombol | Menu juga menutup dengan Escape atau saat fokus pindah ke luar | Tambahan kecil; tampilan tidak berubah |
+| D-T5 | — | "Buka di daftar insiden" membuka `/insiden` tanpa filter | Daftar insiden belum membaca filter dari URL (sama dengan tautan dashboard lain) |

@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseDocument } from 'htmlparser2';
 import { decodeHTML } from 'entities';
+import { SOURCE_PATCHES, TABLE_LOGIC_PATCHES } from './dashboard-tabel.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DESIGN = path.join(ROOT, 'design/dashboard');
@@ -283,10 +284,6 @@ const PERIOD_PATCHES = [
   ['[3, 4, 3, 5, 5, 4]).map((v) => Math.round(v * fS));', '[3, 4, 3, 5, 5, 4]).map((v, i) => pFull ? Math.round(v * fS) : vN[i]);'],
   ["(KR[i] / ikMax * 130).toFixed(1) + 'px' }));", "(KR[i] / ikMax * 130).toFixed(1) + 'px' })).filter((b, i) => moCov[i] > 0);"],
   ["' kerawanan').join('; ')", "' kerawanan').filter((x, i) => moCov[i] > 0).join('; ')"],
-  ['v: WO.map((w) => c[1][w] || 0) }));', 'v: WO.map((w) => Math.round((c[1][w] || 0) * wF[w])) }));'],
-  ["v: WO.map((w) => w === 'jbn' ? 422 : 0)", "v: WO.map((w) => w === 'jbn' ? Math.round(422 * dttF) : 0)"],
-  ['v: ws.map((w) => c[2][w[0]] || 0)', 'v: ws.map((w) => Math.round((c[2][w[0]] || 0) * aF[w[0]]))'],
-  ["mxCap: 'Klik sel untuk menyaring", "mxCap: (pFull ? '' : 'Angka per periode = perkiraan dari porsi insiden. ') + 'Klik sel untuk menyaring"],
   ["subtitle: 'Semester I 2026 · data per", "subtitle: PL + ' · data per"],
   ["const aiCap = 'Semester I 2026 · '", "const aiCap = PL + ' · '"],
   ["' · Semester I 2026',", "' · ' + PL,"],
@@ -342,6 +339,8 @@ const LOGIC_PATCHES = [
   ["aSaran: ak === 'saran',", "askK: ak, aSaran: ak === 'saran',"],
   ['    const SITES = {', '    const SITES = { ...EXTRA_SITES, '],
   ['goUp: zoomOut,', "goUp: zoomOut, askCtx: { skk, z: s.z, loc: s.loc, kat: s.kat, lv: s.lv, kk: s.kk || null, catN: CAT.length }, askApply: (patch) => this.setState(patch),"],
+  // Tabel insiden (Desain v2, section.db-tb) menggantikan matriks Kategori × wilayah: scripts/dashboard-tabel.mjs
+  ...TABLE_LOGIC_PATCHES,
   ...PERIOD_PATCHES,
 ];
 
@@ -350,7 +349,7 @@ const HAND = new Set(['IncidentMap', 'MapStage', 'MapStrip']); // + MapPanel, Fi
 const S_TAG = {
   AppBar: 'S1', KkksBanner: 'S2', FilterBar: 'S3', ActiveFilters: 'S4', KpiRow: 'S5', AiFindings: 'S6', ActionList: 'S7',
   IncidentMap: 'S8', MapStage: 'S8 (peta, zoom, lapisan)', MapStrip: 'S9-S11 (legenda, tabel wilayah)', TopCategories: 'S12',
-  IncidentVsRisk: 'S13', TrendChart: 'S14', HandlingStatus: 'S15', CategoryMatrix: 'S16', Footnote: 'S17',
+  IncidentVsRisk: 'S13', TrendChart: 'S14', HandlingStatus: 'S15', IncidentTable: 'S16 (Tabel insiden)', Footnote: 'S17',
 };
 
 const patches = {
@@ -389,8 +388,9 @@ const patches = {
   TopCategories: [
     [/className=\{\`db-tc \$\{c\.cls\}\`\} onClick=\{c\.go\}/, 'className={\`db-tc \${c.cls}\`} data-tip={c.tip} onClick={c.go}'],
   ],
-  CategoryMatrix: [
-    [/<tbody>/, '<tbody className="db-fade" key={v.fk}>'],
+  // Tabel insiden: menu Baris/Rincikan/Kolom menutup saat fokus keluar atau Escape (desain hanya membuka/menutup lewat tombol)
+  IncidentTable: [
+    [/<span className="dd">(<button type="button" className=(?:"pill"|\{`pill \$\{v\.\w+\.cls\}`\}) onClick=\{v\.(\w+)\.t\})/g, '<span className="dd" onBlur={(e) => { if (v.$2.open && !e.currentTarget.contains(e.relatedTarget as Node)) v.$2.t(); }} onKeyDown={(e) => { if (e.key === "Escape" && v.$2.open) v.$2.t(); }}>$1'],
   ],
   AppBar: [
     // Masukan PM 25 Nov: tombol periode bisa dibuka (PeriodSelect)
@@ -428,7 +428,11 @@ function main() {
 
   /* Dashboard: dipecah per bagian (PRD §3: komponen per section) */
   {
-    const html = read('Dashboard.dc.html');
+    let html = read('Dashboard.dc.html');
+    for (const [re, to] of SOURCE_PATCHES) {
+      if (!re.test(html)) console.warn(`PATCH sumber tidak cocok: ${re}`);
+      html = html.replace(re, to);
+    }
     const { tpl, style, cls } = extractParts(html);
     // Aturan global desain (body, a, .lk-grid > .p-card.cN) dibatasi ke halaman dashboard (.db-page)
     // supaya tidak mengubah halaman lain di aplikasi.
