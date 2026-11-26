@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 Nov 2026 · Tabel insiden: pivot 2 tingkat (TD9–TD16)
+
+- Bar kontrol Tabel insiden kini **Baris**, **› Rincian**, **Kolom**, **Nilai** (komponen TabelDrill terbaru). Kolom mengubah tabel jadi pivot satu nilai (Insiden, Kerugian, Tinggi & Kritis, Meninggal, Luka, Masih terbuka) dengan kolom Total dan baris Total; Kolom bisa Kategori dan Triwulan, Triwulan juga bisa jadi Baris atau Rincian.
+- › Rincian (hanya bila Kolom terisi) membuat tabel 2 tingkat dalam satu kolom nama: baris grup abu-abu dengan angka tebal = subtotal, tombol − / +, teks "{n} {dimensi}"; rincian menjorok 28px; grup dengan lebih dari 10 rincian tertutup secara bawaan; "Buka semua · Tutup semua". Kolom nama tetap saat tabel digulir ke samping.
+- Klik angka grup atau rincian membuka popover yang sama; Lihat insiden, Rincikan, dan Saring halaman membawa grup + rincian + kolom. Kolom, Rincian, dan Nilai tersimpan di URL (`kolom`, `rincian`, `nilai`).
+- Perbaikan: klik di luar popover tidak lagi memicu galat console bila targetnya bukan elemen.
+- Tes: 7 unit baru di `src/analytics/tabelDrill.test.ts` (subtotal = jumlah rincian, buka/tutup, popover rincian, TD14–TD16, URL); e2e `node e2e/tabel-drill.e2e.mjs` menambah TD14, TD15, TD16 dan uji sticky.
+
 ## 26 Nov 2026 · Dashboard: pembanding tahun lalu, kartu KKKS melapor, kolom Tabel insiden
 
 - Pembanding "vs …" = periode yang sama tahun lalu, ikut tombol Periode: Semester I 2026 → "vs Sem. I 2025", Tahun berjalan → "vs 1 Jan–30 Jun 2025", Bulan ini → "vs Jun 2025", rentang lain digeser satu tahun. Berlaku di kartu KPI, kalimat Temuan AI (naik/turun % dihitung), tooltip dan catatan Jenis terbanyak. "Sem. II 2025" tidak dipakai lagi, termasuk di Laporan PDF dan contoh Excel (keduanya isi tetap Semester I 2026).

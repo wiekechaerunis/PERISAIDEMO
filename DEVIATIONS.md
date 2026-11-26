@@ -123,4 +123,6 @@ ke `src/analytics/tabelDrill.ts` (fungsi murni). Aturan korban ada di `src/analy
 | D-TD7 | Tautan "Buka di daftar insiden →" | Teks tanpa "→" (panah dari `.lk-alink::after`); tautan membawa filter jejak + syarat kolom (`/insiden?kategori=…&wilayah=…&korban=meninggal`). Daftar insiden belum membaca parameter ini | Daftar insiden di luar cakupan tugas |
 | D-TD8 | Popover hanya ditutup tombol × | Juga Escape dan klik di luar | Tambahan kecil |
 | D-TD9 | Kategori Illegal tapping/drilling (TD0 gap #3) | Mengikuti kategori kartu lain | Sesuai catatan TD0 |
-
+| D-TD10 | Pivot (TD9–TD16) memakai `data()` demo | Sama dengan D-TD1: insiden dalam cakupan filter halaman; baris dan kolom Total = kartu angka | — |
+| D-TD11 | Menu "Kelompokkan menurut" (TD1–TD8) | Diganti menu Baris / › Rincian / Kolom / Nilai sesuai komponen TabelDrill terbaru (menu Baris dan Kolom belum ada di prototype sebelum tugas ini, jadi ikut dibangun) | Desain berubah |
+| D-TD12 | "Saring halaman" pivot hanya toast | Filter dipasang untuk baris, rincian, dan kolom sel itu sekaligus (WK menimpa Wilayah, Bulan menimpa Triwulan; Triwulan = Periode 1 Jan–31 Mar atau 1 Apr–30 Jun). Status penanganan dilewati karena tidak punya filter halaman; butir disembunyikan bila semua langkahnya Status | Bar filter dashboard tidak punya filter status |
