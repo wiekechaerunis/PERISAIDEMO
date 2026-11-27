@@ -25,9 +25,9 @@ export interface DashPeriodInfo {
   cap: string;
   /** teks untuk subjudul dan keterangan, mis. "30 hari terakhir (31 Mei – 30 Jun 2026)" */
   text: string;
-  /** periode yang sama tahun lalu, untuk label pembanding "vs …": "Sem. I 2025", "Jun 2025", "1 Jan–30 Jun 2025" */
+  /** periode yang sama tahun lalu, untuk label pembanding "vs …": "1 Jan–30 Jun 2025", "Jun 2025", "23–30 Jun 2025" */
   prev: string;
-  /** versi panjang untuk kalimat dan tooltip: "Semester I 2025", "Jun 2025", "1 Jan – 30 Jun 2025" */
+  /** versi panjang untuk kalimat dan tooltip: "1 Jan – 30 Jun 2025", "Jun 2025" */
   prevLong: string;
 }
 
@@ -44,11 +44,9 @@ export function dashPeriodInfo(p: Period): DashPeriodInfo {
   const text = p.kind === 'custom' ? label : p.preset === 'all' ? 'Semester I 2026' : `${label} (${cap})`;
   // Pembanding = periode yang sama tahun lalu (masukan PM 26 Nov), bukan semester sebelumnya
   const pr = { from: minusYear(from), to: minusYear(to) };
-  const allTime = p.kind === 'preset' && p.preset === 'all';
-  const prevLong = allTime ? 'Semester I 2025'
-    : p.kind === 'preset' && p.preset === 'bulan' ? rangeCaption(pr).replace(/^1–\d+ /, '')
-    : rangeCaption(pr);
-  const prev = allTime ? 'Sem. I 2025' : prevLong.replace(' – ', '–');
+  // Semua waktu juga memakai rentang tanggal tahun lalu (1 Jan – 30 Jun 2025), bukan "Semester I 2025" (masukan 27 Nov)
+  const prevLong = p.kind === 'preset' && p.preset === 'bulan' ? rangeCaption(pr).replace(/^1–\d+ /, '') : rangeCaption(pr);
+  const prev = prevLong.replace(' – ', '–');
   return { from, to, full, label, cap, text, prev, prevLong };
 }
 

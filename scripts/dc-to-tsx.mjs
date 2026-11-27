@@ -248,7 +248,7 @@ const PERIOD_PATCHES = [
     const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
     const PL = PD ? PD.text : 'Semester I 2026';
     // Pembanding = periode yang sama tahun lalu, ikut pilihan periode (masukan PM 26 Nov)
-    const PCMP = 'vs ' + (PD ? PD.prev : 'Sem. I 2025'), PRVL = PD ? PD.prevLong : 'Semester I 2025';`],
+    const PCMP = 'vs ' + (PD ? PD.prev : '1 Jan–30 Jun 2025'), PRVL = PD ? PD.prevLong : '1 Jan – 30 Jun 2025';`],
   ['let lv = a[5].slice();', 'let lv = pFull ? a[5].slice() : [0, 1, 2, 3, 4].map((l) => INCP.filter((r) => r[1] === a[0] && r[3] === l).length);'],
   ['lv = alloc(Math.min(catN[a[0]] || 0, sum(a[5])), lv);', 'lv = alloc(Math.min(Math.round((catN[a[0]] || 0) * aF[a[0]]), sum(lv)), lv);'],
   ['lv[0] += DTT[a[0]];', 'lv[0] += Math.round(DTT[a[0]] * dttF);'],

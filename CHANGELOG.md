@@ -1,5 +1,9 @@
 # Changelog
 
+## 27 Nov 2026 · Pembanding Semua waktu ikut periode
+
+- Periode bawaan **Semua waktu** (1 Jan – 30 Jun 2026) kini dibandingkan dengan "vs 1 Jan–30 Jun 2025", bukan "vs Sem. I 2025", di kartu angka, kalimat Temuan AI, dan catatan Jenis terbanyak. Laporan PDF Semester I 2026 tetap membandingkan dengan Semester I 2025.
+
 ## 26 Nov 2026 (malam) · Tabel insiden: susunan Baris · Kolom · Nilai (TD0–TD20), angka per bulan satu sumber
 
 - Kontrol "› Rincian" diganti chip **Baris** (maks. 3, pemisah ›), **Kolom** (maks. 2, pemisah ×), dan **Nilai** (hanya saat Kolom terisi). Klik chip = ganti dimensi, × = hapus (chip Baris terakhir tidak bisa dihapus), **+ Tambah** = menu "Rincikan baris menurut" / "Jadikan kolom" / "Pecah kolom menurut". Satu dimensi tidak bisa dipakai dua kali.

@@ -47,7 +47,7 @@ export class DashboardLogic extends DCLogic {
     const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
     const PL = PD ? PD.text : 'Semester I 2026';
     // Pembanding = periode yang sama tahun lalu, ikut pilihan periode (masukan PM 26 Nov)
-    const PCMP = 'vs ' + (PD ? PD.prev : 'Sem. I 2025'), PRVL = PD ? PD.prevLong : 'Semester I 2025';
+    const PCMP = 'vs ' + (PD ? PD.prev : '1 Jan–30 Jun 2025'), PRVL = PD ? PD.prevLong : '1 Jan – 30 Jun 2025';
     const wTot0 = {}; WO.forEach((w) => { wTot0[w] = sum(A0.filter((a) => a[1] === w).map((a) => sum(a[5]))); });
     // area setelah filter level, kategori, DTT
     // bagi bilangan bulat secara proporsional (largest remainder) supaya total tetap cocok
