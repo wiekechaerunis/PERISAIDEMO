@@ -40,8 +40,9 @@ export function dashPeriodInfo(p: Period): DashPeriodInfo {
   const full = from <= DATA_FROM && to >= DATA_TO;
   const label = p.kind === 'custom' ? periodLabel(p) : choiceLabel(p.preset);
   const cap = r ? rangeCaption(r) : DATA_CAPTION;
-  // Semua waktu = seluruh data demo = Semester I 2026 (teks dashboard tetap seperti sebelumnya); rentang khusus labelnya sudah tanggal
-  const text = p.kind === 'custom' ? label : p.preset === 'all' ? 'Semester I 2026' : `${label} (${cap})`;
+  // Semua periode memakai nama pilihan + rentang, termasuk Semua waktu (masukan 27 Nov: tidak lagi "Semester I 2026");
+  // rentang khusus labelnya sudah tanggal
+  const text = p.kind === 'custom' ? label : `${label} (${cap})`;
   // Pembanding = periode yang sama tahun lalu (masukan PM 26 Nov), bukan semester sebelumnya
   const pr = { from: minusYear(from), to: minusYear(to) };
   // Semua waktu juga memakai rentang tanggal tahun lalu (1 Jan – 30 Jun 2025), bukan "Semester I 2025" (masukan 27 Nov)

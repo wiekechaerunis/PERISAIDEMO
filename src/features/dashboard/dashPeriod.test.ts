@@ -18,7 +18,7 @@ const kpi = (v: { kpis: { val: string }[] }, i: number) => v.kpis[i].val;
 
 describe('dashPeriodInfo (hari ini dashboard = 30 Jun 2026)', () => {
   it('rentang preset dan label', () => {
-    expect(dashPeriodInfo(P('all'))).toMatchObject({ from: '2026-01-01', to: '2026-06-30', full: true, label: 'Semua waktu', text: 'Semester I 2026' });
+    expect(dashPeriodInfo(P('all'))).toMatchObject({ from: '2026-01-01', to: '2026-06-30', full: true, label: 'Semua waktu', text: 'Semua waktu (1 Jan – 30 Jun 2026)' });
     expect(dashPeriodInfo(P('7h'))).toMatchObject({ from: '2026-06-23', to: '2026-06-30', full: false, cap: '23–30 Jun 2026' });
     expect(dashPeriodInfo(P('30h'))).toMatchObject({ from: '2026-05-31', to: '2026-06-30', full: false, text: '30 hari terakhir (31 Mei – 30 Jun 2026)' });
     expect(dashPeriodInfo(P('bulan'))).toMatchObject({ from: '2026-06-01', to: '2026-06-30', full: false });
@@ -41,7 +41,7 @@ describe('logika dashboard per periode', () => {
     for (const peran of ['skk', 'kkks'] as const) {
       expect(JSON.stringify(view(dashPeriodInfo(P('all')), peran))).toBe(JSON.stringify(view(undefined, peran)));
       expect(JSON.stringify(view(dashPeriodInfo(P('tahun')), peran))
-        .replace(/Tahun berjalan \(1 Jan – 30 Jun 2026\)/g, 'Semester I 2026')).toBe(
+        .replace(/Tahun berjalan \(1 Jan – 30 Jun 2026\)/g, 'Semua waktu (1 Jan – 30 Jun 2026)')).toBe(
         JSON.stringify(view(undefined, peran)),
       );
     }

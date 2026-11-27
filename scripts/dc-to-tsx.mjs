@@ -246,7 +246,7 @@ const PERIOD_PATCHES = [
     const wF = {}; WO.forEach((w) => { const ids = A0.filter((a) => a[1] === w).map((a) => a[0]); wF[w] = pFull ? 1 : fracOf((r) => ids.includes(r[1])); });
     const moCov = [31, 28, 31, 30, 31, 30].map((dn, i) => { if (pFull) return 1; let c = 0; for (let d = 1; d <= dn; d++) { const t = '2026-' + pad2(i + 1) + '-' + pad2(d); if (t >= PD.from && t <= PD.to) c++; } return c / dn; });
     const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
-    const PL = PD ? PD.text : 'Semester I 2026';
+    const PL = PD ? PD.text : 'Semua waktu (1 Jan – 30 Jun 2026)';
     // Pembanding = periode yang sama tahun lalu, ikut pilihan periode (masukan PM 26 Nov)
     const PCMP = 'vs ' + (PD ? PD.prev : '1 Jan–30 Jun 2025'), PRVL = PD ? PD.prevLong : '1 Jan – 30 Jun 2025';`],
   ['let lv = a[5].slice();', 'let lv = pFull ? a[5].slice() : [0, 1, 2, 3, 4].map((l) => INCP.filter((r) => r[1] === a[0] && r[3] === l).length);'],
@@ -480,11 +480,15 @@ function main() {
 
   /* Laporan PDF 1..5 */
   {
-    let style = '';
+    // Gaya dari SEMUA halaman (tiap PDF punya beberapa blok <style>; dulu hanya satu blok yang terbawa, sehingga
+    // .bars/.bx/.note halaman 2 hilang dan grafik Tren per bulan tampil sebagai daftar angka). Aturan identik dibuang.
+    const styleLines = [];
     for (let n = 1; n <= 5; n++) {
       const html = read(`Dashboard-PDF${n}.dc.html`);
-      const { tpl, style: st } = extractParts(html);
-      style = st;
+      const { tpl } = extractParts(html);
+      for (const m of html.matchAll(/<style>([\s\S]*?)<\/style>/g)) {
+        m[1].split('\n').map((l) => l.trim()).filter((l) => l.includes('{') && !styleLines.includes(l)).forEach((l) => styleLines.push(l));
+      }
       // Masukan PM 26 Nov: pembanding = periode yang sama tahun lalu (laporan berisi Semester I 2026 → Semester I 2025)
       const jsx = convertTemplate(tpl).split('Sem. II 2025').join('Sem. I 2025').split('Semester II 2025').join('Semester I 2025');
       write(
@@ -493,7 +497,7 @@ function main() {
       );
     }
     // Gaya halaman PDF dibungkus .laporan-root supaya selektor global (.top, table, th, td) tidak mengubah dashboard.
-    const scoped = style.split('\n').filter((l) => l.trim() && !/^body\{/.test(l.trim())).map((l) => {
+    const scoped = styleLines.filter((l) => !/^body\{/.test(l)).map((l) => {
       const i = l.indexOf('{');
       const sels = l.slice(0, i).split(',').map((x) => `.laporan-root ${x.trim()}`).join(',');
       return sels + l.slice(i);

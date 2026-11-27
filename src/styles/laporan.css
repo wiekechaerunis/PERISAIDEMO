@@ -21,3 +21,19 @@
 .laporan-root td{padding:6px 6px 6px 0;border-bottom:1px solid var(--border-subtle)}
 .laporan-root td.r,.laporan-root th.r{text-align:right}
 .laporan-root .ft{margin-top:auto;display:flex;justify-content:space-between;font-size:10px;color:var(--ink-muted);border-top:1px solid var(--border);padding-top:8px}
+.laporan-root .bars{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;height:120px;align-items:end;border-bottom:1px solid var(--border);padding:0 6px}
+.laporan-root .bars div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;font-size:10px;font-weight:600;color:var(--ink-subtle)}
+.laporan-root .bars i{display:block;width:100%;max-width:44px;background:var(--chart-series-1);border-radius:3px 3px 0 0}
+.laporan-root .bars div.mk i{box-shadow:0 0 0 2px #fff,0 0 0 3px var(--ink)}
+.laporan-root .bx{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;padding:4px 6px 0 6px;font-size:10px;color:var(--ink-muted);text-align:center}
+.laporan-root .note{display:flex;gap:8px;align-items:flex-start;background:var(--surface-subtle);border-radius:6px;padding:8px 10px;font-size:11px;line-height:16px}
+.laporan-root .note b.n{flex:none;width:16px;height:16px;border-radius:50%;background:var(--ink);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+.laporan-root .sv{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px}
+.laporan-root .sv i{width:6px;height:6px;border-radius:50%}
+.laporan-root .mx td.c{text-align:center}
+.laporan-root .mx td.h{background:color-mix(in srgb,var(--chart-series-1) var(--p),#fff)}
+.laporan-root .up{color:var(--sev-critical-ink);font-weight:600}.dn{color:var(--status-success-ink);font-weight:600}
+.laporan-root .mono{font-family:var(--font-mono);font-size:10px}
+.laporan-root .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.laporan-root dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:11px;line-height:16px}
+.laporan-root dt{font-weight:600}dd{margin:0;color:var(--ink-subtle)}

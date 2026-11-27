@@ -45,7 +45,7 @@ export class DashboardLogic extends DCLogic {
     const wF = {}; WO.forEach((w) => { const ids = A0.filter((a) => a[1] === w).map((a) => a[0]); wF[w] = pFull ? 1 : fracOf((r) => ids.includes(r[1])); });
     const moCov = [31, 28, 31, 30, 31, 30].map((dn, i) => { if (pFull) return 1; let c = 0; for (let d = 1; d <= dn; d++) { const t = '2026-' + pad2(i + 1) + '-' + pad2(d); if (t >= PD.from && t <= PD.to) c++; } return c / dn; });
     const dttF = pFull ? 1 : sum([35, 27, 70, 122, 66, 102].map((v, i) => v * moCov[i])) / 422;
-    const PL = PD ? PD.text : 'Semester I 2026';
+    const PL = PD ? PD.text : 'Semua waktu (1 Jan – 30 Jun 2026)';
     // Pembanding = periode yang sama tahun lalu, ikut pilihan periode (masukan PM 26 Nov)
     const PCMP = 'vs ' + (PD ? PD.prev : '1 Jan–30 Jun 2025'), PRVL = PD ? PD.prevLong : '1 Jan – 30 Jun 2025';
     const wTot0 = {}; WO.forEach((w) => { wTot0[w] = sum(A0.filter((a) => a[1] === w).map((a) => sum(a[5]))); });
